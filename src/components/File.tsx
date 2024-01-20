@@ -1,3 +1,5 @@
+import cx from "classnames";
+import Image, { IconImage } from "./Image";
 import {
   forwardRef,
   Ref,
@@ -6,8 +8,6 @@ import {
   HTMLAttributes,
 } from "react";
 import { Button as Btn } from "@nextui-org/react";
-import cx from "classnames";
-import Image, { IconImage } from "./Image";
 
 type ButtonElement = HTMLAttributes<HTMLInputElement | HTMLButtonElement>;
 type ImageElement = Partial<HTMLImageElement>;

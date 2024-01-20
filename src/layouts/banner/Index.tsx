@@ -47,7 +47,7 @@ const Banner = () => {
       <Button
         aria-label="simpan"
         onClick={() => console.log("save")}
-        className="mx-auto mt-5"
+        className="mx-auto mt-6"
         startContent={<PlusIcon width={16} />}
       />
     </>

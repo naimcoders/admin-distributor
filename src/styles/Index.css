@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "interRegular";
+    src: url("/src/assets/fonts/Inter-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "interMedium";
+    src: url("/src/assets/fonts/Inter-Medium.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "interThin";
+    src: url("/src/assets/fonts/Inter-Thin.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "interBold";
+    src: url("/src/assets/fonts/Inter-Bold.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  label {
+    @apply text-sm;
+  }
+
+  .flexcol {
+    @apply flex flex-col;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .rdrDefinedRangesWrapper {
+    display: none;
+  }
+
+  .remove-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: #f4f4f4;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #d4d4d4;
+  }
+}
+
+@layer components {
+  .grid-min-200 {
+    @apply grid grid-cols-auto-fit-min-200px;
+  }
+
+  .grid-min-300 {
+    @apply grid grid-cols-auto-fit-min-300px;
+  }
+}

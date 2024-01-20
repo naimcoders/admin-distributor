@@ -6,3 +6,17 @@ export type Color =
   | "warning"
   | "danger"
   | "default";
+
+export interface Columns<S extends object, v = React.ReactNode> {
+  header: v;
+  render(type: S, index: number): React.ReactNode;
+}
+
+export interface TableProps<T extends object> {
+  data: T[];
+  columns: Columns<T>[];
+  isLoading: boolean;
+  page?: number;
+  isNext?: boolean;
+  isPaginate?: boolean;
+}

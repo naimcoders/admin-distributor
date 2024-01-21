@@ -3,19 +3,21 @@ import { Button as Btn } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
 import { Color, Radius } from "src/types";
 
-interface Button
-  extends Pick<
-    HTMLAttributes<HTMLButtonElement>,
-    "aria-label" | "className" | "onClick"
-  > {
+type PickButton = Pick<
+  HTMLAttributes<HTMLButtonElement>,
+  "aria-label" | "className" | "onClick"
+>;
+
+interface Button extends PickButton {
   color: Color;
+  radius: Radius;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
-  radius: Radius;
 }
 
 export const Button = (props: Partial<Button>) => {
   const { className, color, endContent, startContent, onClick, radius } = props;
+
   return (
     <Btn
       onClick={onClick}

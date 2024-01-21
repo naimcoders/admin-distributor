@@ -1,13 +1,16 @@
 import { Input } from "@nextui-org/react";
+import { HTMLAttributes } from "react";
 import {
   FieldValues,
   UseControllerProps,
   useController,
 } from "react-hook-form";
 
-interface Textfield extends UseControllerProps<FieldValues> {
-  placeholder: string;
+interface Textfield
+  extends UseControllerProps<FieldValues>,
+    Pick<HTMLAttributes<HTMLInputElement>, "className"> {
   type: string;
+  placeholder: string;
   autoComplete: "on" | "off";
   label?: string;
   startContent?: React.ReactNode;
@@ -29,6 +32,7 @@ export const Textfield = (props: Textfield) => {
       autoComplete={props.autoComplete}
       startContent={props.startContent}
       color={props.errorMessage ? "danger" : "default"}
+      className={props.className}
       classNames={{
         input: "placeholder:capitalize",
         errorMessage: "capitalize font-interMedium",
@@ -40,7 +44,10 @@ export const Textfield = (props: Textfield) => {
 };
 
 export interface GeneralFields
-  extends Pick<Textfield, "label" | "placeholder" | "type" | "autoComplete"> {
+  extends Pick<
+    Textfield,
+    "label" | "placeholder" | "type" | "autoComplete" | "className"
+  > {
   name: string;
   errorMessage: string;
 }

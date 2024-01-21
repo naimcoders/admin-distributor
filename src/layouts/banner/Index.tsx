@@ -9,8 +9,8 @@ import { ChildRef, File } from "src/components/File";
 import { IconImage } from "src/components/Image";
 
 const Banner = () => {
-  const { logo, logoUrl, onClickLogo, onChangeLogo } = useLogo();
   const { banner, bannerUrl, onClickBanner, onChangeBanner } = useBanner();
+  const { logo, logoUrl, onClickLogo, onChangeLogo } = useLogo();
 
   const icons: IconImage[] = [
     {
@@ -44,6 +44,7 @@ const Banner = () => {
           icons={icons}
         />
       </main>
+
       <Button
         aria-label="simpan"
         onClick={() => console.log("save")}

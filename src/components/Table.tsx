@@ -3,6 +3,9 @@ import Pagination from "./Pagination";
 import { TableProps } from "src/types";
 import { CircularProgress } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
+import { Textfield } from "./Textfield";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Control, FieldValues } from "react-hook-form";
 
 interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
@@ -11,7 +14,7 @@ interface Table<T extends object>
   textColorHead?: string;
 }
 
-function Table<T extends object>(props: Table<T>) {
+export default function Table<T extends object>(props: Table<T>) {
   return (
     <div className={cx("flex flex-col gap-6", props.className)}>
       <section className="relative overflow-x-auto rounded-lg">
@@ -77,4 +80,35 @@ function Table<T extends object>(props: Table<T>) {
   );
 }
 
-export default Table;
+interface TableLayout<T extends object> extends Table<T> {
+  control: Control<FieldValues>;
+  placeholder: string;
+}
+
+export function TableLayoutWithSearchAndTabs<S extends object>(
+  props: TableLayout<S>
+) {
+  return (
+    <div className="mt-4">
+      <Textfield
+        type="text"
+        name="search"
+        defaultValue=""
+        autoComplete="off"
+        control={props.control}
+        placeholder={props.placeholder}
+        startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
+        className="sm:absolute sm:top-0 sm:right-0 sm:w-[40%]"
+      />
+
+      <Table
+        columns={props.columns}
+        data={props.data}
+        isLoading={props.isLoading}
+        className="mt-4"
+        isNext={props.isNext}
+        page={props.page}
+      />
+    </div>
+  );
+}

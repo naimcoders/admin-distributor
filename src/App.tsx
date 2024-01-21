@@ -7,6 +7,7 @@ import Skeleton from "./components/Skeleton";
 
 const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
+const Product = lazy(() => import("./layouts/product/Index"));
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <Banner />
+          </Suspense>
+        ),
+      },
+      {
+        path: "produk",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Product />
           </Suspense>
         ),
       },

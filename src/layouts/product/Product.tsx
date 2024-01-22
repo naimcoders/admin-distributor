@@ -1,12 +1,12 @@
-import { FolderOpenIcon } from "@heroicons/react/24/outline";
 import { FieldValues, useForm } from "react-hook-form";
-import folderIcon from "src/assets/images/folder.png";
-import Image from "src/components/Image";
+import { SwitchAndFolder } from "src/components/Action";
 import { TableLayoutWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 
 const SubProduct = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
+  const { columns } = useProduct();
+
   return (
     <TableLayoutWithSearchAndTabs
       columns={columns}
@@ -40,31 +40,45 @@ const products: Product[] = [
   },
 ];
 
-const columns: Columns<Product>[] = [
-  {
-    header: "nama produk",
-    render: (v) => <p>{v.productName}</p>,
-  },
-  {
-    header: "kategori",
-    render: (v) => <p>{v.category}</p>,
-  },
-  {
-    header: "sub-kategori",
-    render: (v) => <p>{v.categorySub}</p>,
-  },
-  {
-    header: "harga (Rp)",
-    render: (v) => <p className="text-right">{v.price}</p>,
-  },
-  {
-    header: "aksi",
-    render: () => (
-      <div className="flex gap-4 justify-center">
-        <img src={folderIcon} alt="folder" className="w-6 h-4 cursor-pointer" />
-      </div>
-    ),
-  },
-];
+const useProduct = () => {
+  const handleSwitch = () => {
+    console.log("switch");
+  };
+
+  const handleFolder = () => {
+    console.log("folder");
+  };
+
+  const columns: Columns<Product>[] = [
+    {
+      header: "nama produk",
+      render: (v) => <p>{v.productName}</p>,
+    },
+    {
+      header: "kategori",
+      render: (v) => <p>{v.category}</p>,
+    },
+    {
+      header: "sub-kategori",
+      render: (v) => <p>{v.categorySub}</p>,
+    },
+    {
+      header: "harga (Rp)",
+      render: (v) => <p className="text-right">{v.price}</p>,
+    },
+    {
+      header: "aksi",
+      render: () => (
+        <SwitchAndFolder
+          isSuspendSelected={false}
+          handleSwitch={handleSwitch}
+          handleFolder={handleFolder}
+        />
+      ),
+    },
+  ];
+
+  return { columns };
+};
 
 export default SubProduct;

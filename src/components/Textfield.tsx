@@ -26,7 +26,7 @@ export const Textfield = (props: Textfield) => {
       radius="sm"
       type={props.type}
       label={props.label}
-      labelPlacement="outside"
+      labelPlacement="inside"
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}

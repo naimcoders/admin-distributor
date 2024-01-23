@@ -26,12 +26,12 @@ const LoginPage = () => {
   );
 };
 
-export const arrFieldLogin: GeneralFields[] = [
+export const arrLogins: GeneralFields[] = [
   {
     label: "Email",
     name: "email",
     type: "email",
-    placeholder: "you@example.com",
+    placeholder: "masukkan email",
     errorMessage: "Masukkan email",
     autoComplete: "on",
   },
@@ -78,7 +78,7 @@ const Form = () => {
 
   return (
     <section className="flex flex-col gap-5">
-      {arrFieldLogin.map((el, idx) => (
+      {arrLogins.map((el, idx) => (
         <Textfield
           key={idx}
           name={el.name}

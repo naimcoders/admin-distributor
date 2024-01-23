@@ -9,6 +9,7 @@ const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
 const Product = lazy(() => import("./layouts/product/Index"));
 const ProductDetail = lazy(() => import("./layouts/product/Detail"));
+const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <ProductDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: "akun",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Account />
           </Suspense>
         ),
       },

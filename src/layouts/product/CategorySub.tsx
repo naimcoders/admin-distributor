@@ -1,6 +1,7 @@
 import { FieldValues, useForm } from "react-hook-form";
 import { TableLayoutWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
+import { ImageFolder } from "src/components/Image";
 
 export default function CategorySub() {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -19,7 +20,7 @@ export default function CategorySub() {
 
 interface CatergorySub {
   category: string;
-  sub: string | string[];
+  sub: string[];
 }
 
 const useCategorySub = () => {
@@ -36,6 +37,22 @@ const useCategorySub = () => {
 
   const columns: Columns<CatergorySub>[] = [
     { header: "kategori produk", render: (v) => <p>{v.category}</p> },
+    {
+      header: "sub kategori",
+      render: (v) => (
+        <ul className="flex">
+          {v.sub.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      header: "aksi",
+      render: () => (
+        <ImageFolder onClick={() => console.log("hello")} className="mx-auto" />
+      ),
+    },
   ];
 
   return { categories, columns };

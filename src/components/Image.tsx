@@ -1,6 +1,7 @@
+import folder from "src/assets/images/folder.png";
 import cx from "classnames";
 import { Image as Img } from "@nextui-org/react";
-import { useState } from "react";
+import { ImgHTMLAttributes, useState } from "react";
 
 export type IconImage = {
   src: React.ReactNode;
@@ -11,7 +12,7 @@ type Image = Partial<HTMLImageElement> & {
   icons?: IconImage[];
 };
 
-const Image = ({ src, alt, width, icons, loading }: Image) => {
+export default function Image({ src, alt, width, icons, loading }: Image) {
   const [onHover, setOnHover] = useState(false);
 
   const mouseEnter = () => setOnHover(true);
@@ -51,6 +52,17 @@ const Image = ({ src, alt, width, icons, loading }: Image) => {
       )}
     </section>
   );
-};
+}
 
-export default Image;
+export const ImageFolder: React.FC<
+  {} & ImgHTMLAttributes<HTMLImageElement>
+> = ({ className, src, alt, ...props }) => {
+  return (
+    <img
+      src={folder}
+      alt="folder"
+      {...props}
+      className={cx("w-6 h-4 cursor-pointer", className)}
+    />
+  );
+};

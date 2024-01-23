@@ -1,5 +1,6 @@
 import Tabs, { ITabs } from "src/components/Tabs";
 import Password from "./Password";
+import Rekening from "./Rekening";
 
 const Account = () => {
   return (
@@ -11,7 +12,7 @@ const Account = () => {
 
 const tabs: ITabs[] = [
   { label: "password", content: <Password /> },
-  { label: "rekening", content: <h1>rekening</h1> },
+  { label: "rekening", content: <Rekening /> },
 ];
 
 export default Account;

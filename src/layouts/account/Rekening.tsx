@@ -1,10 +1,9 @@
+import { GeneralFields, Textfield } from "src/components/Textfield";
 import Template from "./Template";
 import { FieldValues, useForm } from "react-hook-form";
-import { Textfield } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
-import { arrLogins } from "src/pages/Index";
 
-const Password = () => {
+const Rekening = () => {
   const {
     control,
     handleSubmit,
@@ -16,12 +15,8 @@ const Password = () => {
   });
 
   return (
-    <Template
-      title="perbarui password"
-      onClick={onSubmit}
-      btnLabelForm="buat baru"
-    >
-      {arrLogins.map((el, idx) => (
+    <Template title="detail rekening" onClick={onSubmit} btnLabelForm="simpan">
+      {rekenings.map((el, idx) => (
         <Textfield
           key={idx}
           name={el.name}
@@ -39,4 +34,23 @@ const Password = () => {
   );
 };
 
-export default Password;
+const rekenings: GeneralFields[] = [
+  {
+    label: "nama lengkap",
+    autoComplete: "off",
+    name: "fullname",
+    type: "text",
+    placeholder: "masukkan nama sesuai rekening",
+    errorMessage: "masukkan nama sesuai rekening",
+  },
+  {
+    label: "nomor rekening",
+    autoComplete: "off",
+    name: "noRek",
+    type: "number",
+    placeholder: "masukkan nomor rekening",
+    errorMessage: "masukkan nomor rekening",
+  },
+];
+
+export default Rekening;

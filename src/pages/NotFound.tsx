@@ -1,7 +1,9 @@
-import singleLogo from "src/assets/images/icon_pilipilih flat_white.png";
+// import singleLogo from "src/assets/images/icon_pilipilih flat_white.png";
+import mokes from "src/assets/images/mokes.png";
 import { Button } from "src/components/Button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import Image from "src/components/Image";
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -26,7 +28,7 @@ const NotFound = () => {
         />
       </section>
       <section className="flex justify-center sm:items-center sm:flex-1">
-        <img src={singleLogo} alt="Single Logo" className="w-72 opacity-50" />
+        <Image src={mokes} alt="Mokes" width={250} loading="lazy" />
       </section>
     </main>
   );

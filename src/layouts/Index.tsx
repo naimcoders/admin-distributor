@@ -77,7 +77,11 @@ export const arrNavigationLabels: { label: string }[] = [
   { label: "banner" },
   { label: "produk" },
   { label: "toko" },
+  { label: "distributor" },
+  { label: "sales" },
+  { label: "ekspedisi" },
   { label: "order" },
+  { label: "report" },
   { label: "akun" },
 ];
 

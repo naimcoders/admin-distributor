@@ -1,14 +1,28 @@
-import { GeneralFields, Textfield } from "src/components/Textfield";
+import cx from "classnames";
+import {
+  PartialGeneralFields,
+  Textfield,
+  objectFields,
+} from "src/components/Textfield";
 import Template from "./Template";
 import { FieldValues, useForm } from "react-hook-form";
 import { handleErrorMessage } from "src/helpers";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Modal } from "src/components/Modal";
+import { useActiveModal } from "src/stores/modalStore";
+import { UseForm } from "src/types";
 
 const Rekening = () => {
   const {
     control,
+    setValue,
+    clearErrors,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
+
+  const { rekenings } = useRekening();
+  const { actionIsBankName } = useActiveModal();
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
@@ -17,40 +31,111 @@ const Rekening = () => {
   return (
     <Template title="detail rekening" onClick={onSubmit} btnLabelForm="simpan">
       {rekenings.map((el, idx) => (
-        <Textfield
-          key={idx}
-          name={el.name}
-          type={el.type}
-          label={el.label}
-          defaultValue=""
-          control={control}
-          placeholder={el.placeholder}
-          autoComplete={el.autoComplete}
-          errorMessage={handleErrorMessage(errors, el.name)}
-          rules={{ required: { value: true, message: el.errorMessage } }}
-        />
+        <div key={idx}>
+          {["input"].includes(el.forField!) && (
+            <Textfield
+              type={el.type}
+              label={el.label}
+              control={control}
+              name={el.name ?? ""}
+              placeholder={el.placeholder}
+              defaultValue={el.defaultValue}
+              autoComplete={el.autoComplete}
+              errorMessage={handleErrorMessage(errors, el.name)}
+              rules={{
+                required: { value: true, message: el.errorMessage ?? "" },
+              }}
+            />
+          )}
+
+          {["modal"].includes(el.forField!) && (
+            <Textfield
+              type={el.type}
+              label={el.label}
+              control={control}
+              name={el.name ?? ""}
+              placeholder={el.placeholder}
+              defaultValue={el.defaultValue}
+              autoComplete={el.autoComplete}
+              errorMessage={handleErrorMessage(errors, el.name)}
+              rules={{
+                required: { value: true, message: el.errorMessage ?? "" },
+              }}
+              isReadOnly
+              endContent={<ChevronRightIcon width={16} />}
+              onClick={actionIsBankName}
+            />
+          )}
+        </div>
       ))}
+
+      <BankModal setValue={setValue} clearErrors={clearErrors} />
     </Template>
   );
 };
 
-const rekenings: GeneralFields[] = [
-  {
-    label: "nama lengkap",
-    autoComplete: "off",
-    name: "fullname",
-    type: "text",
-    placeholder: "masukkan nama sesuai rekening",
-    errorMessage: "masukkan nama sesuai rekening",
-  },
-  {
-    label: "nomor rekening",
-    autoComplete: "off",
-    name: "noRek",
-    type: "number",
-    placeholder: "masukkan nomor rekening",
-    errorMessage: "masukkan nomor rekening",
-  },
-];
+const BankModal = ({
+  setValue,
+  clearErrors,
+}: Pick<UseForm, "setValue" | "clearErrors">) => {
+  const { isBankName, actionIsBankName } = useActiveModal();
+
+  const data: string[] = [
+    "Bank Mandiri",
+    "Bank Rakyat Indonesia (BRI)",
+    "Bank Central Asia (BCA)",
+    "Bank Negara Indonesia",
+  ];
+
+  const onClick = (v: string) => {
+    setValue("bankName", v);
+    clearErrors("bankName");
+    actionIsBankName();
+  };
+
+  return (
+    <Modal title="nama bank" isOpen={isBankName} closeModal={actionIsBankName}>
+      <ul className="flex flex-col gap-2 my-4">
+        {data.map((v) => (
+          <li
+            key={v}
+            className={cx("hover:font-interBold cursor-pointer w-max")}
+            onClick={() => onClick(v)}
+          >
+            {v}
+          </li>
+        ))}
+      </ul>
+    </Modal>
+  );
+};
+
+const useRekening = () => {
+  const rekenings: PartialGeneralFields[] = [
+    objectFields({
+      name: "fullname",
+      label: "nama sesuai rekening",
+      type: "text",
+      forField: "input",
+      defaultValue: "",
+    }),
+    objectFields({
+      name: "bankName",
+      label: "nama bank",
+      type: "text",
+      forField: "modal",
+      defaultValue: "",
+    }),
+    objectFields({
+      name: "noRek",
+      label: "nomor rekening",
+      type: "number",
+      forField: "input",
+      defaultValue: "",
+    }),
+  ];
+
+  return { rekenings };
+};
 
 export default Rekening;

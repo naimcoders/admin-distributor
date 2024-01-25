@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { Input } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
 import {
@@ -9,6 +10,7 @@ import {
 interface Textfield
   extends UseControllerProps<FieldValues>,
     Pick<HTMLAttributes<HTMLInputElement>, "className"> {
+  isReadOnly?: boolean;
   type?: string;
   placeholder?: string;
   autoComplete?: "on" | "off";
@@ -16,6 +18,7 @@ interface Textfield
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   errorMessage?: string;
+  onClick?: () => void;
 }
 
 export const Textfield = (props: Textfield) => {
@@ -32,13 +35,19 @@ export const Textfield = (props: Textfield) => {
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
       startContent={props.startContent}
+      endContent={props.endContent}
       color={props.errorMessage ? "danger" : "default"}
       classNames={{
-        input: "placeholder:capitalize",
+        input: cx(
+          "placeholder:capitalize",
+          props.isReadOnly ? "cursor-pointer" : null
+        ),
         errorMessage: "capitalize font-interMedium",
         label: "font-interMedium capitalize",
         base: "z-0",
       }}
+      isReadOnly={props.isReadOnly}
+      onClick={props.onClick}
     />
   );
 };
@@ -46,34 +55,38 @@ export const Textfield = (props: Textfield) => {
 export interface GeneralFields
   extends Pick<
     Textfield,
-    "label" | "placeholder" | "type" | "autoComplete" | "className"
+    | "label"
+    | "placeholder"
+    | "type"
+    | "autoComplete"
+    | "className"
+    | "isReadOnly"
   > {
   name: string;
   errorMessage: string;
   defaultValue: string;
+  forField: string;
 }
 
 export type PartialGeneralFields = Partial<GeneralFields>;
 
-export const objectFields = ({
-  name,
-  type,
-  label,
-  className,
-  placeholder,
-  autoComplete,
-  defaultValue,
-  errorMessage,
-}: PartialGeneralFields): PartialGeneralFields => {
+export const objectFields = (
+  props: PartialGeneralFields
+): PartialGeneralFields => {
   const obj = {
-    type,
-    name,
-    label,
-    className,
-    autoComplete,
-    defaultValue: defaultValue ? defaultValue : "",
-    placeholder: placeholder ? placeholder : `Masukkan ${label}`,
-    errorMessage: errorMessage ? errorMessage : `Masukkan ${label}`,
+    type: props.type,
+    name: props.name,
+    label: props.label,
+    className: props.className,
+    forField: props.forField,
+    defaultValue: props.defaultValue,
+    autoComplete: props.autoComplete,
+    placeholder: props.placeholder
+      ? props.placeholder
+      : `Masukkan ${props.label}`,
+    errorMessage: props.errorMessage
+      ? props.errorMessage
+      : `Masukkan ${props.label}`,
   } satisfies PartialGeneralFields;
 
   return obj;

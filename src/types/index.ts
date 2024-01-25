@@ -1,3 +1,9 @@
+import {
+  FieldValues,
+  UseFormClearErrors,
+  UseFormSetValue,
+} from "react-hook-form";
+
 export type Radius = "full" | "lg" | "md" | "none" | "sm";
 export type Color =
   | "success"
@@ -19,4 +25,9 @@ export interface TableProps<T extends object> {
   page?: number;
   isNext?: boolean;
   isPaginate?: boolean;
+}
+
+export interface UseForm {
+  setValue: UseFormSetValue<FieldValues>;
+  clearErrors: UseFormClearErrors<FieldValues>;
 }

@@ -4,7 +4,7 @@ export const modalDOM = document.querySelector("#modal");
 
 export const handleErrorMessage = (
   errors: FieldErrors<FieldValues>,
-  data: string
+  data?: string
 ): string | undefined => {
-  return (errors[data] as FieldError)?.message;
+  return (errors[data ?? ""] as FieldError)?.message;
 };

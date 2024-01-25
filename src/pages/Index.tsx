@@ -31,7 +31,7 @@ const LoginPage = () => {
   );
 };
 
-const logins: PartialGeneralFields[] = [
+export const logins: PartialGeneralFields[] = [
   objectFields({
     label: "email",
     name: "email",
@@ -42,7 +42,6 @@ const logins: PartialGeneralFields[] = [
     label: "password",
     name: "password",
     type: "password",
-    autoComplete: "off",
   }),
 ];
 
@@ -89,7 +88,7 @@ const Form = () => {
           control={control}
           placeholder={el.placeholder ?? ""}
           autoComplete={el.autoComplete}
-          errorMessage={handleErrorMessage(errors, el.name ?? "")}
+          errorMessage={handleErrorMessage(errors, el.name)}
           rules={{ required: { value: true, message: el.errorMessage ?? "" } }}
         />
       ))}

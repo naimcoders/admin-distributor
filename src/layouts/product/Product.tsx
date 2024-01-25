@@ -68,8 +68,9 @@ const useProduct = () => {
     },
     {
       header: "aksi",
-      render: () => (
+      render: (_, idx) => (
         <SwitchAndFolder
+          id={idx}
           isSuspendSelected={false}
           handleSwitch={handleSwitch}
           handleFolder={handleFolder}

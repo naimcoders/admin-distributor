@@ -1,4 +1,4 @@
-import logoWithTitle from "src/assets/images/Pilipilih_flat_white.png";
+import mokes from "src/assets/images/mokes.png";
 import cx from "classnames";
 import { NavLink } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 } from "src/layouts/Index";
 import { useState } from "react";
 import Drawer from "react-modern-drawer";
+import Image from "./Image";
 
 const Hamburger = () => {
   const { handleBurger, styleTop, styleBottom, styleMiddle, isOpen } =
@@ -30,10 +31,10 @@ const Hamburger = () => {
         direction="left"
         lockBackgroundScroll
       >
-        <div className="bg-primary px-5 py-4">
-          <img src={logoWithTitle} alt="PiliPilih Logo" className="w-[70%]" />
+        <div className="bg-primary px-5 py-6">
+          <Image src={mokes} alt="Mokes" width={70} />
         </div>
-        <section className="mt-1 overflow-y-auto flex flex-col gap-1 h-calcSideBar">
+        <section className="mt-1 overflow-y-auto flex flex-col gap-1 h-calcSideBarDrawer">
           {arrNavigationLabels.map((el) => (
             <NavLink
               to={el.label}

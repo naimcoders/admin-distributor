@@ -1,4 +1,5 @@
-import singleLogo from "src/assets/images/icon_pilipilih flat_white.png";
+import mokes from "src/assets/images/mokes.png";
+import Image from "src/components/Image";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "src/components/Button";
@@ -8,8 +9,8 @@ import { handleErrorMessage } from "src/helpers";
 const LoginPage = () => {
   return (
     <main className="bg-primary min-h-screen flex flex-col justify-between">
-      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-28 lg:gap-40 my-auto">
-        <img src={singleLogo} alt="Single Logo" className="w-72 opacity-50" />
+      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-28 lg:gap-56 my-auto">
+        <Image src={mokes} alt="Mokes" width={250} loading="lazy" />
         <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:w-96">
           <header>
             <h1 className="font-interBold capitalize text-lg sm:text-xl md:text-2xl">

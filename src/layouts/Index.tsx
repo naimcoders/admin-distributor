@@ -1,10 +1,11 @@
 import cx from "classnames";
+import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
-import logoWithTitle from "src/assets/images/Pilipilih_flat_white.png";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
+import Image from "src/components/Image";
 
 const Layout = () => {
   return (
@@ -29,15 +30,12 @@ const Header = () => {
   }, [pathname]);
 
   return (
-    <header className="px-6 py-7 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
+    <header className="px-6 py-2 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
       <section className="flex gap-6 items-center">
         <Hamburger />
-        <img
-          src={logoWithTitle}
-          alt="PiliPilih Logo"
-          className="w-28 sm:w-32 md:w-36"
-        />
+        <Image src={mokes} alt="Mokes" width={70} />
       </section>
+
       <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-xl capitalize">
         {path.split("-").join(" ")}
       </h1>
@@ -87,7 +85,7 @@ export const arrNavigationLabels: { label: string }[] = [
 
 export const Logout = () => {
   return (
-    <div className="flex h-full items-center justify-center p-6">
+    <div className="my-8 flex justify-center">
       <Button
         aria-label="Logout"
         color="danger"

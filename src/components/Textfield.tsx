@@ -9,9 +9,9 @@ import {
 interface Textfield
   extends UseControllerProps<FieldValues>,
     Pick<HTMLAttributes<HTMLInputElement>, "className"> {
-  type: string;
-  placeholder: string;
-  autoComplete: "on" | "off";
+  type?: string;
+  placeholder?: string;
+  autoComplete?: "on" | "off";
   label?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
@@ -27,12 +27,12 @@ export const Textfield = (props: Textfield) => {
       type={props.type}
       label={props.label}
       labelPlacement="outside"
+      className={props.className}
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
       startContent={props.startContent}
       color={props.errorMessage ? "danger" : "default"}
-      className={props.className}
       classNames={{
         input: "placeholder:capitalize",
         errorMessage: "capitalize font-interMedium",
@@ -50,4 +50,31 @@ export interface GeneralFields
   > {
   name: string;
   errorMessage: string;
+  defaultValue: string;
 }
+
+export type PartialGeneralFields = Partial<GeneralFields>;
+
+export const objectFields = ({
+  name,
+  type,
+  label,
+  className,
+  placeholder,
+  autoComplete,
+  defaultValue,
+  errorMessage,
+}: PartialGeneralFields): PartialGeneralFields => {
+  const obj = {
+    type,
+    name,
+    label,
+    className,
+    autoComplete,
+    defaultValue: defaultValue ? defaultValue : "",
+    placeholder: placeholder ? placeholder : `Masukkan ${label}`,
+    errorMessage: errorMessage ? errorMessage : `Masukkan ${label}`,
+  } satisfies PartialGeneralFields;
+
+  return obj;
+};

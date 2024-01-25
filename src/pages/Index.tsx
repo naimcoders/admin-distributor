@@ -3,7 +3,11 @@ import Image from "src/components/Image";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "src/components/Button";
-import { GeneralFields, Textfield } from "src/components/Textfield";
+import {
+  PartialGeneralFields,
+  Textfield,
+  objectFields,
+} from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
 
 const LoginPage = () => {
@@ -27,23 +31,19 @@ const LoginPage = () => {
   );
 };
 
-export const arrLogins: GeneralFields[] = [
-  {
-    label: "Email",
+const logins: PartialGeneralFields[] = [
+  objectFields({
+    label: "email",
     name: "email",
     type: "email",
-    placeholder: "masukkan email",
-    errorMessage: "Masukkan email",
     autoComplete: "on",
-  },
-  {
-    label: "Password",
+  }),
+  objectFields({
+    label: "password",
     name: "password",
     type: "password",
-    placeholder: "Masukkan password",
-    errorMessage: "Masukkan password",
     autoComplete: "off",
-  },
+  }),
 ];
 
 const Form = () => {
@@ -79,18 +79,18 @@ const Form = () => {
 
   return (
     <section className="flex flex-col gap-5">
-      {arrLogins.map((el, idx) => (
+      {logins.map((el, idx) => (
         <Textfield
           key={idx}
-          name={el.name}
-          type={el.type}
+          name={el.name ?? ""}
+          type={el.type ?? "text"}
           label={el.label}
           defaultValue=""
           control={control}
-          placeholder={el.placeholder}
+          placeholder={el.placeholder ?? ""}
           autoComplete={el.autoComplete}
-          errorMessage={handleErrorMessage(errors, el.name)}
-          rules={{ required: { value: true, message: el.errorMessage } }}
+          errorMessage={handleErrorMessage(errors, el.name ?? "")}
+          rules={{ required: { value: true, message: el.errorMessage ?? "" } }}
         />
       ))}
 

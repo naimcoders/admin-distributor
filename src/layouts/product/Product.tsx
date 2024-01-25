@@ -1,5 +1,5 @@
 import { FieldValues, useForm } from "react-hook-form";
-import { SwitchAndFolder } from "src/components/Action";
+import { SwitchAndFolder } from "src/components/Actions";
 import { TableLayoutWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 

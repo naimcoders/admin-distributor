@@ -1,11 +1,12 @@
 import cx from "classnames";
 import Pagination from "./Pagination";
 import { TableProps } from "src/types";
-import { CircularProgress } from "@nextui-org/react";
-import { HTMLAttributes } from "react";
+import { Button, CircularProgress } from "@nextui-org/react";
+import { HTMLAttributes, useEffect } from "react";
 import { Textfield } from "./Textfield";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Control, FieldValues } from "react-hook-form";
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Control, FieldValues, useForm } from "react-hook-form";
+import { useDebounce } from "src/helpers";
 
 interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
@@ -112,3 +113,70 @@ export function TableLayoutWithSearchAndTabs<S extends object>(
     </div>
   );
 }
+
+interface TableWithoutTabs<T extends object> {
+  header: Header;
+  table: TableProps<T>;
+}
+
+interface Header {
+  search: {
+    placeholder: string;
+    setSearch: (v: string) => void;
+  };
+  createData?: {
+    isValue: boolean;
+    label: string;
+    onClick: () => void;
+  };
+}
+
+export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
+  return (
+    <section className="flexcol gap-8">
+      <Header
+        search={props.header.search}
+        createData={props.header.createData}
+      />
+
+      <Table
+        columns={props.table.columns}
+        data={props.table.data}
+        isLoading={props.table.isLoading}
+        isNext={props.table.isNext}
+        page={props.table.page}
+        isPaginate
+      />
+    </section>
+  );
+}
+
+const Header = ({ search, createData }: Header) => {
+  const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
+  const debounced = useDebounce(watch("search"), 500);
+
+  useEffect(() => {
+    if (debounced) search.setSearch(debounced);
+  }, [debounced]);
+
+  return (
+    <header>
+      <Textfield
+        name="search"
+        defaultValue=""
+        control={control}
+        placeholder={search.placeholder}
+        startContent={<MagnifyingGlassIcon width={16} color="#808080" />}
+        className="lg:w-2/4"
+      />
+
+      {createData?.isValue && (
+        <Button
+          aria-label={createData.label}
+          onClick={createData.onClick}
+          startContent={<PlusIcon width={16} />}
+        />
+      )}
+    </header>
+  );
+};

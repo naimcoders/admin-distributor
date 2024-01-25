@@ -9,6 +9,8 @@ const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
 const Product = lazy(() => import("./layouts/product/Index"));
 const ProductDetail = lazy(() => import("./layouts/product/Detail"));
+const Store = lazy(() => import("./layouts/store/Index"));
+const StoreDetail = lazy(() => import("./layouts/store/Detail"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -53,6 +55,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <ProductDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: "toko",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Store />
+          </Suspense>
+        ),
+      },
+      {
+        path: "toko/:id",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <StoreDetail />
           </Suspense>
         ),
       },

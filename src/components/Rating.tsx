@@ -3,7 +3,9 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import { Chip } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
 
-const Rating = (props: { value: number } & HTMLAttributes<HTMLDivElement>) => {
+const Rating = (
+  props: { value?: number | string } & HTMLAttributes<HTMLDivElement>
+) => {
   return (
     <div className={cx("flex", props.className)}>
       <Chip

@@ -87,9 +87,11 @@ const BankModal = ({
     "Bank Negara Indonesia",
   ];
 
+  const key = "bankName";
+
   const onClick = (v: string) => {
-    setValue("bankName", v);
-    clearErrors("bankName");
+    setValue(key, v);
+    clearErrors(key);
     actionIsBankName();
   };
 

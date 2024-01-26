@@ -196,7 +196,14 @@ const useHook = () => {
       readOnly: { isValue: true, cursor: "cursor-pointer" },
     }),
     objectFields({
-      label: "KTP pemilik",
+      label: "komisi penjualan (%)",
+      name: "commission",
+      type: "number",
+      defaultValue: "",
+      placeholder: "masukkan komisi",
+    }),
+    objectFields({
+      label: "KTP sales",
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
@@ -207,13 +214,6 @@ const useHook = () => {
       },
       defaultValue: ktpBlob,
       deleteImage: () => setKtpBlob(""),
-    }),
-    objectFields({
-      label: "komisi penjualan (%)",
-      name: "commission",
-      type: "number",
-      defaultValue: "",
-      placeholder: "masukkan komisi",
     }),
   ];
 

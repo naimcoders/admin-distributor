@@ -1,12 +1,13 @@
 import cx from "classnames";
 import Pagination from "./Pagination";
 import { TableProps } from "src/types";
-import { Button, CircularProgress } from "@nextui-org/react";
+import { CircularProgress } from "@nextui-org/react";
 import { HTMLAttributes, useEffect } from "react";
 import { Textfield } from "./Textfield";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Control, FieldValues, useForm } from "react-hook-form";
 import { useDebounce } from "src/helpers";
+import { Button } from "./Button";
 
 interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
@@ -160,7 +161,7 @@ const Header = ({ search, createData }: Header) => {
   }, [debounced]);
 
   return (
-    <header>
+    <header className="flex gap-4">
       <Textfield
         name="search"
         defaultValue=""

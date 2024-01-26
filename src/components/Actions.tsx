@@ -8,6 +8,7 @@ type Switch = HTMLAttributes<HTMLInputElement> & {
 };
 
 interface ActionProps {
+  id: number;
   action: "switch" | "detail" | "both";
   switch?: Switch;
   detail?: HTMLAttributes<HTMLImageElement>;
@@ -25,6 +26,9 @@ export const Actions: React.FC<ActionProps> = (props) => {
             onClick={props.switch?.onClick}
             isSelected={props.switch?.isSelected}
             className="outline-none"
+            id={String(props.id)}
+            name={String(props.id)}
+            aria-labelledby={String(props.id)}
           />
 
           <FolderIcon onClick={props.detail?.onClick} />
@@ -38,6 +42,9 @@ export const Actions: React.FC<ActionProps> = (props) => {
           onClick={props.switch?.onClick}
           isSelected={props.switch?.isSelected}
           className="outline-none"
+          id={String(props.id)}
+          name={String(props.id)}
+          aria-labelledby={String(props.id)}
         />
       )}
 

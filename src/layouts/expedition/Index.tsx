@@ -33,6 +33,7 @@ const Expedition = () => {
 };
 
 interface Expedition {
+  id: number;
   expeditionName: string;
   ownerName: string;
   phoneNumber: string;
@@ -44,6 +45,7 @@ interface Expedition {
 
 const expeditions: Expedition[] = [
   {
+    id: 1,
     expeditionName: "Karya Agung",
     ownerName: "Andi Agung",
     phoneNumber: "+6285824528625",
@@ -53,6 +55,7 @@ const expeditions: Expedition[] = [
     totalTransaction: 35,
   },
   {
+    id: 2,
     expeditionName: "Nusantara",
     ownerName: "Bobi Sucipta",
     phoneNumber: "+6285824528625",
@@ -64,6 +67,8 @@ const expeditions: Expedition[] = [
 ];
 
 const useHook = () => {
+  const { onNav } = detailNavigate();
+
   const columns: Columns<Expedition>[] = [
     {
       header: "nama ekspedisi",
@@ -104,12 +109,15 @@ const useHook = () => {
     },
     {
       header: "aksi",
-      render: (_, idx) => (
+      render: (v, idx) => (
         <Actions
           id={idx}
           action="both"
           switch={{
             isSelected: true,
+          }}
+          detail={{
+            onClick: () => onNav(String(v.id)),
           }}
         />
       ),

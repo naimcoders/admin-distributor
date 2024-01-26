@@ -1,15 +1,17 @@
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
-import { ChildRef, InputFile } from "src/components/File";
+import { InputFile } from "src/components/File";
 import {
   PartialGeneralFields,
   Textfield,
   objectFields,
 } from "src/components/Textfield";
+import { parsePhoneNumber } from "src/helpers";
+import { useKtp } from "./Create";
 
-const Create = () => {
+const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
 
@@ -26,6 +28,8 @@ const Create = () => {
                 placeholder={v.placeholder}
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
+                readOnly={v.readOnly}
+                description={v.description}
               />
             )}
 
@@ -72,24 +76,6 @@ const Create = () => {
   );
 };
 
-export const useKtp = () => {
-  const [ktpBlob, setKtpBlob] = useState("");
-  const ktpRef = useRef<ChildRef>(null);
-
-  const onClick = () => {
-    if (ktpRef.current) ktpRef.current.click();
-  };
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return null;
-    const blob = URL.createObjectURL(files[0]);
-    setKtpBlob(blob);
-  };
-
-  return { ktpBlob, ktpRef, onClick, onChange, setKtpBlob };
-};
-
 const useHook = () => {
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
@@ -98,47 +84,71 @@ const useHook = () => {
       label: "nama pemilik",
       name: "ownerName",
       type: "text",
-      defaultValue: "",
+      defaultValue: "Andi",
       autoComplete: "on",
     }),
     objectFields({
       label: "nomor HP",
       name: "phoneNumber",
       type: "text",
-      defaultValue: "",
+      defaultValue: parsePhoneNumber("+62811234567"),
       autoComplete: "on",
     }),
     objectFields({
       label: "email",
       name: "email",
       type: "email",
-      defaultValue: "",
+      defaultValue: "adi.nugroho@gmail.com",
       autoComplete: "on",
     }),
     objectFields({
       label: "nama usaha",
       name: "businessName",
       type: "text",
-      defaultValue: "",
+      defaultValue: "Maju Jaya",
     }),
     objectFields({
       label: "alamat usaha",
       name: "businessAddress",
       type: "modal",
-      defaultValue: "",
+      defaultValue: "SULAWESI SELATAN",
       readOnly: { isValue: true, cursor: "cursor-pointer" },
     }),
     objectFields({
       label: "nama jalan, gedung, no. rumah",
       name: "streetName",
       type: "text",
-      defaultValue: "",
+      defaultValue: "Jl. Pongtiku No. 112",
     }),
     objectFields({
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
-      defaultValue: "",
+      defaultValue: "Depan SMP Negeri 4",
+    }),
+    objectFields({
+      label: "nama sesuai rekening",
+      name: "rekName",
+      type: "text",
+      defaultValue: "Andi Susanto",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      description: "*tidak dapat diedit",
+    }),
+    objectFields({
+      label: "nama bank",
+      name: "bankName",
+      type: "text",
+      defaultValue: "Bank Mandiri",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      description: "*tidak dapat diedit",
+    }),
+    objectFields({
+      label: "nomor rekening",
+      name: "noRek",
+      type: "number",
+      defaultValue: "15200014357788",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      description: "*tidak dapat diedit",
     }),
     objectFields({
       label: "KTP pemilik",
@@ -158,4 +168,4 @@ const useHook = () => {
   return { fields };
 };
 
-export default Create;
+export default Detail;

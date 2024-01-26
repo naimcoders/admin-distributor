@@ -16,7 +16,7 @@ interface ActionProps {
 
 export const Actions: React.FC<ActionProps> = (props) => {
   return (
-    <section className="flex justify-center gap-4 items-center">
+    <section className="flex justify-center gap-3 items-center px-3">
       {props.action === "both" && (
         <>
           <Switch

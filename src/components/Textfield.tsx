@@ -23,6 +23,7 @@ interface Textfield
     isValue: boolean;
     cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
   };
+  description?: string;
 }
 
 export const Textfield = (props: Textfield) => {
@@ -40,6 +41,7 @@ export const Textfield = (props: Textfield) => {
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
+      description={props.description}
       startContent={props.startContent}
       isReadOnly={props.readOnly?.isValue}
       color={props.errorMessage ? "danger" : "default"}
@@ -48,6 +50,7 @@ export const Textfield = (props: Textfield) => {
         errorMessage: "capitalize font-interMedium",
         label: "font-interMedium capitalize",
         base: "z-0",
+        description: "text-[#71717A] first-letter:capitalize",
       }}
       title={props.defaultValue}
     />
@@ -57,7 +60,13 @@ export const Textfield = (props: Textfield) => {
 export interface GeneralFields
   extends Pick<
     Textfield,
-    "label" | "placeholder" | "type" | "autoComplete" | "className" | "readOnly"
+    | "label"
+    | "placeholder"
+    | "type"
+    | "autoComplete"
+    | "className"
+    | "readOnly"
+    | "description"
   > {
   name: string;
   errorMessage: string;
@@ -90,6 +99,7 @@ export const objectFields = (
       cursor: props.readOnly?.cursor,
     },
     autoComplete: props.autoComplete ? props.autoComplete : "off",
+    description: props.description,
   } satisfies PartialGeneralFields;
 
   return obj;

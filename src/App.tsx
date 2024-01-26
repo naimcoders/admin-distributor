@@ -13,6 +13,7 @@ const Store = lazy(() => import("./layouts/store/Index"));
 const StoreDetail = lazy(() => import("./layouts/store/Detail"));
 const Expedition = lazy(() => import("./layouts/expedition/Index"));
 const CreateExpedition = lazy(() => import("./layouts/expedition/Create"));
+const DetailExpedition = lazy(() => import("./layouts/expedition/Detail"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -89,6 +90,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <CreateExpedition />
+          </Suspense>
+        ),
+      },
+      {
+        path: "ekspedisi/:id",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <DetailExpedition />
           </Suspense>
         ),
       },

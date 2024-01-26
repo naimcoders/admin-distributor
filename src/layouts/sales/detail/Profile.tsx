@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
@@ -7,7 +7,9 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
-import { CategoryModal } from "../Create";
+import { CategoryModal, useKtp } from "../Create";
+import { InputFile } from "src/components/File";
+import Image from "src/components/Image";
 
 const Profile = () => {
   const { control, setValue, clearErrors } = useForm<FieldValues>({
@@ -46,16 +48,43 @@ const Profile = () => {
               onClick={v.onClick}
             />
           )}
+
+          {["file"].includes(v.type!) && (
+            <InputFile
+              label={v.label!}
+              blob={String(v.defaultValue)}
+              file={{
+                ref: v.refs?.ref!,
+                onChange: v.refs?.onChange,
+                onClick: v.refs?.onClick,
+                btnLabel: v.placeholder!,
+              }}
+              icons={[
+                {
+                  src: <TrashIcon width={16} />,
+                  onClick: v.deleteImage,
+                },
+              ]}
+            />
+          )}
+
+          {["image"].includes(v.type!) && (
+            <div className="flexcol gap-2">
+              <h2 className="text-sm font-interMedium">{v.label}</h2>
+              <Image src={String(v.defaultValue)} alt={v.type} loading="lazy" />
+            </div>
+          )}
         </Fragment>
       ))}
 
-      {/* <CategoryModal setValue={setValue} clearErrors={clearErrors} /> */}
+      <CategoryModal setValue={setValue} clearErrors={clearErrors} />
     </section>
   );
 };
 
 const useHook = () => {
   const { actionIsCategory } = useActiveModal();
+  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
   const fields: PartialGeneralFields[] = [
     objectFields({
@@ -111,6 +140,27 @@ const useHook = () => {
       name: "commission",
       type: "number",
       defaultValue: 10,
+    }),
+    objectFields({
+      label: "KTP sales",
+      name: "ktp",
+      type: "file",
+      placeholder: "unggah KTP",
+      refs: {
+        ref: ktpRef,
+        onClick,
+        onChange,
+      },
+      defaultValue:
+        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      deleteImage: () => setKtpBlob(""),
+    }),
+    objectFields({
+      label: "foto sales",
+      name: "salesPhoto",
+      type: "image",
+      defaultValue:
+        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
     }),
   ];
 

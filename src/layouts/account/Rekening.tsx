@@ -32,7 +32,7 @@ const Rekening = () => {
     <Template title="detail rekening" onClick={onSubmit} btnLabelForm="simpan">
       {rekenings.map((el, idx) => (
         <div key={idx}>
-          {["input"].includes(el.forField!) && (
+          {["text", "number"].includes(el.type!) && (
             <Textfield
               type={el.type}
               label={el.label}
@@ -48,7 +48,7 @@ const Rekening = () => {
             />
           )}
 
-          {["modal"].includes(el.forField!) && (
+          {["modal"].includes(el.type!) && (
             <Textfield
               type={el.type}
               label={el.label}
@@ -118,22 +118,19 @@ const useRekening = () => {
       name: "fullname",
       label: "nama sesuai rekening",
       type: "text",
-      forField: "input",
       defaultValue: "",
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-pointer" },
       name: "bankName",
       label: "nama bank",
-      type: "text",
-      forField: "modal",
+      type: "modal",
       defaultValue: "",
     }),
     objectFields({
       name: "noRek",
       label: "nomor rekening",
       type: "number",
-      forField: "input",
       defaultValue: "",
     }),
   ];

@@ -61,11 +61,8 @@ export interface GeneralFields
   > {
   name: string;
   errorMessage: string;
-  defaultValue: string | number;
-  forField: string;
-  refs: Required<
-    Pick<FileProps, "onChange" | "onClick"> & { ref: Ref<ChildRef> }
-  >;
+  defaultValue: string;
+  refs: Pick<FileProps, "onChange" | "onClick"> & { ref: Ref<ChildRef> };
   deleteImage: () => void;
 }
 
@@ -79,7 +76,6 @@ export const objectFields = (
     name: props.name,
     label: props.label,
     className: props.className,
-    forField: props.forField,
     defaultValue: props.defaultValue,
     refs: props.refs,
     deleteImage: props.deleteImage,

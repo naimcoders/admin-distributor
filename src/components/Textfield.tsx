@@ -71,7 +71,7 @@ export interface GeneralFields
   > {
   name: string;
   errorMessage: string;
-  defaultValue: string;
+  defaultValue: string | number;
   refs: Pick<FileProps, "onChange" | "onClick"> & { ref: Ref<ChildRef> };
   deleteImage: () => void;
 }

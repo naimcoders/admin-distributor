@@ -117,8 +117,9 @@ const useStore = () => {
     },
     {
       header: "aksi",
-      render: (v) => (
+      render: (v, idx) => (
         <Actions
+          id={idx}
           action="detail"
           detail={{
             onClick: () => onNav(String(v.id)),

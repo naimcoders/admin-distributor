@@ -47,8 +47,6 @@ const Detail = () => {
 };
 
 const useDetail = () => {
-  // TODO: FETCH DATA
-
   const fields: PartialGeneralFields[] = [
     objectFields({
       readOnly: { isValue: true },

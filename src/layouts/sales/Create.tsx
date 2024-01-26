@@ -1,4 +1,3 @@
-import cx from "classnames";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,6 +12,8 @@ import {
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 import { handleErrorMessage } from "src/helpers";
+import { Checkbox, CheckboxGroup } from "@nextui-org/react";
+import useGeneralStore from "src/stores/generalStore";
 
 const Create = () => {
   const {
@@ -26,8 +27,15 @@ const Create = () => {
   });
   const { fields } = useHook();
 
+  const category = useGeneralStore((v) => v.category);
+
   const onSubmit = handleSubmit(async (e) => {
-    console.log(e);
+    try {
+      console.log(e, category);
+    } catch (e) {
+      const error = e as Error;
+      console.log(error);
+    }
   });
 
   return (
@@ -100,23 +108,24 @@ const Create = () => {
   );
 };
 
-const CategoryModal = ({
+export const CategoryModal = ({
   setValue,
   clearErrors,
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
+  const category = useGeneralStore((v) => v.category) as string[];
+  const setCategory = useGeneralStore((v) => v.setCategory);
   const { isCategory, actionIsCategory } = useActiveModal();
 
   const data: string[] = [
     "Semua Kategori",
-    "Bank Rakyat Indonesia (BRI)",
-    "Bank Central Asia (BCA)",
-    "Bank Negara Indonesia",
+    "Alat & Mesin",
+    "Bahan Bangunan",
+    "Dapur",
   ];
 
   const key = "category";
-
-  const onClick = (v: string) => {
-    setValue(key, v);
+  const onNext = () => {
+    setValue(key, category.join(", "));
     clearErrors(key);
     actionIsCategory();
   };
@@ -127,17 +136,28 @@ const CategoryModal = ({
       isOpen={isCategory}
       closeModal={actionIsCategory}
     >
-      <ul className="flexcol gap-2 my-4">
+      <CheckboxGroup
+        className="my-5"
+        onChange={(e) => setCategory(e)}
+        defaultValue={category}
+      >
         {data.map((v) => (
-          <li
+          <Checkbox
+            value={v}
             key={v}
-            className={cx("hover:font-interBold cursor-pointer w-max")}
-            onClick={() => onClick(v)}
+            id={v}
+            name={v}
+            classNames={{ label: "text-sm" }}
+            size="sm"
           >
             {v}
-          </li>
+          </Checkbox>
         ))}
-      </ul>
+      </CheckboxGroup>
+
+      <div className="flex justify-center">
+        <Button aria-label="selanjutnya" className="mx-auto" onClick={onNext} />
+      </div>
     </Modal>
   );
 };

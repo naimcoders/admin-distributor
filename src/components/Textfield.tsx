@@ -67,6 +67,7 @@ export interface GeneralFields
     | "className"
     | "readOnly"
     | "description"
+    | "onClick"
   > {
   name: string;
   errorMessage: string;
@@ -100,6 +101,7 @@ export const objectFields = (
     },
     autoComplete: props.autoComplete ? props.autoComplete : "off",
     description: props.description,
+    onClick: props.onClick,
   } satisfies PartialGeneralFields;
 
   return obj;

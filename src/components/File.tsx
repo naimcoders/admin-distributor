@@ -1,5 +1,4 @@
 import cx from "classnames";
-import Image, { IconImage } from "./Image";
 import {
   forwardRef,
   Ref,
@@ -8,18 +7,18 @@ import {
   HTMLAttributes,
 } from "react";
 import { Button as Btn } from "@nextui-org/react";
+import Image, { IconImage } from "./Image";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 type ButtonElement = HTMLAttributes<HTMLInputElement | HTMLButtonElement>;
-type ImageElement = Partial<HTMLImageElement>;
 
-interface File extends ButtonElement {
+export interface FileProps extends ButtonElement {
   btnLabel: string;
-  title?: string;
   errorMessage?: string;
   startContent?: React.ReactNode;
 }
 
-const Button = (props: File) => {
+const Button = (props: FileProps) => {
   return (
     <Btn
       radius="sm"
@@ -39,12 +38,7 @@ export interface ChildRef {
   click: () => void;
 }
 
-type ForwardRef = File & {
-  image?: ImageElement;
-  icons?: IconImage[];
-};
-
-export const File = forwardRef((props: ForwardRef, ref: Ref<ChildRef>) => {
+export const File = forwardRef((props: FileProps, ref: Ref<ChildRef>) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -64,35 +58,52 @@ export const File = forwardRef((props: ForwardRef, ref: Ref<ChildRef>) => {
         onChange={props.onChange}
       />
 
-      <div className="flex flex-col">
-        <h2 className="capitalize font-interMedium text-sm mb-1">
-          {props.title}
-        </h2>
+      <Button
+        btnLabel={props.btnLabel}
+        onClick={props.onClick}
+        startContent={props.startContent}
+        className={!props.errorMessage ? "" : "bg-red-200 text-red-800"}
+      />
 
-        {!props.image?.src ? (
-          <Button
-            title={props.title}
-            btnLabel={props.btnLabel}
-            onClick={props.onClick}
-            startContent={props.startContent}
-            className={!props.errorMessage ? "" : "bg-red-200 text-red-800"}
-          />
-        ) : (
-          <Image
-            src={props.image?.src}
-            alt={props.title}
-            loading="lazy"
-            width={props.image.width}
-            icons={props.icons}
-          />
-        )}
-
-        {!props.errorMessage ? null : (
-          <p className="text-red-500 text-xs capitalize font-interMedium mt-1">
-            {props.errorMessage}
-          </p>
-        )}
-      </div>
+      {!props.errorMessage ? null : (
+        <p className="text-red-500 text-xs capitalize font-interMedium mt-1">
+          {props.errorMessage}
+        </p>
+      )}
     </>
   );
 });
+
+interface InputFile {
+  label: string;
+  blob: string;
+  file: FileProps & {
+    btnLabel: string;
+    ref: Ref<ChildRef>;
+  };
+  icons: IconImage[];
+}
+
+export const InputFile: React.FC<InputFile> = ({
+  label,
+  blob,
+  file,
+  icons,
+}) => {
+  return (
+    <div className="flexcol gap-2">
+      <h2 className="text-sm font-interMedium capitalize">{label}</h2>
+      {!blob ? (
+        <File
+          btnLabel={file.btnLabel}
+          ref={file.ref}
+          onChange={file.onChange}
+          onClick={file.onClick}
+          startContent={<ArrowUpTrayIcon width={16} />}
+        />
+      ) : (
+        <Image src={blob} alt="image" icons={icons} />
+      )}
+    </div>
+  );
+};

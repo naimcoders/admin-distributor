@@ -30,13 +30,12 @@ export default function Image({ src, alt, width, icons, loading }: Image) {
         onMouseLeave={mouseLeave}
       />
 
-      {!icons ? null : (
+      {icons && (
         <div
           className={cx(
             "absolute right-2 top-2 cursor-pointer",
             !onHover ? "hidden" : "block"
           )}
-          title="Delete"
           onMouseEnter={mouseEnter}
         >
           {icons.map((icon, idx) => (

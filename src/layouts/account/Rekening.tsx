@@ -61,7 +61,7 @@ const Rekening = () => {
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },
               }}
-              isReadOnly
+              readOnly={el.readOnly}
               endContent={<ChevronRightIcon width={16} />}
               onClick={actionIsBankName}
             />
@@ -122,6 +122,7 @@ const useRekening = () => {
       defaultValue: "",
     }),
     objectFields({
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
       name: "bankName",
       label: "nama bank",
       type: "text",

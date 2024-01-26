@@ -9,13 +9,14 @@ import { ChildRef, File } from "src/components/File";
 import { IconImage } from "src/components/Image";
 
 const Banner = () => {
-  const { banner, bannerUrl, onClickBanner, onChangeBanner } = useBanner();
+  const { banner, bannerUrl, onClickBanner, onChangeBanner, setBannerUrl } =
+    useBanner();
   const { logo, logoUrl, onClickLogo, onChangeLogo } = useLogo();
 
   const icons: IconImage[] = [
     {
       src: <TrashIcon width={16} color="#F31260" />,
-      onClick: () => console.log("image id"),
+      onClick: () => setBannerUrl(""),
     },
   ];
 
@@ -75,6 +76,7 @@ const useBanner = () => {
     bannerUrl,
     onClickBanner,
     onChangeBanner,
+    setBannerUrl,
   };
 };
 

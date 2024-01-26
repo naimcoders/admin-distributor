@@ -1,11 +1,12 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, Ref } from "react";
 import {
   FieldValues,
   UseControllerProps,
   useController,
 } from "react-hook-form";
+import { ChildRef, FileProps } from "./File";
 
 interface Textfield
   extends UseControllerProps<FieldValues>,
@@ -14,14 +15,14 @@ interface Textfield
   label?: string;
   placeholder?: string;
   onClick?: () => void;
-  readOnly?: {
-    isValue: boolean;
-    cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
-  };
   errorMessage?: string;
   autoComplete?: "on" | "off";
   endContent?: React.ReactNode;
   startContent?: React.ReactNode;
+  readOnly?: {
+    isValue: boolean;
+    cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
+  };
 }
 
 export const Textfield = (props: Textfield) => {
@@ -62,6 +63,10 @@ export interface GeneralFields
   errorMessage: string;
   defaultValue: string | number;
   forField: string;
+  refs: Required<
+    Pick<FileProps, "onChange" | "onClick"> & { ref: Ref<ChildRef> }
+  >;
+  deleteImage: () => void;
 }
 
 export type PartialGeneralFields = Partial<GeneralFields>;
@@ -76,7 +81,8 @@ export const objectFields = (
     className: props.className,
     forField: props.forField,
     defaultValue: props.defaultValue,
-    autoComplete: props.autoComplete ? props.autoComplete : "off",
+    refs: props.refs,
+    deleteImage: props.deleteImage,
     placeholder: props.placeholder
       ? props.placeholder
       : `Masukkan ${props.label}`,
@@ -87,6 +93,7 @@ export const objectFields = (
       isValue: props.readOnly?.isValue!,
       cursor: props.readOnly?.cursor,
     },
+    autoComplete: props.autoComplete ? props.autoComplete : "off",
   } satisfies PartialGeneralFields;
 
   return obj;

@@ -82,7 +82,7 @@ export default function Table<T extends object>(props: Table<T>) {
   );
 }
 
-interface TableLayout<T extends object> extends Table<T> {
+export interface TableLayout<T extends object> extends Table<T> {
   control: Control<FieldValues>;
   placeholder: string;
 }

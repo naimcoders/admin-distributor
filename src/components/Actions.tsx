@@ -8,7 +8,7 @@ type Switch = HTMLAttributes<HTMLInputElement> & {
 };
 
 interface ActionProps {
-  id: number;
+  id: number | string;
   action: "switch" | "detail" | "both";
   switch?: Switch;
   detail?: HTMLAttributes<HTMLImageElement>;

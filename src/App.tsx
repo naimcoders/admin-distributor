@@ -28,6 +28,7 @@ const CreateDistributor = lazy(() => import("./layouts/distributor/Create"));
 const DetailDistributor = lazy(
   () => import("./layouts/distributor/detail/Index")
 );
+const Order = lazy(() => import("./layouts/order/Index"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -176,6 +177,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <DetailDistributor />
+          </Suspense>
+        ),
+      },
+      {
+        path: "order",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Order />
           </Suspense>
         ),
       },

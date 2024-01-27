@@ -20,6 +20,7 @@ const DetailSales = lazy(() => import("./layouts/sales/detail/Index"));
 const CustomerSalesDetail = lazy(
   () => import("./layouts/sales/detail/CustomerDetail")
 );
+const Distributor = lazy(() => import("./layouts/distributor/Index"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -136,6 +137,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <CustomerSalesDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: "distributor",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Distributor />
           </Suspense>
         ),
       },

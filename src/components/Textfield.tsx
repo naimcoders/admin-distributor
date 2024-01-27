@@ -1,12 +1,13 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes, Ref } from "react";
+import { Component, HTMLAttributes, Ref } from "react";
 import {
   FieldValues,
   UseControllerProps,
   useController,
 } from "react-hook-form";
 import { ChildRef, FileProps } from "./File";
+import { Radius } from "src/types";
 
 interface Textfield
   extends UseControllerProps<FieldValues>,
@@ -23,7 +24,11 @@ interface Textfield
     isValue: boolean;
     cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
   };
+  radius?: Radius;
   description?: string;
+  classNames?: Partial<{
+    inputWrapper: string;
+  }>;
 }
 
 export const Textfield = (props: Textfield) => {
@@ -31,25 +36,26 @@ export const Textfield = (props: Textfield) => {
   return (
     <Input
       {...field}
-      radius="sm"
       type={props.type}
       label={props.label}
       labelPlacement="outside"
       onClick={props.onClick}
-      className={props.className}
       endContent={props.endContent}
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
+      className={props.className}
       description={props.description}
       startContent={props.startContent}
       isReadOnly={props.readOnly?.isValue}
+      radius={!props.radius ? "sm" : props.radius}
       color={props.errorMessage ? "danger" : "default"}
       classNames={{
+        base: "z-0",
         input: cx("placeholder:capitalize", props.readOnly?.cursor),
+        inputWrapper: props.classNames?.inputWrapper,
         errorMessage: "capitalize font-interMedium",
         label: "font-interMedium capitalize",
-        base: "z-0",
         description: "text-[#71717A] first-letter:capitalize",
       }}
       title={props.defaultValue}

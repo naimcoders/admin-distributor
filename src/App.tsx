@@ -9,6 +9,9 @@ const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
 const Product = lazy(() => import("./layouts/product/Index"));
 const ProductDetail = lazy(() => import("./layouts/product/Detail"));
+const DetailSubCategory = lazy(
+  () => import("./layouts/product/sub-category/Detail")
+);
 const Store = lazy(() => import("./layouts/store/Index"));
 const StoreDetail = lazy(() => import("./layouts/store/Detail"));
 const Expedition = lazy(() => import("./layouts/expedition/Index"));
@@ -69,6 +72,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <ProductDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: "produk/sub-kategori/:id",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <DetailSubCategory />
           </Suspense>
         ),
       },

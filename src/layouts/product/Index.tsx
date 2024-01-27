@@ -2,7 +2,7 @@ import Tabs, { ITabs } from "src/components/Tabs";
 import SubProduct from "./Product";
 import { Button } from "src/components/Button";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import CategorySub from "./CategorySub";
+import CategorySub from "./sub-category/Index";
 
 const Product = () => {
   return (
@@ -12,7 +12,6 @@ const Product = () => {
         aria-label="produk"
         startContent={<PlusIcon width={16} />}
         className="absolute top-0 right-0 sm:right-[42%]"
-        color="primary"
       />
     </div>
   );

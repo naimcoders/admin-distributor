@@ -31,3 +31,9 @@ export interface UseForm {
   setValue: UseFormSetValue<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
 }
+
+export enum IconColor {
+  red = "#F31260",
+  green = "#12A150",
+  zinc = "#71717A",
+}

@@ -17,6 +17,9 @@ const DetailExpedition = lazy(() => import("./layouts/expedition/Detail"));
 const Sales = lazy(() => import("./layouts/sales/Index"));
 const CreateSales = lazy(() => import("./layouts/sales/Create"));
 const DetailSales = lazy(() => import("./layouts/sales/detail/Index"));
+const CustomerSalesDetail = lazy(
+  () => import("./layouts/sales/detail/CustomerDetail")
+);
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -125,6 +128,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <DetailSales />
+          </Suspense>
+        ),
+      },
+      {
+        path: "sales/:id/pelanggan/:id",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <CustomerSalesDetail />
           </Suspense>
         ),
       },

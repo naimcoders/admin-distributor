@@ -1,5 +1,6 @@
 import Tabs, { ITabs } from "src/components/Tabs";
 import Profile from "./Profile";
+import Customer from "./Customer";
 
 const Detail = () => {
   const { tab } = useHook();
@@ -18,7 +19,7 @@ const useHook = () => {
     },
     {
       label: "pelanggan",
-      content: <p>pelanggan</p>,
+      content: <Customer />,
     },
   ];
 

@@ -16,7 +16,12 @@ interface ActionProps {
 
 export const Actions: React.FC<ActionProps> = (props) => {
   return (
-    <section className="flex justify-center gap-3 items-center px-3">
+    <section
+      className={cx(
+        "flex justify-center gap-3 items-center",
+        props.action === "both" && "px-3"
+      )}
+    >
       {props.action === "both" && (
         <>
           <Switch
@@ -29,9 +34,13 @@ export const Actions: React.FC<ActionProps> = (props) => {
             id={String(props.id)}
             name={String(props.id)}
             aria-labelledby={String(props.id)}
+            classNames={{ base: "z-0" }}
           />
 
-          <FolderIcon onClick={props.detail?.onClick} />
+          <FolderIcon
+            onClick={props.detail?.onClick}
+            className={props.detail?.className}
+          />
         </>
       )}
 
@@ -49,7 +58,10 @@ export const Actions: React.FC<ActionProps> = (props) => {
       )}
 
       {props.action === "detail" && (
-        <FolderIcon onClick={props.detail?.onClick} />
+        <FolderIcon
+          onClick={props.detail?.onClick}
+          className={props.detail?.className}
+        />
       )}
     </section>
   );
@@ -62,7 +74,7 @@ export const FolderIcon: React.FC<ImgHTMLAttributes<HTMLImageElement>> = ({
   return (
     <img
       src={folder}
-      alt="Folder Icon"
+      alt="Detail"
       className={cx("w-6 h-4 cursor-pointer", className)}
       {...props}
     />

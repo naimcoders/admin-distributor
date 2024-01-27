@@ -4,11 +4,16 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
-import { CategoryModal, useKtp } from "../Create";
 import { Fragment } from "react";
 import { handleErrorMessage } from "src/helpers";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Modal } from "src/components/Modal";
+import { UseForm } from "src/types";
+import { Checkbox, CheckboxGroup } from "@nextui-org/react";
+import { Button } from "src/components/Button";
+import useGeneralStore from "src/stores/generalStore";
+import Image from "src/components/Image";
 
 const CustomerDetail = () => {
   const {
@@ -30,9 +35,9 @@ const CustomerDetail = () => {
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
                 type={v.type}
+                name={v.name!}
                 label={v.label}
                 control={control}
-                name={v.name ?? ""}
                 placeholder={v.placeholder}
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
@@ -62,36 +67,76 @@ const CustomerDetail = () => {
               />
             )}
 
-            {/* {["file"].includes(v.type!) && (
-              <InputFile
-                label={v.label!}
-                blob={String(v.defaultValue)}
-                file={{
-                  ref: v.refs?.ref!,
-                  onChange: v.refs?.onChange,
-                  onClick: v.refs?.onClick,
-                  btnLabel: v.placeholder!,
-                }}
-                icons={[
-                  {
-                    src: <TrashIcon width={16} />,
-                    onClick: v.deleteImage,
-                  },
-                ]}
-              />
-            )} */}
+            {["image"].includes(v.type!) && (
+              <div className="flexcol gap-2">
+                <h2 className="font-interMedium text-sm capitalize">
+                  {v.label}
+                </h2>
+                <Image src={String(v.defaultValue)} alt={v.label} />
+              </div>
+            )}
           </Fragment>
         ))}
       </div>
 
-      {/* <CategoryModal setValue={setValue} clearErrors={clearErrors} /> */}
+      <PicSalesModal setValue={setValue} clearErrors={clearErrors} />
     </main>
+  );
+};
+
+const PicSalesModal = ({
+  setValue,
+  clearErrors,
+}: Pick<UseForm, "setValue" | "clearErrors">) => {
+  const picSales = useGeneralStore((v) => v.picSales) as string[];
+  const setPicSales = useGeneralStore((v) => v.setPicSales);
+  const { isCategory, actionIsCategory } = useActiveModal();
+
+  const data: string[] = [
+    "Andi, 085845672348",
+    "Marlin, 085845672348",
+    "Zulkifli, 085845672348",
+    "Irfan, 085845672348",
+  ];
+
+  const key = "picSales";
+  const onNext = () => {
+    setValue(key, picSales);
+    clearErrors(key);
+    actionIsCategory();
+  };
+
+  return (
+    <Modal title="PIC sales" isOpen={isCategory} closeModal={actionIsCategory}>
+      <CheckboxGroup
+        className="my-5"
+        onChange={(e) => setPicSales(e)}
+        defaultValue={picSales}
+      >
+        {data.map((v) => (
+          <Checkbox
+            value={v}
+            key={v}
+            id={v}
+            name={v}
+            classNames={{ label: "text-sm" }}
+            size="sm"
+          >
+            {v}
+          </Checkbox>
+        ))}
+      </CheckboxGroup>
+
+      <div className="flex justify-center">
+        <Button aria-label="selanjutnya" className="mx-auto" onClick={onNext} />
+      </div>
+    </Modal>
   );
 };
 
 const useHook = () => {
   // const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
-  // const { actionIsCategory } = useActiveModal();
+  const { actionIsCategory } = useActiveModal();
 
   const fields: PartialGeneralFields[] = [
     objectFields({
@@ -178,26 +223,28 @@ const useHook = () => {
       defaultValue: "-",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
-    // objectFields({
-    //   label: "detail alamat",
-    //   name: "detailAddress",
-    //   type: "text",
-    //   defaultValue: "Depan SMP Negeri 4",
-    //   readOnly: { isValue: true, cursor: "cursor-default" },
-    // }),
-    // objectFields({
-    //   label: "KTP sales",
-    //   name: "ktp",
-    //   type: "file",
-    //   placeholder: "unggah KTP",
-    //   refs: {
-    //     ref: ktpRef,
-    //     onClick,
-    //     onChange,
-    //   },
-    //   defaultValue: ktpBlob,
-    //   deleteImage: () => setKtpBlob(""),
-    // }),
+    objectFields({
+      label: "PIC sales",
+      name: "picSales",
+      type: "modal",
+      defaultValue: "-",
+      onClick: actionIsCategory,
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+    objectFields({
+      label: "KTP pemilik",
+      name: "ktp",
+      type: "image",
+      defaultValue:
+        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+    }),
+    objectFields({
+      label: "banner etalase",
+      name: "banner",
+      type: "image",
+      defaultValue:
+        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+    }),
   ];
 
   return { fields };

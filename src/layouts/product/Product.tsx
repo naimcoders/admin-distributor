@@ -1,6 +1,6 @@
 import { FieldValues, useForm } from "react-hook-form";
-import { SwitchAndFolder } from "src/components/Actions";
-import { TableLayoutWithSearchAndTabs } from "src/components/Table";
+import { Actions } from "src/components/Actions";
+import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 
 const SubProduct = () => {
@@ -8,7 +8,7 @@ const SubProduct = () => {
   const { columns } = useProduct();
 
   return (
-    <TableLayoutWithSearchAndTabs
+    <TableWithSearchAndTabs
       columns={columns}
       data={products}
       control={control}
@@ -41,14 +41,6 @@ const products: Product[] = [
 ];
 
 const useProduct = () => {
-  const handleSwitch = () => {
-    console.log("switch");
-  };
-
-  const handleFolder = () => {
-    console.log("folder");
-  };
-
   const columns: Columns<Product>[] = [
     {
       header: "nama produk",
@@ -59,7 +51,7 @@ const useProduct = () => {
       render: (v) => <p>{v.category}</p>,
     },
     {
-      header: "sub-kategori",
+      header: "sub kategori",
       render: (v) => <p>{v.categorySub}</p>,
     },
     {
@@ -68,14 +60,7 @@ const useProduct = () => {
     },
     {
       header: "aksi",
-      render: (_, idx) => (
-        <SwitchAndFolder
-          id={idx}
-          isSuspendSelected={false}
-          handleSwitch={handleSwitch}
-          handleFolder={handleFolder}
-        />
-      ),
+      render: (_, idx) => <Actions action="both" id={idx} />,
     },
   ];
 

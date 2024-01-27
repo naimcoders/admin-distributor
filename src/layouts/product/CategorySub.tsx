@@ -1,5 +1,5 @@
 import { FieldValues, useForm } from "react-hook-form";
-import { TableLayoutWithSearchAndTabs } from "src/components/Table";
+import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 import { ImageFolder } from "src/components/Image";
 
@@ -8,7 +8,7 @@ export default function CategorySub() {
   const { categories, columns } = useCategorySub();
 
   return (
-    <TableLayoutWithSearchAndTabs
+    <TableWithSearchAndTabs
       columns={columns}
       data={categories}
       control={control}
@@ -30,8 +30,8 @@ const useCategorySub = () => {
       sub: ["Pendingin Ruangan", "Lemari Es", "Televisi"],
     },
     {
-      category: "elektronik",
-      sub: ["Pendingin Ruangan", "Lemari Es", "Televisi"],
+      category: "Gadget & Aksesoris",
+      sub: ["Handphone", "Tablet", "Casing", "Charger"],
     },
   ];
 
@@ -39,13 +39,7 @@ const useCategorySub = () => {
     { header: "kategori produk", render: (v) => <p>{v.category}</p> },
     {
       header: "sub kategori",
-      render: (v) => (
-        <ul className="flex">
-          {v.sub.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ul>
-      ),
+      render: (v) => <ul className="flex">{v.sub.join(", ")}</ul>,
     },
     {
       header: "aksi",

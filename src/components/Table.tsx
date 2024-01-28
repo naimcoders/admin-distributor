@@ -111,6 +111,7 @@ export function TableWithSearchAndTabs<S extends object>(
         className="mt-4"
         isNext={props.isNext}
         page={props.page}
+        isPaginate={props.isPaginate}
       />
     </div>
   );

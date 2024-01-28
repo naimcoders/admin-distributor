@@ -1,6 +1,8 @@
 import Tabs, { ITabs } from "src/components/Tabs";
 import Waiting from "./waiting/Index";
 import Process from "./process/Index";
+import Finish from "./finish/Index";
+import Cancel from "./cancel/Index";
 
 const Order = () => {
   const { tabs } = useTabs();
@@ -22,6 +24,14 @@ const useTabs = () => {
     {
       label: "diproses",
       content: <Process />,
+    },
+    {
+      label: "selesai",
+      content: <Finish />,
+    },
+    {
+      label: "batal",
+      content: <Cancel />,
     },
   ];
 

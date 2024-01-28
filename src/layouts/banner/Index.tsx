@@ -1,55 +1,56 @@
-import {
-  ArrowUpTrayIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 import { Button } from "src/components/Button";
-import { ChildRef, File } from "src/components/File";
-import { IconImage } from "src/components/Image";
+import { ChildRef, InputFile } from "src/components/File";
+import { IconColor } from "src/types";
 
 const Banner = () => {
   const { banner, bannerUrl, onClickBanner, onChangeBanner, setBannerUrl } =
     useBanner();
-  const { logo, logoUrl, onClickLogo, onChangeLogo } = useLogo();
-
-  const icons: IconImage[] = [
-    {
-      src: <TrashIcon width={16} color="#F31260" />,
-      onClick: () => setBannerUrl(""),
-    },
-  ];
+  const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo } = useLogo();
 
   return (
     <>
       <main className="flex flex-col sm:flex-row gap-8">
-        <File
-          ref={logo}
-          onClick={onClickLogo}
-          onChange={onChangeLogo}
-          title="logo/foto usaha"
-          btnLabel="unggah logo/foto usaha"
-          image={{ src: logoUrl, width: 200 }}
-          startContent={<ArrowUpTrayIcon width={16} />}
-          icons={icons}
+        <InputFile
+          label="logo/foto usaha"
+          blob={logoUrl}
+          icons={[
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setLogoUrl(""),
+            },
+          ]}
+          file={{
+            ref: logo,
+            btnLabel: "unggah logo/foto usaha",
+            onClick: onClickLogo,
+            onChange: onChangeLogo,
+          }}
         />
 
-        <File
-          ref={banner}
-          onClick={onClickBanner}
-          onChange={onChangeBanner}
-          title="banner etalase"
-          btnLabel="unggah banner etalase"
-          image={{ src: bannerUrl, width: 400 }}
-          startContent={<ArrowUpTrayIcon width={16} />}
-          icons={icons}
+        <InputFile
+          label="banner etalase"
+          blob={bannerUrl}
+          icons={[
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setBannerUrl(""),
+            },
+          ]}
+          file={{
+            ref: banner,
+            onClick: onClickBanner,
+            onChange: onChangeBanner,
+            btnLabel: "unggah banner etalase",
+          }}
         />
       </main>
 
       <Button
         aria-label="simpan"
-        onClick={() => console.log("save")}
         className="mx-auto mt-6"
+        onClick={() => console.log("save")}
         startContent={<PlusIcon width={16} />}
       />
     </>
@@ -100,6 +101,7 @@ const useLogo = () => {
     logoUrl,
     onClickLogo,
     onChangeLogo,
+    setLogoUrl,
   };
 };
 

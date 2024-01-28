@@ -5,13 +5,20 @@ import React, { Fragment } from "react";
 import { modalDOM } from "src/helpers";
 
 interface Modal {
-  title: string;
   isOpen: boolean;
   closeModal: () => void;
   children: React.ReactNode;
+  customHeader?: React.ReactNode;
+  title?: string | React.ReactNode;
 }
 
-export const Modal = ({ isOpen, closeModal, title, children }: Modal) => {
+export const Modal = ({
+  isOpen,
+  closeModal,
+  title,
+  children,
+  customHeader,
+}: Modal) => {
   return (
     <>
       {!modalDOM
@@ -47,12 +54,16 @@ export const Modal = ({ isOpen, closeModal, title, children }: Modal) => {
                       leaveTo="opacity-0 scale-95"
                     >
                       <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                        <Dialog.Title
-                          as="h3"
-                          className="text-lg font-interMedium leading-6 text-gray-900 capitalize"
-                        >
-                          {title}
-                        </Dialog.Title>
+                        {!customHeader ? (
+                          <Dialog.Title
+                            as="h3"
+                            className="text-lg font-interMedium leading-6 text-gray-900 capitalize"
+                          >
+                            {title}
+                          </Dialog.Title>
+                        ) : (
+                          customHeader
+                        )}
 
                         {children}
 

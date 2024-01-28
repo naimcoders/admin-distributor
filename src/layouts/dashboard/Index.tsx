@@ -1,11 +1,13 @@
-import plus from "src/assets/svg/plus.svg";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
-import arrowExchange from "src/assets/svg/arrow-exchange.svg";
+import transferImg from "src/assets/images/transfer.png";
+import topUpImg from "src/assets/images/top up.png";
+import historyImg from "src/assets/images/riwayat.png";
 import cx from "classnames";
 import { Button } from "src/components/Button";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { Columns } from "src/types";
 import Table from "src/components/Table";
+import Image from "src/components/Image";
 
 const Dashboard = () => {
   return (
@@ -121,6 +123,10 @@ const PilipayTransaction = () => {
 };
 
 const PilipayBalance = () => {
+  const handleHistory = () => {
+    console.log("history");
+  };
+
   return (
     <section className="flex gap-4 items-center">
       <section className="text-white flex flex-col gap-1">
@@ -131,45 +137,36 @@ const PilipayBalance = () => {
         <h2 className="font-interMedium">Rp13.450.000</h2>
       </section>
 
-      <section className="flex gap-4">
-        <BtnTopUpAndTransfer
-          label="top up"
-          srcImgIcon={plus}
-          onClick={() => console.log("top up")}
+      <section className="flex gap-3">
+        <BtnPiliPayActions
+          label="riwayat"
+          alt="History"
+          src={historyImg}
+          onClick={handleHistory}
         />
-        <BtnTopUpAndTransfer
-          label="transfer"
-          srcImgIcon={arrowExchange}
-          onClick={() => console.log("transfer")}
-        />
+        <BtnPiliPayActions label="top up" alt="Top Up" src={topUpImg} />
+        <BtnPiliPayActions label="transfer" alt="Transfer" src={transferImg} />
       </section>
     </section>
   );
 };
 
-interface TopUpAndTransfer {
+interface PiliPayActions {
   label: string;
-  srcImgIcon: string;
+  src: string;
+  alt: string;
   onClick?: () => void;
 }
 
-const BtnTopUpAndTransfer = ({
-  label,
-  srcImgIcon,
-  onClick,
-}: TopUpAndTransfer) => {
+const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
   return (
-    <button
-      className="capitalize inline-flex text-[.70rem] text-white flex-col items-center gap-1 tracking-wide remove-highlight"
+    <section
+      className="flexcol gap-1 items-center cursor-pointer"
       onClick={onClick}
     >
-      <img
-        src={srcImgIcon}
-        alt={label}
-        className="bg-blue-300 rounded-md w-5 p-[.15rem]"
-      />
-      {label}
-    </button>
+      <Image src={src} alt={alt} width={20} radius="none" />
+      <h2 className="text-xs text-white capitalize">{label}</h2>
+    </section>
   );
 };
 

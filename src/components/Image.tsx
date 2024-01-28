@@ -2,6 +2,7 @@ import folder from "src/assets/images/folder.png";
 import cx from "classnames";
 import { Image as Img } from "@nextui-org/react";
 import { ImgHTMLAttributes, useState } from "react";
+import { Radius } from "src/types";
 
 export type IconImage = {
   src: React.ReactNode;
@@ -10,9 +11,17 @@ export type IconImage = {
 
 type Image = Partial<HTMLImageElement> & {
   icons?: IconImage[];
+  radius?: Radius;
 };
 
-export default function Image({ src, alt, width, icons, loading }: Image) {
+export default function Image({
+  src,
+  alt,
+  width,
+  icons,
+  loading,
+  radius,
+}: Image) {
   const [onHover, setOnHover] = useState(false);
 
   const mouseEnter = () => setOnHover(true);
@@ -25,6 +34,7 @@ export default function Image({ src, alt, width, icons, loading }: Image) {
         src={src}
         className="z-0"
         loading={loading}
+        radius={radius && radius}
         width={!width ? 300 : width}
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}

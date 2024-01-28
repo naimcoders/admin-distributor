@@ -13,6 +13,14 @@ interface Button extends PickButton {
   radius: Radius;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
+  variant:
+    | "solid"
+    | "bordered"
+    | "light"
+    | "flat"
+    | "faded"
+    | "shadow"
+    | "ghost";
 }
 
 export const Button = (props: Partial<Button>) => {
@@ -26,6 +34,7 @@ export const Button = (props: Partial<Button>) => {
       color={!color ? "primary" : color}
       className={cx("capitalize", className)}
       radius={!radius ? "sm" : radius}
+      variant={props.variant}
     >
       {props["aria-label"]}
     </Btn>

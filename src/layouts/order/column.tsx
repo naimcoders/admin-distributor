@@ -53,7 +53,7 @@ const useOrderColumns = (tab: Tabs) => {
           id={v.idOrder}
           action="detail"
           detail={{
-            onClick: () => onNav(`${tab}/${v.idOrder.replace(/\s+/g, "-")}`),
+            onClick: () => onNav(`${tab}/${v.idOrder}`),
           }}
         />
       ),

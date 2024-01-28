@@ -29,6 +29,7 @@ const DetailDistributor = lazy(
   () => import("./layouts/distributor/detail/Index")
 );
 const Order = lazy(() => import("./layouts/order/Index"));
+const OrderWaiting = lazy(() => import("./layouts/order/waiting/Detail"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -185,6 +186,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <Order />
+          </Suspense>
+        ),
+      },
+      {
+        path: "order/menunggu/:id",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <OrderWaiting />
           </Suspense>
         ),
       },

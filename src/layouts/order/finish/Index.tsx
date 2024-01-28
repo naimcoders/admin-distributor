@@ -4,7 +4,7 @@ import { FieldValues, useForm } from "react-hook-form";
 
 const Finish = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
-  const { columns } = useOrderColumns();
+  const { columns } = useOrderColumns("selesai");
 
   return (
     <section>

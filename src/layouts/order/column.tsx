@@ -1,6 +1,7 @@
 import Label from "src/components/Label";
 import { Actions } from "src/components/Actions";
 import { Columns } from "src/types";
+import { detailNavigate } from "src/helpers";
 
 export interface OrderProps {
   idOrder: string;
@@ -12,7 +13,10 @@ export interface OrderProps {
   totalPay: number;
 }
 
-const useOrderColumns = () => {
+type Tabs = "menunggu" | "proses" | "selesai" | "batal";
+const useOrderColumns = (tab: Tabs) => {
+  const { onNav } = detailNavigate();
+
   const columns: Columns<OrderProps>[] = [
     {
       header: "ID order",
@@ -49,7 +53,7 @@ const useOrderColumns = () => {
           id={v.idOrder}
           action="detail"
           detail={{
-            onClick: () => console.log(v.idOrder),
+            onClick: () => onNav(`${tab}/${v.idOrder.replace(/\s+/g, "-")}`),
           }}
         />
       ),

@@ -91,7 +91,7 @@ export const Logout = () => {
     <div className="my-8 flex justify-center">
       <Button
         aria-label="Logout"
-        color="danger"
+        className="bg-[#c41414]"
         endContent={
           <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />
         }

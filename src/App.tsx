@@ -4,6 +4,7 @@ import NotFound from "./pages/NotFound";
 import Layout from "./layouts/Index";
 import { lazy, Suspense } from "react";
 import Skeleton from "./components/Skeleton";
+import { PrivateRoute } from "./components/PrivateRoute";
 
 const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
@@ -39,182 +40,188 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "*",
-    element: <NotFound />,
-  },
-  {
     path: "/",
-    element: <Layout />,
+    element: <PrivateRoute />,
     children: [
       {
-        path: "dashboard",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Dashboard />
-          </Suspense>
-        ),
-      },
-      {
-        path: "banner",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Banner />
-          </Suspense>
-        ),
-      },
-      {
-        path: "produk",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Product />
-          </Suspense>
-        ),
-      },
-      {
-        path: "produk/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <ProductDetail />
-          </Suspense>
-        ),
-      },
-      {
-        path: "produk/sub-kategori/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <DetailSubCategory />
-          </Suspense>
-        ),
-      },
-      {
-        path: "toko",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Store />
-          </Suspense>
-        ),
-      },
-      {
-        path: "toko/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <StoreDetail />
-          </Suspense>
-        ),
-      },
-      {
-        path: "ekspedisi",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Expedition />
-          </Suspense>
-        ),
-      },
-      {
-        path: "ekspedisi/tambah",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <CreateExpedition />
-          </Suspense>
-        ),
-      },
-      {
-        path: "ekspedisi/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <DetailExpedition />
-          </Suspense>
-        ),
-      },
-      {
-        path: "sales",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Sales />
-          </Suspense>
-        ),
-      },
-      {
-        path: "sales/tambah",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <CreateSales />
-          </Suspense>
-        ),
-      },
-      {
-        path: "sales/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <DetailSales />
-          </Suspense>
-        ),
-      },
-      {
-        path: "sales/:id/pelanggan/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <CustomerSalesDetail />
-          </Suspense>
-        ),
-      },
-      {
-        path: "distributor",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Distributor />
-          </Suspense>
-        ),
-      },
-      {
-        path: "distributor/tambah",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <CreateDistributor />
-          </Suspense>
-        ),
-      },
-      {
-        path: "distributor/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <DetailDistributor />
-          </Suspense>
-        ),
-      },
-      {
-        path: "order",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Order />
-          </Suspense>
-        ),
-      },
-      {
-        path: "order/menunggu/:id",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <OrderWaiting />
-          </Suspense>
-        ),
-      },
-      {
-        path: "report",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Report />
-          </Suspense>
-        ),
-      },
-      {
-        path: "akun",
-        element: (
-          <Suspense fallback={<Skeleton />}>
-            <Account />
-          </Suspense>
-        ),
+        path: "/",
+        element: <Layout />,
+        children: [
+          {
+            path: "dashboard",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Dashboard />
+              </Suspense>
+            ),
+          },
+          {
+            path: "banner",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Banner />
+              </Suspense>
+            ),
+          },
+          {
+            path: "produk",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Product />
+              </Suspense>
+            ),
+          },
+          {
+            path: "produk/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <ProductDetail />
+              </Suspense>
+            ),
+          },
+          {
+            path: "produk/sub-kategori/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <DetailSubCategory />
+              </Suspense>
+            ),
+          },
+          {
+            path: "toko",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Store />
+              </Suspense>
+            ),
+          },
+          {
+            path: "toko/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <StoreDetail />
+              </Suspense>
+            ),
+          },
+          {
+            path: "ekspedisi",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Expedition />
+              </Suspense>
+            ),
+          },
+          {
+            path: "ekspedisi/tambah",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <CreateExpedition />
+              </Suspense>
+            ),
+          },
+          {
+            path: "ekspedisi/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <DetailExpedition />
+              </Suspense>
+            ),
+          },
+          {
+            path: "sales",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Sales />
+              </Suspense>
+            ),
+          },
+          {
+            path: "sales/tambah",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <CreateSales />
+              </Suspense>
+            ),
+          },
+          {
+            path: "sales/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <DetailSales />
+              </Suspense>
+            ),
+          },
+          {
+            path: "sales/:id/pelanggan/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <CustomerSalesDetail />
+              </Suspense>
+            ),
+          },
+          {
+            path: "distributor",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Distributor />
+              </Suspense>
+            ),
+          },
+          {
+            path: "distributor/tambah",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <CreateDistributor />
+              </Suspense>
+            ),
+          },
+          {
+            path: "distributor/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <DetailDistributor />
+              </Suspense>
+            ),
+          },
+          {
+            path: "order",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Order />
+              </Suspense>
+            ),
+          },
+          {
+            path: "order/menunggu/:id",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <OrderWaiting />
+              </Suspense>
+            ),
+          },
+          {
+            path: "report",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Report />
+              </Suspense>
+            ),
+          },
+          {
+            path: "akun",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <Account />
+              </Suspense>
+            ),
+          },
+        ],
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import Image from "src/components/Image";
+import { useAuth } from "src/firebase/auth";
 
 const Layout = () => {
   return (
@@ -84,6 +85,8 @@ export const arrNavigationLabels: { label: string }[] = [
 ];
 
 export const Logout = () => {
+  const { logout } = useAuth();
+
   return (
     <div className="my-8 flex justify-center">
       <Button
@@ -92,6 +95,7 @@ export const Logout = () => {
         endContent={
           <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />
         }
+        onClick={logout}
       />
     </div>
   );

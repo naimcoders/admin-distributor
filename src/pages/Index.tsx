@@ -9,6 +9,10 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
+import { useEffect, useState } from "react";
+import { requestForToken } from "src/firebase";
+import { Role, useLogin } from "src/api/login.service";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   return (
@@ -46,12 +50,12 @@ export const logins: PartialGeneralFields[] = [
 ];
 
 const Form = () => {
-  // const [token, setToken] = useState("");
-  // useEffect(() => {
-  //   requestForToken().then((token) => {
-  //     setToken(token);
-  //   });
-  // }, []);
+  const [token, setToken] = useState("");
+  useEffect(() => {
+    requestForToken().then((token) => {
+      setToken(token);
+    });
+  }, []);
 
   const {
     control,
@@ -59,17 +63,19 @@ const Form = () => {
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
 
+  const posted = useLogin();
+  const navigate = useNavigate();
+
   const onSubmit = handleSubmit(async (e) => {
     try {
-      // const result = {
-      //   email: e.email,
-      //   password: e.password,
-      //   role: Role.ADMIN,
-      //   fcmToken: token,
-      // };
-      // await posted.mutateAsync(result);
-      // navigate("/dashboard");
-      console.log(e);
+      const result = {
+        email: e.email,
+        password: e.password,
+        role: Role.DISTRIBUTOR,
+        fcmToken: token,
+      };
+      await posted.mutateAsync(result);
+      navigate("/dashboard");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -94,7 +100,7 @@ const Form = () => {
       ))}
 
       <Button
-        aria-label="Login"
+        aria-label={posted.isPending ? "Loading..." : "Login"}
         onClick={onSubmit}
         className="mt-4 text-base bg-accentYellow text-black"
       />

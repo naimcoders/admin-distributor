@@ -34,6 +34,7 @@ export const Actions: React.FC<ActionProps> = (props) => {
             id={String(props.id)}
             name={String(props.id)}
             aria-labelledby={String(props.id)}
+            size="sm"
             classNames={{ base: "z-0" }}
           />
 
@@ -75,7 +76,7 @@ export const FolderIcon: React.FC<ImgHTMLAttributes<HTMLImageElement>> = ({
     <img
       src={folder}
       alt="Detail"
-      className={cx("w-6 h-4 cursor-pointer", className)}
+      className={cx("w-[25px] h-[17px] cursor-pointer", className)}
       {...props}
     />
   );

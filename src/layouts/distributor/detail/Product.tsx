@@ -56,35 +56,35 @@ const products: Product[] = [
 
 const columns: Columns<Product>[] = [
   {
-    header: "nama produk",
+    header: <p className="text-center">nama produk</p>,
     render: (v) => <Label label={v.productName} />,
   },
   {
-    header: "kategori",
+    header: <p className="text-center">kategori</p>,
     render: (v) => <Label label={v.category} />,
   },
   {
-    header: "sub-kategori",
+    header: <p className="text-center">sub-kategori</p>,
     render: (v) => <Label label={v.categorySub} />,
   },
   {
-    header: "harga (Rp)",
+    header: <p className="text-right">harga (Rp)</p>,
     render: (v) => <Label label={v.price} className="justify-end" />,
   },
   {
-    header: "komisi",
+    header: <p className="text-right">komisi</p>,
     render: (v) => <Label label={`${v.commission}%`} className="justify-end" />,
   },
   {
-    header: "diskon",
+    header: <p className="text-center">diskon</p>,
     render: () => <Label label="(50%) 1.750" className="justify-end" />,
   },
   {
-    header: "periode",
-    render: (v) => <Label label={v.period} className="justify-center" />,
+    header: <p className="text-center">periode</p>,
+    render: (v) => <Label label={v.period} />,
   },
   {
-    header: "aksi",
+    header: <p className="text-center">aksi</p>,
     render: (v) => (
       <Actions
         id={v.id}

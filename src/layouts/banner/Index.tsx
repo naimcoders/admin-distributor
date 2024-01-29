@@ -22,7 +22,7 @@ const Banner = () => {
           ]}
           file={{
             ref: logo,
-            btnLabel: "unggah logo usaha",
+            btnLabel: "unggah logo",
             onClick: onClickLogo,
             onChange: onChangeLogo,
           }}
@@ -41,7 +41,7 @@ const Banner = () => {
             ref: banner,
             onClick: onClickBanner,
             onChange: onChangeBanner,
-            btnLabel: "unggah banner etalase",
+            btnLabel: "unggah banner",
           }}
         />
       </main>

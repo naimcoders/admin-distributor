@@ -1,7 +1,7 @@
 import { Actions } from "src/components/Actions";
 import Label from "src/components/Label";
 import { TableWithoutTabs } from "src/components/Table";
-import { detailNavigate, parsePhoneNumber } from "src/helpers";
+import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Sales = () => {
@@ -72,52 +72,45 @@ const useHook = () => {
 
   const columns: Columns<Sales>[] = [
     {
-      header: "nama sales",
+      header: <p className="text-center">nama sales</p>,
       render: (v) => <Label label={v.salesName} />,
     },
     {
-      header: "nomor HP",
-      render: (v) => (
-        <Label
-          label={parsePhoneNumber(v.phoneNumber)}
-          className="justify-center"
-        />
-      ),
+      header: <p className="text-center">nomor HP</p>,
+      render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
     },
     {
-      header: "email",
-      render: (v) => <Label label={v.email} className="justify-center" />,
+      header: <p className="text-center">email</p>,
+      render: (v) => <Label label={v.email} />,
     },
     {
-      header: "tanggal join",
-      render: (v) => <Label label={v.joiningDate} className="justify-center" />,
+      header: <p className="text-center">tanggal join</p>,
+      render: (v) => <Label label={v.joiningDate} />,
     },
     {
-      header: "kategori sales",
-      render: (v) => (
-        <Label label={v.categorySales} className="justify-center" />
-      ),
+      header: <p className="text-center">kategori sales</p>,
+      render: (v) => <Label label={v.categorySales} />,
     },
     {
-      header: "kategori sales",
+      header: <p className="text-center">komisi</p>,
       render: (v) => (
         <Label label={`${v.commission}%`} className="justify-end" />
       ),
     },
     {
-      header: "total omset",
-      render: (v) => (
-        <Label label={`Rp${v.totalOmset}`} className="justify-end" />
-      ),
-    },
-    {
-      header: "total transaksi",
+      header: <p className="text-center">total transaksi</p>,
       render: (v) => (
         <Label label={v.totalTransaction} className="justify-end" />
       ),
     },
     {
-      header: "aksi",
+      header: <p className="text-right">total omset (Rp)</p>,
+      render: (v) => (
+        <Label label={`${Currency(v.totalOmset)}`} className="justify-end" />
+      ),
+    },
+    {
+      header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
           id={idx}
@@ -130,6 +123,7 @@ const useHook = () => {
           }}
         />
       ),
+      width: "w-40",
     },
   ];
 

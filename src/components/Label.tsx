@@ -9,11 +9,11 @@ interface LabelProps extends HTMLAttributes<HTMLDivElement> {
 
 const Label: React.FC<LabelProps> = (props) => {
   return (
-    <div className={cx("flex gap-2 font-interMedium text-sm", props.className)}>
+    <p className={cx("flex gap-2", props.className)}>
       {props.endContent}
       {props.label}
       {props.startContent}
-    </div>
+    </p>
   );
 };
 

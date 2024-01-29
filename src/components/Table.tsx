@@ -18,24 +18,33 @@ interface Table<T extends object>
 export default function Table<T extends object>(props: Table<T>) {
   return (
     <div className={cx("flex flex-col gap-6", props.className)}>
-      <section className="relative overflow-x-auto rounded-lg">
-        <table className="w-full text-left rtl:text-right bg-white shadow-sm">
+      <section className="relative overflow-x-auto">
+        <table
+          className="w-full text-left rtl:text-right bg-white shadow-sm"
+          style={{ tableLayout: "fixed" }}
+        >
           <thead
             className={cx(
-              "capitalize text-gray-700",
+              "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",
               props.isTransparent ? "bg-transparent" : "bg-slate-100"
             )}
           >
             <tr>
               {props.columns.map((val, idx) => (
-                <th key={idx} className={cx("px-6 py-3")}>
+                <th
+                  key={idx}
+                  className={cx(
+                    "p-3 font-semibold border border-gray-300 W-12 text-[13px]",
+                    val.width
+                  )}
+                >
                   {val.header}
                 </th>
               ))}
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="border border-gray-300">
             {!props.isLoading &&
               props.data &&
               props.data?.map((it, idx) => (
@@ -44,7 +53,7 @@ export default function Table<T extends object>(props: Table<T>) {
                     <td
                       key={key}
                       className={cx(
-                        "w-full whitespace-nowrap px-5 py-2 font-medium text-gray-700 lg:w-[200px]"
+                        "text-[13px] p-3 text-gray-700 W-12 border border-gray-300"
                       )}
                     >
                       {col.render(it, idx)}
@@ -90,7 +99,7 @@ export function TableWithSearchAndTabs<S extends object>(
 ) {
   return (
     <div className="mt-5">
-      <div className="sm:absolute sm:top-0 sm:right-0 sm:w-[40%]">
+      <div className="sm:absolute sm:top-0 sm:right-0">
         <Textfield
           type="text"
           name="search"
@@ -163,12 +172,12 @@ const Header = ({ search, createData }: Header) => {
   return (
     <header className="flex gap-4">
       <Textfield
+        type="text"
         name="search"
         defaultValue=""
         control={control}
         placeholder={search.placeholder}
         startContent={<MagnifyingGlassIcon width={16} color="#808080" />}
-        className="lg:w-2/4"
       />
 
       {createData?.isValue && (

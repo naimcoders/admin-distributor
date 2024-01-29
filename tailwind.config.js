@@ -17,7 +17,7 @@ export default {
       },
       width: {
         calcSideBar: "calc(100% - 224px)",
-        calcLogin: "calc(100% - 50%)",
+        calcLogin: "calc(100% - 70%)",
       },
       height: {
         calcSideBar: "calc(100vh - 12%)",

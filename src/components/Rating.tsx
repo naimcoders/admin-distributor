@@ -11,8 +11,11 @@ const Rating = (
       <Chip
         startContent={<StarIcon color="#cbde23" width={18} />}
         color="default"
-        variant="bordered"
+        variant="light"
         className={"font-interBold text-xs"}
+        classNames={{
+          dot: "p-0",
+        }}
       >
         {props.value}
       </Chip>

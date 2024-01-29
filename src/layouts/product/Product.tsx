@@ -1,6 +1,8 @@
 import { FieldValues, useForm } from "react-hook-form";
 import { Actions } from "src/components/Actions";
+import Label from "src/components/Label";
 import { TableWithSearchAndTabs } from "src/components/Table";
+import { Currency } from "src/helpers";
 import { Columns } from "src/types";
 
 const SubProduct = () => {
@@ -9,11 +11,12 @@ const SubProduct = () => {
 
   return (
     <TableWithSearchAndTabs
+      isPaginate
       columns={columns}
       data={products}
       control={control}
       isLoading={false}
-      placeholder="cari nama produk, kategori, Sub-Kategori"
+      placeholder="cari nama produk/kategori/Sub-Kategori"
     />
   );
 };
@@ -43,24 +46,27 @@ const products: Product[] = [
 const useProduct = () => {
   const columns: Columns<Product>[] = [
     {
-      header: "nama produk",
-      render: (v) => <p>{v.productName}</p>,
+      header: <p className="text-center">nama produk</p>,
+      render: (v) => <Label label={v.productName} />,
     },
     {
-      header: "kategori",
-      render: (v) => <p>{v.category}</p>,
+      header: <p className="text-center">kategori</p>,
+      render: (v) => <Label label={v.category} />,
     },
     {
-      header: "sub kategori",
-      render: (v) => <p>{v.categorySub}</p>,
+      header: <p className="text-center">sub-kategori</p>,
+      render: (v) => <Label label={v.categorySub} />,
     },
     {
-      header: "harga (Rp)",
-      render: (v) => <p className="text-right">{v.price}</p>,
+      header: <p className="text-right">harga (Rp)</p>,
+      render: (v) => (
+        <Label label={Currency(v.price)} className="justify-end" />
+      ),
     },
     {
-      header: "aksi",
+      header: <p className="text-center">aksi</p>,
       render: (_, idx) => <Actions action="both" id={idx} />,
+      width: "w-40",
     },
   ];
 

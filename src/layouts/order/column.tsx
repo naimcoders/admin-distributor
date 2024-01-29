@@ -1,7 +1,7 @@
 import Label from "src/components/Label";
 import { Actions } from "src/components/Actions";
 import { Columns } from "src/types";
-import { detailNavigate } from "src/helpers";
+import { Currency, detailNavigate } from "src/helpers";
 
 export interface OrderProps {
   idOrder: string;
@@ -19,35 +19,37 @@ const useOrderColumns = (tab: Tabs) => {
 
   const columns: Columns<OrderProps>[] = [
     {
-      header: "ID order",
-      render: (v) => <Label label={v.idOrder} className="justify-center" />,
+      header: <p className="text-center">ID order</p>,
+      render: (v) => <Label label={v.idOrder} />,
     },
     {
-      header: "tanggal order",
-      render: (v) => <Label label={v.orderDate} className="justify-center" />,
+      header: <p className="text-center">tanggal order</p>,
+      render: (v) => <Label label={v.orderDate} />,
     },
     {
-      header: "nama pemesan",
+      header: <p className="text-center">nama pemesan</p>,
       render: (v) => <Label label={v.orderName} />,
     },
     {
-      header: "nomor HP",
-      render: (v) => <Label label={v.phoneNumber} className="justify-center" />,
+      header: <p className="text-center">nomor HP</p>,
+      render: (v) => <Label label={v.phoneNumber} />,
     },
     {
-      header: "nama toko",
+      header: <p className="text-center">nama toko</p>,
       render: (v) => <Label label={v.storeName} />,
     },
     {
-      header: "metode bayar",
+      header: <p className="text-center">metode bayar</p>,
       render: (v) => <Label label={v.paymentMethod} />,
     },
     {
-      header: "total bayar",
-      render: (v) => <Label label={v.totalPay} className="justify-end" />,
+      header: <p className="text-right">total bayar (Rp)</p>,
+      render: (v) => (
+        <Label label={Currency(v.totalPay)} className="justify-end" />
+      ),
     },
     {
-      header: "aksi",
+      header: <p className="text-center">aksi</p>,
       render: (v) => (
         <Actions
           id={v.idOrder}
@@ -57,6 +59,7 @@ const useOrderColumns = (tab: Tabs) => {
           }}
         />
       ),
+      width: "w-40",
     },
   ];
 

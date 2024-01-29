@@ -31,7 +31,7 @@ const Select: React.FC<SelectProps> = ({
       labelPlacement="outside"
       className={className}
       classNames={{
-        label: "capitalize font-interMedium",
+        label: "capitalize font-interMedium pb-2",
         value: "capitalize",
         errorMessage: "capitalize font-interMedium",
         listbox: "capitalize",

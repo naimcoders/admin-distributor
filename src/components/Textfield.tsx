@@ -44,7 +44,7 @@ export const Textfield = (props: Textfield) => {
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
-      className={props.className}
+      className={"w-[24rem]"}
       description={props.description}
       startContent={props.startContent}
       isReadOnly={props.readOnly?.isValue}
@@ -53,9 +53,8 @@ export const Textfield = (props: Textfield) => {
       classNames={{
         base: "z-0",
         input: cx("placeholder:capitalize", props.readOnly?.cursor),
-        inputWrapper: props.classNames?.inputWrapper,
         errorMessage: "capitalize font-interMedium",
-        label: "font-interMedium capitalize",
+        label: "font-interMedium capitalize pb-2",
         description: "text-[#71717A] first-letter:capitalize",
       }}
       title={props.defaultValue}

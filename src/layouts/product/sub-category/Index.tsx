@@ -3,6 +3,7 @@ import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
 import { detailNavigate } from "src/helpers";
+import Label from "src/components/Label";
 
 export default function CategorySub() {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -15,16 +16,16 @@ export default function CategorySub() {
         data={categories}
         control={control}
         isLoading={false}
-        placeholder="cari nama kategori, Sub-Kategori"
+        placeholder="cari nama kategori/Sub-Kategori"
       />
-      <div className="text-[13px] font-interMedium mt-6">
+      <div className="text-[13px] mt-6 normal-case">
         <p>
-          Tambahkan Sub-Kategori untuk setiap produk Anda untuk merapikan
+          Tambahkan sub-kategori untuk setiap produk Anda untuk merapikan
           etalase dan memudahkan pencarian.
         </p>
         <p>
-          Misal produk kategori Fashion, maka Sub-kategorinya bisa Fashion Pria,
-          Fashion Wanita, dan lainnya.
+          Misal produk kategori fashion, maka sub-kategorinya bisa fashion pria,
+          fashion wanita, dan lainnya.
         </p>
       </div>
     </section>
@@ -54,13 +55,18 @@ const useCategorySub = () => {
   ];
 
   const columns: Columns<CatergorySub>[] = [
-    { header: "kategori produk", render: (v) => <p>{v.category}</p> },
     {
-      header: "sub kategori",
-      render: (v) => <ul className="flex">{v.sub.join(", ")}</ul>,
+      header: <p className="text-center">kategori produk</p>,
+      render: (v) => <Label label={v.category} />,
     },
     {
-      header: "aksi",
+      header: <p className="text-center">sub-kategori</p>,
+      render: (v) => (
+        <ul className="flex font-interMedium">{v.sub.join(", ")}</ul>
+      ),
+    },
+    {
+      header: <p className="text-center">aksi</p>,
       render: (v) => (
         <Actions
           id={v.id}
@@ -70,6 +76,7 @@ const useCategorySub = () => {
           }}
         />
       ),
+      width: "w-40",
     },
   ];
 

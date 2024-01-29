@@ -12,6 +12,12 @@ function Tabs(props: { items: ITabs[]; color: Color }) {
       aria-label="Dynamic tabs"
       items={props.items}
       color={props.color}
+      variant="solid"
+      classNames={{
+        tab: "w-32 text-sm",
+      }}
+      size="lg"
+      radius="sm"
     >
       {(item) => (
         <Tab key={item.label} title={item.label} className="capitalize">

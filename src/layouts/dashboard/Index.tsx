@@ -11,6 +11,7 @@ import Image from "src/components/Image";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
 import { Currency } from "src/helpers";
+import Label from "src/components/Label";
 
 const Dashboard = () => {
   return (
@@ -58,7 +59,7 @@ const TopLine = () => {
         <Card
           key={v.label}
           className={cx(
-            "bg-gradient-to-r text-white flex-grow lg:flex-1 z-0",
+            "bg-gradient-to-r text-white flex-grow lg:flex-1 z-0 px-1",
             `${v.bg.topLeft} ${v.bg.bottomRight}`
           )}
         >
@@ -82,19 +83,19 @@ const MiddleLine = () => {
     <section className="grid-min-300 gap-8">
       <PiliPay />
 
-      <Card className="flex-grow z-0">
-        <CardHeader as="h2" className="text-sm capitalize font-interMedium">
+      <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">
+        <CardHeader as="h2" className="text-xl capitalize justify-center">
           total omset
         </CardHeader>
-        <CardBody as="h2" className="font-interBold text-xl text-center">
+        <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
           Rp18,950,000
         </CardBody>
       </Card>
-      <Card className="flex-grow">
-        <CardHeader as="h2" className="text-sm capitalize font-interMedium">
+      <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">
+        <CardHeader as="h2" className="text-xl capitalize justify-center">
           total transaksi
         </CardHeader>
-        <CardBody as="h2" className="font-interBold text-xl text-center">
+        <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
           Rp17,829
         </CardBody>
       </Card>
@@ -320,39 +321,41 @@ const products: Product[] = [
 
 const columnStore: Columns<Store>[] = [
   {
-    header: <p className="text-[#30b2e5]">toko terlaris</p>,
-    render: (v, idx) => (
-      <p>
-        {idx + 1}. {v.bestStore}
-      </p>
+    header: <p className="text-[#30b2e5] text-sm">toko terlaris</p>,
+    render: (v, idx) => <Label label={`${idx + 1}. ${v.bestStore}`} />,
+  },
+  {
+    header: (
+      <p className="text-right text-[#30b2e5] text-sm">total omset (Rp)</p>
     ),
+    render: (v) => <Label label={Currency(v.omset)} className="justify-end" />,
   },
   {
-    header: <p className="text-right text-[#30b2e5]">total omset (Rp)</p>,
-    render: (v) => <p className="text-right">{Currency(v.omset)}</p>,
-  },
-  {
-    header: <p className="text-right text-[#30b2e5]">total transaksi</p>,
-    render: (v) => <p className="text-right">{Currency(v.transaction)}</p>,
+    header: (
+      <p className="text-right text-[#30b2e5] text-sm">total transaksi</p>
+    ),
+    render: (v) => (
+      <Label label={Currency(v.transaction)} className="justify-end" />
+    ),
   },
 ];
 
 const columnProduct: Columns<Product>[] = [
   {
-    header: <p className="text-[#ae5eaa]">produk terlaris</p>,
-    render: (v, idx) => (
-      <p>
-        {idx + 1}. {v.bestStore}
-      </p>
+    header: <p className="text-[#ae5eaa] text-sm">produk terlaris</p>,
+    render: (v, idx) => <Label label={`${idx + 1}. ${v.bestStore}`} />,
+  },
+  {
+    header: <p className="text-[#ae5eaa] text-sm">kategori</p>,
+    render: (v) => <Label label={v.category} />,
+  },
+  {
+    header: (
+      <p className="text-right text-[#ae5eaa] text-sm">total pembelian</p>
     ),
-  },
-  {
-    header: <p className="text-right text-[#ae5eaa]">kategori</p>,
-    render: (v) => <p className="text-right">{v.category}</p>,
-  },
-  {
-    header: <p className="text-right text-[#ae5eaa]">total pembelian</p>,
-    render: (v) => <p className="text-right">{Currency(v.totalPay)}</p>,
+    render: (v) => (
+      <Label label={Currency(v.totalPay)} className="justify-end" />
+    ),
   },
 ];
 

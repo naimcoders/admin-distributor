@@ -59,6 +59,12 @@
     height: 8px;
   }
 
+  @media screen and (min-width: 600px) {
+    ::-webkit-scrollbar {
+      height: 5px;
+    }
+  }
+
   ::-webkit-scrollbar-thumb {
     border-radius: 6px;
     background-color: #f4f4f4;

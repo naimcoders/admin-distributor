@@ -32,7 +32,7 @@ export const Button = (props: Partial<Button>) => {
       endContent={endContent}
       startContent={startContent}
       color={!color ? "primary" : color}
-      className={cx("capitalize", className)}
+      className={cx("capitalize w-36", className)}
       radius={!radius ? "sm" : radius}
       variant={props.variant}
     >

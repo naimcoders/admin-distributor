@@ -1,16 +1,15 @@
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon, StarIcon } from "@heroicons/react/24/solid";
 import { Actions } from "src/components/Actions";
 import Label from "src/components/Label";
-import Rating from "src/components/Rating";
 import { TableWithoutTabs } from "src/components/Table";
-import { detailNavigate, parsePhoneNumber } from "src/helpers";
+import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Store = () => {
   const { columns } = useStore();
 
   return (
-    <main>
+    <>
       <TableWithoutTabs
         header={{
           search: {
@@ -26,7 +25,7 @@ const Store = () => {
           page: 1,
         }}
       />
-    </main>
+    </>
   );
 };
 
@@ -46,7 +45,7 @@ const storeDatas: Store[] = [
   {
     id: 1,
     storeName: "Maju Jaya",
-    rate: 0,
+    rate: 3.8,
     ownerName: "Andi",
     isVerify: true,
     phoneNumber: "+6285824528625",
@@ -57,7 +56,7 @@ const storeDatas: Store[] = [
   {
     id: 2,
     storeName: "Mbak Atun",
-    rate: 0,
+    rate: 4.9,
     ownerName: "Bobi",
     isVerify: false,
     phoneNumber: "+6285824528625",
@@ -72,15 +71,20 @@ const useStore = () => {
 
   const columns: Columns<Store>[] = [
     {
-      header: "nama toko",
+      header: <p className="text-center">nama toko</p>,
       render: (v) => <Label label={v.storeName} />,
     },
     {
-      header: "rating",
-      render: (v) => <Rating value={v.rate} className="justify-center" />,
+      header: <p className="text-center">rating</p>,
+      render: (v) => (
+        <div className="flex gap-1 justify-center p-0">
+          <StarIcon color="#cbde23" width={16} />
+          <Label label={v.rate} />
+        </div>
+      ),
     },
     {
-      header: "nama pemilik",
+      header: <p className="text-center">nama pemilik</p>,
       render: (v) => (
         <Label
           label={v.ownerName}
@@ -91,32 +95,27 @@ const useStore = () => {
       ),
     },
     {
-      header: "nomor HP",
+      header: <p className="text-">nomor HP</p>,
+      render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
+    },
+    {
+      header: <p className="text-center">PIC Sales</p>,
+      render: (v) => <Label label={v.picSales} />,
+    },
+    {
+      header: <p className="text-center">total transaksi</p>,
       render: (v) => (
-        <Label
-          label={parsePhoneNumber(v.phoneNumber)}
-          className="justify-center"
-        />
+        <Label label={Currency(v.totalTransaction)} className="justify-end" />
       ),
     },
     {
-      header: "PIC Sales",
-      render: (v) => <Label label={v.picSales} className="justify-center" />,
-    },
-    {
-      header: "total revenue",
+      header: <p className="text-right">total revenue (Rp)</p>,
       render: (v) => (
-        <Label label={`Rp${v.totalRevenue}`} className="justify-end" />
+        <Label label={`${Currency(v.totalRevenue)}`} className="justify-end" />
       ),
     },
     {
-      header: "total transaksi",
-      render: (v) => (
-        <Label label={v.totalTransaction} className="justify-end" />
-      ),
-    },
-    {
-      header: "aksi",
+      header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
           id={idx}
@@ -126,6 +125,7 @@ const useStore = () => {
           }}
         />
       ),
+      width: "w-40",
     },
   ];
 

@@ -17,7 +17,7 @@ const Report = () => {
   const setReportType = useGeneralStore((v) => v.setReportType);
 
   return (
-    <main className="grid grid-cols-3 gap-6">
+    <main className="grid grid-cols-3 gap-6 pt-3">
       <Select
         data={data}
         label="jenis report"

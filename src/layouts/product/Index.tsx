@@ -11,7 +11,7 @@ const Product = () => {
       <Button
         aria-label="produk"
         startContent={<PlusIcon width={16} />}
-        className="absolute top-0 right-0 sm:right-[42%]"
+        className="absolute top-0 left-[300px]"
       />
     </div>
   );

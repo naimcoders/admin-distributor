@@ -29,7 +29,7 @@ const datas: OrderProps[] = [
     orderName: "Guntur",
     phoneNumber: "085867894321",
     storeName: "Gunung Mas",
-    paymentMethod: "VA BCA",
+    paymentMethod: "indomaret",
     totalPay: 356000,
   },
   {

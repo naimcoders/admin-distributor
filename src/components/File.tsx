@@ -91,7 +91,7 @@ export const InputFile: React.FC<InputFile> = ({
   icons,
 }) => {
   return (
-    <div className="flexcol gap-2">
+    <div className="flexcol gap-4">
       <h2 className="text-sm font-interMedium capitalize">{label}</h2>
       {!blob ? (
         <File

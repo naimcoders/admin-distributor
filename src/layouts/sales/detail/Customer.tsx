@@ -2,7 +2,7 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { Actions } from "src/components/Actions";
 import Label from "src/components/Label";
 import Table from "src/components/Table";
-import { detailNavigate, parsePhoneNumber } from "src/helpers";
+import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Customer = () => {
@@ -62,11 +62,11 @@ const useHook = () => {
   const { onNav } = detailNavigate();
   const columns: Columns<Customer>[] = [
     {
-      header: "nama toko",
+      header: <p className="text-center">nama toko</p>,
       render: (v) => <Label label={v.storeName} />,
     },
     {
-      header: "nama pemilik",
+      header: <p className="text-center">nama pemilik</p>,
       render: (v) => (
         <Label
           label={v.ownerName}
@@ -77,32 +77,30 @@ const useHook = () => {
       ),
     },
     {
-      header: "nomor HP",
+      header: <p className="text-center">nomor HP</p>,
+      render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
+    },
+    {
+      header: <p className="text-center">kota</p>,
+      render: (v) => <Label label={v.city} />,
+    },
+    {
+      header: <p className="text-right">total revenue</p>,
       render: (v) => (
         <Label
-          label={parsePhoneNumber(v.phoneNumber)}
-          className="justify-center"
+          label={`Rp${Currency(v.totalRevenue)}`}
+          className="justify-end"
         />
       ),
     },
     {
-      header: "kota",
-      render: (v) => <Label label={v.city} className="justify-center" />,
-    },
-    {
-      header: "total revenue",
+      header: <p className="text-right">total transaksi</p>,
       render: (v) => (
-        <Label label={`Rp${v.totalRevenue}`} className="justify-end" />
+        <Label label={Currency(v.totalTransaction)} className="justify-end" />
       ),
     },
     {
-      header: "total transaksi",
-      render: (v) => (
-        <Label label={v.totalTransaction} className="justify-end" />
-      ),
-    },
-    {
-      header: "aksi",
+      header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
           id={idx}

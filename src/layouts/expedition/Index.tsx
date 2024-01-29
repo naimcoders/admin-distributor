@@ -1,7 +1,7 @@
 import { Actions } from "src/components/Actions";
 import Label from "src/components/Label";
 import { TableWithoutTabs } from "src/components/Table";
-import { detailNavigate, parsePhoneNumber } from "src/helpers";
+import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Expedition = () => {
@@ -71,44 +71,39 @@ const useHook = () => {
 
   const columns: Columns<Expedition>[] = [
     {
-      header: "nama ekspedisi",
+      header: <p className="text-center">nama ekspedisi</p>,
       render: (v) => <Label label={v.expeditionName} />,
     },
     {
-      header: "nama pemilik",
+      header: <p className="text-center">nama pemilik</p>,
       render: (v) => <Label label={v.ownerName} />,
     },
     {
-      header: "nomor HP",
+      header: <p className="text-center">nomor HP</p>,
+      render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
+    },
+    {
+      header: <p className="text-center">email</p>,
+      render: (v) => <Label label={v.email} />,
+    },
+    {
+      header: <p className="text-center">tanggal join</p>,
+      render: (v) => <Label label={v.joiningDate} />,
+    },
+    {
+      header: <p className="text-center">total transaksi</p>,
       render: (v) => (
-        <Label
-          label={parsePhoneNumber(v.phoneNumber)}
-          className="justify-center"
-        />
+        <Label label={Currency(v.totalTransaction)} className="justify-end" />
       ),
     },
     {
-      header: "email",
-      render: (v) => <Label label={v.email} className="justify-center" />,
-    },
-    {
-      header: "tanggal join",
-      render: (v) => <Label label={v.joiningDate} className="justify-center" />,
-    },
-    {
-      header: "total omset",
+      header: <p className="text-right">total omset (Rp)</p>,
       render: (v) => (
-        <Label label={`Rp${v.totalOmset}`} className="justify-end" />
+        <Label label={`${Currency(v.totalOmset)}`} className="justify-end" />
       ),
     },
     {
-      header: "total transaksi",
-      render: (v) => (
-        <Label label={v.totalTransaction} className="justify-end" />
-      ),
-    },
-    {
-      header: "aksi",
+      header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
           id={idx}

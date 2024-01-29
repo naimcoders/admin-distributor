@@ -14,6 +14,7 @@ import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import useGeneralStore from "src/stores/generalStore";
 import Image from "src/components/Image";
+import { GridInput } from "src/layouts/Index";
 
 const CustomerDetail = () => {
   const {
@@ -28,8 +29,8 @@ const CustomerDetail = () => {
   const { fields } = useHook();
 
   return (
-    <main>
-      <div className="grid-min-300 gap-6">
+    <>
+      <GridInput className="mt-2">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -77,10 +78,10 @@ const CustomerDetail = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <PicSalesModal setValue={setValue} clearErrors={clearErrors} />
-    </main>
+    </>
   );
 };
 

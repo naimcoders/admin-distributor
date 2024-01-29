@@ -9,6 +9,7 @@ import { Fragment } from "react";
 import { Button } from "src/components/Button";
 import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { GridInput } from "src/layouts/Index";
 
 const Business = () => {
   const {
@@ -18,8 +19,8 @@ const Business = () => {
   const { fields } = useHook();
 
   return (
-    <main className="my-5">
-      <div className="grid-min-300 gap-6">
+    <main className="mt-5">
+      <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -65,7 +66,7 @@ const Business = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />

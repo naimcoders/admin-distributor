@@ -10,6 +10,7 @@ import { useActiveModal } from "src/stores/modalStore";
 import { CategoryModal, useKtp } from "../Create";
 import { InputFile } from "src/components/File";
 import Image from "src/components/Image";
+import { GridInput } from "src/layouts/Index";
 
 const Profile = () => {
   const { control, setValue, clearErrors } = useForm<FieldValues>({
@@ -18,7 +19,7 @@ const Profile = () => {
   const { fields } = useHook();
 
   return (
-    <section className="grid-min-300 gap-6 mt-5">
+    <GridInput className="mt-5">
       {fields.map((v, idx) => (
         <Fragment key={idx}>
           {["text", "number", "email"].includes(v.type!) && (
@@ -78,7 +79,7 @@ const Profile = () => {
       ))}
 
       <CategoryModal setValue={setValue} clearErrors={clearErrors} />
-    </section>
+    </GridInput>
   );
 };
 

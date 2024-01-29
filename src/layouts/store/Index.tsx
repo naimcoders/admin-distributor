@@ -9,23 +9,21 @@ const Store = () => {
   const { columns } = useStore();
 
   return (
-    <>
-      <TableWithoutTabs
-        header={{
-          search: {
-            placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
-            setSearch: () => console.log("dadsa"),
-          },
-        }}
-        table={{
-          columns,
-          data: storeDatas,
-          isLoading: false,
-          isNext: false,
-          page: 1,
-        }}
-      />
-    </>
+    <TableWithoutTabs
+      header={{
+        search: {
+          placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
+          setSearch: () => console.log("dadsa"),
+        },
+      }}
+      table={{
+        columns,
+        data: storeDatas,
+        isLoading: false,
+        isNext: false,
+        page: 1,
+      }}
+    />
   );
 };
 

@@ -9,6 +9,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { InputFile } from "src/components/File";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
+import { GridInput } from "src/layouts/Index";
 
 const Profile = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -16,7 +17,7 @@ const Profile = () => {
 
   return (
     <main className="mt-5">
-      <div className="grid-min-300 gap-6">
+      <GridInput className="mt-5">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -28,7 +29,7 @@ const Profile = () => {
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
                 readOnly={v.readOnly}
-                description={v.description}
+                // description={v.description}
               />
             )}
 
@@ -52,7 +53,7 @@ const Profile = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />

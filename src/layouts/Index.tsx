@@ -2,7 +2,7 @@ import cx from "classnames";
 import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import Image from "src/components/Image";
@@ -98,6 +98,16 @@ export const Logout = () => {
         onClick={logout}
       />
     </div>
+  );
+};
+
+export const GridInput: React.FC<
+  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
+> = ({ children, className }) => {
+  return (
+    <section className={cx("grid-min-300 gap-x-6 gap-y-8", className)}>
+      {children}
+    </section>
   );
 };
 

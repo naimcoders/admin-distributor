@@ -8,6 +8,7 @@ import {
   Textfield,
   objectFields,
 } from "src/components/Textfield";
+import { GridInput } from "../Index";
 
 const Create = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -15,7 +16,7 @@ const Create = () => {
 
   return (
     <main>
-      <div className="grid-min-300 gap-6">
+      <GridInput className="mt-2">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -63,7 +64,7 @@ const Create = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />

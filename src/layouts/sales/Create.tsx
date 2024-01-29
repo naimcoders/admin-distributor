@@ -14,6 +14,7 @@ import { UseForm } from "src/types";
 import { handleErrorMessage } from "src/helpers";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import useGeneralStore from "src/stores/generalStore";
+import { GridInput } from "../Index";
 
 const Create = () => {
   const {
@@ -40,7 +41,7 @@ const Create = () => {
 
   return (
     <main>
-      <div className="grid-min-300 gap-6">
+      <GridInput className="mt-2">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -97,7 +98,7 @@ const Create = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" onClick={onSubmit} />

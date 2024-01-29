@@ -10,6 +10,7 @@ import {
 } from "src/components/Textfield";
 import { parsePhoneNumber } from "src/helpers";
 import { useKtp } from "./Create";
+import { GridInput } from "../Index";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -17,7 +18,7 @@ const Detail = () => {
 
   return (
     <main>
-      <div className="grid-min-300 gap-6">
+      <GridInput className="mt-2">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -29,7 +30,7 @@ const Detail = () => {
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
                 readOnly={v.readOnly}
-                description={v.description}
+                // description={v.description}
               />
             )}
 
@@ -67,7 +68,7 @@ const Detail = () => {
             )}
           </Fragment>
         ))}
-      </div>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />

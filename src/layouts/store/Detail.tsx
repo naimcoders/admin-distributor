@@ -6,13 +6,14 @@ import {
   Textfield,
   objectFields,
 } from "src/components/Textfield";
+import { GridInput } from "../Index";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useDetail();
 
   return (
-    <main className="grid-min-300 gap-6">
+    <GridInput className="mt-2">
       {fields.map((v, idx) => (
         <Fragment key={idx}>
           {["text", "number", "email"].includes(v.type!) && (
@@ -42,7 +43,7 @@ const Detail = () => {
           )}
         </Fragment>
       ))}
-    </main>
+    </GridInput>
   );
 };
 

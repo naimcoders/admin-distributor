@@ -44,11 +44,11 @@ export const Textfield = (props: Textfield) => {
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
-      className={"w-[24rem]"}
       description={props.description}
       startContent={props.startContent}
       isReadOnly={props.readOnly?.isValue}
       radius={!props.radius ? "sm" : props.radius}
+      className={cx("max-w-[24rem]", props.className)}
       color={props.errorMessage ? "danger" : "default"}
       classNames={{
         base: "z-0",

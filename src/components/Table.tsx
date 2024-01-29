@@ -99,17 +99,16 @@ export function TableWithSearchAndTabs<S extends object>(
 ) {
   return (
     <div className="mt-5">
-      <div className="sm:absolute sm:top-0 sm:right-0">
-        <Textfield
-          type="text"
-          name="search"
-          defaultValue=""
-          autoComplete="off"
-          control={props.control}
-          placeholder={props.placeholder}
-          startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
-        />
-      </div>
+      <Textfield
+        type="text"
+        name="search"
+        defaultValue=""
+        autoComplete="off"
+        control={props.control}
+        placeholder={props.placeholder}
+        className="sm:absolute sm:top-0 sm:right-0"
+        startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
+      />
 
       <Table
         columns={props.columns}

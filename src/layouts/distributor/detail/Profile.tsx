@@ -62,7 +62,7 @@ const Profile = () => {
 };
 
 const useHook = () => {
-  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
   const newKTP =
     "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg";
 

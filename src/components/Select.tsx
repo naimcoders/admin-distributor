@@ -1,11 +1,14 @@
 import { Select as Listbox, SelectItem } from "@nextui-org/react";
+import { HTMLAttributes } from "react";
 
 export interface SelectDataProps {
   label: string;
   value: string;
 }
 
-interface SelectProps extends Omit<SelectDataProps, "value"> {
+interface SelectProps
+  extends Omit<SelectDataProps, "value">,
+    HTMLAttributes<HTMLInputElement> {
   data: SelectDataProps[];
   placeholder: string;
   setSelected: (v: string) => void;
@@ -18,14 +21,15 @@ const Select: React.FC<SelectProps> = ({
   placeholder,
   errorMessage,
   setSelected,
+  className,
 }) => {
   return (
     <Listbox
       items={data}
       label={label}
       placeholder={placeholder}
-      className="max-w-xs"
       labelPlacement="outside"
+      className={className}
       classNames={{
         label: "capitalize font-interMedium",
         value: "capitalize",

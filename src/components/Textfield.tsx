@@ -1,6 +1,6 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { Component, HTMLAttributes, Ref } from "react";
+import { HTMLAttributes, Ref } from "react";
 import {
   FieldValues,
   UseControllerProps,

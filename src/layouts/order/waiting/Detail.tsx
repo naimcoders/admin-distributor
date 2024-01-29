@@ -1,7 +1,6 @@
 import cx from "classnames";
 import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
-import Image from "src/components/Image";
 
 const Detail = () => {
   return (

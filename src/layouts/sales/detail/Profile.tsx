@@ -84,7 +84,7 @@ const Profile = () => {
 
 const useHook = () => {
   const { actionIsCategory } = useActiveModal();
-  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
   const fields: PartialGeneralFields[] = [
     objectFields({

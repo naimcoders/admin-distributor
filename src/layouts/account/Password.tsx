@@ -24,10 +24,10 @@ const Password = () => {
       {logins.map((el, idx) => (
         <Textfield
           key={idx}
-          name={el.name ?? ""}
           type={el.type}
-          label={el.label}
+          name={el.name!}
           defaultValue=""
+          label={el.label}
           control={control}
           placeholder={el.placeholder}
           autoComplete={el.autoComplete}

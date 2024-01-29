@@ -14,7 +14,7 @@ const Template: React.FC<TemplateProps> = ({
   btnLabelForm,
 }) => {
   return (
-    <main className="p-5 bg-white rounded-lg w-max flexcol gap-6 mt-5">
+    <main className="p-5 bg-white rounded-lg max-w-[24rem] flexcol gap-6 mt-5">
       <h1 className="font-interBold text-xl">{title}</h1>
 
       <section className="flexcol gap-7">{children}</section>

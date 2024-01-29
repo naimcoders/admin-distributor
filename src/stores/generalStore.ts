@@ -3,7 +3,18 @@ import { create } from "zustand";
 
 type CategoryProps = string[] | FormEvent<HTMLDivElement>;
 
+interface Period<T> {
+  startAt: T;
+  endAt: T;
+}
+
 interface General {
+  epoch: { startAt: number; endAt: number };
+  setEpoch: (v: Period<number>) => void;
+  clearEpoch: () => void;
+  date: { startAt: string; endAt: string };
+  setDate: (v: Period<string>) => void;
+
   bankName: string;
   setBankName: (v: string) => void;
   category: CategoryProps;
@@ -15,6 +26,12 @@ interface General {
 }
 
 const useGeneralStore = create<General>((set) => ({
+  epoch: { startAt: 0, endAt: 0 },
+  setEpoch: (v) => set({ epoch: v }),
+  clearEpoch: () => set({ epoch: { startAt: 0, endAt: 0 } }),
+  date: { startAt: "", endAt: "" },
+  setDate: (v) => set({ date: v }),
+
   bankName: "",
   setBankName: (v) => set({ bankName: v }),
   category: [],

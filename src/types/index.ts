@@ -37,3 +37,8 @@ export enum IconColor {
   green = "#12A150",
   zinc = "#71717A",
 }
+
+export interface ActionModal {
+  open: boolean;
+  close: () => void;
+}

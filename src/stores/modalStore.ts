@@ -7,6 +7,8 @@ interface Modal {
   setIsCategory: (v: boolean) => void;
   isHistory: boolean;
   setIsHistory: (v: boolean) => void;
+  isPeriod: boolean;
+  setIsPeriod: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -16,6 +18,8 @@ const useModalStore = create<Modal>((set) => ({
   setIsCategory: (v) => set({ isCategory: v }),
   isHistory: false,
   setIsHistory: (v) => set({ isHistory: v }),
+  isPeriod: false,
+  setIsPeriod: (v) => set({ isPeriod: v }),
 }));
 
 export default useModalStore;
@@ -28,11 +32,14 @@ export const useActiveModal = () => {
     setIsCategory,
     isHistory,
     setIsHistory,
+    isPeriod,
+    setIsPeriod,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
   const actionIsCategory = () => setIsCategory(!isCategory);
   const actionIsHistory = () => setIsHistory(!isHistory);
+  const actionIsPeriod = () => setIsPeriod(!isPeriod);
 
   return {
     isBankName,
@@ -41,5 +48,7 @@ export const useActiveModal = () => {
     actionIsCategory,
     isHistory,
     actionIsHistory,
+    isPeriod,
+    actionIsPeriod,
   };
 };

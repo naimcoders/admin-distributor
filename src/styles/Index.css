@@ -68,6 +68,10 @@
   }
 }
 
+.rdrDefinedRangesWrapper {
+  display: none;
+}
+
 @layer components {
   .grid-min-200 {
     @apply grid grid-cols-auto-fit-min-200px;

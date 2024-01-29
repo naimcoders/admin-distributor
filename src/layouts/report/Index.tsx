@@ -1,9 +1,12 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FieldValues, useForm } from "react-hook-form";
+import { Calendar } from "src/components/Calendar";
+import { Modal } from "src/components/Modal";
 import Select, { SelectDataProps } from "src/components/Select";
 import { Textfield } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
 import useGeneralStore from "src/stores/generalStore";
+import { useActiveModal } from "src/stores/modalStore";
 
 const data: SelectDataProps[] = [
   { label: "sales", value: "sales" },
@@ -34,16 +37,25 @@ const Period = () => {
     control,
     formState: { errors },
   } = useForm<FieldValues>();
+  const { isPeriod, actionIsPeriod } = useActiveModal();
+
   return (
-    <Textfield
-      name="period"
-      label="periode"
-      control={control}
-      placeholder="pilih periode report"
-      endContent={<ChevronRightIcon width={16} />}
-      errorMessage={handleErrorMessage(errors, "period")}
-      readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-      rules={{ required: { value: true, message: "pilih periode report" } }}
-    />
+    <>
+      <Textfield
+        name="period"
+        label="periode"
+        control={control}
+        placeholder="pilih periode report"
+        endContent={<ChevronRightIcon width={16} />}
+        errorMessage={handleErrorMessage(errors, "period")}
+        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+        rules={{ required: { value: true, message: "pilih periode report" } }}
+        onClick={actionIsPeriod}
+      />
+
+      <Modal title="periode" isOpen={isPeriod} closeModal={actionIsPeriod}>
+        <Calendar close={actionIsPeriod} />
+      </Modal>
+    </>
   );
 };

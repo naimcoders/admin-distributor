@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { FieldError, FieldErrors, FieldValues } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { format, fromUnixTime, getUnixTime } from "date-fns";
+import idLocale from "date-fns/locale/id";
 
 export const modalDOM = document.querySelector("#modal");
 
@@ -43,3 +45,11 @@ export const CreateObject = <T extends object>(data: T): T => {
   }
   return resultObj;
 };
+
+export const epochToDateConvert = (unixTime: number) => {
+  const date = fromUnixTime(unixTime);
+  const formatted = format(date, "dd MMM yyyy", { locale: idLocale });
+  return formatted;
+};
+
+export const dateToEpochConvert = (date: Date) => getUnixTime(date);

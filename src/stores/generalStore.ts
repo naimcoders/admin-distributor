@@ -10,6 +10,8 @@ interface General {
   setCategory: (v: CategoryProps) => void;
   picSales: CategoryProps;
   setPicSales: (v: CategoryProps) => void;
+  reportType: string;
+  setReportType: (v: string) => void;
 }
 
 const useGeneralStore = create<General>((set) => ({
@@ -19,6 +21,8 @@ const useGeneralStore = create<General>((set) => ({
   setCategory: (v) => set({ category: v }),
   picSales: [],
   setPicSales: (v) => set({ picSales: v }),
+  reportType: "",
+  setReportType: (v) => set({ reportType: v }),
 }));
 
 export default useGeneralStore;

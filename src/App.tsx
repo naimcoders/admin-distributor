@@ -30,6 +30,7 @@ const DetailDistributor = lazy(
 );
 const Order = lazy(() => import("./layouts/order/Index"));
 const OrderWaiting = lazy(() => import("./layouts/order/waiting/Detail"));
+const Report = lazy(() => import("./layouts/report/Index"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
@@ -194,6 +195,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Skeleton />}>
             <OrderWaiting />
+          </Suspense>
+        ),
+      },
+      {
+        path: "report",
+        element: (
+          <Suspense fallback={<Skeleton />}>
+            <Report />
           </Suspense>
         ),
       },

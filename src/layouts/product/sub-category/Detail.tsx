@@ -62,6 +62,7 @@ const Detail = () => {
             />
           )
         }
+        className="max-w-full"
       />
     </main>
   );
@@ -71,7 +72,7 @@ export default Detail;
 
 const Header = () => {
   return (
-    <header className="border-b-2 border-gray-300 px-5 py-4 ">
+    <header className="border-b-2 border-gray-300 p-4">
       <h2 className="font-interBold">Elektronik</h2>
     </header>
   );
@@ -85,7 +86,7 @@ interface ListingProps {
 
 const Listing = ({ label, update, remove }: ListingProps) => {
   return (
-    <section className="px-5 py-4 flex justify-between border-t border-gray-300 hover:bg-gray-100">
+    <section className="p-4 flex justify-between border-t border-gray-300 hover:bg-gray-100">
       <h2>{label}</h2>
 
       <section className="flex gap-5">

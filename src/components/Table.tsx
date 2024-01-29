@@ -13,19 +13,17 @@ interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
     TableProps<T> {
   isTransparent?: boolean;
-  textColorHead?: string;
 }
 
 export default function Table<T extends object>(props: Table<T>) {
   return (
     <div className={cx("flex flex-col gap-6", props.className)}>
       <section className="relative overflow-x-auto rounded-lg">
-        <table className="w-full text-sm text-left rtl:text-right bg-white shadow-sm">
+        <table className="w-full text-left rtl:text-right bg-white shadow-sm">
           <thead
             className={cx(
-              "text-sm capitalize text-center",
-              props.isTransparent ? "bg-transparent" : "bg-slate-100",
-              !props.textColorHead ? "text-gray-700" : props.textColorHead
+              "capitalize text-gray-700",
+              props.isTransparent ? "bg-transparent" : "bg-slate-100"
             )}
           >
             <tr>

@@ -1,6 +1,5 @@
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
-import { Button } from "src/components/Button";
 import { ChildRef, InputFile } from "src/components/File";
 import { IconColor } from "src/types";
 
@@ -13,7 +12,7 @@ const Banner = () => {
     <>
       <main className="flex flex-col sm:flex-row gap-8">
         <InputFile
-          label="logo/foto usaha"
+          label="logo usaha"
           blob={logoUrl}
           icons={[
             {
@@ -23,7 +22,7 @@ const Banner = () => {
           ]}
           file={{
             ref: logo,
-            btnLabel: "unggah logo/foto usaha",
+            btnLabel: "unggah logo usaha",
             onClick: onClickLogo,
             onChange: onChangeLogo,
           }}
@@ -46,13 +45,6 @@ const Banner = () => {
           }}
         />
       </main>
-
-      <Button
-        aria-label="simpan"
-        className="mx-auto mt-6"
-        onClick={() => console.log("save")}
-        startContent={<PlusIcon width={16} />}
-      />
     </>
   );
 };

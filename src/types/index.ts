@@ -16,6 +16,7 @@ export type Color =
 export interface Columns<S extends object, v = React.ReactNode> {
   header: v;
   render(type: S, index: number): React.ReactNode;
+  width?: number;
 }
 
 export interface TableProps<T extends object> {

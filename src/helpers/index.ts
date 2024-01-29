@@ -53,3 +53,7 @@ export const epochToDateConvert = (unixTime: number) => {
 };
 
 export const dateToEpochConvert = (date: Date) => getUnixTime(date);
+
+export const Currency = (currency: number): string => {
+  return currency.toLocaleString("id-ID");
+};

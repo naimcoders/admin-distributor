@@ -10,6 +10,7 @@ import Table from "src/components/Table";
 import Image from "src/components/Image";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
+import { Currency } from "src/helpers";
 
 const Dashboard = () => {
   return (
@@ -52,7 +53,7 @@ const arrTopLines: ITopLines[] = [
 
 const TopLine = () => {
   return (
-    <section className="flex flex-wrap gap-4 lg:gap-8">
+    <section className="grid-min-300 lg:gap-8">
       {arrTopLines.map((v) => (
         <Card
           key={v.label}
@@ -61,11 +62,14 @@ const TopLine = () => {
             `${v.bg.topLeft} ${v.bg.bottomRight}`
           )}
         >
-          <CardHeader className="capitalize" as="h2">
+          <CardHeader className="capitalize text-xl" as="h2">
             {v.label}
           </CardHeader>
-          <CardBody as="h2" className="text-3xl font-interMedium text-center">
-            {v.amount}
+          <CardBody
+            as="h2"
+            className="text-5xl font-interMedium text-center -mt-4"
+          >
+            {v.amount.toLocaleString("id-ID")}
           </CardBody>
         </Card>
       ))}
@@ -75,7 +79,7 @@ const TopLine = () => {
 
 const MiddleLine = () => {
   return (
-    <section className="flex flex-wrap gap-8">
+    <section className="grid-min-300 gap-8">
       <PiliPay />
 
       <Card className="flex-grow z-0">
@@ -258,21 +262,19 @@ const BottomLine = () => {
   return (
     <footer className="flex flex-col gap-8 sm:flex-row sm:flex-wrap">
       <Table
-        columns={columns}
+        columns={columnStore}
         data={stores}
         isLoading={false}
         isTransparent
         className="flex-1"
-        textColorHead="text-[#30b2e5]"
       />
 
       <Table
-        columns={columns}
-        data={stores}
+        columns={columnProduct}
+        data={products}
         isLoading={false}
         isTransparent
         className="flex-1"
-        textColorHead="text-[#ae5eaa]"
       />
     </footer>
   );
@@ -280,26 +282,45 @@ const BottomLine = () => {
 
 interface Store {
   bestStore: string;
-  renevue: number;
+  omset: number;
   transaction: number;
+}
+
+interface Product {
+  bestStore: string;
+  category: string;
+  totalPay: number;
 }
 
 const stores: Store[] = [
   {
-    bestStore: "sukses jaya mandiri",
-    renevue: 21311442,
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
     transaction: 1231,
   },
   {
-    bestStore: "sukses jaya mandiri",
-    renevue: 21311442,
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
     transaction: 1231,
   },
 ];
 
-const columns: Columns<Store>[] = [
+const products: Product[] = [
   {
-    header: "toko terlaris",
+    bestStore: "Kertas A4 1 Rim",
+    category: "Kantor & Alat Tulis",
+    totalPay: 532,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    category: "Bahan Bangunan",
+    totalPay: 513,
+  },
+];
+
+const columnStore: Columns<Store>[] = [
+  {
+    header: <p className="text-[#30b2e5]">toko terlaris</p>,
     render: (v, idx) => (
       <p>
         {idx + 1}. {v.bestStore}
@@ -307,12 +328,31 @@ const columns: Columns<Store>[] = [
     ),
   },
   {
-    header: "total revenue",
-    render: (v) => <p className="text-center">{v.renevue}</p>,
+    header: <p className="text-right text-[#30b2e5]">total omset (Rp)</p>,
+    render: (v) => <p className="text-right">{Currency(v.omset)}</p>,
   },
   {
-    header: "total transaksi",
-    render: (v) => <p className="text-center">{v.transaction}</p>,
+    header: <p className="text-right text-[#30b2e5]">total transaksi</p>,
+    render: (v) => <p className="text-right">{Currency(v.transaction)}</p>,
+  },
+];
+
+const columnProduct: Columns<Product>[] = [
+  {
+    header: <p className="text-[#ae5eaa]">produk terlaris</p>,
+    render: (v, idx) => (
+      <p>
+        {idx + 1}. {v.bestStore}
+      </p>
+    ),
+  },
+  {
+    header: <p className="text-right text-[#ae5eaa]">kategori</p>,
+    render: (v) => <p className="text-right">{v.category}</p>,
+  },
+  {
+    header: <p className="text-right text-[#ae5eaa]">total pembelian</p>,
+    render: (v) => <p className="text-right">{Currency(v.totalPay)}</p>,
   },
 ];
 

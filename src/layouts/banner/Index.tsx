@@ -1,5 +1,6 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, InputFile } from "src/components/File";
 import { IconColor } from "src/types";
 
@@ -7,12 +8,14 @@ const Banner = () => {
   const { banner, bannerUrl, onClickBanner, onChangeBanner, setBannerUrl } =
     useBanner();
   const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo } = useLogo();
-
+  const {
+    control,
+    formState: { errors },
+  } = useForm<FieldValues>();
   return (
     <>
       <main className="flex flex-col sm:flex-row gap-8">
         <InputFile
-          label="logo usaha"
           blob={logoUrl}
           icons={[
             {
@@ -22,14 +25,19 @@ const Banner = () => {
           ]}
           file={{
             ref: logo,
-            btnLabel: "unggah logo",
+            label: "logo usaha",
             onClick: onClickLogo,
             onChange: onChangeLogo,
+            control,
+            errors,
+            name: "logo",
+            placeholder: "Unggah logo",
+            errorMessage: "Pilih logo usaha",
+            className: "w-[15rem]",
           }}
         />
 
         <InputFile
-          label="banner etalase"
           blob={bannerUrl}
           icons={[
             {
@@ -39,9 +47,15 @@ const Banner = () => {
           ]}
           file={{
             ref: banner,
+            label: "banner etalase",
             onClick: onClickBanner,
             onChange: onChangeBanner,
-            btnLabel: "unggah banner",
+            control,
+            errors,
+            name: "banner",
+            placeholder: "Unggah banner",
+            errorMessage: "Pilih banner etalase",
+            className: "w-[15rem]",
           }}
         />
       </main>

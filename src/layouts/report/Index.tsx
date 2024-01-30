@@ -1,5 +1,6 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FieldValues, useForm } from "react-hook-form";
+import { Button } from "src/components/Button";
 import { Calendar } from "src/components/Calendar";
 import { Modal } from "src/components/Modal";
 import Select, { SelectDataProps } from "src/components/Select";
@@ -17,15 +18,18 @@ const Report = () => {
   const setReportType = useGeneralStore((v) => v.setReportType);
 
   return (
-    <main className="grid grid-cols-3 gap-6 pt-3">
+    <main className="flexcol sm:flex-row gap-x-8 pt-3 items-end">
       <Select
         data={data}
         label="jenis report"
         placeholder="pilih jenis report"
         setSelected={setReportType}
+        className="w-[20rem]"
       />
 
       <Period />
+
+      <Button aria-label="export" />
     </main>
   );
 };
@@ -53,6 +57,7 @@ const Period = () => {
         errorMessage={handleErrorMessage(errors, "period")}
         readOnly={{ isValue: true, cursor: "cursor-pointer" }}
         rules={{ required: { value: true, message: "pilih periode report" } }}
+        className="w-[20rem]"
       />
 
       <Modal title="periode" isOpen={isPeriod} closeModal={actionIsPeriod}>

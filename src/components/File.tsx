@@ -53,6 +53,7 @@ export const File = forwardRef(
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
           errorMessage={handleErrorMessage(props.errors!, props.name)}
           rules={{ required: { value: true, message: props.errorMessage! } }}
+          className={props.className}
         />
       </>
     );
@@ -80,6 +81,7 @@ export const InputFile: React.FC<InputFile> = ({ blob, file, icons }) => {
           placeholder={file.placeholder}
           startContent={<ArrowUpTrayIcon width={16} />}
           errorMessage={file.errorMessage}
+          className={file.className}
         />
       ) : (
         <div className="flexcol gap-2">

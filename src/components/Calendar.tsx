@@ -6,7 +6,7 @@ import { dateToEpochConvert, epochToDateConvert } from "src/helpers";
 import { Chip } from "@nextui-org/react";
 import { Button } from "./Button";
 import useGeneralStore from "src/stores/generalStore";
-import { ActionModal } from "src/types";
+import { ActionModal, UseForm } from "src/types";
 
 interface IDateRange {
   key: string;
@@ -14,16 +14,20 @@ interface IDateRange {
   endDate: Date;
 }
 
-export const Calendar = ({ close }: Pick<ActionModal, "close">) => {
+export const Calendar = (
+  r: Pick<ActionModal, "close"> & Pick<UseForm, "setValue">
+) => {
   const { dateRange, handleSelect } = useHook();
   const date = useGeneralStore((v) => v.date);
-  const setEpoch = useGeneralStore((v) => v.setEpoch);
 
   const handlePeriod = () => {
     const startAt = dateToEpochConvert(new Date(date.startAt));
     const endAt = dateToEpochConvert(new Date(date.endAt));
-    setEpoch({ startAt, endAt });
-    close();
+    const start = epochToDateConvert(startAt);
+    const end = epochToDateConvert(endAt);
+
+    r.setValue("period", `${start} - ${end}`);
+    r.close();
   };
 
   return (

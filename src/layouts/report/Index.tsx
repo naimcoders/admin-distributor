@@ -35,6 +35,7 @@ export default Report;
 const Period = () => {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useForm<FieldValues>();
   const { isPeriod, actionIsPeriod } = useActiveModal();
@@ -44,17 +45,18 @@ const Period = () => {
       <Textfield
         name="period"
         label="periode"
+        defaultValue=""
         control={control}
+        onClick={actionIsPeriod}
         placeholder="pilih periode report"
         endContent={<ChevronRightIcon width={16} />}
         errorMessage={handleErrorMessage(errors, "period")}
         readOnly={{ isValue: true, cursor: "cursor-pointer" }}
         rules={{ required: { value: true, message: "pilih periode report" } }}
-        onClick={actionIsPeriod}
       />
 
       <Modal title="periode" isOpen={isPeriod} closeModal={actionIsPeriod}>
-        <Calendar close={actionIsPeriod} />
+        <Calendar close={actionIsPeriod} setValue={setValue} />
       </Modal>
     </>
   );

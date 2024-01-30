@@ -16,7 +16,6 @@ import { UseForm } from "src/types";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import useGeneralStore from "src/stores/generalStore";
-import Image from "src/components/Image";
 import { GridInput } from "src/layouts/Index";
 import { StaticImageAndTitle } from "src/components/File";
 

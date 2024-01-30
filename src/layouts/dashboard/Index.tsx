@@ -202,7 +202,7 @@ const HistoryModal = () => {
     >
       <main className="my-6 text-sm">
         <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interBold">Jumat, 22 Des 2023</h2>
+          <h2 className="font-interMedium">Jumat, 22 Des 2023</h2>
           <History
             label="Top Up"
             desc="Alfamart"
@@ -217,7 +217,7 @@ const HistoryModal = () => {
           />
         </section>
         <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interBold">Kamis, 21 Des 2023</h2>
+          <h2 className="font-interMedium">Kamis, 21 Des 2023</h2>
           <History
             label="Transfer"
             desc="Mandiri"
@@ -246,14 +246,14 @@ const History: React.FC<{
           radius="none"
         />
         <section>
-          <h2 className="font-interBold">{props.label}</h2>
-          <p className="text-xs font-interMedium">{props.desc}</p>
+          <h2 className="font-interMedium">{props.label}</h2>
+          <p className="text-xs">{props.desc}</p>
         </section>
       </section>
 
       <h2
         className={cx(
-          "font-interBold",
+          "font-interMedium",
           props.label === "Top Up" && "text-[#2754bb]"
         )}
       >

@@ -1,13 +1,14 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes, Ref } from "react";
+import { HTMLAttributes, Ref, useState } from "react";
 import {
   FieldValues,
   UseControllerProps,
   useController,
 } from "react-hook-form";
 import { ChildRef, FileProps } from "./File";
-import { Radius } from "src/types";
+import { IconColor, Radius } from "src/types";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 interface Textfield
   extends UseControllerProps<FieldValues>,
@@ -32,14 +33,18 @@ interface Textfield
 
 export const Textfield = (props: Textfield) => {
   const { field } = useController(props);
+  const [isPass, setIsPass] = useState(false);
+  const handlePass = () => setIsPass((prev) => !prev);
+
   return (
     <Input
       {...field}
-      type={props.type}
+      type={
+        props.type === "password" ? (!isPass ? "password" : "text") : props.type
+      }
       label={props.label}
       labelPlacement="outside"
       onClick={props.onClick}
-      endContent={props.endContent}
       placeholder={props.placeholder}
       errorMessage={props.errorMessage}
       autoComplete={props.autoComplete}
@@ -57,6 +62,29 @@ export const Textfield = (props: Textfield) => {
         description: "text-[#71717A] first-letter:capitalize",
       }}
       title={props.defaultValue}
+      endContent={
+        props.type === "password" ? (
+          !isPass ? (
+            <EyeSlashIcon
+              width={18}
+              className="cursor-pointer"
+              onClick={handlePass}
+              color={IconColor.zinc}
+              title="Show"
+            />
+          ) : (
+            <EyeIcon
+              width={18}
+              color={IconColor.zinc}
+              className="cursor-pointer"
+              onClick={handlePass}
+              title="Hide"
+            />
+          )
+        ) : (
+          props.endContent
+        )
+      }
     />
   );
 };

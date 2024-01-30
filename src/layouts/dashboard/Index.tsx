@@ -1,3 +1,4 @@
+import pilipayLogo from "src/assets/images/pilipay.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
 import transferImg from "src/assets/images/transfer.png";
 import topUpImg from "src/assets/images/top up.png";
@@ -116,14 +117,14 @@ const PiliPay = () => {
 const PilipayTransaction = () => {
   return (
     <section className="flex items-center gap-4 flex-1">
-      <div className="text-white flex flex-col gap-1">
-        <h2 className="capitalize text-[.72rem]">transaksi hari ini</h2>
+      <div className="text-white flex flex-col gap-2">
+        <h2 className="capitalize text-[.75rem]">transaksi hari ini</h2>
         <h2 className="font-interMedium">Rp1.978.000</h2>
       </div>
       <Button
         aria-label="Update"
         radius="sm"
-        className="w-full text-black text-sm bg-blue-300 font-interBold"
+        className="w-full text-black text-sm bg-blue-300 font-interMedium"
       />
     </section>
   );
@@ -134,8 +135,8 @@ const PilipayBalance = () => {
 
   return (
     <section className="flex gap-4 items-center">
-      <section className="text-white flex flex-col gap-1">
-        <span className="text-[.72rem] tracking-wider inline-flex gap-1">
+      <section className="text-white flex flex-col gap-2">
+        <span className="text-[.75rem] tracking-wider inline-flex gap-1">
           <img src={walletSVG} alt="wallet" className="w-4" />
           Saldo PiliPay
         </span>
@@ -180,7 +181,12 @@ const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
 const CustomeHeader = () => {
   return (
     <header>
-      <h2>Logo Pilipay</h2>
+      <img
+        src={pilipayLogo}
+        alt="Pilipay"
+        className="w-[10rem]"
+        loading="lazy"
+      />
     </header>
   );
 };

@@ -1,6 +1,5 @@
 import tokoroti from "src/assets/images/toko_roti.jpg";
 import bannerEtalase from "src/assets/images/banner_etalase.jpg";
-import Image from "src/components/Image";
 import {
   PartialGeneralFields,
   Textfield,
@@ -12,6 +11,7 @@ import { Button } from "src/components/Button";
 import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { GridInput } from "src/layouts/Index";
+import { StaticImageAndTitle } from "src/components/File";
 
 const Business = () => {
   const {
@@ -55,17 +55,10 @@ const Business = () => {
             )}
 
             {["image"].includes(v.type!) && (
-              <div className="flexcol gap-2">
-                <h2 className="text-sm font-interMedium capitalize">
-                  {v.label}
-                </h2>
-                <Image
-                  src={String(v.defaultValue)}
-                  alt={v.label}
-                  loading="lazy"
-                  className="aspect-video object-cover"
-                />
-              </div>
+              <StaticImageAndTitle
+                label={v.label!}
+                src={String(v.defaultValue)}
+              />
             )}
           </Fragment>
         ))}

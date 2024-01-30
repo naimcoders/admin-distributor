@@ -2,13 +2,13 @@ import ktp from "src/assets/images/ktp.png";
 import banner from "src/assets/images/banner_etalase.jpg";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import Image from "src/components/Image";
 import {
   PartialGeneralFields,
   Textfield,
   objectFields,
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
+import { StaticImageAndTitle } from "src/components/File";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -34,15 +34,10 @@ const Detail = () => {
           )}
 
           {["image"].includes(v.type!) && (
-            <div className="flexcol gap-2 text-sm capitalize font-interMedium">
-              <h2>{v.label}</h2>
-              <Image
-                src={String(v.defaultValue)}
-                alt={v.label}
-                loading="lazy"
-                className="aspect-video object-cover"
-              />
-            </div>
+            <StaticImageAndTitle
+              label={v.label!}
+              src={String(v.defaultValue)}
+            />
           )}
         </Fragment>
       ))}

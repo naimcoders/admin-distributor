@@ -9,10 +9,19 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
+import { handleErrorMessage } from "src/helpers";
 
 const Create = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
+
+  const onSubmit = handleSubmit(async (e) => {
+    console.log(e);
+  });
 
   return (
     <main>
@@ -27,6 +36,8 @@ const Create = () => {
                 placeholder={v.placeholder}
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
+                errorMessage={handleErrorMessage(errors, v.name)}
+                rules={{ required: { value: true, message: v.errorMessage! } }}
               />
             )}
 
@@ -41,18 +52,24 @@ const Create = () => {
                 type="text"
                 label={v.label}
                 endContent={<ChevronRightIcon width={16} />}
+                errorMessage={handleErrorMessage(errors, v.name)}
+                rules={{ required: { value: true, message: v.errorMessage! } }}
               />
             )}
 
             {["file"].includes(v.type!) && (
               <InputFile
-                label={v.label!}
                 blob={String(v.defaultValue)}
                 file={{
+                  errors,
+                  control,
+                  name: v.name!,
+                  label: v.label!,
                   ref: v.refs?.ref!,
-                  onChange: v.refs?.onChange,
                   onClick: v.refs?.onClick,
-                  btnLabel: v.placeholder!,
+                  onChange: v.refs?.onChange,
+                  placeholder: v.placeholder!,
+                  errorMessage: v.errorMessage,
                 }}
                 icons={[
                   {
@@ -67,7 +84,7 @@ const Create = () => {
       </GridInput>
 
       <div className="flex justify-center mt-10">
-        <Button aria-label="simpan" />
+        <Button aria-label="simpan" onClick={onSubmit} />
       </div>
     </main>
   );

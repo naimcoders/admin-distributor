@@ -1,3 +1,4 @@
+import ktp from "src/assets/images/ktp.png";
 import {
   PartialGeneralFields,
   Textfield,
@@ -12,8 +13,16 @@ import { Button } from "src/components/Button";
 import { GridInput } from "src/layouts/Index";
 
 const Profile = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
+
+  const onSubmit = handleSubmit(async (e) => {
+    console.log(e);
+  });
 
   return (
     <main className="mt-5">
@@ -35,13 +44,17 @@ const Profile = () => {
 
             {["file"].includes(v.type!) && (
               <InputFile
-                label={v.label!}
                 blob={String(v.defaultValue)}
                 file={{
+                  errors,
+                  control,
+                  name: v.name!,
+                  label: v.label!,
                   ref: v.refs?.ref!,
-                  onChange: v.refs?.onChange,
                   onClick: v.refs?.onClick,
-                  btnLabel: v.placeholder!,
+                  onChange: v.refs?.onChange,
+                  placeholder: v.placeholder!,
+                  errorMessage: v.errorMessage,
                 }}
                 icons={[
                   {
@@ -56,7 +69,7 @@ const Profile = () => {
       </GridInput>
 
       <div className="flex justify-center mt-10">
-        <Button aria-label="simpan" />
+        <Button aria-label="simpan" onClick={onSubmit} />
       </div>
     </main>
   );
@@ -64,8 +77,6 @@ const Profile = () => {
 
 const useHook = () => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
-  const newKTP =
-    "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg";
 
   const fields: PartialGeneralFields[] = [
     objectFields({
@@ -123,7 +134,7 @@ const useHook = () => {
         onClick,
         onChange,
       },
-      defaultValue: newKTP,
+      defaultValue: ktp,
       deleteImage: () => setKtpBlob(""),
     }),
   ];

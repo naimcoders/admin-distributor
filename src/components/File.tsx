@@ -1,4 +1,3 @@
-import cx from "classnames";
 import {
   forwardRef,
   Ref,
@@ -6,104 +5,110 @@ import {
   useRef,
   HTMLAttributes,
 } from "react";
-import { Button as Btn } from "@nextui-org/react";
 import Image, { IconImage } from "./Image";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { PartialGeneralFields, Textfield } from "./Textfield";
+import { UseForm } from "src/types";
+import { handleErrorMessage } from "src/helpers";
 
-type ButtonElement = HTMLAttributes<HTMLInputElement | HTMLButtonElement>;
-
-export interface FileProps extends ButtonElement {
-  btnLabel: string;
-  errorMessage?: string;
+export interface FileProps
+  extends HTMLAttributes<HTMLButtonElement | HTMLInputElement>,
+    Pick<UseForm, "errors" | "control"> {
   startContent?: React.ReactNode;
 }
-
-const Button = (props: FileProps) => {
-  return (
-    <Btn
-      radius="sm"
-      onClick={props.onClick}
-      startContent={props.startContent}
-      className={cx(
-        "capitalize border-1 border-dashed border-gray-500 w-full",
-        props.className
-      )}
-    >
-      {props.btnLabel}
-    </Btn>
-  );
-};
 
 export interface ChildRef {
   click: () => void;
 }
 
-export const File = forwardRef((props: FileProps, ref: Ref<ChildRef>) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+export const File = forwardRef(
+  (props: FileProps & PartialGeneralFields, ref: Ref<ChildRef>) => {
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  useImperativeHandle(ref, () => ({
-    click: () => {
-      if (inputRef.current) {
-        inputRef.current.click();
-      }
-    },
-  }));
+    useImperativeHandle(ref, () => ({
+      click: () => {
+        if (inputRef.current) {
+          inputRef.current.click();
+        }
+      },
+    }));
 
-  return (
-    <>
-      <input
-        type="file"
-        ref={inputRef}
-        className="hidden"
-        onChange={props.onChange}
-      />
+    return (
+      <>
+        <input
+          type="file"
+          ref={inputRef}
+          className="hidden"
+          onChange={props.onChange}
+        />
 
-      <Button
-        btnLabel={props.btnLabel}
-        onClick={props.onClick}
-        startContent={props.startContent}
-        className={!props.errorMessage ? "" : "bg-red-200 text-red-800"}
-      />
-
-      {!props.errorMessage ? null : (
-        <p className="text-red-500 text-xs capitalize font-interMedium mt-1">
-          {props.errorMessage}
-        </p>
-      )}
-    </>
-  );
-});
+        <Textfield
+          name={props.name!}
+          autoComplete="off"
+          label={props.label}
+          control={props.control}
+          onClick={props.onClick}
+          placeholder={props.placeholder}
+          startContent={props.startContent}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          errorMessage={handleErrorMessage(props.errors!, props.name)}
+          rules={{ required: { value: true, message: props.errorMessage! } }}
+        />
+      </>
+    );
+  }
+);
 
 interface InputFile {
-  label: string;
   blob: string;
-  file: FileProps & {
-    btnLabel: string;
-    ref: Ref<ChildRef>;
-  };
+  file: FileProps & { ref: Ref<ChildRef> } & PartialGeneralFields;
   icons: IconImage[];
 }
 
-export const InputFile: React.FC<InputFile> = ({
-  label,
-  blob,
-  file,
-  icons,
-}) => {
+export const InputFile: React.FC<InputFile> = ({ blob, file, icons }) => {
   return (
-    <div className="flexcol gap-4">
-      <h2 className="text-sm font-interMedium capitalize">{label}</h2>
+    <>
       {!blob ? (
         <File
-          btnLabel={file.btnLabel}
           ref={file.ref}
-          onChange={file.onChange}
+          name={file.name}
+          errors={file.errors}
+          control={file.control}
+          label={file.label}
           onClick={file.onClick}
+          onChange={file.onChange}
+          placeholder={file.placeholder}
           startContent={<ArrowUpTrayIcon width={16} />}
+          errorMessage={file.errorMessage}
         />
       ) : (
-        <Image src={blob} alt="image" icons={icons} />
+        <div className="flexcol gap-2">
+          <h2 className="font-interMedium text-sm capitalize -mt-3">
+            {file.label}
+          </h2>
+          <Image
+            src={blob}
+            alt="image"
+            icons={icons}
+            className="aspect-video object-cover"
+          />
+        </div>
       )}
+    </>
+  );
+};
+
+export const StaticImageAndTitle = (props: { label: string; src: string }) => {
+  return (
+    <div className="flexcol gap-2">
+      <h2 className="font-interMedium text-sm capitalize -mt-3">
+        {props.label}
+      </h2>
+      <Image
+        src={props.src}
+        alt="image"
+        className="aspect-video object-cover"
+      />
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import tokoroti from "src/assets/images/toko_roti.jpg";
+import bannerEtalase from "src/assets/images/banner_etalase.jpg";
 import Image from "src/components/Image";
 import {
   PartialGeneralFields,
@@ -61,6 +63,7 @@ const Business = () => {
                   src={String(v.defaultValue)}
                   alt={v.label}
                   loading="lazy"
+                  className="aspect-video object-cover"
                 />
               </div>
             )}
@@ -76,9 +79,6 @@ const Business = () => {
 };
 
 const useHook = () => {
-  const businessLogo =
-    "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg";
-
   const fields: PartialGeneralFields[] = [
     objectFields({
       label: "nama usaha",
@@ -106,16 +106,16 @@ const useHook = () => {
       defaultValue: "Depan SMP Negeri 4",
     }),
     objectFields({
-      label: "logo/foto usaha",
+      label: "logo usaha",
       name: "businessLogo",
       type: "image",
-      defaultValue: businessLogo,
+      defaultValue: tokoroti,
     }),
     objectFields({
       label: "banner etalase",
       name: "banner",
       type: "image",
-      defaultValue: businessLogo,
+      defaultValue: bannerEtalase,
     }),
   ];
 

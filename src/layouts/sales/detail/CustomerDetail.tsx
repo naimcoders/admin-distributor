@@ -1,3 +1,6 @@
+import ktp from "src/assets/images/ktp.png";
+import bannerEtalase from "src/assets/images/banner_etalase.jpg";
+
 import {
   PartialGeneralFields,
   Textfield,
@@ -15,6 +18,7 @@ import { Button } from "src/components/Button";
 import useGeneralStore from "src/stores/generalStore";
 import Image from "src/components/Image";
 import { GridInput } from "src/layouts/Index";
+import { StaticImageAndTitle } from "src/components/File";
 
 const CustomerDetail = () => {
   const {
@@ -69,12 +73,10 @@ const CustomerDetail = () => {
             )}
 
             {["image"].includes(v.type!) && (
-              <div className="flexcol gap-2">
-                <h2 className="font-interMedium text-sm capitalize">
-                  {v.label}
-                </h2>
-                <Image src={String(v.defaultValue)} alt={v.label} />
-              </div>
+              <StaticImageAndTitle
+                label={v.label!}
+                src={String(v.defaultValue)}
+              />
             )}
           </Fragment>
         ))}
@@ -236,15 +238,13 @@ const useHook = () => {
       label: "KTP pemilik",
       name: "ktp",
       type: "image",
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: ktp,
     }),
     objectFields({
       label: "banner etalase",
       name: "banner",
       type: "image",
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: bannerEtalase,
     }),
   ];
 

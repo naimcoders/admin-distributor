@@ -1,4 +1,6 @@
 import {
+  Control,
+  FieldErrors,
   FieldValues,
   UseFormClearErrors,
   UseFormSetValue,
@@ -29,6 +31,8 @@ export interface TableProps<T extends object> {
 }
 
 export interface UseForm {
+  errors: FieldErrors<FieldValues>;
+  control: Control<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
 }

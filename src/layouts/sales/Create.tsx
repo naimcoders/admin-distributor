@@ -80,13 +80,17 @@ const Create = () => {
 
             {["file"].includes(v.type!) && (
               <InputFile
-                label={v.label!}
                 blob={String(v.defaultValue)}
                 file={{
+                  errors,
+                  control,
+                  name: v.name!,
+                  label: v.label!,
                   ref: v.refs?.ref!,
-                  onChange: v.refs?.onChange,
                   onClick: v.refs?.onClick,
-                  btnLabel: v.placeholder!,
+                  onChange: v.refs?.onChange,
+                  placeholder: v.placeholder!,
+                  errorMessage: v.errorMessage,
                 }}
                 icons={[
                   {

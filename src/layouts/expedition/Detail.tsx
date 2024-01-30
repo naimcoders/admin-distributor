@@ -1,3 +1,5 @@
+import ktp from "src/assets/images/ktp.png";
+
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,7 +15,10 @@ import { useKtp } from "./Create";
 import { GridInput } from "../Index";
 
 const Detail = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
+  const {
+    control,
+    formState: { errors },
+  } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
 
   return (
@@ -50,13 +55,17 @@ const Detail = () => {
 
             {["file"].includes(v.type!) && (
               <InputFile
-                label={v.label!}
                 blob={String(v.defaultValue)}
                 file={{
+                  errors,
+                  control,
+                  name: v.name!,
+                  label: v.label!,
                   ref: v.refs?.ref!,
-                  onChange: v.refs?.onChange,
                   onClick: v.refs?.onClick,
-                  btnLabel: v.placeholder!,
+                  onChange: v.refs?.onChange,
+                  placeholder: v.placeholder!,
+                  errorMessage: v.errorMessage,
                 }}
                 icons={[
                   {
@@ -161,7 +170,7 @@ const useHook = () => {
         onClick,
         onChange,
       },
-      defaultValue: ktpBlob,
+      defaultValue: ktp,
       deleteImage: () => setKtpBlob(""),
     }),
   ];

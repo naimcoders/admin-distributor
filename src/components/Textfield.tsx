@@ -11,11 +11,10 @@ import { Radius } from "src/types";
 
 interface Textfield
   extends UseControllerProps<FieldValues>,
-    Pick<HTMLAttributes<HTMLInputElement>, "className"> {
+    Pick<HTMLAttributes<HTMLInputElement>, "className" | "onClick"> {
   type?: string;
   label?: string;
   placeholder?: string;
-  onClick?: () => void;
   errorMessage?: string;
   autoComplete?: "on" | "off";
   endContent?: React.ReactNode;

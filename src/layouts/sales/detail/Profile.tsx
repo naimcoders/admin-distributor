@@ -1,3 +1,4 @@
+import ktp from "src/assets/images/ktp.png";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,7 +14,12 @@ import Image from "src/components/Image";
 import { GridInput } from "src/layouts/Index";
 
 const Profile = () => {
-  const { control, setValue, clearErrors } = useForm<FieldValues>({
+  const {
+    control,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = useForm<FieldValues>({
     mode: "onChange",
   });
   const { fields } = useHook();
@@ -52,13 +58,17 @@ const Profile = () => {
 
           {["file"].includes(v.type!) && (
             <InputFile
-              label={v.label!}
               blob={String(v.defaultValue)}
               file={{
+                errors,
+                control,
+                name: v.name!,
+                label: v.label!,
                 ref: v.refs?.ref!,
-                onChange: v.refs?.onChange,
                 onClick: v.refs?.onClick,
-                btnLabel: v.placeholder!,
+                onChange: v.refs?.onChange,
+                placeholder: v.placeholder!,
+                errorMessage: v.errorMessage,
               }}
               icons={[
                 {
@@ -71,8 +81,13 @@ const Profile = () => {
 
           {["image"].includes(v.type!) && (
             <div className="flexcol gap-2">
-              <h2 className="text-sm font-interMedium">{v.label}</h2>
-              <Image src={String(v.defaultValue)} alt={v.type} loading="lazy" />
+              <h2 className="text-sm font-interMedium -mt-3">{v.label}</h2>
+              <Image
+                src={String(v.defaultValue)}
+                alt={v.type}
+                loading="lazy"
+                className="aspect-video object-cover"
+              />
             </div>
           )}
         </Fragment>
@@ -152,16 +167,14 @@ const useHook = () => {
         onClick,
         onChange,
       },
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: ktp,
       deleteImage: () => setKtpBlob(""),
     }),
     objectFields({
       label: "foto sales",
       name: "salesPhoto",
       type: "image",
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: ktp,
     }),
   ];
 

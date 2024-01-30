@@ -1,3 +1,5 @@
+import ktp from "src/assets/images/ktp.png";
+import banner from "src/assets/images/banner_etalase.jpg";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import Image from "src/components/Image";
@@ -38,6 +40,7 @@ const Detail = () => {
                 src={String(v.defaultValue)}
                 alt={v.label}
                 loading="lazy"
+                className="aspect-video object-cover"
               />
             </div>
           )}
@@ -144,15 +147,13 @@ const useDetail = () => {
       label: "KTP pemilik",
       name: "ktp",
       type: "image",
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: ktp,
     }),
     objectFields({
       label: "banner etalase",
       name: "banner",
       type: "image",
-      defaultValue:
-        "https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg",
+      defaultValue: banner,
     }),
   ];
 

@@ -21,6 +21,7 @@ export default function Image({
   icons,
   loading,
   radius,
+  className,
 }: Image) {
   const [onHover, setOnHover] = useState(false);
 
@@ -32,7 +33,7 @@ export default function Image({
       <Img
         alt={alt}
         src={src}
-        className="z-0"
+        className={cx("z-0", className)}
         loading={loading}
         radius={radius && radius}
         width={!width ? 300 : width}

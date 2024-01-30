@@ -29,7 +29,7 @@ const LoginPage = () => {
         </section>
       </section>
       <footer className="py-4 px-12 text-center">
-        <p className="text-white">&copy;2024, nama perusahaan</p>
+        <p className="text-white">&copy;2024, MOKES, All Rights Reserved</p>
       </footer>
     </main>
   );

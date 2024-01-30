@@ -84,7 +84,7 @@ const MiddleLine = () => {
       <PiliPay />
 
       <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">
-        <CardHeader as="h2" className="text-xl capitalize justify-center">
+        <CardHeader as="h2" className="text-lg capitalize justify-center">
           total omset
         </CardHeader>
         <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
@@ -92,7 +92,7 @@ const MiddleLine = () => {
         </CardBody>
       </Card>
       <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">
-        <CardHeader as="h2" className="text-xl capitalize justify-center">
+        <CardHeader as="h2" className="text-lg capitalize justify-center">
           total transaksi
         </CardHeader>
         <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
@@ -123,7 +123,7 @@ const PilipayTransaction = () => {
       <Button
         aria-label="Update"
         radius="sm"
-        className="w-full text-black text-xs bg-blue-300 font-interBold"
+        className="w-full text-black text-sm bg-blue-300 font-interBold"
       />
     </section>
   );

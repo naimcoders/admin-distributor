@@ -3,17 +3,26 @@ import SubProduct from "./Product";
 import { Button } from "src/components/Button";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import CategorySub from "./sub-category/Index";
+import { useProduct } from "src/api/product.service";
+import Error from "src/components/Error";
 
 const Product = () => {
+  const { error } = useProduct().find();
   return (
-    <div className="relative">
-      <Tabs items={tabs} color="primary" />
-      <Button
-        aria-label="produk"
-        startContent={<PlusIcon width={16} />}
-        className="absolute top-0 left-[300px]"
-      />
-    </div>
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : (
+        <div className="relative">
+          <Tabs items={tabs} color="primary" />
+          <Button
+            aria-label="produk"
+            startContent={<PlusIcon width={16} />}
+            className="absolute top-0 left-[300px]"
+          />
+        </div>
+      )}
+    </>
   );
 };
 

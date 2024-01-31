@@ -111,13 +111,13 @@ export function TableWithSearchAndTabs<S extends object>(
       />
 
       <Table
-        columns={props.columns}
-        data={props.data}
-        isLoading={props.isLoading}
+        isPaginate
         className="mt-4"
-        isNext={props.isNext}
+        data={props.data}
         page={props.page}
-        isPaginate={props.isPaginate}
+        isNext={props.isNext}
+        columns={props.columns}
+        isLoading={props.isLoading}
       />
     </div>
   );

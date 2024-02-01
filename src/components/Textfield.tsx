@@ -64,7 +64,6 @@ export const Textfield = (props: TextfieldProps) => {
         className={cx("w-full", props.className)}
         color={props.errorMessage ? "danger" : "default"}
         autoComplete={props.autoComplete ?? "off"}
-        defaultValue={props.defaultValue ?? ""}
         classNames={{
           base: "z-0",
           errorMessage: "capitalize font-interMedium",

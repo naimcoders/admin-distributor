@@ -37,11 +37,9 @@ const Rekening = () => {
               type={el.type}
               label={el.label}
               control={control}
-              className="w-full"
               name={el.name ?? ""}
               placeholder={el.placeholder}
               defaultValue={el.defaultValue}
-              autoComplete={el.autoComplete}
               errorMessage={handleErrorMessage(errors, el.name)}
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },
@@ -54,11 +52,9 @@ const Rekening = () => {
               type={el.type}
               label={el.label}
               control={control}
-              className="w-full"
               name={el.name ?? ""}
               placeholder={el.placeholder}
               defaultValue={el.defaultValue}
-              autoComplete={el.autoComplete}
               errorMessage={handleErrorMessage(errors, el.name)}
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },

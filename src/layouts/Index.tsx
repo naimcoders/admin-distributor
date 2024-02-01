@@ -105,7 +105,7 @@ export const GridInput: React.FC<
   { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
 > = ({ children, className }) => {
   return (
-    <section className={cx("grid-min-300 gap-x-8 gap-y-10 pt-1", className)}>
+    <section className={cx("grid-min-300 gap-x-8 gap-y-10", className)}>
       {children}
     </section>
   );

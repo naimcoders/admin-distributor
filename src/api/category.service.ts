@@ -47,10 +47,20 @@ class Api {
       errors: this.errors,
     });
   }
+
+  async findAll(): Promise<SubCategory[]> {
+    return await req<SubCategory[]>({
+      method: "GET",
+      path: `${this.path}/all`,
+      isNoAuth: false,
+      errors: this.errors,
+    });
+  }
 }
 
 interface ApiCategoryInfo {
   find(): Promise<Category[]>;
+  findAll(): Promise<SubCategory[]>;
 }
 
 export function getCategoryApiInfo(): ApiCategoryInfo {
@@ -74,5 +84,19 @@ export const useCategory = () => {
     };
   };
 
-  return { find };
+  const findAll = () => {
+    const get = async () => await getCategoryApiInfo().findAll();
+    const { data, isLoading, error } = useQuery<SubCategory[], Error>({
+      queryKey: [key],
+      queryFn: get,
+    });
+
+    return {
+      data,
+      isLoading,
+      error: error?.message,
+    };
+  };
+
+  return { find, findAll };
 };

@@ -1,6 +1,6 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes, Ref, useState } from "react";
+import { HTMLAttributes, ReactNode, Ref, useState } from "react";
 import {
   FieldValues,
   UseControllerProps,
@@ -10,7 +10,7 @@ import { ChildRef, FileProps } from "./File";
 import { IconColor, Radius } from "src/types";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-interface Textfield
+export interface TextfieldProps
   extends UseControllerProps<FieldValues>,
     Pick<HTMLAttributes<HTMLInputElement>, "className" | "onClick"> {
   type?: string;
@@ -18,123 +18,100 @@ interface Textfield
   placeholder?: string;
   errorMessage?: string;
   autoComplete?: "on" | "off";
-  endContent?: React.ReactNode;
-  startContent?: React.ReactNode;
+  endContent?: ReactNode;
+  startContent?: ReactNode;
   readOnly?: {
     isValue: boolean;
     cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
   };
   radius?: Radius;
   description?: string;
-  classNames?: Partial<{
-    inputWrapper: string;
-  }>;
+  uploadImage?: {
+    file: Pick<FileProps, "onChange" | "onClick"> & {
+      ref: Ref<ChildRef>;
+    };
+    image: {
+      deleteImage: () => void;
+    };
+  };
 }
 
-export const Textfield = (props: Textfield) => {
+export const Textfield = (props: TextfieldProps) => {
   const { field } = useController(props);
   const [isPass, setIsPass] = useState(false);
   const handlePass = () => setIsPass((prev) => !prev);
 
   return (
-    <Input
-      {...field}
-      type={
-        props.type === "password" ? (!isPass ? "password" : "text") : props.type
-      }
-      label={props.label}
-      labelPlacement="outside"
-      onClick={props.onClick}
-      placeholder={props.placeholder}
-      errorMessage={props.errorMessage}
-      autoComplete={props.autoComplete}
-      description={props.description}
-      startContent={props.startContent}
-      isReadOnly={props.readOnly?.isValue}
-      radius={!props.radius ? "sm" : props.radius}
-      className={cx("max-w-[24rem]", props.className)}
-      color={props.errorMessage ? "danger" : "default"}
-      classNames={{
-        base: "z-0",
-        input: cx("placeholder:capitalize", props.readOnly?.cursor),
-        errorMessage: "capitalize font-interMedium",
-        label: "font-interMedium capitalize pb-2",
-        description: "text-[#71717A] first-letter:capitalize",
-      }}
-      title={props.defaultValue}
-      endContent={
-        props.type === "password" ? (
-          !isPass ? (
-            <EyeSlashIcon
-              width={18}
-              className="cursor-pointer"
-              onClick={handlePass}
-              color={IconColor.zinc}
-              title="Show"
-            />
+    <section className="flexcol gap-4">
+      {props.label && <h2 className="text-sm capitalize">{props.label}</h2>}
+      <Input
+        {...field}
+        type={
+          props.type === "password"
+            ? !isPass
+              ? "password"
+              : "text"
+            : props.type
+        }
+        labelPlacement="outside"
+        onClick={props.onClick}
+        placeholder={props.placeholder}
+        errorMessage={props.errorMessage}
+        description={props.description}
+        startContent={props.startContent}
+        isReadOnly={props.readOnly?.isValue}
+        radius={!props.radius ? "sm" : props.radius}
+        className={cx("w-full", props.className)}
+        color={props.errorMessage ? "danger" : "default"}
+        autoComplete={props.autoComplete ?? "off"}
+        defaultValue={props.defaultValue ?? ""}
+        classNames={{
+          base: "z-0",
+          errorMessage: "capitalize font-interMedium",
+          description: "text-[#71717A] first-letter:capitalize",
+          input: cx("placeholder:capitalize", props.readOnly?.cursor),
+        }}
+        title={props.defaultValue}
+        endContent={
+          props.type === "password" ? (
+            !isPass ? (
+              <EyeSlashIcon
+                width={18}
+                className="cursor-pointer"
+                onClick={handlePass}
+                color={IconColor.zinc}
+                title="Show"
+              />
+            ) : (
+              <EyeIcon
+                width={18}
+                color={IconColor.zinc}
+                className="cursor-pointer"
+                onClick={handlePass}
+                title="Hide"
+              />
+            )
           ) : (
-            <EyeIcon
-              width={18}
-              color={IconColor.zinc}
-              className="cursor-pointer"
-              onClick={handlePass}
-              title="Hide"
-            />
+            props.endContent
           )
-        ) : (
-          props.endContent
-        )
-      }
-    />
+        }
+      />
+    </section>
   );
 };
 
-export interface GeneralFields
-  extends Pick<
-    Textfield,
-    | "label"
-    | "placeholder"
-    | "type"
-    | "autoComplete"
-    | "className"
-    | "readOnly"
-    | "description"
-    | "onClick"
-  > {
-  name: string;
-  errorMessage: string;
-  defaultValue: string | number;
-  refs: Pick<FileProps, "onChange" | "onClick"> & { ref: Ref<ChildRef> };
-  deleteImage: () => void;
-}
-
-export type PartialGeneralFields = Partial<GeneralFields>;
-
-export const objectFields = (
-  props: PartialGeneralFields
-): PartialGeneralFields => {
+export const objectFields = ({
+  placeholder,
+  errorMessage,
+  autoComplete,
+  ...props
+}: TextfieldProps): TextfieldProps => {
   const obj = {
-    type: props.type,
-    name: props.name,
-    label: props.label,
-    className: props.className,
-    defaultValue: props.defaultValue,
-    refs: props.refs,
-    deleteImage: props.deleteImage,
-    placeholder: props.placeholder
-      ? props.placeholder
-      : `Masukkan ${props.label}`,
-    errorMessage: props.errorMessage
-      ? props.errorMessage
-      : `Masukkan ${props.label}`,
-    readOnly: {
-      isValue: props.readOnly?.isValue!,
-      cursor: props.readOnly?.cursor,
-    },
-    autoComplete: props.autoComplete ? props.autoComplete : "off",
-    description: props.description,
-    onClick: props.onClick,
-  } satisfies PartialGeneralFields;
+    autoComplete: autoComplete ? autoComplete : "off",
+    placeholder: placeholder ? placeholder : `Masukkan ${props.label}`,
+    errorMessage: errorMessage ? errorMessage : `Masukkan ${props.label}`,
+    ...props,
+  } satisfies TextfieldProps;
 
   return obj;
 };

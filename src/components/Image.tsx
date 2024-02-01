@@ -35,8 +35,8 @@ export default function Image({
         src={src}
         className={cx("z-0", className)}
         loading={loading}
-        radius={radius && radius}
-        width={!width ? 300 : width}
+        radius={radius ?? "sm"}
+        width={width}
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
       />

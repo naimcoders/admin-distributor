@@ -1,7 +1,7 @@
 import cx from "classnames";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import Template from "./Template";
@@ -37,6 +37,7 @@ const Rekening = () => {
               type={el.type}
               label={el.label}
               control={control}
+              className="w-full"
               name={el.name ?? ""}
               placeholder={el.placeholder}
               defaultValue={el.defaultValue}
@@ -53,6 +54,7 @@ const Rekening = () => {
               type={el.type}
               label={el.label}
               control={control}
+              className="w-full"
               name={el.name ?? ""}
               placeholder={el.placeholder}
               defaultValue={el.defaultValue}
@@ -113,7 +115,7 @@ const BankModal = ({
 };
 
 const useRekening = () => {
-  const rekenings: PartialGeneralFields[] = [
+  const rekenings: TextfieldProps[] = [
     objectFields({
       name: "fullname",
       label: "nama sesuai rekening",

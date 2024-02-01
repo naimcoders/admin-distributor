@@ -93,7 +93,7 @@ const useStore = () => {
       ),
     },
     {
-      header: <p className="text-">nomor HP</p>,
+      header: <p className="text-center">nomor HP</p>,
       render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
     },
     {

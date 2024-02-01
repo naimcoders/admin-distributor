@@ -1,11 +1,11 @@
-import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
-import { ChildRef, InputFile } from "src/components/File";
+import { ChildRef, File, LabelAndImage } from "src/components/File";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
@@ -30,6 +30,7 @@ const Create = () => {
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
+                type={v.type}
                 label={v.label}
                 control={control}
                 name={v.name ?? ""}
@@ -38,52 +39,52 @@ const Create = () => {
                 autoComplete={v.autoComplete}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
+                className="w-full"
               />
             )}
 
             {["modal"].includes(v.type!) && (
               <Textfield
+                type="text"
                 name={v.name!}
-                autoComplete={v.autoComplete}
+                label={v.label}
                 control={control}
                 defaultValue={v.defaultValue}
                 placeholder={v.placeholder}
-                readOnly={v.readOnly}
-                type="text"
-                label={v.label}
+                autoComplete={v.autoComplete}
                 endContent={<ChevronRightIcon width={16} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
+                readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
+                className="w-full"
               />
             )}
 
-            {["file"].includes(v.type!) && (
-              <InputFile
-                blob={String(v.defaultValue)}
-                file={{
-                  errors,
-                  control,
-                  name: v.name!,
-                  label: v.label!,
-                  ref: v.refs?.ref!,
-                  onClick: v.refs?.onClick,
-                  onChange: v.refs?.onChange,
-                  placeholder: v.placeholder!,
-                  errorMessage: v.errorMessage,
-                }}
-                icons={[
-                  {
-                    src: <TrashIcon width={16} />,
-                    onClick: v.deleteImage,
-                  },
-                ]}
-              />
-            )}
+            {["file"].includes(v.type!) &&
+              (!v.defaultValue ? (
+                <File
+                  name={v.name}
+                  label={v.label}
+                  control={control}
+                  className="w-full"
+                  placeholder={v.placeholder}
+                  ref={v.uploadImage?.file.ref}
+                  onClick={v.uploadImage?.file.onClick}
+                  onChange={v.uploadImage?.file.onChange}
+                  startContent={<ArrowUpTrayIcon width={16} />}
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  rules={{
+                    required: { value: true, message: v.errorMessage ?? "" },
+                  }}
+                />
+              ) : (
+                <LabelAndImage src={v.defaultValue} label={v.label!} />
+              ))}
           </Fragment>
         ))}
       </GridInput>
 
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-center mt-16">
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
     </main>
@@ -111,7 +112,7 @@ export const useKtp = () => {
 const useHook = () => {
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",
@@ -122,7 +123,7 @@ const useHook = () => {
     objectFields({
       label: "nomor HP",
       name: "phoneNumber",
-      type: "text",
+      type: "number",
       defaultValue: "",
       autoComplete: "on",
     }),
@@ -163,13 +164,15 @@ const useHook = () => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      refs: {
-        ref: ktpRef,
-        onClick,
-        onChange,
-      },
       defaultValue: ktpBlob,
-      deleteImage: () => setKtpBlob(""),
+      uploadImage: {
+        file: {
+          ref: ktpRef,
+          onClick,
+          onChange,
+        },
+        image: { deleteImage: () => setKtpBlob("") },
+      },
     }),
   ];
 

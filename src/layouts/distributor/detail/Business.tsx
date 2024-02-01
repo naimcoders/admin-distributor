@@ -1,8 +1,8 @@
 import tokoroti from "src/assets/images/toko_roti.jpg";
 import bannerEtalase from "src/assets/images/banner_etalase.jpg";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ import { Button } from "src/components/Button";
 import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { GridInput } from "src/layouts/Index";
-import { StaticImageAndTitle } from "src/components/File";
+import { LabelAndImage } from "src/components/File";
 
 const Business = () => {
   const {
@@ -36,6 +36,7 @@ const Business = () => {
                 description={v.description}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
+                className="w-full"
               />
             )}
 
@@ -51,14 +52,12 @@ const Business = () => {
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
                 endContent={<ChevronRightIcon width={16} />}
+                className="w-full"
               />
             )}
 
             {["image"].includes(v.type!) && (
-              <StaticImageAndTitle
-                label={v.label!}
-                src={String(v.defaultValue)}
-              />
+              <LabelAndImage label={v.label!} src={String(v.defaultValue)} />
             )}
           </Fragment>
         ))}
@@ -72,7 +71,7 @@ const Business = () => {
 };
 
 const useHook = () => {
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       label: "nama usaha",
       name: "businessName",

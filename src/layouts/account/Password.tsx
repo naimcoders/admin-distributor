@@ -29,6 +29,7 @@ const Password = () => {
           defaultValue=""
           label={el.label}
           control={control}
+          className="w-full"
           placeholder={el.placeholder}
           autoComplete={el.autoComplete}
           errorMessage={handleErrorMessage(errors, el.name ?? "")}

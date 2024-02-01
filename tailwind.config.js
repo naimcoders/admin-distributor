@@ -35,6 +35,9 @@ export default {
         vmin: "3vmin",
         "2vmin": "2vmin",
       },
+      aspectRatio: {
+        "3/4": "3 / 4",
+      },
       colors: {
         primary: "#093DB0",
         secondary: "#FFFFFF",

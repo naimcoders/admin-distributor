@@ -106,7 +106,7 @@ export function TableWithSearchAndTabs<S extends object>(
         autoComplete="off"
         control={props.control}
         placeholder={props.placeholder}
-        className="sm:absolute sm:top-0 sm:right-0"
+        className="sm:absolute sm:top-0 sm:right-0 w-[24rem]"
         startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
       />
 
@@ -175,6 +175,7 @@ const Header = ({ search, createData }: Header) => {
         name="search"
         defaultValue=""
         control={control}
+        className="w-[24rem]"
         placeholder={search.placeholder}
         startContent={<MagnifyingGlassIcon width={16} color="#808080" />}
       />

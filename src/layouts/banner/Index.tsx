@@ -1,66 +1,82 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { ChildRef, InputFile } from "src/components/File";
-import { IconColor } from "src/types";
+import { ChildRef, File } from "src/components/File";
+import { TextfieldProps, objectFields } from "src/components/Textfield";
+import { handleErrorMessage } from "src/helpers";
 
 const Banner = () => {
-  const { banner, bannerUrl, onClickBanner, onChangeBanner, setBannerUrl } =
-    useBanner();
-  const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo } = useLogo();
   const {
     control,
     formState: { errors },
   } = useForm<FieldValues>();
+  const { banners } = useHook();
+
   return (
     <>
       <main className="flex flex-col sm:flex-row gap-8">
-        <InputFile
-          blob={logoUrl}
-          icons={[
-            {
-              src: <TrashIcon width={16} color={IconColor.red} />,
-              onClick: () => setLogoUrl(""),
-            },
-          ]}
-          file={{
-            ref: logo,
-            label: "logo usaha",
-            onClick: onClickLogo,
-            onChange: onChangeLogo,
-            control,
-            errors,
-            name: "logo",
-            placeholder: "Unggah logo",
-            errorMessage: "Pilih logo usaha",
-            className: "w-[15rem]",
-          }}
-        />
-
-        <InputFile
-          blob={bannerUrl}
-          icons={[
-            {
-              src: <TrashIcon width={16} color={IconColor.red} />,
-              onClick: () => setBannerUrl(""),
-            },
-          ]}
-          file={{
-            ref: banner,
-            label: "banner etalase",
-            onClick: onClickBanner,
-            onChange: onChangeBanner,
-            control,
-            errors,
-            name: "banner",
-            placeholder: "Unggah banner",
-            errorMessage: "Pilih banner etalase",
-            className: "w-[15rem]",
-          }}
-        />
+        {banners.map((v) => (
+          <File
+            name={v.name}
+            label={v.label}
+            control={control}
+            className="w-full"
+            placeholder={v.placeholder}
+            ref={v.uploadImage?.file.ref}
+            onClick={v.uploadImage?.file.onClick}
+            onChange={v.uploadImage?.file.onChange}
+            startContent={<ArrowUpTrayIcon width={16} />}
+            errorMessage={handleErrorMessage(errors, v.name)}
+            rules={{
+              required: { value: true, message: v.errorMessage ?? "" },
+            }}
+            key={v.label}
+          />
+        ))}
       </main>
     </>
   );
+};
+
+const useHook = () => {
+  const { banner, bannerUrl, onClickBanner, onChangeBanner, setBannerUrl } =
+    useBanner();
+  const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo } = useLogo();
+
+  const banners: TextfieldProps[] = [
+    objectFields({
+      label: "logo usaha",
+      name: "logo",
+      type: "file",
+      placeholder: "unggah logo",
+      defaultValue: logoUrl,
+      uploadImage: {
+        file: {
+          ref: logo,
+          onClick: onClickLogo,
+          onChange: onChangeLogo,
+        },
+        image: { deleteImage: () => setLogoUrl("") },
+      },
+    }),
+    objectFields({
+      label: "banner etalase",
+      name: "banner",
+      type: "file",
+      placeholder: "unggah banner",
+      defaultValue: bannerUrl,
+      uploadImage: {
+        file: {
+          ref: banner,
+          onClick: onClickBanner,
+          onChange: onChangeBanner,
+        },
+        image: { deleteImage: () => setBannerUrl("") },
+      },
+    }),
+  ];
+
+  return { banners };
 };
 
 const useBanner = () => {

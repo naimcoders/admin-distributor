@@ -9,6 +9,7 @@ import { PrivateRoute } from "./components/PrivateRoute";
 const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
 const Product = lazy(() => import("./layouts/product/Index"));
+const CreateProduct = lazy(() => import("./layouts/product/Create"));
 const ProductDetail = lazy(() => import("./layouts/product/Detail"));
 const DetailSubCategory = lazy(
   () => import("./layouts/product/sub-category/Detail")
@@ -68,6 +69,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<Skeleton />}>
                 <Product />
+              </Suspense>
+            ),
+          },
+          {
+            path: "produk/tambah",
+            element: (
+              <Suspense fallback={<Skeleton />}>
+                <CreateProduct />
               </Suspense>
             ),
           },

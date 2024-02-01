@@ -1,16 +1,17 @@
 import ktp from "src/assets/images/ktp.png";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { useKtp } from "../Create";
 import { FieldValues, useForm } from "react-hook-form";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { InputFile } from "src/components/File";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
 import { GridInput } from "src/layouts/Index";
+import { File, LabelAndImage } from "src/components/File";
+import { handleErrorMessage } from "src/helpers";
 
 const Profile = () => {
   const {
@@ -39,31 +40,30 @@ const Profile = () => {
                 autoComplete={v.autoComplete}
                 readOnly={v.readOnly}
                 // description={v.description}
+                className="w-full"
               />
             )}
 
-            {["file"].includes(v.type!) && (
-              <InputFile
-                blob={String(v.defaultValue)}
-                file={{
-                  errors,
-                  control,
-                  name: v.name!,
-                  label: v.label!,
-                  ref: v.refs?.ref!,
-                  onClick: v.refs?.onClick,
-                  onChange: v.refs?.onChange,
-                  placeholder: v.placeholder!,
-                  errorMessage: v.errorMessage,
-                }}
-                icons={[
-                  {
-                    src: <TrashIcon width={16} />,
-                    onClick: v.deleteImage,
-                  },
-                ]}
-              />
-            )}
+            {["file"].includes(v.type!) &&
+              (!v.defaultValue ? (
+                <File
+                  name={v.name}
+                  label={v.label}
+                  control={control}
+                  className="w-full"
+                  placeholder={v.placeholder}
+                  ref={v.uploadImage?.file.ref}
+                  onClick={v.uploadImage?.file.onClick}
+                  onChange={v.uploadImage?.file.onChange}
+                  startContent={<ArrowUpTrayIcon width={16} />}
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  rules={{
+                    required: { value: true, message: v.errorMessage ?? "" },
+                  }}
+                />
+              ) : (
+                <LabelAndImage src={v.defaultValue} label={v.label!} />
+              ))}
           </Fragment>
         ))}
       </GridInput>
@@ -78,7 +78,7 @@ const Profile = () => {
 const useHook = () => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",
@@ -129,13 +129,15 @@ const useHook = () => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      refs: {
-        ref: ktpRef,
-        onClick,
-        onChange,
-      },
       defaultValue: ktp,
-      deleteImage: () => setKtpBlob(""),
+      uploadImage: {
+        file: {
+          ref: ktpRef,
+          onClick,
+          onChange,
+        },
+        image: { deleteImage: () => setKtpBlob("") },
+      },
     }),
   ];
 

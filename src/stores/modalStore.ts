@@ -11,6 +11,10 @@ interface Modal {
   setIsHistory: (v: boolean) => void;
   isPeriod: boolean;
   setIsPeriod: (v: boolean) => void;
+  isDangerous: boolean;
+  setIsDangerous: (v: boolean) => void;
+  isCondition: boolean;
+  setIsCondition: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -24,6 +28,10 @@ const useModalStore = create<Modal>((set) => ({
   setIsHistory: (v) => set({ isHistory: v }),
   isPeriod: false,
   setIsPeriod: (v) => set({ isPeriod: v }),
+  isDangerous: false,
+  setIsDangerous: (v) => set({ isDangerous: v }),
+  isCondition: false,
+  setIsCondition: (v) => set({ isCondition: v }),
 }));
 
 export default useModalStore;
@@ -40,6 +48,10 @@ export const useActiveModal = () => {
     setIsPeriod,
     isSubCategory,
     setIsSubCategory,
+    isDangerous,
+    setIsDangerous,
+    isCondition,
+    setIsCondition,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -47,6 +59,8 @@ export const useActiveModal = () => {
   const actionIsSubCategory = () => setIsSubCategory(!isSubCategory);
   const actionIsHistory = () => setIsHistory(!isHistory);
   const actionIsPeriod = () => setIsPeriod(!isPeriod);
+  const actionIsDangerous = () => setIsDangerous(!isDangerous);
+  const actionIsCondition = () => setIsCondition(!isCondition);
 
   return {
     isBankName,
@@ -59,5 +73,9 @@ export const useActiveModal = () => {
     actionIsPeriod,
     isSubCategory,
     actionIsSubCategory,
+    isDangerous,
+    actionIsDangerous,
+    isCondition,
+    actionIsCondition,
   };
 };

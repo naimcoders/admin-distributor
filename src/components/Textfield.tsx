@@ -107,8 +107,12 @@ export const objectFields = ({
 }: TextfieldProps): TextfieldProps => {
   const obj = {
     autoComplete: autoComplete ? autoComplete : "off",
-    placeholder: placeholder ? placeholder : `Masukkan ${props.label}`,
-    errorMessage: errorMessage ? errorMessage : `Masukkan ${props.label}`,
+    placeholder: placeholder
+      ? placeholder
+      : `Masukkan ${props.label?.replace("*", "")}`,
+    errorMessage: errorMessage
+      ? errorMessage
+      : `Masukkan ${props.label?.replace("*", "")}`,
     ...props,
   } satisfies TextfieldProps;
 

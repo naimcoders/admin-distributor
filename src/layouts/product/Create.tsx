@@ -3,7 +3,7 @@ import {
   PhotoIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File } from "src/components/File";
 import Image from "src/components/Image";
@@ -19,6 +19,9 @@ import { useCategory } from "src/api/category.service";
 import Error from "src/components/Error";
 import { ListingModal } from "src/components/Category";
 import { useActiveModal } from "src/stores/modalStore";
+import { Modal } from "src/components/Modal";
+import { Radio, RadioGroup, Switch } from "@nextui-org/react";
+import Textarea from "src/components/Textarea";
 
 const Create = () => {
   const {
@@ -67,12 +70,12 @@ const Create = () => {
               startContent={<PhotoIcon width={16} color={IconColor.zinc} />}
             />
           </section>
-
           <GridInput>
             {fields.map((v) => (
               <Fragment key={v.label}>
                 {["text", "number"].includes(v.type!) && (
                   <Textfield
+                    type={v.type}
                     name={v.name}
                     label={v.label}
                     control={control}
@@ -103,11 +106,23 @@ const Create = () => {
                     }
                   />
                 )}
+
+                {["textarea"].includes(v.type!) && (
+                  <Textarea
+                    label={v.label}
+                    name={v.name}
+                    defaultValue=""
+                    control={control}
+                    placeholder={v.placeholder}
+                  />
+                )}
               </Fragment>
             ))}
           </GridInput>
 
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
+          <DangerousModal setValue={setValue} />
+          <ConditionModal setValue={setValue} />
         </main>
       )}
     </>
@@ -169,18 +184,69 @@ const useUploadPhoto = () => {
   return { productPhotoRef, onClick, onChange, photos, setPhotos };
 };
 
+const DangerousModal = (p: Pick<UseForm, "setValue">) => {
+  const { isDangerous, actionIsDangerous } = useActiveModal();
+  const [isStatus, setIsStatus] = useState(false);
+
+  useEffect(() => {
+    p.setValue("dangerous", isStatus ? "Ya" : "Tidak");
+  }, [isStatus]);
+
+  return (
+    <Modal isOpen={isDangerous} closeModal={actionIsDangerous}>
+      <section className="my-4 flexcol gap-5">
+        <h1>Mengandung baterai/magnet/cairan/bahan mudah terbakar</h1>
+        <Switch
+          color="success"
+          id="switch"
+          name="switch"
+          size="sm"
+          isSelected={isStatus}
+          onValueChange={setIsStatus}
+        >
+          {isStatus ? "Ya" : "Tidak"}
+        </Switch>
+      </section>
+    </Modal>
+  );
+};
+
+const ConditionModal = (p: Pick<UseForm, "setValue">) => {
+  const { isCondition, actionIsCondition } = useActiveModal();
+
+  return (
+    <Modal title="kondisi" isOpen={isCondition} closeModal={actionIsCondition}>
+      <RadioGroup
+        color="primary"
+        defaultValue="Baru"
+        size="sm"
+        className="mt-4"
+        onValueChange={(val) => p.setValue("condition", val)}
+      >
+        <Radio value="Baru">Baru</Radio>
+        <Radio value="Pernah Dipakai">Pernah Dipakai</Radio>
+      </RadioGroup>
+    </Modal>
+  );
+};
+
 const useFields = () => {
-  const { actionIsCategory, actionIsSubCategory } = useActiveModal();
+  const {
+    actionIsCategory,
+    actionIsSubCategory,
+    actionIsDangerous,
+    actionIsCondition,
+  } = useActiveModal();
 
   const fields: TextfieldProps[] = [
     objectFields({
-      label: "nama produk",
+      label: "nama produk *",
       name: "productName",
       type: "text",
       defaultValue: "",
     }),
     objectFields({
-      label: "kategori",
+      label: "kategori *",
       name: "category",
       type: "modal",
       defaultValue: "",
@@ -192,6 +258,32 @@ const useFields = () => {
       type: "modal",
       defaultValue: "",
       onClick: actionIsSubCategory,
+    }),
+    objectFields({
+      label: "produk berbahaya",
+      name: "dangerous",
+      type: "modal",
+      defaultValue: "Tidak",
+      onClick: actionIsDangerous,
+    }),
+    objectFields({
+      label: "harga (Rp) *",
+      name: "price",
+      type: "number",
+      defaultValue: "",
+    }),
+    objectFields({
+      label: "kondisi *",
+      name: "condition",
+      type: "modal",
+      defaultValue: "Baru",
+      onClick: actionIsCondition,
+    }),
+    objectFields({
+      label: "deskripsi produk",
+      name: "description",
+      type: "textarea",
+      defaultValue: "",
     }),
   ];
 

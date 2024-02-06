@@ -9,13 +9,12 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-modern-drawer/dist/index.css";
-import Coordinate from "./components/Coordinate.tsx";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
       <NextUIProvider>
         <App />
         <ToastContainer
@@ -26,7 +25,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           draggable={false}
         />
       </NextUIProvider>
-    </QueryClientProvider> */}
-    <Coordinate />
+    </QueryClientProvider>
   </React.StrictMode>
 );

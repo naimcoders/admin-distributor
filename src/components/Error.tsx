@@ -1,5 +1,5 @@
 const Error = ({ error }: { error: string }) => {
-  return <div className="font-interBold text-lg">{error}</div>;
+  return <div className="font-semibold text-base">{error}</div>;
 };
 
 export default Error;

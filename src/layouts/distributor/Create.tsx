@@ -1,4 +1,8 @@
-import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  MapPinIcon,
+} from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -10,6 +14,10 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
+import { useActiveModal } from "src/stores/modalStore";
+import { Modal } from "src/components/Modal";
+import { IconColor } from "src/types";
+import Coordinate from "src/components/Coordinate";
 
 // TODO: Create the coordinate
 
@@ -46,14 +54,31 @@ const Create = () => {
 
             {["modal"].includes(v.type!) && (
               <Textfield
-                type="text"
                 name={v.name!}
                 label={v.label}
                 control={control}
                 defaultValue={v.defaultValue}
                 placeholder={v.placeholder}
                 autoComplete={v.autoComplete}
-                endContent={<ChevronRightIcon width={16} />}
+                endContent={
+                  <ChevronRightIcon width={16} color={IconColor.zinc} />
+                }
+                errorMessage={handleErrorMessage(errors, v.name)}
+                readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                rules={{ required: { value: true, message: v.errorMessage! } }}
+              />
+            )}
+
+            {["coordinate"].includes(v.type!) && (
+              <Textfield
+                name={v.name!}
+                label={v.label}
+                control={control}
+                onClick={v.onClick}
+                defaultValue={v.defaultValue}
+                placeholder={v.placeholder}
+                autoComplete={v.autoComplete}
+                startContent={<MapPinIcon width={16} color={IconColor.zinc} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
@@ -70,7 +95,9 @@ const Create = () => {
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}
                   onChange={v.uploadImage?.file.onChange}
-                  startContent={<ArrowUpTrayIcon width={16} />}
+                  startContent={
+                    <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
+                  }
                   errorMessage={handleErrorMessage(errors, v.name)}
                   rules={{
                     required: { value: true, message: v.errorMessage ?? "" },
@@ -86,7 +113,24 @@ const Create = () => {
       <div className="flex justify-center mt-16">
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
+
+      <CoordinateModal />
     </main>
+  );
+};
+
+const CoordinateModal = () => {
+  const { isCoordinate, actionIsCoordinate } = useActiveModal();
+  return (
+    <Modal
+      title="koordinat usaha"
+      isOpen={isCoordinate}
+      closeModal={actionIsCoordinate}
+    >
+      <section className="my-4">
+        <Coordinate />
+      </section>
+    </Modal>
   );
 };
 
@@ -109,6 +153,7 @@ export const useKtp = () => {
 };
 
 const useHook = () => {
+  const { actionIsCoordinate } = useActiveModal();
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
   const fields: TextfieldProps[] = [
@@ -157,6 +202,14 @@ const useHook = () => {
       name: "detailAddress",
       type: "text",
       defaultValue: "",
+    }),
+    objectFields({
+      label: "koordinat usaha",
+      name: "coordinate",
+      type: "coordinate",
+      defaultValue: "",
+      placeholder: "tentukan koordinat",
+      onClick: actionIsCoordinate,
     }),
     objectFields({
       label: "KTP pemilik",

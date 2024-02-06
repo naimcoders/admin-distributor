@@ -39,7 +39,6 @@ const Create = () => {
                 autoComplete={v.autoComplete}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
-                className="w-full"
               />
             )}
 
@@ -56,7 +55,6 @@ const Create = () => {
                 errorMessage={handleErrorMessage(errors, v.name)}
                 readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
-                className="w-full"
               />
             )}
 
@@ -66,7 +64,6 @@ const Create = () => {
                   name={v.name}
                   label={v.label}
                   control={control}
-                  className="w-full"
                   placeholder={v.placeholder}
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}

@@ -3,12 +3,12 @@ import banner from "src/assets/images/banner_etalase.jpg";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
-import { StaticImageAndTitle } from "src/components/File";
+import { LabelAndImage } from "src/components/File";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -34,10 +34,7 @@ const Detail = () => {
           )}
 
           {["image"].includes(v.type!) && (
-            <StaticImageAndTitle
-              label={v.label!}
-              src={String(v.defaultValue)}
-            />
+            <LabelAndImage label={v.label!} src={v.defaultValue} />
           )}
         </Fragment>
       ))}
@@ -46,7 +43,7 @@ const Detail = () => {
 };
 
 const useDetail = () => {
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       readOnly: { isValue: true },
       label: "nama pemilik",

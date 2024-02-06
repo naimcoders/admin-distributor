@@ -2,8 +2,8 @@ import ktp from "src/assets/images/ktp.png";
 import bannerEtalase from "src/assets/images/banner_etalase.jpg";
 
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
@@ -17,7 +17,7 @@ import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import useGeneralStore from "src/stores/generalStore";
 import { GridInput } from "src/layouts/Index";
-import { StaticImageAndTitle } from "src/components/File";
+import { LabelAndImage } from "src/components/File";
 
 const CustomerDetail = () => {
   const {
@@ -72,10 +72,7 @@ const CustomerDetail = () => {
             )}
 
             {["image"].includes(v.type!) && (
-              <StaticImageAndTitle
-                label={v.label!}
-                src={String(v.defaultValue)}
-              />
+              <LabelAndImage label={v.label!} src={v.defaultValue} />
             )}
           </Fragment>
         ))}
@@ -140,7 +137,7 @@ const useHook = () => {
   // const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
   const { actionIsCategory } = useActiveModal();
 
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

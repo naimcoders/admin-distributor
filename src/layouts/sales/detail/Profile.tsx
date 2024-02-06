@@ -1,17 +1,18 @@
 import ktp from "src/assets/images/ktp.png";
-import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
-  PartialGeneralFields,
   Textfield,
+  TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
 import { CategoryModal, useKtp } from "../Create";
-import { InputFile } from "src/components/File";
 import Image from "src/components/Image";
 import { GridInput } from "src/layouts/Index";
+import { File, LabelAndImage } from "src/components/File";
+import { handleErrorMessage } from "src/helpers";
 
 const Profile = () => {
   const {
@@ -56,28 +57,26 @@ const Profile = () => {
             />
           )}
 
-          {["file"].includes(v.type!) && (
-            <InputFile
-              blob={String(v.defaultValue)}
-              file={{
-                errors,
-                control,
-                name: v.name!,
-                label: v.label!,
-                ref: v.refs?.ref!,
-                onClick: v.refs?.onClick,
-                onChange: v.refs?.onChange,
-                placeholder: v.placeholder!,
-                errorMessage: v.errorMessage,
-              }}
-              icons={[
-                {
-                  src: <TrashIcon width={16} />,
-                  onClick: v.deleteImage,
-                },
-              ]}
-            />
-          )}
+          {["file"].includes(v.type!) &&
+            (!v.defaultValue ? (
+              <File
+                name={v.name}
+                label={v.label}
+                control={control}
+                className="w-full"
+                placeholder={v.placeholder}
+                ref={v.uploadImage?.file.ref}
+                onClick={v.uploadImage?.file.onClick}
+                onChange={v.uploadImage?.file.onChange}
+                startContent={<ArrowUpTrayIcon width={16} />}
+                errorMessage={handleErrorMessage(errors, v.name)}
+                rules={{
+                  required: { value: true, message: v.errorMessage ?? "" },
+                }}
+              />
+            ) : (
+              <LabelAndImage src={v.defaultValue} label={v.label!} />
+            ))}
 
           {["image"].includes(v.type!) && (
             <div className="flexcol gap-2">
@@ -100,9 +99,9 @@ const Profile = () => {
 
 const useHook = () => {
   const { actionIsCategory } = useActiveModal();
-  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
-  const fields: PartialGeneralFields[] = [
+  const fields: TextfieldProps[] = [
     objectFields({
       label: "nama sales",
       name: "salesName",
@@ -157,18 +156,33 @@ const useHook = () => {
       type: "number",
       defaultValue: 10,
     }),
+    // objectFields({
+    //   label: "KTP sales",
+    //   name: "ktp",
+    //   type: "file",
+    //   placeholder: "unggah KTP",
+    //   refs: {
+    //     ref: ktpRef,
+    //     onClick,
+    //     onChange,
+    //   },
+    //   defaultValue: ktp,
+    //   deleteImage: () => setKtpBlob(""),
+    // }),
     objectFields({
       label: "KTP sales",
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      refs: {
-        ref: ktpRef,
-        onClick,
-        onChange,
+      defaultValue: ktpBlob,
+      uploadImage: {
+        file: {
+          ref: ktpRef,
+          onClick,
+          onChange,
+        },
+        image: { deleteImage: () => setKtpBlob("") },
       },
-      defaultValue: ktp,
-      deleteImage: () => setKtpBlob(""),
     }),
     objectFields({
       label: "foto sales",

@@ -7,7 +7,7 @@ const containerStyle = {
   height: "400px",
 };
 
-const coordinate = {
+const defaultCoordinate = {
   lat: -5.135399,
   lng: 119.42379,
 };
@@ -25,7 +25,7 @@ const Coordinate = () => {
   });
 
   const onLoad = useCallback((map: google.maps.Map): void => {
-    const bounds = new window.google.maps.LatLngBounds(coordinate);
+    const bounds = new window.google.maps.LatLngBounds(defaultCoordinate);
     map.fitBounds(bounds);
     setMap(map);
 
@@ -36,6 +36,8 @@ const Coordinate = () => {
       setLatLngUser({ lat, lng });
     });
   }, []);
+
+  const onUnmount = useCallback(() => setMap(null), []);
 
   useEffect(() => {
     if (map && latLngUser) {
@@ -56,8 +58,9 @@ const Coordinate = () => {
       <GoogleMap
         mapContainerStyle={containerStyle}
         zoom={10}
-        center={coordinate}
+        center={defaultCoordinate}
         onLoad={onLoad}
+        onUnmount={onUnmount}
       >
         {latLngUser && (
           <Marker position={{ lat: latLngUser.lat!, lng: latLngUser.lng! }} />

@@ -11,6 +11,8 @@ import {
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 
+// TODO: Create the coordinate
+
 const Create = () => {
   const {
     control,

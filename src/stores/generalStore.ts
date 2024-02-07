@@ -26,6 +26,8 @@ interface General {
   setReportType: (v: string) => void;
   coordinate: CoordinateProps | null;
   setCoordinate: (v: CoordinateProps) => void;
+  formatAddress: string;
+  setFormatAddress: (v: string) => void;
 }
 
 const useGeneralStore = create<General>((set) => ({
@@ -45,6 +47,8 @@ const useGeneralStore = create<General>((set) => ({
   setReportType: (v) => set({ reportType: v }),
   coordinate: null,
   setCoordinate: (v) => set({ coordinate: v }),
+  formatAddress: "",
+  setFormatAddress: (v) => set({ formatAddress: v }),
 }));
 
 export default useGeneralStore;

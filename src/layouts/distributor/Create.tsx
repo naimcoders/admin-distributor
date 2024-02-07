@@ -33,6 +33,7 @@ const Create = () => {
   });
 
   const coordinate = useGeneralStore((v) => v.coordinate);
+  const { actionIsCoordinate } = useActiveModal();
 
   return (
     <main>
@@ -76,7 +77,7 @@ const Create = () => {
                   label={v.label!}
                   lat={coordinate.lat}
                   lng={coordinate.lng}
-                  onClick={() => console.log("edit coordinate")}
+                  onClick={actionIsCoordinate}
                 />
               ) : (
                 <Textfield

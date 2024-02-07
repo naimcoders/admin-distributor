@@ -44,6 +44,8 @@ const Coordinate = () => {
   const { actionIsCoordinate } = useActiveModal();
   const { isLoaded, loadError } = useMaps();
   const setCoordinate = useGeneralStore((v) => v.setCoordinate);
+  const formatAddress = useGeneralStore((v) => v.formatAddress);
+  const setFormatAddress = useGeneralStore((v) => v.setFormatAddress);
 
   const handleSearch = (newAddress: string) => setAddress(newAddress);
   const handleSelect = async (newAddress: string) => {
@@ -96,8 +98,15 @@ const Coordinate = () => {
 
   const closeModal = () => {
     setCoordinate(currentCoordinate!);
+    setFormatAddress(formattedAddress);
     actionIsCoordinate();
   };
+
+  useEffect(() => {
+    if (formatAddress) {
+      setFormattedAddress(formatAddress);
+    }
+  }, []);
 
   useEffect(() => {
     if (map && currentCoordinate) {

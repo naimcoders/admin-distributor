@@ -160,7 +160,7 @@ const Coordinate = () => {
       <div className="flexcol gap-2">
         <GoogleMap
           mapContainerStyle={containerStyle}
-          zoom={10}
+          zoom={8}
           center={defaultCoordinate}
           onLoad={onLoad}
           onUnmount={onUnmount}

@@ -1,4 +1,5 @@
 import { FormEvent } from "react";
+import { CoordinateProps } from "src/components/Coordinate";
 import { create } from "zustand";
 
 type CategoryProps = string[] | FormEvent<HTMLDivElement>;
@@ -23,6 +24,8 @@ interface General {
   setPicSales: (v: CategoryProps) => void;
   reportType: string;
   setReportType: (v: string) => void;
+  coordinate: CoordinateProps | null;
+  setCoordinate: (v: CoordinateProps) => void;
 }
 
 const useGeneralStore = create<General>((set) => ({
@@ -40,6 +43,8 @@ const useGeneralStore = create<General>((set) => ({
   setPicSales: (v) => set({ picSales: v }),
   reportType: "",
   setReportType: (v) => set({ reportType: v }),
+  coordinate: null,
+  setCoordinate: (v) => set({ coordinate: v }),
 }));
 
 export default useGeneralStore;

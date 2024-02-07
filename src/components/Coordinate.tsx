@@ -12,6 +12,15 @@ import PlacesAutocomplete, {
   getLatLng,
 } from "react-places-autocomplete";
 import { Input } from "@nextui-org/react";
+import useGeneralStore from "src/stores/generalStore";
+import { Button } from "./Button";
+import { useActiveModal } from "src/stores/modalStore";
+import { UseForm } from "src/types";
+
+export interface CoordinateProps {
+  lat: number;
+  lng: number;
+}
 
 const containerStyle: CSSProperties = {
   width: "400px",
@@ -24,26 +33,21 @@ const defaultCoordinate = {
   lng: 119.42379,
 };
 
-const libraries: Libraries = ["places"];
+const libraries: Libraries = ["maps", "places"];
 
-const Coordinate = () => {
+const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
   const [address, setAddress] = useState("");
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const { actionIsCoordinate } = useActiveModal();
+  const coordinate = useGeneralStore((v) => v.coordinate);
+  const setCoordinate = useGeneralStore((v) => v.setCoordinate);
 
-  const [latLngUser, setLatLngUser] = useState<{
-    lat?: number;
-    lng?: number;
-  } | null>(null);
-
-  const handleSearch = (newAddress: string) => {
-    setAddress(newAddress);
-  };
-
+  const handleSearch = (newAddress: string) => setAddress(newAddress);
   const handleSelect = async (newAddress: string) => {
     try {
       const results = await geocodeByAddress(newAddress);
       const latlng = await getLatLng(results[0]);
-      setLatLngUser(latlng);
+      setCoordinate({ lat: latlng.lat, lng: latlng.lng });
     } catch (e) {
       const error = e as Error;
       console.error(`Error: ${error.message}`);
@@ -57,15 +61,14 @@ const Coordinate = () => {
   });
 
   const onLoad = useCallback((map: google.maps.Map): void => {
-    const bounds = new window.google.maps.LatLngBounds(defaultCoordinate);
-    map.fitBounds(bounds);
     setMap(map);
 
     // get coordinate user
     map.addListener("click", (e: google.maps.MapMouseEvent) => {
-      const lat = e.latLng?.lat();
-      const lng = e.latLng?.lng();
-      setLatLngUser({ lat, lng });
+      const lat = e.latLng?.lat()!;
+      const lng = e.latLng?.lng()!;
+      setCoordinate({ lat, lng });
+      setValue("coordinate", { lat, lng });
       setAddress("");
     });
   }, []);
@@ -73,10 +76,10 @@ const Coordinate = () => {
   const onUnmount = useCallback(() => setMap(null), []);
 
   useEffect(() => {
-    if (map && latLngUser) {
-      map.panTo({ lat: latLngUser.lat!, lng: latLngUser.lng! });
+    if (map && coordinate) {
+      map.panTo({ lat: coordinate.lat!, lng: coordinate.lng! });
     }
-  }, [map, latLngUser]);
+  }, [map, coordinate]);
 
   if (loadError) {
     return <Error error="Error Loading Maps" />;
@@ -130,12 +133,65 @@ const Coordinate = () => {
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
-        {latLngUser && (
-          <Marker position={{ lat: latLngUser.lat!, lng: latLngUser.lng! }} />
+        {coordinate && (
+          <Marker position={{ lat: coordinate.lat, lng: coordinate.lng }} />
         )}
       </GoogleMap>
+
+      <Button
+        aria-label="pilih koordinat"
+        className="mx-auto mt-2"
+        onClick={actionIsCoordinate}
+      />
     </section>
   );
 };
 
 export default Coordinate;
+
+export interface UserCoordinateProps extends CoordinateProps {
+  label: string;
+}
+
+export const UserCoordinate = ({ label, lat, lng }: UserCoordinateProps) => {
+  const coordinate = { lat, lng };
+
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_COORDINATE,
+    libraries,
+  });
+
+  return (
+    <section className="flexcol gap-4">
+      <h2 className="capitalize text-sm">{label}</h2>
+      {!isLoaded ? (
+        <div className="font-semibold text-base">Loading...</div>
+      ) : (
+        <div className="relative">
+          <GoogleMap
+            zoom={8}
+            center={coordinate}
+            mapContainerStyle={{
+              width: "100%",
+              aspectRatio: 16 / 9,
+              borderRadius: ".5rem",
+            }}
+            options={{
+              restriction: {
+                latLngBounds: {
+                  north: defaultCoordinate.lat + 0.1,
+                  south: defaultCoordinate.lat - 0.1,
+                  west: defaultCoordinate.lng - 0.1,
+                  east: defaultCoordinate.lng + 0.1,
+                },
+              },
+            }}
+          >
+            <Marker position={coordinate} />
+          </GoogleMap>
+        </div>
+      )}
+    </section>
+  );
+};

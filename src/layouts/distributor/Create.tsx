@@ -16,15 +16,15 @@ import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
-import { IconColor } from "src/types";
-import Coordinate from "src/components/Coordinate";
-
-// TODO: Create the coordinate
+import { IconColor, UseForm } from "src/types";
+import Coordinate, { UserCoordinate } from "src/components/Coordinate";
+import useGeneralStore from "src/stores/generalStore";
 
 const Create = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
@@ -32,6 +32,8 @@ const Create = () => {
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
+
+  const coordinate = useGeneralStore((v) => v.coordinate);
 
   return (
     <main>
@@ -69,21 +71,32 @@ const Create = () => {
               />
             )}
 
-            {["coordinate"].includes(v.type!) && (
-              <Textfield
-                name={v.name!}
-                label={v.label}
-                control={control}
-                onClick={v.onClick}
-                defaultValue={v.defaultValue}
-                placeholder={v.placeholder}
-                autoComplete={v.autoComplete}
-                startContent={<MapPinIcon width={16} color={IconColor.zinc} />}
-                errorMessage={handleErrorMessage(errors, v.name)}
-                readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                rules={{ required: { value: true, message: v.errorMessage! } }}
-              />
-            )}
+            {["coordinate"].includes(v.type!) &&
+              (coordinate ? (
+                <UserCoordinate
+                  label={v.label!}
+                  lat={coordinate.lat}
+                  lng={coordinate.lng}
+                />
+              ) : (
+                <Textfield
+                  name={v.name!}
+                  label={v.label}
+                  control={control}
+                  onClick={v.onClick}
+                  defaultValue={v.defaultValue}
+                  placeholder={v.placeholder}
+                  autoComplete={v.autoComplete}
+                  startContent={
+                    <MapPinIcon width={16} color={IconColor.zinc} />
+                  }
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                  rules={{
+                    required: { value: true, message: v.errorMessage! },
+                  }}
+                />
+              ))}
 
             {["file"].includes(v.type!) &&
               (!v.defaultValue ? (
@@ -114,13 +127,14 @@ const Create = () => {
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
 
-      <CoordinateModal />
+      <CoordinateModal setValue={setValue} />
     </main>
   );
 };
 
-const CoordinateModal = () => {
+const CoordinateModal = ({ setValue }: Pick<UseForm, "setValue">) => {
   const { isCoordinate, actionIsCoordinate } = useActiveModal();
+
   return (
     <Modal
       title="koordinat usaha"
@@ -128,7 +142,7 @@ const CoordinateModal = () => {
       closeModal={actionIsCoordinate}
     >
       <section className="my-4">
-        <Coordinate />
+        <Coordinate setValue={setValue} />
       </section>
     </Modal>
   );

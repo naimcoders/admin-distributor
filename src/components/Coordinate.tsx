@@ -35,14 +35,14 @@ const defaultCoordinate = {
 const libraries: Libraries = ["maps", "places"];
 
 const Coordinate = () => {
-  const [address, setAddress] = useState("");
-  const [formattedAddress, setFormattedAddress] = useState("");
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [currentCoordinate, setCurrentCoordinate] =
     useState<CoordinateProps | null>(null);
+  const [address, setAddress] = useState("");
+  const [formattedAddress, setFormattedAddress] = useState("");
 
   const { actionIsCoordinate } = useActiveModal();
-  const coordinate = useGeneralStore((v) => v.coordinate);
+  const { isLoaded, loadError } = useMaps();
   const setCoordinate = useGeneralStore((v) => v.setCoordinate);
 
   const handleSearch = (newAddress: string) => setAddress(newAddress);
@@ -58,12 +58,6 @@ const Coordinate = () => {
       console.error(`Error: ${error.message}`);
     }
   };
-
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_COORDINATE,
-    libraries,
-  });
 
   const onLoad = useCallback((map: google.maps.Map): void => {
     setMap(map);
@@ -106,88 +100,94 @@ const Coordinate = () => {
   };
 
   useEffect(() => {
-    if (map && coordinate) {
-      map.panTo({ lat: coordinate.lat!, lng: coordinate.lng! });
+    if (map && currentCoordinate) {
+      const { lat, lng } = currentCoordinate;
+      map.panTo({ lat, lng });
     }
-  }, [map, coordinate]);
-
-  if (loadError) {
-    return <Error error="Error Loading Maps" />;
-  }
-
-  if (!isLoaded) {
-    return <div className="font-semibold">Loading Maps...</div>;
-  }
+  }, [map, currentCoordinate]);
 
   return (
-    <section className="flexcol gap-4">
-      {/* search location */}
-      <PlacesAutocomplete
-        value={address}
-        onChange={handleSearch}
-        onSelect={handleSelect}
-      >
-        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-          <div>
-            <Input
-              {...getInputProps({ placeholder: "Cari Lokasi..." })}
-              labelPlacement="outside"
-              autoFocus
-            />
-            <div className="mt-4">
-              {loading && <div className="font-semibold">Loading...</div>}
-              {suggestions.map((suggestion) => (
-                <div
-                  {...getSuggestionItemProps(suggestion, {
-                    className: cx(
-                      "text-sm p-2 rounded-md",
-                      suggestion.active
-                        ? "bg-[#cacafe] cursor-pointer"
-                        : "bg-white cursor-pointer"
-                    ),
-                  })}
-                  key={suggestion.index}
-                >
-                  <span>{suggestion.description}</span>
+    <>
+      {loadError ? (
+        <Error error="Error Maps" />
+      ) : !isLoaded ? (
+        <div className="text-sm font-semibold">Loading...</div>
+      ) : (
+        <section className="flexcol gap-4">
+          {/* search location */}
+          <PlacesAutocomplete
+            value={address}
+            onChange={handleSearch}
+            onSelect={handleSelect}
+          >
+            {({
+              getInputProps,
+              suggestions,
+              getSuggestionItemProps,
+              loading,
+            }) => (
+              <div>
+                <Input
+                  {...getInputProps({ placeholder: "Cari Lokasi..." })}
+                  labelPlacement="outside"
+                  autoFocus
+                />
+                <div className="mt-4">
+                  {loading && <div className="font-semibold">Loading...</div>}
+                  {suggestions.map((suggestion) => (
+                    <div
+                      {...getSuggestionItemProps(suggestion, {
+                        className: cx(
+                          "text-sm p-2 rounded-md",
+                          suggestion.active
+                            ? "bg-[#cacafe] cursor-pointer"
+                            : "bg-white cursor-pointer"
+                        ),
+                      })}
+                      key={suggestion.index}
+                    >
+                      <span>{suggestion.description}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+          </PlacesAutocomplete>
+
+          {/* maps */}
+          <div className="flexcol gap-2">
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              zoom={8}
+              center={defaultCoordinate}
+              onLoad={onLoad}
+              onUnmount={onUnmount}
+            >
+              {currentCoordinate && (
+                <Marker
+                  position={{
+                    lat: currentCoordinate.lat,
+                    lng: currentCoordinate.lng,
+                  }}
+                />
+              )}
+            </GoogleMap>
+
+            {formattedAddress && (
+              <p className="text-sm border border-gray-400 p-2 rounded-md">
+                {formattedAddress}
+              </p>
+            )}
           </div>
-        )}
-      </PlacesAutocomplete>
 
-      {/* maps */}
-      <div className="flexcol gap-2">
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          zoom={8}
-          center={defaultCoordinate}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-        >
-          {currentCoordinate && (
-            <Marker
-              position={{
-                lat: currentCoordinate.lat,
-                lng: currentCoordinate.lng,
-              }}
-            />
-          )}
-        </GoogleMap>
-
-        {formattedAddress && (
-          <p className="text-sm border border-gray-400 p-2 rounded-md">
-            {formattedAddress}
-          </p>
-        )}
-      </div>
-
-      <Button
-        aria-label="pilih koordinat"
-        className="mx-auto mt-2"
-        onClick={closeModal}
-      />
-    </section>
+          <Button
+            aria-label="pilih koordinat"
+            className="mx-auto mt-2"
+            onClick={closeModal}
+          />
+        </section>
+      )}
+    </>
   );
 };
 
@@ -205,12 +205,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
   onClick,
 }) => {
   const coordinate = { lat, lng };
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_COORDINATE,
-    libraries,
-  });
+  const { isLoaded } = useMaps();
 
   return (
     <section className="flexcol gap-4">
@@ -239,4 +234,14 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
       )}
     </section>
   );
+};
+
+const useMaps = () => {
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_COORDINATE,
+    libraries,
+  });
+
+  return { isLoaded, loadError };
 };

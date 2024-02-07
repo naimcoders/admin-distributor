@@ -69,11 +69,32 @@ const Coordinate = () => {
     setMap(map);
 
     // get coordinate user
-    map.addListener("click", (e: google.maps.MapMouseEvent) => {
-      const lat = e.latLng?.lat()!;
-      const lng = e.latLng?.lng()!;
-      setCurrentCoordinate({ lat, lng });
+    map.addListener("click", async (e: google.maps.MapMouseEvent) => {
+      const latLng = {
+        lat: e.latLng?.lat()!,
+        lng: e.latLng?.lng()!,
+      };
+
+      setCurrentCoordinate(latLng);
       setAddress("");
+
+      try {
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ location: latLng }, (results, status) => {
+          if (status === "OK") {
+            if (results?.[0]) {
+              setFormattedAddress(results[0].formatted_address);
+            } else {
+              console.error("Tidak terdapat data");
+            }
+          } else {
+            console.error(`Geocoder failed : ${status}`);
+          }
+        });
+      } catch (e) {
+        const error = e as Error;
+        console.error(error.message);
+      }
     });
   }, []);
 
@@ -199,7 +220,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
       ) : (
         <div className="relative">
           <GoogleMap
-            zoom={10}
+            zoom={8}
             center={coordinate}
             mapContainerStyle={{
               width: "100%",

@@ -15,7 +15,6 @@ import { Input } from "@nextui-org/react";
 import useGeneralStore from "src/stores/generalStore";
 import { Button } from "./Button";
 import { useActiveModal } from "src/stores/modalStore";
-import { UseForm } from "src/types";
 
 export interface CoordinateProps {
   lat: number;
@@ -35,9 +34,13 @@ const defaultCoordinate = {
 
 const libraries: Libraries = ["maps", "places"];
 
-const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
+const Coordinate = () => {
   const [address, setAddress] = useState("");
+  const [formattedAddress, setFormattedAddress] = useState("");
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [currentCoordinate, setCurrentCoordinate] =
+    useState<CoordinateProps | null>(null);
+
   const { actionIsCoordinate } = useActiveModal();
   const coordinate = useGeneralStore((v) => v.coordinate);
   const setCoordinate = useGeneralStore((v) => v.setCoordinate);
@@ -47,7 +50,9 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
     try {
       const results = await geocodeByAddress(newAddress);
       const latlng = await getLatLng(results[0]);
-      setCoordinate({ lat: latlng.lat, lng: latlng.lng });
+
+      setCurrentCoordinate({ lat: latlng.lat, lng: latlng.lng });
+      setFormattedAddress(results[0].formatted_address);
     } catch (e) {
       const error = e as Error;
       console.error(`Error: ${error.message}`);
@@ -67,13 +72,17 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
     map.addListener("click", (e: google.maps.MapMouseEvent) => {
       const lat = e.latLng?.lat()!;
       const lng = e.latLng?.lng()!;
-      setCoordinate({ lat, lng });
-      setValue("coordinate", { lat, lng });
+      setCurrentCoordinate({ lat, lng });
       setAddress("");
     });
   }, []);
 
   const onUnmount = useCallback(() => setMap(null), []);
+
+  const closeModal = () => {
+    setCoordinate(currentCoordinate!);
+    actionIsCoordinate();
+  };
 
   useEffect(() => {
     if (map && coordinate) {
@@ -90,7 +99,7 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
   }
 
   return (
-    <section className="flexcol gap-5">
+    <section className="flexcol gap-4">
       {/* search location */}
       <PlacesAutocomplete
         value={address}
@@ -127,22 +136,35 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
       </PlacesAutocomplete>
 
       {/* maps */}
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        zoom={10}
-        center={defaultCoordinate}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-      >
-        {coordinate && (
-          <Marker position={{ lat: coordinate.lat, lng: coordinate.lng }} />
+      <div className="flexcol gap-2">
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          zoom={10}
+          center={defaultCoordinate}
+          onLoad={onLoad}
+          onUnmount={onUnmount}
+        >
+          {currentCoordinate && (
+            <Marker
+              position={{
+                lat: currentCoordinate.lat,
+                lng: currentCoordinate.lng,
+              }}
+            />
+          )}
+        </GoogleMap>
+
+        {formattedAddress && (
+          <p className="text-sm border border-gray-400 p-2 rounded-md">
+            {formattedAddress}
+          </p>
         )}
-      </GoogleMap>
+      </div>
 
       <Button
         aria-label="pilih koordinat"
         className="mx-auto mt-2"
-        onClick={actionIsCoordinate}
+        onClick={closeModal}
       />
     </section>
   );
@@ -177,7 +199,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
       ) : (
         <div className="relative">
           <GoogleMap
-            zoom={8}
+            zoom={10}
             center={coordinate}
             mapContainerStyle={{
               width: "100%",
@@ -185,20 +207,12 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
               borderRadius: ".5rem",
             }}
             options={{
-              restriction: {
-                latLngBounds: {
-                  north: defaultCoordinate.lat + 0.1,
-                  south: defaultCoordinate.lat - 0.1,
-                  west: defaultCoordinate.lng - 0.1,
-                  east: defaultCoordinate.lng + 0.1,
-                },
-              },
               draggableCursor: "pointer",
               fullscreenControl: false,
             }}
             onClick={onClick}
           >
-            <Marker position={coordinate} />
+            {coordinate && <Marker position={coordinate} />}
           </GoogleMap>
         </div>
       )}

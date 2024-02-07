@@ -16,7 +16,7 @@ import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
-import { IconColor, UseForm } from "src/types";
+import { IconColor } from "src/types";
 import Coordinate, { UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 
@@ -24,7 +24,6 @@ const Create = () => {
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
   const { fields } = useHook();
@@ -128,12 +127,12 @@ const Create = () => {
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
 
-      <CoordinateModal setValue={setValue} />
+      <CoordinateModal />
     </main>
   );
 };
 
-const CoordinateModal = ({ setValue }: Pick<UseForm, "setValue">) => {
+const CoordinateModal = () => {
   const { isCoordinate, actionIsCoordinate } = useActiveModal();
 
   return (
@@ -143,7 +142,7 @@ const CoordinateModal = ({ setValue }: Pick<UseForm, "setValue">) => {
       closeModal={actionIsCoordinate}
     >
       <section className="my-4">
-        <Coordinate setValue={setValue} />
+        <Coordinate />
       </section>
     </Modal>
   );

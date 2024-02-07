@@ -77,6 +77,7 @@ const Create = () => {
                   label={v.label!}
                   lat={coordinate.lat}
                   lng={coordinate.lng}
+                  onClick={() => console.log("edit coordinate")}
                 />
               ) : (
                 <Textfield

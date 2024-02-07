@@ -6,7 +6,7 @@ import {
   Libraries,
 } from "@react-google-maps/api";
 import Error from "./Error";
-import { CSSProperties, useCallback, useEffect, useState } from "react";
+import { CSSProperties, FC, useCallback, useEffect, useState } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -151,9 +151,15 @@ export default Coordinate;
 
 export interface UserCoordinateProps extends CoordinateProps {
   label: string;
+  onClick?: () => void;
 }
 
-export const UserCoordinate = ({ label, lat, lng }: UserCoordinateProps) => {
+export const UserCoordinate: FC<UserCoordinateProps> = ({
+  label,
+  lat,
+  lng,
+  onClick,
+}) => {
   const coordinate = { lat, lng };
 
   const { isLoaded } = useJsApiLoader({
@@ -186,7 +192,10 @@ export const UserCoordinate = ({ label, lat, lng }: UserCoordinateProps) => {
                   east: defaultCoordinate.lng + 0.1,
                 },
               },
+              draggableCursor: "pointer",
+              fullscreenControl: false,
             }}
+            onClick={onClick}
           >
             <Marker position={coordinate} />
           </GoogleMap>

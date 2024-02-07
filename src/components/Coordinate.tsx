@@ -91,7 +91,7 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
 
   return (
     <section className="flexcol gap-5">
-      {/* Search location */}
+      {/* search location */}
       <PlacesAutocomplete
         value={address}
         onChange={handleSearch}
@@ -102,6 +102,7 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
             <Input
               {...getInputProps({ placeholder: "Cari Lokasi..." })}
               labelPlacement="outside"
+              autoFocus
             />
             <div className="mt-4">
               {loading && <div className="font-semibold">Loading...</div>}
@@ -125,7 +126,7 @@ const Coordinate = ({ setValue }: Pick<UseForm, "setValue">) => {
         )}
       </PlacesAutocomplete>
 
-      {/* Maps */}
+      {/* maps */}
       <GoogleMap
         mapContainerStyle={containerStyle}
         zoom={10}

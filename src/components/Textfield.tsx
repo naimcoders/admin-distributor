@@ -26,13 +26,14 @@ interface UploadImageProps {
 
 export interface TextfieldProps
   extends UseControllerProps<FieldValues>,
-    Pick<HTMLAttributes<HTMLInputElement>, "className" | "onClick"> {
+    Pick<HTMLAttributes<HTMLInputElement>, "className"> {
   type?: string;
   label?: string;
   radius?: Radius;
   placeholder?: string;
-  errorMessage?: string;
   description?: string;
+  onClick?: () => void;
+  errorMessage?: string;
   endContent?: ReactNode;
   startContent?: ReactNode;
   readOnly?: ReadOnlyProps;

@@ -25,7 +25,6 @@ const Detail = () => {
 
   const { fields } = useHook();
   const coordinate = useGeneralStore((v) => v.coordinate);
-  const { actionIsCoordinate } = useActiveModal();
 
   return (
     <main>
@@ -61,9 +60,9 @@ const Detail = () => {
             {["coordinate"].includes(v.type!) && (
               <UserCoordinate
                 label={v.label!}
-                lat={coordinate?.lat ?? v.defaultValue.lat}
-                lng={coordinate?.lng ?? v.defaultValue.lng}
-                onClick={actionIsCoordinate}
+                onClick={v.onClick}
+                lat={coordinate ? coordinate.lat : v.defaultValue.lat}
+                lng={coordinate ? coordinate.lng : v.defaultValue.lng}
               />
             )}
 

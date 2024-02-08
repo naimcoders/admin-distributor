@@ -14,7 +14,7 @@ const Layout = () => {
       <Header />
       <section className="bg-background">
         <AsideNav />
-        <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative flex flex-col gap-6">
+        <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
           <Outlet />
         </main>
       </section>

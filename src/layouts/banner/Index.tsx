@@ -13,28 +13,25 @@ const Banner = () => {
   const { banners } = useHook();
 
   return (
-    <>
-      <main className="flex flex-col sm:flex-row gap-8">
-        {banners.map((v) => (
-          <File
-            name={v.name}
-            label={v.label}
-            control={control}
-            className="w-full"
-            placeholder={v.placeholder}
-            ref={v.uploadImage?.file.ref}
-            onClick={v.uploadImage?.file.onClick}
-            onChange={v.uploadImage?.file.onChange}
-            startContent={<ArrowUpTrayIcon width={16} />}
-            errorMessage={handleErrorMessage(errors, v.name)}
-            rules={{
-              required: { value: true, message: v.errorMessage ?? "" },
-            }}
-            key={v.label}
-          />
-        ))}
-      </main>
-    </>
+    <main className="flex flex-col sm:flex-row gap-8">
+      {banners.map((v) => (
+        <File
+          name={v.name}
+          label={v.label}
+          control={control}
+          placeholder={v.placeholder}
+          ref={v.uploadImage?.file.ref}
+          onClick={v.uploadImage?.file.onClick}
+          onChange={v.uploadImage?.file.onChange}
+          startContent={<ArrowUpTrayIcon width={16} />}
+          errorMessage={handleErrorMessage(errors, v.name)}
+          rules={{
+            required: { value: true, message: v.errorMessage ?? "" },
+          }}
+          key={v.label}
+        />
+      ))}
+    </main>
   );
 };
 

@@ -203,7 +203,7 @@ const Coordinate = () => {
 export default Coordinate;
 
 export interface UserCoordinateProps extends CoordinateProps {
-  label: string;
+  label?: string;
   cursor?: string;
   onClick?: () => void;
 }
@@ -220,7 +220,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
 
   return (
     <section className="flexcol gap-4">
-      <h2 className="capitalize text-sm">{label}</h2>
+      {label && <h2 className="capitalize text-sm">{label}</h2>}
       {!isLoaded ? (
         <div className="font-semibold text-base">Loading...</div>
       ) : (

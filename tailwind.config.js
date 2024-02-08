@@ -22,6 +22,7 @@ export default {
       height: {
         calcSideBar: "calc(100vh - 12%)",
         calcSideBarDrawer: "calc(100vh - 16%)",
+        calcOutlet: "calc(100vh - 100px)",
       },
       fontFamily: {
         interRegular: ["interRegular", "sans"],

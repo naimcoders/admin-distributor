@@ -20,30 +20,27 @@ const Detail = () => {
   const { fields } = useDetail();
 
   return (
-    <GridInput className="mt-2">
+    <GridInput>
       {fields.map((v, idx) => (
         <Fragment key={idx}>
           {["text", "number", "email"].includes(v.type!) && (
             <Textfield
+              name={v.name}
               type={v.type}
               label={v.label}
               control={control}
-              name={v.name ?? ""}
               defaultValue={v.defaultValue}
               autoComplete={v.autoComplete}
-              readOnly={{
-                isValue: v.readOnly?.isValue!,
-                cursor: v.readOnly?.isValue ? "cursor-default" : "cursor-text",
-              }}
+              readOnly={v.readOnly}
             />
           )}
 
           {["coordinate"].includes(v.type!) && (
             <UserCoordinate
-              label={v.label!}
+              label={v.label}
+              cursor="default"
               lat={v.defaultValue.lat}
               lng={v.defaultValue.lng}
-              cursor="default"
             />
           )}
 
@@ -59,91 +56,91 @@ const Detail = () => {
 const useDetail = () => {
   const fields: TextfieldProps[] = [
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama pemilik",
       name: "ownerName",
       type: "text",
       defaultValue: "naim",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nomor HP",
       name: "phoneNumber",
       type: "text",
       defaultValue: "085824528625",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "email",
       name: "email",
       type: "email",
       defaultValue: "adi.nugroho@gmail.com",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "tanggal join",
       name: "joinDate",
       type: "text",
       defaultValue: "13 Des 2023",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama toko",
       name: "storeName",
       type: "text",
       defaultValue: "Maju Jaya",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "alamat toko",
       name: "storeAddress",
       type: "text",
       defaultValue: "SULAWESI SELATAN, KOTA MAKASSAR",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama jalan, gedung, no. rumah",
       name: "streetName",
       type: "text",
       defaultValue: "Jl. Pongtiku No. 112",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
       defaultValue: "Depan SMP Negeri 4",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "total revenue",
       name: "totalRevenue",
       type: "text",
       defaultValue: `Rp85.000.000`,
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "total transaksi",
       name: "totalTransaction",
       type: "number",
       defaultValue: 321,
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "rating",
       name: "rate",
       type: "text",
       defaultValue: "0",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "status akun",
       name: "verify",
       type: "text",
       defaultValue: "Verified",
     }),
     objectFields({
-      readOnly: { isValue: true },
+      readOnly: { isValue: true, cursor: "cursor-default" },
       label: "PIC sales",
       name: "picSales",
       type: "text",

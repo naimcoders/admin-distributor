@@ -53,7 +53,7 @@ const Coordinate = () => {
       const results = await geocodeByAddress(newAddress);
       const latlng = await getLatLng(results[0]);
 
-      setCurrentCoordinate({ lat: latlng.lat, lng: latlng.lng });
+      setCurrentCoordinate(latlng);
       setFormattedAddress(results[0].formatted_address);
     } catch (e) {
       const error = e as Error;

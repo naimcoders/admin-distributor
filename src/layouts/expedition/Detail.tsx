@@ -1,5 +1,5 @@
 import ktp from "src/assets/images/ktp.png";
-
+import useGeneralStore from "src/stores/generalStore";
 import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,13 +13,19 @@ import {
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useKtp } from "./Create";
 import { GridInput } from "../Index";
+import { useActiveModal } from "src/stores/modalStore";
+import { CoordinateModal } from "src/components/Modal";
+import { UserCoordinate, defaultCoordinate } from "src/components/Coordinate";
 
 const Detail = () => {
   const {
     control,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
+
   const { fields } = useHook();
+  const coordinate = useGeneralStore((v) => v.coordinate);
+  const { actionIsCoordinate } = useActiveModal();
 
   return (
     <main>
@@ -35,8 +41,6 @@ const Detail = () => {
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
                 readOnly={v.readOnly}
-                // description={v.description}
-                className="w-full"
               />
             )}
 
@@ -50,8 +54,16 @@ const Detail = () => {
                 readOnly={v.readOnly}
                 type="text"
                 label={v.label}
-                className="w-full"
                 endContent={<ChevronRightIcon width={16} />}
+              />
+            )}
+
+            {["coordinate"].includes(v.type!) && (
+              <UserCoordinate
+                label={v.label!}
+                lat={coordinate?.lat ?? v.defaultValue.lat}
+                lng={coordinate?.lng ?? v.defaultValue.lng}
+                onClick={actionIsCoordinate}
               />
             )}
 
@@ -61,7 +73,6 @@ const Detail = () => {
                   name={v.name}
                   label={v.label}
                   control={control}
-                  className="w-full"
                   placeholder={v.placeholder}
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}
@@ -82,12 +93,15 @@ const Detail = () => {
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />
       </div>
+
+      <CoordinateModal />
     </main>
   );
 };
 
 const useHook = () => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { actionIsCoordinate } = useActiveModal();
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -159,6 +173,14 @@ const useHook = () => {
       defaultValue: "15200014357788",
       readOnly: { isValue: true, cursor: "cursor-default" },
       description: "*tidak dapat diedit",
+    }),
+    objectFields({
+      label: "koordinat usaha",
+      name: "coordinate",
+      type: "coordinate",
+      placeholder: "tentukan koordinat",
+      defaultValue: defaultCoordinate,
+      onClick: actionIsCoordinate,
     }),
     objectFields({
       label: "KTP pemilik",

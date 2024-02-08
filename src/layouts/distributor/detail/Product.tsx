@@ -72,7 +72,7 @@ const columns: Columns<Product>[] = [
     render: (v) => <Label label={v.price} className="justify-end" />,
   },
   {
-    header: <p className="text-right">komisi</p>,
+    header: <p className="text-center">komisi</p>,
     render: (v) => <Label label={`${v.commission}%`} className="justify-end" />,
   },
   {

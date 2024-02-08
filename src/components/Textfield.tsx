@@ -10,30 +10,34 @@ import { ChildRef, FileProps } from "./File";
 import { IconColor, Radius } from "src/types";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
+interface ReadOnlyProps {
+  isValue: boolean;
+  cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
+}
+
+interface UploadImageProps {
+  file: Pick<FileProps, "onChange" | "onClick"> & {
+    ref: Ref<ChildRef>;
+  };
+  image: {
+    deleteImage: () => void;
+  };
+}
+
 export interface TextfieldProps
   extends UseControllerProps<FieldValues>,
     Pick<HTMLAttributes<HTMLInputElement>, "className" | "onClick"> {
   type?: string;
   label?: string;
+  radius?: Radius;
   placeholder?: string;
   errorMessage?: string;
-  autoComplete?: "on" | "off";
+  description?: string;
   endContent?: ReactNode;
   startContent?: ReactNode;
-  readOnly?: {
-    isValue: boolean;
-    cursor?: "cursor-text" | "cursor-pointer" | "cursor-default";
-  };
-  radius?: Radius;
-  description?: string;
-  uploadImage?: {
-    file: Pick<FileProps, "onChange" | "onClick"> & {
-      ref: Ref<ChildRef>;
-    };
-    image: {
-      deleteImage: () => void;
-    };
-  };
+  readOnly?: ReadOnlyProps;
+  autoComplete?: "on" | "off";
+  uploadImage?: UploadImageProps;
 }
 
 export const Textfield = (props: TextfieldProps) => {

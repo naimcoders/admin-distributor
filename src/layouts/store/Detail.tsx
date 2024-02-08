@@ -9,6 +9,11 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { LabelAndImage } from "src/components/File";
+import {
+  CoordinateProps,
+  UserCoordinate,
+  defaultCoordinate,
+} from "src/components/Coordinate";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -30,6 +35,15 @@ const Detail = () => {
                 isValue: v.readOnly?.isValue!,
                 cursor: v.readOnly?.isValue ? "cursor-default" : "cursor-text",
               }}
+            />
+          )}
+
+          {["coordinate"].includes(v.type!) && (
+            <UserCoordinate
+              label={v.label!}
+              lat={v.defaultValue.lat}
+              lng={v.defaultValue.lng}
+              cursor="default"
             />
           )}
 
@@ -134,6 +148,12 @@ const useDetail = () => {
       name: "picSales",
       type: "text",
       defaultValue: "-",
+    }),
+    objectFields({
+      label: "koordinat toko",
+      name: "coordinate",
+      type: "coordinate",
+      defaultValue: defaultCoordinate as CoordinateProps,
     }),
     objectFields({
       label: "KTP pemilik",

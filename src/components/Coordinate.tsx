@@ -27,7 +27,7 @@ const containerStyle: CSSProperties = {
   borderRadius: ".5rem",
 };
 
-const defaultCoordinate = {
+export const defaultCoordinate = {
   lat: -5.135399,
   lng: 119.42379,
 };
@@ -204,6 +204,7 @@ export default Coordinate;
 
 export interface UserCoordinateProps extends CoordinateProps {
   label: string;
+  cursor?: string;
   onClick?: () => void;
 }
 
@@ -212,6 +213,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
   lat,
   lng,
   onClick,
+  cursor,
 }) => {
   const coordinate = { lat, lng };
   const { isLoaded } = useMaps();
@@ -232,7 +234,7 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
               borderRadius: ".5rem",
             }}
             options={{
-              draggableCursor: "pointer",
+              draggableCursor: cursor ?? "pointer",
               fullscreenControl: false,
             }}
             onClick={onClick}

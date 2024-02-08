@@ -12,6 +12,11 @@ import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { GridInput } from "src/layouts/Index";
 import { LabelAndImage } from "src/components/File";
+import {
+  CoordinateProps,
+  UserCoordinate,
+  defaultCoordinate,
+} from "src/components/Coordinate";
 
 const Business = () => {
   const {
@@ -36,7 +41,6 @@ const Business = () => {
                 description={v.description}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
-                className="w-full"
               />
             )}
 
@@ -52,7 +56,15 @@ const Business = () => {
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
                 endContent={<ChevronRightIcon width={16} />}
-                className="w-full"
+              />
+            )}
+
+            {["coordinate"].includes(v.type!) && (
+              <UserCoordinate
+                label={v.label!}
+                lat={v.defaultValue.lat}
+                lng={v.defaultValue.lng}
+                cursor="default"
               />
             )}
 
@@ -96,6 +108,12 @@ const useHook = () => {
       name: "detailAddress",
       type: "text",
       defaultValue: "Depan SMP Negeri 4",
+    }),
+    objectFields({
+      label: "koordinat usaha",
+      name: "coordinate",
+      type: "coordinate",
+      defaultValue: defaultCoordinate as CoordinateProps,
     }),
     objectFields({
       label: "logo usaha",

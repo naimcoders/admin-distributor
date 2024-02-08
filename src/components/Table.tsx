@@ -98,7 +98,7 @@ export function TableWithSearchAndTabs<S extends object>(
   props: TableLayout<S>
 ) {
   return (
-    <div className="mt-5">
+    <div>
       <Textfield
         type="text"
         name="search"
@@ -124,11 +124,11 @@ export function TableWithSearchAndTabs<S extends object>(
 }
 
 interface TableWithoutTabs<T extends object> {
-  header: Header;
+  header: HeaderProps;
   table: TableProps<T>;
 }
 
-interface Header {
+interface HeaderProps {
   search: {
     placeholder: string;
     setSearch: (v: string) => void;
@@ -160,7 +160,7 @@ export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
   );
 }
 
-const Header = ({ search, createData }: Header) => {
+const Header = ({ search, createData }: HeaderProps) => {
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
   const debounced = useDebounce(watch("search"), 500);
 

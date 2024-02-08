@@ -9,26 +9,24 @@ const Expedition = () => {
   const { onNav } = detailNavigate();
 
   return (
-    <main>
-      <TableWithoutTabs
-        header={{
-          search: {
-            placeholder: "cari nama ekspedisi/nomor HP",
-            setSearch: () => console.log("set search"),
-          },
-          createData: {
-            isValue: true,
-            label: "ekspedisi",
-            onClick: () => onNav("tambah"),
-          },
-        }}
-        table={{
-          columns,
-          data: expeditions,
-          isLoading: false,
-        }}
-      />
-    </main>
+    <TableWithoutTabs
+      header={{
+        search: {
+          placeholder: "cari nama ekspedisi/nomor HP",
+          setSearch: () => console.log("set search"),
+        },
+        createData: {
+          isValue: true,
+          label: "ekspedisi",
+          onClick: () => onNav("tambah"),
+        },
+      }}
+      table={{
+        columns,
+        data: expeditions,
+        isLoading: false,
+      }}
+    />
   );
 };
 

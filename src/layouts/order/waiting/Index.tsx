@@ -7,18 +7,16 @@ const Waiting = () => {
   const { columns } = useOrderColumns("menunggu");
 
   return (
-    <section>
-      <TableWithSearchAndTabs
-        page={1}
-        isPaginate
-        data={datas}
-        isNext={false}
-        columns={columns}
-        isLoading={false}
-        control={control}
-        placeholder="cari ID order/nama toko/pemilik/nomor HP"
-      />
-    </section>
+    <TableWithSearchAndTabs
+      page={1}
+      isPaginate
+      data={datas}
+      isNext={false}
+      columns={columns}
+      isLoading={false}
+      control={control}
+      placeholder="cari ID order/nama toko/pemilik/nomor HP"
+    />
   );
 };
 

@@ -12,11 +12,7 @@ import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { GridInput } from "src/layouts/Index";
 import { LabelAndImage } from "src/components/File";
-import {
-  CoordinateProps,
-  UserCoordinate,
-  defaultCoordinate,
-} from "src/components/Coordinate";
+import { UserCoordinate, defaultCoordinate } from "src/components/Coordinate";
 
 const Business = () => {
   const {
@@ -26,7 +22,7 @@ const Business = () => {
   const { fields } = useHook();
 
   return (
-    <main className="mt-5">
+    <main className="mt-5 flexcol gap-8">
       <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
@@ -58,13 +54,19 @@ const Business = () => {
                 endContent={<ChevronRightIcon width={16} />}
               />
             )}
+          </Fragment>
+        ))}
+      </GridInput>
 
+      <section className="grid grid-cols-4 gap-x-8 gap-y-10">
+        {fields.map((v, idx) => (
+          <Fragment key={idx}>
             {["coordinate"].includes(v.type!) && (
               <UserCoordinate
                 label={v.label!}
                 lat={v.defaultValue.lat}
                 lng={v.defaultValue.lng}
-                cursor="default"
+                onClick={v.onClick}
               />
             )}
 
@@ -73,7 +75,7 @@ const Business = () => {
             )}
           </Fragment>
         ))}
-      </GridInput>
+      </section>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" />
@@ -113,7 +115,8 @@ const useHook = () => {
       label: "koordinat usaha",
       name: "coordinate",
       type: "coordinate",
-      defaultValue: defaultCoordinate as CoordinateProps,
+      defaultValue: defaultCoordinate,
+      onClick: () => console.log("koordinate usaha"),
     }),
     objectFields({
       label: "logo usaha",

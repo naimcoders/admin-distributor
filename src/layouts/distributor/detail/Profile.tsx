@@ -9,7 +9,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
-import { GridInput } from "src/layouts/Index";
+import { GridInput, GridWithoutTextfield } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage } from "src/helpers";
 
@@ -26,24 +26,29 @@ const Profile = () => {
   });
 
   return (
-    <main className="mt-5">
-      <GridInput className="mt-5">
+    <main className="mt-5 flexcol gap-8">
+      <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
+                type={v.type}
                 label={v.label}
                 control={control}
                 name={v.name ?? ""}
+                readOnly={v.readOnly}
                 placeholder={v.placeholder}
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
-                readOnly={v.readOnly}
-                // description={v.description}
-                className="w-full"
               />
             )}
+          </Fragment>
+        ))}
+      </GridInput>
 
+      <GridWithoutTextfield>
+        {fields.map((v, idx) => (
+          <Fragment key={idx}>
             {["file"].includes(v.type!) &&
               (!v.defaultValue ? (
                 <File
@@ -66,7 +71,7 @@ const Profile = () => {
               ))}
           </Fragment>
         ))}
-      </GridInput>
+      </GridWithoutTextfield>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" onClick={onSubmit} />

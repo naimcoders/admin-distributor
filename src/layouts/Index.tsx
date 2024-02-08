@@ -3,7 +3,7 @@ import Image from "src/components/Image";
 import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { HTMLAttributes, useEffect, useState } from "react";
+import { FC, HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
@@ -106,6 +106,16 @@ export const GridInput: React.FC<
 > = ({ children, className }) => {
   return (
     <section className={cx("grid-min-300 gap-x-8 gap-y-10", className)}>
+      {children}
+    </section>
+  );
+};
+
+export const GridWithoutTextfield: FC<
+  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
+> = ({ children, className }) => {
+  return (
+    <section className={cx("grid grid-cols-4 gap-x-8 gap-y-10", className)}>
       {children}
     </section>
   );

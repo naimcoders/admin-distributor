@@ -18,11 +18,8 @@ interface Table<T extends object>
 export default function Table<T extends object>(props: Table<T>) {
   return (
     <div className={cx("flex flex-col gap-6", props.className)}>
-      <section className="relative overflow-x-auto">
-        <table
-          className="w-full text-left rtl:text-right bg-white shadow-sm"
-          style={{ tableLayout: "fixed" }}
-        >
+      <section className="relative">
+        <table className="w-full text-left bg-white shadow-sm table-fixed">
           <thead
             className={cx(
               "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",
@@ -103,7 +100,6 @@ export function TableWithSearchAndTabs<S extends object>(
         type="text"
         name="search"
         defaultValue=""
-        autoComplete="off"
         control={props.control}
         placeholder={props.placeholder}
         className="sm:absolute sm:top-0 sm:right-0 w-[24rem]"

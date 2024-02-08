@@ -15,9 +15,9 @@ import {
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
-import { Modal } from "src/components/Modal";
+import { CoordinateModal } from "src/components/Modal";
 import { IconColor } from "src/types";
-import Coordinate, { UserCoordinate } from "src/components/Coordinate";
+import { UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 
 const Create = () => {
@@ -130,22 +130,6 @@ const Create = () => {
 
       <CoordinateModal />
     </main>
-  );
-};
-
-const CoordinateModal = () => {
-  const { isCoordinate, actionIsCoordinate } = useActiveModal();
-
-  return (
-    <Modal
-      title="koordinat usaha"
-      isOpen={isCoordinate}
-      closeModal={actionIsCoordinate}
-    >
-      <section className="my-4">
-        <Coordinate />
-      </section>
-    </Modal>
   );
 };
 

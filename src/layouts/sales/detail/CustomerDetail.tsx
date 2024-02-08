@@ -18,6 +18,11 @@ import { Button } from "src/components/Button";
 import useGeneralStore from "src/stores/generalStore";
 import { GridInput } from "src/layouts/Index";
 import { LabelAndImage } from "src/components/File";
+import {
+  CoordinateProps,
+  UserCoordinate,
+  defaultCoordinate,
+} from "src/components/Coordinate";
 
 const CustomerDetail = () => {
   const {
@@ -68,6 +73,15 @@ const CustomerDetail = () => {
                 rules={{
                   required: { value: true, message: v.errorMessage ?? "" },
                 }}
+              />
+            )}
+
+            {["coordinate"].includes(v.type!) && (
+              <UserCoordinate
+                label={v.label!}
+                lat={v.defaultValue.lat}
+                lng={v.defaultValue.lng}
+                cursor="default"
               />
             )}
 
@@ -229,6 +243,12 @@ const useHook = () => {
       defaultValue: "-",
       onClick: actionIsCategory,
       readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+    objectFields({
+      label: "koordinat toko",
+      name: "coordinate",
+      type: "coordinate",
+      defaultValue: defaultCoordinate as CoordinateProps,
     }),
     objectFields({
       label: "KTP pemilik",

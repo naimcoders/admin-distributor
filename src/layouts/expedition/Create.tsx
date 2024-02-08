@@ -1,4 +1,9 @@
-import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import useGeneralStore from "src/stores/generalStore";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  MapPinIcon,
+} from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -10,6 +15,10 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
+import { UserCoordinate } from "src/components/Coordinate";
+import { useActiveModal } from "src/stores/modalStore";
+import { IconColor } from "src/types";
+import { CoordinateModal } from "src/components/Modal";
 
 const Create = () => {
   const {
@@ -23,6 +32,9 @@ const Create = () => {
     console.log(e);
   });
 
+  const coordinate = useGeneralStore((v) => v.coordinate);
+  const { actionIsCoordinate } = useActiveModal();
+
   return (
     <main>
       <GridInput className="mt-4">
@@ -30,6 +42,7 @@ const Create = () => {
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
+                type={v.type}
                 label={v.label}
                 control={control}
                 name={v.name ?? ""}
@@ -40,21 +53,18 @@ const Create = () => {
                 rules={{
                   required: { value: true, message: v.errorMessage! },
                 }}
-                className="w-full"
               />
             )}
 
             {["modal"].includes(v.type!) && (
               <Textfield
                 name={v.name!}
-                autoComplete={v.autoComplete}
+                label={v.label}
                 control={control}
+                readOnly={v.readOnly}
+                autoComplete={v.autoComplete}
                 defaultValue={v.defaultValue}
                 placeholder={v.placeholder}
-                readOnly={v.readOnly}
-                type="text"
-                label={v.label}
-                className="w-full"
                 endContent={<ChevronRightIcon width={16} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{
@@ -63,13 +73,40 @@ const Create = () => {
               />
             )}
 
+            {["coordinate"].includes(v.type!) &&
+              (coordinate ? (
+                <UserCoordinate
+                  label={v.label!}
+                  lat={coordinate.lat}
+                  lng={coordinate.lng}
+                  onClick={actionIsCoordinate}
+                />
+              ) : (
+                <Textfield
+                  name={v.name!}
+                  label={v.label}
+                  control={control}
+                  onClick={v.onClick}
+                  defaultValue={v.defaultValue}
+                  placeholder={v.placeholder}
+                  autoComplete={v.autoComplete}
+                  startContent={
+                    <MapPinIcon width={16} color={IconColor.zinc} />
+                  }
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                  rules={{
+                    required: { value: true, message: v.errorMessage! },
+                  }}
+                />
+              ))}
+
             {["file"].includes(v.type!) &&
               (!v.defaultValue ? (
                 <File
                   name={v.name}
                   label={v.label}
                   control={control}
-                  className="w-full"
                   placeholder={v.placeholder}
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}
@@ -90,6 +127,8 @@ const Create = () => {
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
+
+      <CoordinateModal />
     </main>
   );
 };
@@ -113,6 +152,7 @@ export const useKtp = () => {
 };
 
 const useHook = () => {
+  const { actionIsCoordinate } = useActiveModal();
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
   const fields: TextfieldProps[] = [
@@ -161,6 +201,14 @@ const useHook = () => {
       name: "detailAddress",
       type: "text",
       defaultValue: "",
+    }),
+    objectFields({
+      label: "koordinat usaha",
+      name: "coordinate",
+      type: "coordinate",
+      defaultValue: "",
+      placeholder: "tentukan koordinat",
+      onClick: actionIsCoordinate,
     }),
     objectFields({
       label: "KTP pemilik",

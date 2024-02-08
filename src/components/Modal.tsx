@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { Fragment } from "react";
 import { modalDOM } from "src/helpers";
+import { useActiveModal } from "src/stores/modalStore";
+import Coordinate from "./Coordinate";
 
 interface Modal {
   isOpen: boolean;
@@ -83,5 +85,21 @@ export const Modal = ({
             modalDOM
           )}
     </>
+  );
+};
+
+export const CoordinateModal = () => {
+  const { isCoordinate, actionIsCoordinate } = useActiveModal();
+
+  return (
+    <Modal
+      title="koordinat usaha"
+      isOpen={isCoordinate}
+      closeModal={actionIsCoordinate}
+    >
+      <section className="my-4">
+        <Coordinate />
+      </section>
+    </Modal>
   );
 };

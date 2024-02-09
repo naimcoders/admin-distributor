@@ -1,5 +1,5 @@
-import ktp from "src/assets/images/ktp.png";
-import banner from "src/assets/images/banner_etalase.jpg";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
@@ -9,93 +9,105 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { LabelAndImage } from "src/components/File";
-import {
-  CoordinateProps,
-  UserCoordinate,
-  defaultCoordinate,
-} from "src/components/Coordinate";
+import { UserCoordinate } from "src/components/Coordinate";
+import { useStore } from "src/api/store.service";
+import { useParams } from "react-router-dom";
+import { epochToDateConvert, parsePhoneNumber } from "src/helpers";
 
 const Detail = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
-  const { fields } = useDetail();
+  const { fields, isLoading, error, location } = useHook();
 
   return (
-    <GridInput>
-      {fields.map((v, idx) => (
-        <Fragment key={idx}>
-          {["text", "number", "email"].includes(v.type!) && (
-            <Textfield
-              name={v.name}
-              type={v.type}
-              label={v.label}
-              control={control}
-              defaultValue={v.defaultValue}
-              autoComplete={v.autoComplete}
-              readOnly={v.readOnly}
-            />
-          )}
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
+        <Skeleton />
+      ) : (
+        <GridInput>
+          {fields.map((v, idx) => (
+            <Fragment key={idx}>
+              {["text", "number", "email"].includes(v.type!) && (
+                <Textfield
+                  name={v.name}
+                  type={v.type}
+                  label={v.label}
+                  control={control}
+                  defaultValue={v.defaultValue}
+                  autoComplete={v.autoComplete}
+                  readOnly={v.readOnly}
+                />
+              )}
 
-          {["coordinate"].includes(v.type!) && (
-            <UserCoordinate
-              label={v.label}
-              cursor="default"
-              lat={v.defaultValue.lat}
-              lng={v.defaultValue.lng}
-            />
-          )}
+              {["coordinate"].includes(v.type!) && location?.lat && (
+                <UserCoordinate
+                  label={v.label}
+                  cursor="default"
+                  lat={location.lat}
+                  lng={location.lng}
+                />
+              )}
 
-          {["image"].includes(v.type!) && (
-            <LabelAndImage label={v.label!} src={v.defaultValue} />
-          )}
-        </Fragment>
-      ))}
-    </GridInput>
+              {["image"].includes(v.type!) && (
+                <LabelAndImage label={v.label} src={v.defaultValue} />
+              )}
+            </Fragment>
+          ))}
+        </GridInput>
+      )}
+    </>
   );
 };
 
-const useDetail = () => {
+const useHook = () => {
+  const { id } = useParams() as { id: string };
+  const { data, isLoading, error } = useStore().findByid(id);
+  const location = data?.details.location[0];
+  const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
+
   const fields: TextfieldProps[] = [
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama pemilik",
       name: "ownerName",
       type: "text",
-      defaultValue: "naim",
+      defaultValue: data?.ownerName,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nomor HP",
       name: "phoneNumber",
       type: "text",
-      defaultValue: "085824528625",
+      defaultValue: parsePhoneNumber(data?.phoneNumber),
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "email",
       name: "email",
       type: "email",
-      defaultValue: "adi.nugroho@gmail.com",
+      defaultValue: data?.email,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "tanggal join",
       name: "joinDate",
       type: "text",
-      defaultValue: "13 Des 2023",
+      defaultValue: epochToDateConvert(data?.createdAt),
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama toko",
       name: "storeName",
       type: "text",
-      defaultValue: "Maju Jaya",
+      defaultValue: data?.storeName,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "alamat toko",
       name: "storeAddress",
       type: "text",
-      defaultValue: "SULAWESI SELATAN, KOTA MAKASSAR",
+      defaultValue: storeAddress,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
@@ -109,7 +121,7 @@ const useDetail = () => {
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
-      defaultValue: "Depan SMP Negeri 4",
+      defaultValue: location?.detailAddress,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
@@ -130,7 +142,7 @@ const useDetail = () => {
       label: "rating",
       name: "rate",
       type: "text",
-      defaultValue: "0",
+      defaultValue: data?.rate,
     }),
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
@@ -150,23 +162,23 @@ const useDetail = () => {
       label: "koordinat toko",
       name: "coordinate",
       type: "coordinate",
-      defaultValue: defaultCoordinate as CoordinateProps,
+      defaultValue: "",
     }),
     objectFields({
       label: "KTP pemilik",
       name: "ktp",
       type: "image",
-      defaultValue: ktp,
+      defaultValue: data?.ktpImageUrl,
     }),
     objectFields({
       label: "banner etalase",
       name: "banner",
       type: "image",
-      defaultValue: banner,
+      defaultValue: data?.banner,
     }),
   ];
 
-  return { fields };
+  return { fields, isLoading, error, location };
 };
 
 export default Detail;

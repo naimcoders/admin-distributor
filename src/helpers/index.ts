@@ -25,10 +25,12 @@ export const useDebounce = (value: string, delay: number) => {
   return debounce;
 };
 
-export const parsePhoneNumber = (val: string): string => {
+export const parsePhoneNumber = (phone?: string): string => {
+  if (!phone) return "-";
+
   const pattern = /^\+62/;
-  const cutValue = val.replace(pattern, "");
-  return pattern.test(val) ? `0${cutValue}` : val;
+  const cutValue = phone.replace(pattern, "");
+  return pattern.test(phone) ? `0${cutValue}` : phone;
 };
 
 export const detailNavigate = () => {
@@ -46,7 +48,8 @@ export const CreateObject = <T extends object>(data: T): T => {
   return resultObj;
 };
 
-export const epochToDateConvert = (unixTime: number) => {
+export const epochToDateConvert = (unixTime?: number): string => {
+  if (!unixTime) return "-";
   const date = fromUnixTime(unixTime);
   const formatted = format(date, "dd MMM yyyy", { locale: idLocale });
   return formatted;

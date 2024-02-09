@@ -180,10 +180,20 @@ class Api {
       errors: this.errors,
     });
   }
+
+  async findById(id: string): Promise<Store> {
+    return await req<Store>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/${id}`,
+      errors: this.errors,
+    });
+  }
 }
 
 interface ApiStoreInfo {
   find(r: ReqPaging): Promise<ResPaging<Store>>;
+  findById(id: string): Promise<Store>;
 }
 
 export function getStoreApiInfo(): ApiStoreInfo {
@@ -219,5 +229,20 @@ export const useStore = () => {
     };
   };
 
-  return { find };
+  const findByid = (id: string) => {
+    const byId = async () => await getStoreApiInfo().findById(id);
+
+    const { data, isLoading, error } = useQuery<Store, Error>({
+      queryKey: [key, id],
+      queryFn: byId,
+    });
+
+    return {
+      data,
+      isLoading,
+      error: error?.message,
+    };
+  };
+
+  return { find, findByid };
 };

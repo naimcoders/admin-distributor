@@ -3,6 +3,7 @@ import {
   ArrowUpTrayIcon,
   ChevronRightIcon,
   MapPinIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,7 +14,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { GridInput } from "../Index";
+import { GridInput, GridWithoutTextfield, WrapperInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
@@ -36,19 +37,16 @@ const Create = () => {
   const { actionIsCoordinate } = useActiveModal();
 
   return (
-    <main>
-      <GridInput className="mt-4">
+    <WrapperInput>
+      <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
-                type={v.type}
+                {...v}
                 label={v.label}
                 control={control}
-                name={v.name ?? ""}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                autoComplete={v.autoComplete}
+                // defaultValue={v.defaultValue}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{
                   required: { value: true, message: v.errorMessage! },
@@ -72,7 +70,13 @@ const Create = () => {
                 }}
               />
             )}
+          </Fragment>
+        ))}
+      </GridInput>
 
+      <GridWithoutTextfield>
+        {fields.map((v, idx) => (
+          <Fragment key={idx}>
             {["coordinate"].includes(v.type!) &&
               (coordinate ? (
                 <UserCoordinate
@@ -118,18 +122,18 @@ const Create = () => {
                   }}
                 />
               ) : (
-                <LabelAndImage src={v.defaultValue} label={v.label!} />
+                <LabelAndImage src={v.defaultValue} label={v.label} />
               ))}
           </Fragment>
         ))}
-      </GridInput>
+      </GridWithoutTextfield>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
 
       <CoordinateModal />
-    </main>
+    </WrapperInput>
   );
 };
 
@@ -166,7 +170,7 @@ const useHook = () => {
     objectFields({
       label: "nomor HP",
       name: "phoneNumber",
-      type: "text",
+      type: "number",
       defaultValue: "",
       autoComplete: "on",
     }),
@@ -222,7 +226,14 @@ const useHook = () => {
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
   ];

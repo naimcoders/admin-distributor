@@ -4,7 +4,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "src/components/Button";
 import {
-  PartialGeneralFields,
+  TextfieldProps,
   Textfield,
   objectFields,
 } from "src/components/Textfield";
@@ -35,7 +35,7 @@ const LoginPage = () => {
   );
 };
 
-export const logins: PartialGeneralFields[] = [
+export const logins: TextfieldProps[] = [
   objectFields({
     label: "email",
     name: "email",
@@ -83,20 +83,16 @@ const Form = () => {
   });
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flexcol gap-8">
       {logins.map((el, idx) => (
         <Textfield
+          {...el}
           key={idx}
-          name={el.name ?? ""}
-          type={el.type ?? "text"}
-          label={el.label}
           defaultValue=""
           control={control}
-          placeholder={el.placeholder ?? ""}
-          autoComplete={el.autoComplete}
-          errorMessage={handleErrorMessage(errors, el.name)}
-          rules={{ required: { value: true, message: el.errorMessage ?? "" } }}
           className="max-w-full"
+          errorMessage={handleErrorMessage(errors, el.name)}
+          rules={{ required: { value: true, message: el.errorMessage! } }}
         />
       ))}
 

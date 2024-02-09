@@ -1,4 +1,8 @@
-import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -10,7 +14,7 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
-import { UseForm } from "src/types";
+import { IconColor, UseForm } from "src/types";
 import { handleErrorMessage } from "src/helpers";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import useGeneralStore from "src/stores/generalStore";
@@ -239,7 +243,14 @@ const useHook = () => {
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
   ];

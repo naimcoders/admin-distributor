@@ -176,7 +176,7 @@ class Api {
     return await req<ResPaging<Store>>({
       method: "GET",
       isNoAuth: false,
-      path: `${this.path}/${query}`,
+      path: `${this.path}?${query}`,
       errors: this.errors,
     });
   }

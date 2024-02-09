@@ -1,24 +1,20 @@
 import cx from "classnames";
 import { StarIcon } from "@heroicons/react/24/solid";
-import { Chip } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
+import Label from "./Label";
 
 const Rating = (
-  props: { value?: number | string } & HTMLAttributes<HTMLDivElement>
+  props: { rate?: number | string } & Pick<
+    HTMLAttributes<HTMLDivElement>,
+    "className"
+  >
 ) => {
   return (
     <div className={cx("flex", props.className)}>
-      <Chip
-        startContent={<StarIcon color="#cbde23" width={18} />}
-        color="default"
-        variant="light"
-        className={"font-interBold text-xs"}
-        classNames={{
-          dot: "p-0",
-        }}
-      >
-        {props.value}
-      </Chip>
+      <div className="flex gap-1 justify-center p-0">
+        <StarIcon color="#cbde23" width={16} />
+        <Label label={String(props.rate)} />
+      </div>
     </div>
   );
 };

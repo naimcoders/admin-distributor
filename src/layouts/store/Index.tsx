@@ -1,70 +1,80 @@
-import { CheckBadgeIcon, StarIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { Store, useStore } from "src/api/store.service";
 import { Actions } from "src/components/Actions";
+import Error from "src/components/Error";
 import Label from "src/components/Label";
+import Rating from "src/components/Rating";
 import { TableWithoutTabs } from "src/components/Table";
-import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
+import { detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Store = () => {
-  const { columns } = useStore();
+  const { columns } = useHook();
+  const { data, isLoading, error, isNext, page } = useStore().find();
 
   return (
-    <TableWithoutTabs
-      header={{
-        search: {
-          placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
-          setSearch: () => console.log("dadsa"),
-        },
-      }}
-      table={{
-        columns,
-        data: storeDatas,
-        isLoading: false,
-        isNext: false,
-        page: 1,
-      }}
-    />
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : (
+        <TableWithoutTabs
+          header={{
+            search: {
+              placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
+              setSearch: () => console.log("dadsa"),
+            },
+          }}
+          table={{
+            columns,
+            data: data?.items ?? [],
+            isLoading: isLoading,
+            isNext: isNext,
+            page: page,
+          }}
+        />
+      )}
+    </>
   );
 };
 
-interface Store {
-  id: number;
-  storeName: string;
-  rate: number;
-  ownerName: string;
-  phoneNumber: string;
-  picSales: string;
-  totalRevenue: number;
-  totalTransaction: number;
-  isVerify: boolean;
-}
+// interface Store {
+//   id: number;
+//   storeName: string;
+//   rate: number;
+//   ownerName: string;
+//   phoneNumber: string;
+//   picSales: string;
+//   totalRevenue: number;
+//   totalTransaction: number;
+//   isVerify: boolean;
+// }
 
-const storeDatas: Store[] = [
-  {
-    id: 1,
-    storeName: "Maju Jaya",
-    rate: 3.8,
-    ownerName: "Andi",
-    isVerify: true,
-    phoneNumber: "+6285824528625",
-    picSales: "-",
-    totalRevenue: 85000000,
-    totalTransaction: 321,
-  },
-  {
-    id: 2,
-    storeName: "Mbak Atun",
-    rate: 4.9,
-    ownerName: "Bobi",
-    isVerify: false,
-    phoneNumber: "+6285824528625",
-    picSales: "Cahyo",
-    totalRevenue: 112980000,
-    totalTransaction: 647,
-  },
-];
+// const storeDatas: Store[] = [
+//   {
+//     id: 1,
+//     storeName: "Maju Jaya",
+//     rate: 3.8,
+//     ownerName: "Andi",
+//     isVerify: true,
+//     phoneNumber: "+6285824528625",
+//     picSales: "-",
+//     totalRevenue: 85000000,
+//     totalTransaction: 321,
+//   },
+//   {
+//     id: 2,
+//     storeName: "Mbak Atun",
+//     rate: 4.9,
+//     ownerName: "Bobi",
+//     isVerify: false,
+//     phoneNumber: "+6285824528625",
+//     picSales: "Cahyo",
+//     totalRevenue: 112980000,
+//     totalTransaction: 647,
+//   },
+// ];
 
-const useStore = () => {
+const useHook = () => {
   const { onNav } = detailNavigate();
 
   const columns: Columns<Store>[] = [
@@ -74,12 +84,7 @@ const useStore = () => {
     },
     {
       header: <p className="text-center">rating</p>,
-      render: (v) => (
-        <div className="flex gap-1 justify-center p-0">
-          <StarIcon color="#cbde23" width={16} />
-          <Label label={v.rate} />
-        </div>
-      ),
+      render: (v) => <Rating rate={v.rate} />,
     },
     {
       header: <p className="text-center">nama pemilik</p>,
@@ -87,7 +92,7 @@ const useStore = () => {
         <Label
           label={v.ownerName}
           startContent={
-            v.isVerify && <CheckBadgeIcon color="#006FEE" width={20} />
+            v.isVerify && <CheckBadgeIcon color="#006FEE" width={16} />
           }
         />
       ),
@@ -95,22 +100,6 @@ const useStore = () => {
     {
       header: <p className="text-center">nomor HP</p>,
       render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
-    },
-    {
-      header: <p className="text-center">PIC Sales</p>,
-      render: (v) => <Label label={v.picSales} />,
-    },
-    {
-      header: <p className="text-center">total transaksi</p>,
-      render: (v) => (
-        <Label label={Currency(v.totalTransaction)} className="justify-end" />
-      ),
-    },
-    {
-      header: <p className="text-right">total revenue (Rp)</p>,
-      render: (v) => (
-        <Label label={`${Currency(v.totalRevenue)}`} className="justify-end" />
-      ),
     },
     {
       header: <p className="text-center">aksi</p>,

@@ -1,16 +1,28 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { usePagination, PaginationItemType, Button } from "@nextui-org/react";
+import { Fragment } from "react";
 
 interface IPagination {
   page: number;
+  setPage: (v: number) => void;
   isNext?: boolean;
 }
 
-const Pagination: React.FC<IPagination> = ({ page, isNext }) => {
+const Pagination: React.FC<IPagination> = ({ page, setPage, isNext }) => {
   const { activePage, range, onNext, onPrevious } = usePagination({
     total: isNext ? page + 1 : page,
     showControls: true,
   });
+
+  const prev = () => {
+    onPrevious();
+    setPage(activePage - 1);
+  };
+
+  const next = () => {
+    onNext();
+    setPage(activePage + 1);
+  };
 
   const newRange = range.filter(
     (f) => f === "prev" || f === "next" || f === activePage
@@ -20,13 +32,13 @@ const Pagination: React.FC<IPagination> = ({ page, isNext }) => {
     <main>
       <ul className="flex gap-2 justify-center">
         {newRange.map((page) => (
-          <div key={page}>
+          <Fragment key={page}>
             {page === PaginationItemType.PREV && (
               <Button
                 isIconOnly
                 color="default"
                 aria-label="prev"
-                onClick={onPrevious}
+                onClick={prev}
                 isDisabled={activePage > 1 ? false : true}
                 title="Previous"
               >
@@ -51,14 +63,14 @@ const Pagination: React.FC<IPagination> = ({ page, isNext }) => {
                 isIconOnly
                 color="default"
                 aria-label="next"
-                onClick={onNext}
+                onClick={next}
                 isDisabled={isNext ? false : true}
                 title="Next"
               >
                 <ChevronRightIcon width={16} color="#1E1E1E" />
               </Button>
             )}
-          </div>
+          </Fragment>
         ))}
       </ul>
     </main>

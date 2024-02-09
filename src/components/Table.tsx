@@ -80,7 +80,11 @@ export default function Table<T extends object>(props: Table<T>) {
       )}
 
       {!props.isPaginate ? null : (
-        <Pagination page={props.page ?? 1} isNext={props.isNext} />
+        <Pagination
+          page={props.page ?? 1}
+          isNext={props.isNext}
+          setPage={props.setPage}
+        />
       )}
     </div>
   );
@@ -114,6 +118,7 @@ export function TableWithSearchAndTabs<S extends object>(
         isNext={props.isNext}
         columns={props.columns}
         isLoading={props.isLoading}
+        setPage={() => console.log("d")}
       />
     </div>
   );
@@ -150,6 +155,7 @@ export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
         isLoading={props.table.isLoading}
         isNext={props.table.isNext}
         page={props.table.page}
+        setPage={props.table.setPage}
         isPaginate
       />
     </section>

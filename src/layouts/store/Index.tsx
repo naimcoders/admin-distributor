@@ -10,7 +10,8 @@ import { Columns } from "src/types";
 
 const Store = () => {
   const { columns } = useHook();
-  const { data, isLoading, error, isNext, page } = useStore().find();
+  const { data, isLoading, error, isNext, page, setPage, setSearch } =
+    useStore().find();
 
   return (
     <>
@@ -21,58 +22,22 @@ const Store = () => {
           header={{
             search: {
               placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
-              setSearch: () => console.log("dadsa"),
+              setSearch,
             },
           }}
           table={{
             columns,
             data: data?.items ?? [],
             isLoading: isLoading,
-            isNext: isNext,
-            page: page,
+            isNext,
+            page,
+            setPage,
           }}
         />
       )}
     </>
   );
 };
-
-// interface Store {
-//   id: number;
-//   storeName: string;
-//   rate: number;
-//   ownerName: string;
-//   phoneNumber: string;
-//   picSales: string;
-//   totalRevenue: number;
-//   totalTransaction: number;
-//   isVerify: boolean;
-// }
-
-// const storeDatas: Store[] = [
-//   {
-//     id: 1,
-//     storeName: "Maju Jaya",
-//     rate: 3.8,
-//     ownerName: "Andi",
-//     isVerify: true,
-//     phoneNumber: "+6285824528625",
-//     picSales: "-",
-//     totalRevenue: 85000000,
-//     totalTransaction: 321,
-//   },
-//   {
-//     id: 2,
-//     storeName: "Mbak Atun",
-//     rate: 4.9,
-//     ownerName: "Bobi",
-//     isVerify: false,
-//     phoneNumber: "+6285824528625",
-//     picSales: "Cahyo",
-//     totalRevenue: 112980000,
-//     totalTransaction: 647,
-//   },
-// ];
 
 const useHook = () => {
   const { onNav } = detailNavigate();

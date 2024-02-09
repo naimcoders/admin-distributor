@@ -204,7 +204,7 @@ const key = "store";
 
 export const useStore = () => {
   const find = () => {
-    const [page, _] = useState(1);
+    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 
@@ -221,6 +221,7 @@ export const useStore = () => {
       isLoading,
       error: error?.message,
       page,
+      setPage,
       limit,
       setLimit,
       search,

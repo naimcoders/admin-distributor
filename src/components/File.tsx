@@ -1,6 +1,14 @@
+import cx from "classnames";
 import { UseForm } from "src/types";
 import { Textfield, TextfieldProps } from "./Textfield";
-import { FC, forwardRef, Ref, useImperativeHandle, useRef } from "react";
+import {
+  FC,
+  forwardRef,
+  HTMLAttributes,
+  Ref,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import Image, { IconImage } from "./Image";
 
 export interface FileProps extends Pick<UseForm, "control"> {
@@ -43,7 +51,8 @@ export const File = forwardRef(
   }
 );
 
-interface LabelAndImageProps {
+interface LabelAndImageProps
+  extends Pick<HTMLAttributes<HTMLImageElement>, "className"> {
   src: string;
   label?: string;
   actions?: IconImage[];
@@ -53,6 +62,7 @@ export const LabelAndImage: FC<LabelAndImageProps> = ({
   label,
   src,
   actions,
+  className,
 }) => {
   return (
     <section className="flexcol gap-4">
@@ -61,7 +71,7 @@ export const LabelAndImage: FC<LabelAndImageProps> = ({
         src={src}
         alt="image"
         actions={actions}
-        className="aspect-video object-cover"
+        className={cx("aspect-video object-cover", className)}
       />
     </section>
   );

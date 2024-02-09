@@ -1,5 +1,10 @@
 import ktp from "src/assets/images/ktp.png";
-import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import salesPhoto from "src/assets/images/sales_photo.jpg";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
@@ -9,10 +14,10 @@ import {
 } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
 import { CategoryModal, useKtp } from "../Create";
-import Image from "src/components/Image";
 import { GridInput } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage } from "src/helpers";
+import { IconColor } from "src/types";
 
 const Profile = () => {
   const {
@@ -79,15 +84,12 @@ const Profile = () => {
             ))}
 
           {["image"].includes(v.type!) && (
-            <div className="flexcol gap-2">
-              <h2 className="text-sm font-interMedium -mt-3">{v.label}</h2>
-              <Image
-                src={String(v.defaultValue)}
-                alt={v.type}
-                loading="lazy"
-                className="aspect-video object-cover"
-              />
-            </div>
+            <LabelAndImage
+              label={v.label}
+              src={v.defaultValue}
+              actions={v.uploadImage?.image.actions}
+              className="aspect-square w-[10rem]"
+            />
           )}
         </Fragment>
       ))}
@@ -99,7 +101,7 @@ const Profile = () => {
 
 const useHook = () => {
   const { actionIsCategory } = useActiveModal();
-  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -156,39 +158,33 @@ const useHook = () => {
       type: "number",
       defaultValue: 10,
     }),
-    // objectFields({
-    //   label: "KTP sales",
-    //   name: "ktp",
-    //   type: "file",
-    //   placeholder: "unggah KTP",
-    //   refs: {
-    //     ref: ktpRef,
-    //     onClick,
-    //     onChange,
-    //   },
-    //   defaultValue: ktp,
-    //   deleteImage: () => setKtpBlob(""),
-    // }),
     objectFields({
       label: "KTP sales",
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      defaultValue: ktpBlob,
+      defaultValue: ktp,
       uploadImage: {
         file: {
           ref: ktpRef,
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
     objectFields({
       label: "foto sales",
       name: "salesPhoto",
       type: "image",
-      defaultValue: ktp,
+      defaultValue: salesPhoto,
     }),
   ];
 

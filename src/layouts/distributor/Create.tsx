@@ -2,6 +2,7 @@ import {
   ArrowUpTrayIcon,
   ChevronRightIcon,
   MapPinIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -12,7 +13,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { GridInput } from "../Index";
+import { GridInput, GridWithoutTextfield, WrapperInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { CoordinateModal } from "src/components/Modal";
@@ -36,8 +37,8 @@ const Create = () => {
   const { actionIsCoordinate } = useActiveModal();
 
   return (
-    <main>
-      <GridInput className="mt-2">
+    <WrapperInput>
+      <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
@@ -70,7 +71,13 @@ const Create = () => {
                 rules={{ required: { value: true, message: v.errorMessage! } }}
               />
             )}
+          </Fragment>
+        ))}
+      </GridInput>
 
+      <GridWithoutTextfield>
+        {fields.map((v, idx) => (
+          <Fragment key={idx}>
             {["coordinate"].includes(v.type!) &&
               (coordinate ? (
                 <UserCoordinate
@@ -81,7 +88,7 @@ const Create = () => {
                 />
               ) : (
                 <Textfield
-                  name={v.name!}
+                  name={v.name}
                   label={v.label}
                   control={control}
                   onClick={v.onClick}
@@ -109,27 +116,31 @@ const Create = () => {
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}
                   onChange={v.uploadImage?.file.onChange}
+                  errorMessage={handleErrorMessage(errors, v.name)}
                   startContent={
                     <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
                   }
-                  errorMessage={handleErrorMessage(errors, v.name)}
                   rules={{
-                    required: { value: true, message: v.errorMessage ?? "" },
+                    required: { value: true, message: v.errorMessage! },
                   }}
                 />
               ) : (
-                <LabelAndImage src={v.defaultValue} label={v.label!} />
+                <LabelAndImage
+                  src={v.defaultValue}
+                  label={v.label}
+                  actions={v.uploadImage?.image.actions}
+                />
               ))}
           </Fragment>
         ))}
-      </GridInput>
+      </GridWithoutTextfield>
 
       <div className="flex justify-center mt-16">
         <Button aria-label="simpan" onClick={onSubmit} />
       </div>
 
       <CoordinateModal />
-    </main>
+    </WrapperInput>
   );
 };
 
@@ -222,7 +233,14 @@ const useHook = () => {
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
   ];

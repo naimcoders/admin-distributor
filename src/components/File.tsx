@@ -1,7 +1,7 @@
 import { UseForm } from "src/types";
 import { Textfield, TextfieldProps } from "./Textfield";
-import { forwardRef, Ref, useImperativeHandle, useRef } from "react";
-import Image from "./Image";
+import { FC, forwardRef, Ref, useImperativeHandle, useRef } from "react";
+import Image, { IconImage } from "./Image";
 
 export interface FileProps extends Pick<UseForm, "control"> {
   onClick?: () => void;
@@ -43,15 +43,26 @@ export const File = forwardRef(
   }
 );
 
-export const LabelAndImage = (props: { label: string; src: string }) => {
+interface LabelAndImageProps {
+  src: string;
+  label?: string;
+  actions?: IconImage[];
+}
+
+export const LabelAndImage: FC<LabelAndImageProps> = ({
+  label,
+  src,
+  actions,
+}) => {
   return (
-    <div className="flexcol gap-4">
-      <h2 className="text-sm capitalize">{props.label}</h2>
+    <section className="flexcol gap-4">
+      {label && <h2 className="text-sm capitalize">{label}</h2>}
       <Image
-        src={props.src}
+        src={src}
         alt="image"
+        actions={actions}
         className="aspect-video object-cover"
       />
-    </div>
+    </section>
   );
 };

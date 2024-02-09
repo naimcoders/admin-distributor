@@ -121,4 +121,10 @@ export const GridWithoutTextfield: FC<
   );
 };
 
+export const WrapperInput: FC<
+  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
+> = ({ children, className }) => {
+  return <main className={cx("flexcol gap-8", className)}>{children}</main>;
+};
+
 export default Layout;

@@ -9,6 +9,7 @@ import {
 import { ChildRef, FileProps } from "./File";
 import { IconColor, Radius } from "src/types";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { IconImage } from "./Image";
 
 interface ReadOnlyProps {
   isValue: boolean;
@@ -20,7 +21,7 @@ interface UploadImageProps {
     ref: Ref<ChildRef>;
   };
   image: {
-    deleteImage: () => void;
+    actions: IconImage[];
   };
 }
 

@@ -10,7 +10,7 @@ export type IconImage = {
 };
 
 type Image = Partial<HTMLImageElement> & {
-  icons?: IconImage[];
+  actions?: IconImage[];
   radius?: Radius;
 };
 
@@ -18,7 +18,7 @@ export default function Image({
   src,
   alt,
   width,
-  icons,
+  actions,
   loading,
   radius,
   className,
@@ -41,7 +41,7 @@ export default function Image({
         onMouseLeave={mouseLeave}
       />
 
-      {icons && (
+      {actions && (
         <div
           className={cx(
             "absolute right-2 top-2 cursor-pointer",
@@ -49,7 +49,7 @@ export default function Image({
           )}
           onMouseEnter={mouseEnter}
         >
-          {icons.map((icon, idx) => (
+          {actions.map((icon, idx) => (
             <div
               className="bg-white p-1 rounded-full mb-2"
               onClick={icon.onClick}

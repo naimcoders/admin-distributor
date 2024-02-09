@@ -1,9 +1,11 @@
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { ChildRef, File } from "src/components/File";
+import { ChildRef, File, LabelAndImage } from "src/components/File";
 import { TextfieldProps, objectFields } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
+import { IconColor } from "src/types";
+import { GridWithoutTextfield } from "../Index";
 
 const Banner = () => {
   const {
@@ -13,25 +15,34 @@ const Banner = () => {
   const { banners } = useHook();
 
   return (
-    <main className="flex flex-col sm:flex-row gap-8">
-      {banners.map((v) => (
-        <File
-          name={v.name}
-          label={v.label}
-          control={control}
-          placeholder={v.placeholder}
-          ref={v.uploadImage?.file.ref}
-          onClick={v.uploadImage?.file.onClick}
-          onChange={v.uploadImage?.file.onChange}
-          startContent={<ArrowUpTrayIcon width={16} />}
-          errorMessage={handleErrorMessage(errors, v.name)}
-          rules={{
-            required: { value: true, message: v.errorMessage ?? "" },
-          }}
-          key={v.label}
-        />
-      ))}
-    </main>
+    <GridWithoutTextfield>
+      {banners.map((v) =>
+        !v.defaultValue ? (
+          <File
+            name={v.name}
+            key={v.label}
+            label={v.label}
+            control={control}
+            placeholder={v.placeholder}
+            ref={v.uploadImage?.file.ref}
+            onClick={v.uploadImage?.file.onClick}
+            onChange={v.uploadImage?.file.onChange}
+            startContent={<ArrowUpTrayIcon width={16} />}
+            errorMessage={handleErrorMessage(errors, v.name)}
+            rules={{
+              required: { value: true, message: v.errorMessage! },
+            }}
+          />
+        ) : (
+          <LabelAndImage
+            key={v.label}
+            label={v.label}
+            src={v.defaultValue}
+            actions={v.uploadImage?.image.actions}
+          />
+        )
+      )}
+    </GridWithoutTextfield>
   );
 };
 
@@ -53,7 +64,14 @@ const useHook = () => {
           onClick: onClickLogo,
           onChange: onChangeLogo,
         },
-        image: { deleteImage: () => setLogoUrl("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setLogoUrl(""),
+            },
+          ],
+        },
       },
     }),
     objectFields({
@@ -68,7 +86,14 @@ const useHook = () => {
           onClick: onClickBanner,
           onChange: onChangeBanner,
         },
-        image: { deleteImage: () => setBannerUrl("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setBannerUrl(""),
+            },
+          ],
+        },
       },
     }),
   ];

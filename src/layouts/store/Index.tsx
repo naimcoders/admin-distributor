@@ -1,17 +1,26 @@
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { Store, useStore } from "src/api/store.service";
-import { Actions } from "src/components/Actions";
 import Error from "src/components/Error";
 import Label from "src/components/Label";
 import Rating from "src/components/Rating";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { Store, useStore } from "src/api/store.service";
+import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
 import { detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
 
 const Store = () => {
   const { columns } = useHook();
-  const { data, isLoading, error, isNext, page, setPage, setSearch } =
+
+  const { data, isLoading, error, isNext, page, setSearch, setPage } =
     useStore().find();
+
+  const onPrev = () => {
+    setPage((num) => num - 1);
+  };
+
+  const onNext = () => {
+    setPage((num) => num + 1);
+  };
 
   return (
     <>
@@ -31,7 +40,8 @@ const Store = () => {
             isLoading: isLoading,
             isNext,
             page,
-            setPage,
+            next: onNext,
+            prev: onPrev,
           }}
         />
       )}

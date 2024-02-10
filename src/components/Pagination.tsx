@@ -4,29 +4,30 @@ import { Fragment } from "react";
 
 interface IPagination {
   page: number;
-  setPage: (v: number) => void;
+  next: () => void;
+  prev: () => void;
   isNext?: boolean;
 }
 
-const Pagination: React.FC<IPagination> = ({ page, setPage, isNext }) => {
+const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
   const { activePage, range, onNext, onPrevious } = usePagination({
     total: isNext ? page + 1 : page,
     showControls: true,
   });
 
-  const prev = () => {
-    onPrevious();
-    setPage(activePage - 1);
-  };
-
-  const next = () => {
-    onNext();
-    setPage(activePage + 1);
-  };
-
   const newRange = range.filter(
     (f) => f === "prev" || f === "next" || f === activePage
   );
+
+  const left = () => {
+    prev();
+    onPrevious();
+  };
+
+  const right = () => {
+    next();
+    onNext();
+  };
 
   return (
     <main>
@@ -38,7 +39,7 @@ const Pagination: React.FC<IPagination> = ({ page, setPage, isNext }) => {
                 isIconOnly
                 color="default"
                 aria-label="prev"
-                onClick={prev}
+                onClick={left}
                 isDisabled={activePage > 1 ? false : true}
                 title="Previous"
               >
@@ -63,7 +64,7 @@ const Pagination: React.FC<IPagination> = ({ page, setPage, isNext }) => {
                 isIconOnly
                 color="default"
                 aria-label="next"
-                onClick={next}
+                onClick={right}
                 isDisabled={isNext ? false : true}
                 title="Next"
               >

@@ -13,6 +13,8 @@ interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
     TableProps<T> {
   isTransparent?: boolean;
+  next: () => void;
+  prev: () => void;
 }
 
 export default function Table<T extends object>(props: Table<T>) {
@@ -83,7 +85,8 @@ export default function Table<T extends object>(props: Table<T>) {
         <Pagination
           page={props.page ?? 1}
           isNext={props.isNext}
-          setPage={props.setPage}
+          next={props.next}
+          prev={props.prev}
         />
       )}
     </div>
@@ -118,7 +121,9 @@ export function TableWithSearchAndTabs<S extends object>(
         isNext={props.isNext}
         columns={props.columns}
         isLoading={props.isLoading}
-        setPage={() => console.log("d")}
+        next={props.next}
+        prev={props.prev}
+        // setPage={() => console.log("d")}
       />
     </div>
   );
@@ -126,7 +131,7 @@ export function TableWithSearchAndTabs<S extends object>(
 
 interface TableWithoutTabs<T extends object> {
   header: HeaderProps;
-  table: TableProps<T>;
+  table: Table<T>;
 }
 
 interface HeaderProps {
@@ -155,7 +160,8 @@ export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
         isLoading={props.table.isLoading}
         isNext={props.table.isNext}
         page={props.table.page}
-        setPage={props.table.setPage}
+        next={props.table.next}
+        prev={props.table.prev}
         isPaginate
       />
     </section>

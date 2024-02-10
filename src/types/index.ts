@@ -25,7 +25,6 @@ export interface TableProps<T extends object> {
   data: T[];
   columns: Columns<T>[];
   isLoading: boolean;
-  setPage: (v: number) => void;
   page?: number;
   isNext?: boolean;
   isPaginate?: boolean;

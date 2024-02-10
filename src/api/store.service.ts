@@ -214,6 +214,7 @@ export const useStore = () => {
     const { data, isLoading, error } = useQuery<ResPaging<Store>, Error>({
       queryKey: [key, page, limit, search],
       queryFn: byPaging,
+      enabled: !!page && !!limit,
     });
 
     return {

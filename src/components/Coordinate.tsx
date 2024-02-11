@@ -1,18 +1,18 @@
 import cx from "classnames";
+import Error from "./Error";
+import useGeneralStore from "src/stores/generalStore";
 import {
   GoogleMap,
   Marker,
   useJsApiLoader,
   Libraries,
 } from "@react-google-maps/api";
-import Error from "./Error";
 import { CSSProperties, FC, useCallback, useEffect, useState } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
 import { Input } from "@nextui-org/react";
-import useGeneralStore from "src/stores/generalStore";
 import { Button } from "./Button";
 import { useActiveModal } from "src/stores/modalStore";
 
@@ -43,11 +43,13 @@ const Coordinate = () => {
 
   const { actionIsCoordinate } = useActiveModal();
   const { isLoaded, loadError } = useMaps();
+
   const setCoordinate = useGeneralStore((v) => v.setCoordinate);
   const formatAddress = useGeneralStore((v) => v.formatAddress);
   const setFormatAddress = useGeneralStore((v) => v.setFormatAddress);
 
   const handleSearch = (newAddress: string) => setAddress(newAddress);
+
   const handleSelect = async (newAddress: string) => {
     try {
       const results = await geocodeByAddress(newAddress);

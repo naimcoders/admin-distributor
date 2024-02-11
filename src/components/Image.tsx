@@ -9,7 +9,10 @@ export type IconImage = {
   onClick?: () => void;
 };
 
-type Image = Partial<HTMLImageElement> & {
+type Image = Pick<
+  Partial<HTMLImageElement>,
+  "src" | "alt" | "width" | "loading" | "className"
+> & {
   actions?: IconImage[];
   radius?: Radius;
 };

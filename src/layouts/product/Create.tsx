@@ -49,7 +49,7 @@ const Create = () => {
                 alt="Product"
                 key={v}
                 className="aspect-square w-[10rem] object-cover rounded-md"
-                icons={[
+                actions={[
                   {
                     src: <TrashIcon width={16} />,
                     onClick: () => setPhotos(photos.filter((e) => e !== v)),
@@ -70,7 +70,8 @@ const Create = () => {
               startContent={<PhotoIcon width={16} color={IconColor.zinc} />}
             />
           </section>
-          <GridInput>
+
+          <GridInput className="grid grid-cols-3">
             {fields.map((v) => (
               <Fragment key={v.label}>
                 {["text", "number"].includes(v.type!) && (
@@ -106,18 +107,18 @@ const Create = () => {
                     }
                   />
                 )}
-
-                {["textarea"].includes(v.type!) && (
-                  <Textarea
-                    label={v.label}
-                    name={v.name}
-                    defaultValue=""
-                    control={control}
-                    placeholder={v.placeholder}
-                  />
-                )}
               </Fragment>
             ))}
+          </GridInput>
+
+          <GridInput className="grid grid-cols-3">
+            <Textarea
+              label="deskripsi"
+              name="description"
+              defaultValue=""
+              control={control}
+              placeholder="masukkan deskripsi"
+            />
           </GridInput>
 
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />

@@ -16,9 +16,11 @@ const Textarea = (props: TextfieldProps) => {
         {...field}
         id={props.label}
         radius={props.radius}
-        className={props.className}
         description={props.description}
         placeholder={props.placeholder}
+        classNames={{
+          input: "placeholder:capitalize",
+        }}
       />
     </section>
   );

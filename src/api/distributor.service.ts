@@ -174,10 +174,20 @@ class Api {
       isNoAuth: false,
     });
   }
+
+  async findById(id: string): Promise<Distributor> {
+    return await req<Distributor>({
+      method: "GET",
+      errors: "",
+      path: `${this.path}/${id}`,
+      isNoAuth: false,
+    });
+  }
 }
 
 interface ApiDistributorInfo {
   find(r: ReqPaging): Promise<ResPaging<Distributor>>;
+  findById(id: string): Promise<Distributor>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -214,5 +224,20 @@ export const useDistributor = () => {
     };
   };
 
-  return { find };
+  const findById = (id: string) => {
+    const byId = async () => await getDistributorApiInfo().findById(id);
+    const { data, isLoading, error } = useQuery({
+      queryKey: [key, id],
+      queryFn: byId,
+      enabled: !!id,
+    });
+
+    return {
+      data,
+      isLoading,
+      error: error?.message,
+    };
+  };
+
+  return { find, findById };
 };

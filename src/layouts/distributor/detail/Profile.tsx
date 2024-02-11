@@ -6,82 +6,109 @@ import {
 } from "src/components/Textfield";
 import { useKtp } from "../Create";
 import { FieldValues, useForm } from "react-hook-form";
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
 import { GridInput, GridWithoutTextfield } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
-import { handleErrorMessage } from "src/helpers";
+import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
+import { useDistributor } from "src/api/distributor.service";
+import { useParams } from "react-router-dom";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
+import { IconColor } from "src/types";
 
 const Profile = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>({ mode: "onChange" });
-  const { fields } = useHook();
+  } = useForm<FieldValues>();
+  const { fields, isLoading, error } = useHook();
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
 
   return (
-    <main className="mt-5 flexcol gap-8">
-      <GridInput>
-        {fields.map((v, idx) => (
-          <Fragment key={idx}>
-            {["text", "number", "email"].includes(v.type!) && (
-              <Textfield
-                type={v.type}
-                label={v.label}
-                control={control}
-                name={v.name ?? ""}
-                readOnly={v.readOnly}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                autoComplete={v.autoComplete}
-              />
-            )}
-          </Fragment>
-        ))}
-      </GridInput>
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
+        <Skeleton />
+      ) : (
+        <main className="mt-5 flexcol gap-8">
+          <GridInput className="grid grid-cols-3">
+            {fields.map((v, idx) => (
+              <Fragment key={idx}>
+                {["text", "number", "email"].includes(v.type!) && (
+                  <Textfield
+                    type={v.type}
+                    name={v.name}
+                    label={v.label}
+                    control={control}
+                    readOnly={v.readOnly}
+                    placeholder={v.placeholder}
+                    defaultValue={v.defaultValue}
+                    description={v.description}
+                    autoComplete={v.autoComplete}
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    rules={{
+                      required: { value: true, message: v.errorMessage ?? "" },
+                    }}
+                  />
+                )}
+              </Fragment>
+            ))}
+          </GridInput>
 
-      <GridWithoutTextfield>
-        {fields.map((v, idx) => (
-          <Fragment key={idx}>
-            {["file"].includes(v.type!) &&
-              (!v.defaultValue ? (
-                <File
-                  name={v.name}
-                  label={v.label}
-                  control={control}
-                  className="w-full"
-                  placeholder={v.placeholder}
-                  ref={v.uploadImage?.file.ref}
-                  onClick={v.uploadImage?.file.onClick}
-                  onChange={v.uploadImage?.file.onChange}
-                  startContent={<ArrowUpTrayIcon width={16} />}
-                  errorMessage={handleErrorMessage(errors, v.name)}
-                  rules={{
-                    required: { value: true, message: v.errorMessage ?? "" },
-                  }}
-                />
-              ) : (
-                <LabelAndImage src={v.defaultValue} label={v.label!} />
-              ))}
-          </Fragment>
-        ))}
-      </GridWithoutTextfield>
+          <GridWithoutTextfield>
+            {fields.map((v, idx) => (
+              <Fragment key={idx}>
+                {["file"].includes(v.type!) &&
+                  (!v.defaultValue ? (
+                    <File
+                      name={v.name}
+                      label={v.label}
+                      control={control}
+                      placeholder={v.placeholder}
+                      ref={v.uploadImage?.file.ref}
+                      onClick={v.uploadImage?.file.onClick}
+                      onChange={v.uploadImage?.file.onChange}
+                      startContent={<ArrowUpTrayIcon width={16} />}
+                      errorMessage={handleErrorMessage(errors, v.name)}
+                      rules={{
+                        required: {
+                          value: true,
+                          message: v.errorMessage ?? "",
+                        },
+                      }}
+                    />
+                  ) : (
+                    <LabelAndImage
+                      src={v.defaultValue}
+                      label={v.label}
+                      actions={v.uploadImage?.image.actions}
+                    />
+                  ))}
+              </Fragment>
+            ))}
+          </GridWithoutTextfield>
 
-      <div className="flex justify-center mt-10">
-        <Button aria-label="simpan" onClick={onSubmit} />
-      </div>
-    </main>
+          <div className="flex justify-center mt-10">
+            <Button aria-label="simpan" onClick={onSubmit} />
+          </div>
+        </main>
+      )}
+    </>
   );
 };
 
 const useHook = () => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+  const { id } = useParams() as { id: string };
+  const { data, isLoading, error } = useDistributor().findById(id);
+  const bank = data?.details.bank;
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -89,44 +116,44 @@ const useHook = () => {
       name: "ownerName",
       type: "text",
       autoComplete: "on",
-      defaultValue: "Andi",
+      defaultValue: data?.ownerName,
     }),
     objectFields({
       label: "nomor HP",
       name: "phoneNumber",
       type: "number",
       autoComplete: "on",
-      defaultValue: "085867554378",
+      defaultValue: parsePhoneNumber(data?.phoneNumber),
     }),
     objectFields({
       label: "email",
       name: "email",
       type: "email",
       autoComplete: "on",
-      defaultValue: "adi.nugroho@gmail.com",
+      defaultValue: data?.email,
     }),
     objectFields({
       label: "nama sesuai rekening",
-      name: "rekName",
+      name: "accountName",
       type: "text",
-      defaultValue: "Andi Susanto",
-      description: "*tidak dapat diedit",
+      defaultValue: bank?.accountName ?? "-",
+      description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       label: "nama bank",
       name: "bankName",
       type: "text",
-      defaultValue: "Bank Mandiri",
-      description: "*tidak dapat diedit",
+      defaultValue: bank?.bankName ?? "-",
+      description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       label: "nomor rekening",
-      name: "noRek",
+      name: "accountNumber",
       type: "text",
-      defaultValue: "15224275284",
-      description: "*tidak dapat diedit",
+      defaultValue: bank?.accountNumber ?? "-",
+      description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
@@ -141,12 +168,19 @@ const useHook = () => {
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon color={IconColor.red} width={16} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
   ];
 
-  return { fields };
+  return { fields, isLoading, error };
 };
 
 export default Profile;

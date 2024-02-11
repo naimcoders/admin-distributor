@@ -1,8 +1,9 @@
 import { ReqPaging, ResPaging } from "src/interface";
 import { req } from "./request";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import queryString from "query-string";
+import { toast } from "react-toastify";
 
 export interface Distributor {
   banner: string;
@@ -150,6 +151,10 @@ export interface History {
   walletId: string;
 }
 
+interface Suspend {
+  isSuspend: boolean;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -183,11 +188,22 @@ class Api {
       isNoAuth: false,
     });
   }
+
+  async suspend(distributorId: string, r: Suspend): Promise<Distributor> {
+    return await req<Distributor>({
+      method: "PUT",
+      path: `${this.path}/${distributorId}/suspend`,
+      errors: "",
+      isNoAuth: false,
+      body: r,
+    });
+  }
 }
 
 interface ApiDistributorInfo {
   find(r: ReqPaging): Promise<ResPaging<Distributor>>;
   findById(id: string): Promise<Distributor>;
+  suspend(distributorId: string, r: Suspend): Promise<Distributor>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -197,6 +213,8 @@ export function getDistributorApiInfo(): ApiDistributorInfo {
 const key = "distributor";
 
 export const useDistributor = () => {
+  const queryClient = useQueryClient();
+
   const find = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -226,7 +244,7 @@ export const useDistributor = () => {
 
   const findById = (id: string) => {
     const byId = async () => await getDistributorApiInfo().findById(id);
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error } = useQuery<Distributor, Error>({
       queryKey: [key, id],
       queryFn: byId,
       enabled: !!id,
@@ -239,5 +257,26 @@ export const useDistributor = () => {
     };
   };
 
-  return { find, findById };
+  const suspend = () => {
+    useMutation<
+      Distributor,
+      Error,
+      { id: string; isSuspend: boolean; closeModal: () => void }
+    >({
+      mutationKey: [key],
+      mutationFn: async (e) =>
+        await getDistributorApiInfo().suspend(e.id, { isSuspend: e.isSuspend }),
+      onError: (e) => {
+        const error = e as Error;
+        toast.error(error.message);
+      },
+      onSuccess: (_, r) => {
+        toast.success("Status akun berhasil diperbarui");
+        void queryClient.invalidateQueries({ queryKey: [key] });
+        r.closeModal();
+      },
+    });
+  };
+
+  return { find, findById, suspend };
 };

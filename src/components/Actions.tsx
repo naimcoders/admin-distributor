@@ -3,9 +3,10 @@ import { Switch } from "@nextui-org/react";
 import cx from "classnames";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 
-type Switch = HTMLAttributes<HTMLInputElement> & {
+interface Switch {
   isSelected?: boolean;
-};
+  onClick?: () => void;
+}
 
 interface ActionProps {
   id: number | string;

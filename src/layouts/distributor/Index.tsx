@@ -9,9 +9,13 @@ import {
   parsePhoneNumber,
 } from "src/helpers";
 import { Columns } from "src/types";
+import { useActiveModal } from "src/stores/modalStore";
+import { FC, useState } from "react";
+import { Modal } from "src/components/Modal";
+import { Button } from "src/components/Button";
 
 const Distributor = () => {
-  const { columns } = useHook();
+  const { columns, id, isSuspend } = useHook();
   const { onNav } = detailNavigate();
   const { data, isLoading, error, page, setPage, setSearch, isNext } =
     useDistributor().find();
@@ -24,30 +28,64 @@ const Distributor = () => {
       {error ? (
         <Error error={error} />
       ) : (
-        <TableWithoutTabs
-          header={{
-            search: {
-              placeholder: "cari nama sub-distributor/pemilik/no HP",
-              setSearch,
-            },
-            createData: {
-              isValue: true,
-              label: "distributor",
-              onClick: () => onNav("tambah"),
-            },
-          }}
-          table={{
-            columns,
-            data: data?.items ?? [],
-            isLoading,
-            isNext,
-            page,
-            next,
-            prev,
-          }}
-        />
+        <>
+          <TableWithoutTabs
+            header={{
+              search: {
+                placeholder: "cari nama sub-distributor/pemilik/no HP",
+                setSearch,
+              },
+              createData: {
+                isValue: true,
+                label: "distributor",
+                onClick: () => onNav("tambah"),
+              },
+            }}
+            table={{
+              columns,
+              data: data?.items ?? [],
+              isLoading,
+              isNext,
+              page,
+              next,
+              prev,
+            }}
+          />
+
+          <ConfirmModal id={id} isSuspend={isSuspend} />
+        </>
       )}
     </>
+  );
+};
+
+interface ConfirmModalProps {
+  id: string;
+  isSuspend: boolean;
+}
+
+const ConfirmModal: FC<ConfirmModalProps> = ({ id, isSuspend }) => {
+  const { isConfirm, actionIsConfirm } = useActiveModal();
+
+  const handleClick = () => {
+    console.log(id, isSuspend);
+  };
+
+  return (
+    <Modal isOpen={isConfirm} closeModal={actionIsConfirm}>
+      <section className="my-2 flexcol gap-4 items-center">
+        <p>
+          {!isSuspend
+            ? "Yakin ingin menonaktifkan akun ini?"
+            : "Yakin ingin mengaktifkan akun ini?"}
+        </p>
+
+        <Button
+          aria-label={!isSuspend ? "Non-aktifkan" : "Aktifkan"}
+          onClick={handleClick}
+        />
+      </section>
+    </Modal>
   );
 };
 
@@ -87,6 +125,16 @@ const Distributor = () => {
 
 const useHook = () => {
   const { onNav } = detailNavigate();
+  const { actionIsConfirm } = useActiveModal();
+
+  const [id, setId] = useState("");
+  const [isSuspend, setIsSuspend] = useState(false);
+
+  const handleSwitch = (id: string, isSuspend: boolean) => {
+    setId(id);
+    setIsSuspend(isSuspend);
+    actionIsConfirm();
+  };
 
   const columns: Columns<Distributor>[] = [
     {
@@ -112,7 +160,8 @@ const useHook = () => {
           id={idx}
           action="both"
           switch={{
-            isSelected: true,
+            isSelected: !v.isSuspend, // if false, so switch is true
+            onClick: () => handleSwitch(v.id, v.isSuspend),
           }}
           detail={{
             onClick: () => onNav(String(v.id)),
@@ -123,7 +172,7 @@ const useHook = () => {
     },
   ];
 
-  return { columns };
+  return { columns, id, isSuspend };
 };
 
 export default Distributor;

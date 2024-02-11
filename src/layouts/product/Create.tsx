@@ -22,6 +22,7 @@ import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
 import { Radio, RadioGroup, Switch } from "@nextui-org/react";
 import Textarea from "src/components/Textarea";
+import { Button } from "src/components/Button";
 
 const Create = () => {
   const {
@@ -124,6 +125,7 @@ const Create = () => {
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
+          <PostageModal />
         </main>
       )}
     </>
@@ -165,6 +167,165 @@ const ModalCategory = ({
       />
     </>
   );
+};
+
+const PostageModal = () => {
+  const { isPostage, actionIsPostage } = useActiveModal();
+  const { packageSize, outOfTownDeliveryField } = usePostage();
+
+  const {
+    control,
+    formState: { errors },
+  } = useForm<FieldValues>();
+
+  return (
+    <Modal isOpen={isPostage} closeModal={actionIsPostage}>
+      <section className="my-2 flexcol gap-4">
+        <Textfield
+          name="weight"
+          placeholder="atur berat produk"
+          label="berat produk"
+          control={control}
+          defaultValue=""
+          type="number"
+          endContent={
+            <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
+          }
+          errorMessage={handleErrorMessage(errors, "postage")}
+          rules={{
+            required: { value: true, message: "masukkan berat produk" },
+          }}
+        />
+
+        <hr />
+
+        <section>
+          <h2 className="font-semibold capitalize">ukuran paket</h2>
+          <section className="flexcol gap-4 mt-4">
+            {packageSize.map((v) => (
+              <Textfield
+                key={v.label}
+                name={v.name}
+                type={v.type}
+                label={v.label}
+                control={control}
+                placeholder={v.placeholder}
+                defaultValue={v.defaultValue}
+                errorMessage={handleErrorMessage(errors, v.name)}
+                rules={{
+                  required: { value: true, message: v.errorMessage! },
+                }}
+                endContent={
+                  <div className={`text-[${IconColor.zinc}] text-sm`}>cm</div>
+                }
+              />
+            ))}
+          </section>
+        </section>
+
+        <hr />
+
+        <section>
+          <h2 className="font-semibold capitalize mb-4">
+            pengiriman dalam kota
+          </h2>
+          <Textfield
+            name="distributorCourier"
+            label="kurir distributor"
+            placeholder="atur ongkir"
+            control={control}
+            defaultValue=""
+            type="number"
+            startContent={
+              <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
+            }
+            errorMessage={handleErrorMessage(errors, "distributorCourier")}
+            rules={{
+              required: { value: true, message: "masukkan berat produk" },
+            }}
+          />
+        </section>
+
+        <hr />
+
+        <section>
+          <header className="flex justify-between">
+            <h2 className="font-semibold capitalize">pengiriman luar kota</h2>
+            <Switch size="sm" color="success" />
+          </header>
+          <section className="mt-4 flexcol gap-4">
+            {outOfTownDeliveryField.map((v) => (
+              <Textfield
+                type="text"
+                key={v.label}
+                name={v.name}
+                label={v.label}
+                control={control}
+                placeholder={v.placeholder}
+                defaultValue={v.defaultValue}
+                readOnly={v.readOnly}
+                startContent={
+                  <div className={`text-[${IconColor.zinc}] text-sm`}>Maks</div>
+                }
+                endContent={
+                  <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
+                }
+                errorMessage={handleErrorMessage(errors, "postage")}
+                rules={{
+                  required: { value: true, message: "masukkan berat produk" },
+                }}
+              />
+            ))}
+          </section>
+        </section>
+
+        <Button aria-label="simpan" className="mx-auto mt-4" />
+      </section>
+    </Modal>
+  );
+};
+
+const usePostage = () => {
+  const packageSize: TextfieldProps[] = [
+    objectFields({
+      name: "width",
+      label: "lebar",
+      type: "number",
+      placeholder: "atur lebar",
+      defaultValue: "",
+    }),
+    objectFields({
+      name: "length",
+      label: "panjang",
+      type: "number",
+      defaultValue: "",
+      placeholder: "atur panjang",
+    }),
+    objectFields({
+      name: "height",
+      label: "tinggi",
+      type: "number",
+      defaultValue: "",
+      placeholder: "atur tinggi",
+    }),
+  ];
+
+  const outOfTownDeliveryField: TextfieldProps[] = [
+    objectFields({
+      name: "jneReguler",
+      defaultValue: "50.000",
+      label: "JNE Reguler",
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+    objectFields({
+      name: "jneCargo",
+      defaultValue: "50.000",
+      label: "JNE Cargo",
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+  ];
+
+  return { packageSize, outOfTownDeliveryField };
 };
 
 const useUploadPhoto = () => {
@@ -237,6 +398,7 @@ const useFields = () => {
     actionIsSubCategory,
     actionIsDangerous,
     actionIsCondition,
+    actionIsPostage,
   } = useActiveModal();
 
   const fields: TextfieldProps[] = [
@@ -272,6 +434,13 @@ const useFields = () => {
       name: "price",
       type: "number",
       defaultValue: "",
+    }),
+    objectFields({
+      label: "ongkos kirim (berat/ukuran)",
+      name: "postage",
+      type: "modal",
+      defaultValue: "",
+      onClick: actionIsPostage,
     }),
     objectFields({
       label: "kondisi *",

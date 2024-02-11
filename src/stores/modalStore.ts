@@ -19,6 +19,8 @@ interface Modal {
   setIsCoordinate: (v: boolean) => void;
   isConfirm: boolean;
   setIsConfirm: (v: boolean) => void;
+  isPostage: boolean;
+  setIsPostage: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -40,6 +42,8 @@ const useModalStore = create<Modal>((set) => ({
   setIsCoordinate: (v) => set({ isCoordinate: v }),
   isConfirm: false,
   setIsConfirm: (v) => set({ isConfirm: v }),
+  isPostage: false,
+  setIsPostage: (v) => set({ isPostage: v }),
 }));
 
 export default useModalStore;
@@ -64,6 +68,8 @@ export const useActiveModal = () => {
     setIsCoordinate,
     isConfirm,
     setIsConfirm,
+    isPostage,
+    setIsPostage,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -75,6 +81,7 @@ export const useActiveModal = () => {
   const actionIsCondition = () => setIsCondition(!isCondition);
   const actionIsCoordinate = () => setIsCoordinate(!isCoordinate);
   const actionIsConfirm = () => setIsConfirm(!isConfirm);
+  const actionIsPostage = () => setIsPostage(!isPostage);
 
   return {
     isBankName,
@@ -95,5 +102,7 @@ export const useActiveModal = () => {
     actionIsCoordinate,
     isConfirm,
     actionIsConfirm,
+    isPostage,
+    actionIsPostage,
   };
 };

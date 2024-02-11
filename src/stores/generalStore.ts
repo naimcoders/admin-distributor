@@ -9,6 +9,17 @@ interface Period<T> {
   endAt: T;
 }
 
+interface PostageProps {
+  weight: number;
+  size: {
+    width: number;
+    length: number;
+    height: number;
+  };
+  postage: number;
+  isOutOfTownDelivery: boolean;
+}
+
 interface General {
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;
@@ -28,6 +39,8 @@ interface General {
   setCoordinate: (v: CoordinateProps) => void;
   formatAddress: string;
   setFormatAddress: (v: string) => void;
+  postageProduct: PostageProps;
+  setPostageProduct: (v: PostageProps) => void;
 }
 
 const useGeneralStore = create<General>((set) => ({
@@ -49,6 +62,13 @@ const useGeneralStore = create<General>((set) => ({
   setCoordinate: (v) => set({ coordinate: v }),
   formatAddress: "",
   setFormatAddress: (v) => set({ formatAddress: v }),
+  postageProduct: {
+    weight: 0,
+    size: { width: 0, length: 0, height: 0 },
+    postage: 0,
+    isOutOfTownDelivery: false,
+  },
+  setPostageProduct: (v) => set({ postageProduct: v }),
 }));
 
 export default useGeneralStore;

@@ -21,7 +21,10 @@ interface PostageProps {
 }
 
 interface VariantProps {
-  types: string[];
+  types: {
+    label: string;
+    image?: string;
+  }[];
 }
 
 interface General {

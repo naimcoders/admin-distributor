@@ -192,8 +192,9 @@ const VariantModal = () => {
                       size="sm"
                       variant="light"
                       className="w-[6rem] border border-gray-400 text-gray-500"
+                      onClick={() => console.log(v)}
                     >
-                      {v}
+                      {v.label}
                     </Btn>
                     {isDeleteType && (
                       <XCircleIcon
@@ -201,7 +202,7 @@ const VariantModal = () => {
                         color={IconColor.red}
                         className="absolute -top-2 -right-2 cursor-pointer"
                         title="hapus"
-                        onClick={() => handleDeleteType(v)}
+                        onClick={() => handleDeleteType(v.label)}
                       />
                     )}
                   </section>
@@ -273,8 +274,10 @@ const useVariant = () => {
   const handleSubmitType = handleSubmit(async (e) => {
     try {
       const type = e.type;
-      const obj = { ...variant, types: [...variant.types, type] };
-      setVariant(obj);
+      setVariant({
+        ...variant,
+        types: [...variant.types, { label: type }],
+      });
       setFocus("type");
     } catch (e) {
       const error = e as Error;
@@ -285,7 +288,7 @@ const useVariant = () => {
   });
 
   const handleDeleteType = (label: string) => {
-    const newTypes = variant.types.filter((type) => type !== label);
+    const newTypes = variant.types.filter((type) => type.label !== label);
     const obj = { ...variant, types: newTypes };
     setVariant(obj);
   };
@@ -293,8 +296,11 @@ const useVariant = () => {
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const val = getValues();
-      const obj = { ...variant, types: [...variant.types, val.type] };
-      setVariant(obj);
+      setVariant({
+        ...variant,
+        types: [...variant.types, { label: val.type }],
+      });
+      setFocus("type");
       resetField("type");
       setFocus("type");
     }

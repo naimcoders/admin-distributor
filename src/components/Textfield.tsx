@@ -1,6 +1,6 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes, ReactNode, Ref, useState } from "react";
+import { HTMLAttributes, KeyboardEvent, ReactNode, Ref, useState } from "react";
 import {
   FieldValues,
   UseControllerProps,
@@ -40,6 +40,7 @@ export interface TextfieldProps
   readOnly?: ReadOnlyProps;
   autoComplete?: "on" | "off";
   uploadImage?: UploadImageProps;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const Textfield = (props: TextfieldProps) => {
@@ -59,6 +60,7 @@ export const Textfield = (props: TextfieldProps) => {
               : "text"
             : props.type
         }
+        onKeyDown={props.onKeyDown}
         labelPlacement="outside"
         onClick={props.onClick}
         placeholder={props.placeholder}

@@ -9,7 +9,14 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  Fragment,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File } from "src/components/File";
 import {
@@ -139,43 +146,21 @@ const Create = () => {
 };
 
 const VariantModal = () => {
-  const [isDeleteType, setIsDeleteTye] = useState(false);
-  const [isAddType, setIsAddType] = useState(false);
-
   const {
+    isAddType,
+    isDeleteType,
+    actionIsVariant,
     control,
-    handleSubmit,
-    resetField,
+    errors,
+    handleAddType,
+    handleChangeType,
+    handleDeleteType,
+    handleOnKeyDown,
+    handleSubmitType,
+    isVariant,
     setFocus,
-    formState: { errors },
-  } = useForm<FieldValues>();
-  const { isVariant, actionIsVariant } = useActiveModal();
-
-  const variant = useGeneralStore((v) => v.variant);
-  const setVariant = useGeneralStore((v) => v.setVariant);
-
-  const handleAddType = () => setIsAddType((v) => !v);
-  const handleChangeType = () => setIsDeleteTye((v) => !v);
-
-  const handleSubmitType = handleSubmit(async (e) => {
-    try {
-      const type = e.type;
-      const obj = { ...variant, types: [...variant.types, type] };
-      setVariant(obj);
-      setFocus("type");
-    } catch (e) {
-      const error = e as Error;
-      console.error(error);
-    } finally {
-      resetField("type");
-    }
-  });
-
-  const handleDeleteType = (label: string) => {
-    const newTypes = variant.types.filter((type) => type !== label);
-    const obj = { ...variant, types: newTypes };
-    setVariant(obj);
-  };
+    variant,
+  } = useVariant();
 
   useEffect(() => {
     if (isAddType) {
@@ -255,6 +240,7 @@ const VariantModal = () => {
                 }
                 errorMessage={handleErrorMessage(errors, "type")}
                 rules={{ required: { value: true, message: "masukkan warna" } }}
+                onKeyDown={handleOnKeyDown}
               />
             )}
           </section>
@@ -262,6 +248,78 @@ const VariantModal = () => {
       </main>
     </Modal>
   );
+};
+
+const useVariant = () => {
+  const [isDeleteType, setIsDeleteTye] = useState(false);
+  const [isAddType, setIsAddType] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    setFocus,
+    getValues,
+    formState: { errors },
+  } = useForm<FieldValues>();
+  const { isVariant, actionIsVariant } = useActiveModal();
+
+  const variant = useGeneralStore((v) => v.variant);
+  const setVariant = useGeneralStore((v) => v.setVariant);
+
+  const handleAddType = () => setIsAddType((v) => !v);
+  const handleChangeType = () => setIsDeleteTye((v) => !v);
+
+  const handleSubmitType = handleSubmit(async (e) => {
+    try {
+      const type = e.type;
+      const obj = { ...variant, types: [...variant.types, type] };
+      setVariant(obj);
+      setFocus("type");
+    } catch (e) {
+      const error = e as Error;
+      console.error(error);
+    } finally {
+      resetField("type");
+    }
+  });
+
+  const handleDeleteType = (label: string) => {
+    const newTypes = variant.types.filter((type) => type !== label);
+    const obj = { ...variant, types: newTypes };
+    setVariant(obj);
+  };
+
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const val = getValues();
+      const obj = { ...variant, types: [...variant.types, val.type] };
+      setVariant(obj);
+      resetField("type");
+      setFocus("type");
+    }
+
+    if (e.key === "Escape") {
+      setIsAddType((v) => !v);
+    }
+  };
+
+  return {
+    handleOnKeyDown,
+    control,
+    errors,
+    isVariant,
+    actionIsVariant,
+    handleDeleteType,
+    handleAddType,
+    handleChangeType,
+    handleSubmitType,
+    isDeleteType,
+    isAddType,
+    setFocus,
+    variant,
+    setVariant,
+  };
 };
 
 const ModalCategory = ({

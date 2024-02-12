@@ -142,8 +142,13 @@ const VariantModal = () => {
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isAddType, setIsAddType] = useState(false);
 
-  const { control, handleSubmit, resetField, setFocus } =
-    useForm<FieldValues>();
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    setFocus,
+    formState: { errors },
+  } = useForm<FieldValues>();
   const { isVariant, actionIsVariant } = useActiveModal();
 
   const variant = useGeneralStore((v) => v.variant);
@@ -157,6 +162,7 @@ const VariantModal = () => {
       const type = e.type;
       const obj = { ...variant, types: [...variant.types, type] };
       setVariant(obj);
+      setFocus("type");
     } catch (e) {
       const error = e as Error;
       console.error(error);
@@ -164,6 +170,18 @@ const VariantModal = () => {
       resetField("type");
     }
   });
+
+  const handleDeleteType = (label: string) => {
+    const newTypes = variant.types.filter((type) => type !== label);
+    const obj = { ...variant, types: newTypes };
+    setVariant(obj);
+  };
+
+  useEffect(() => {
+    if (isAddType) {
+      setFocus("type");
+    }
+  }, [isAddType]);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
@@ -198,6 +216,7 @@ const VariantModal = () => {
                         color={IconColor.red}
                         className="absolute -top-2 -right-2 cursor-pointer"
                         title="hapus"
+                        onClick={() => handleDeleteType(v)}
                       />
                     )}
                   </section>
@@ -234,6 +253,8 @@ const VariantModal = () => {
                     onClick={handleSubmitType}
                   />
                 }
+                errorMessage={handleErrorMessage(errors, "type")}
+                rules={{ required: { value: true, message: "masukkan warna" } }}
               />
             )}
           </section>

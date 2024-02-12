@@ -7,6 +7,7 @@ import {
 } from "react-hook-form";
 
 export type Radius = "full" | "lg" | "md" | "none" | "sm";
+export type Size = "lg" | "md" | "sm";
 export type Color =
   | "success"
   | "primary"

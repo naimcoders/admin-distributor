@@ -1,7 +1,7 @@
 import cx from "classnames";
 import { Button as Btn } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
-import { Color, Radius } from "src/types";
+import { Color, Radius, Size } from "src/types";
 
 type PickButton = Pick<
   HTMLAttributes<HTMLButtonElement>,
@@ -11,6 +11,7 @@ type PickButton = Pick<
 interface Button extends PickButton {
   color: Color;
   radius: Radius;
+  size: Size;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   variant:
@@ -24,7 +25,8 @@ interface Button extends PickButton {
 }
 
 export const Button = (props: Partial<Button>) => {
-  const { className, color, endContent, startContent, onClick, radius } = props;
+  const { className, color, endContent, startContent, onClick, radius, size } =
+    props;
 
   return (
     <Btn
@@ -35,6 +37,7 @@ export const Button = (props: Partial<Button>) => {
       className={cx("capitalize w-36", className)}
       radius={!radius ? "sm" : radius}
       variant={props.variant}
+      size={size ?? "md"}
     >
       {props["aria-label"]}
     </Btn>

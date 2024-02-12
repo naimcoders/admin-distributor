@@ -1,12 +1,17 @@
+import Error from "src/components/Error";
+import Image from "src/components/Image";
+import Textarea from "src/components/Textarea";
 import {
+  CheckIcon,
   ChevronRightIcon,
   PhotoIcon,
+  PlusIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File } from "src/components/File";
-import Image from "src/components/Image";
 import {
   Textfield,
   TextfieldProps,
@@ -16,13 +21,13 @@ import { handleErrorMessage } from "src/helpers";
 import { IconColor, UseForm } from "src/types";
 import { GridInput } from "../Index";
 import { useCategory } from "src/api/category.service";
-import Error from "src/components/Error";
 import { ListingModal } from "src/components/Category";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
-import { Radio, RadioGroup, Switch } from "@nextui-org/react";
-import Textarea from "src/components/Textarea";
+import { Radio, RadioGroup, Switch, Button as Btn } from "@nextui-org/react";
 import { Button } from "src/components/Button";
+import { XCircleIcon } from "@heroicons/react/24/solid";
+import useGeneralStore from "src/stores/generalStore";
 
 const Create = () => {
   const {
@@ -126,9 +131,115 @@ const Create = () => {
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
           <PostageModal />
+          <VariantModal />
         </main>
       )}
     </>
+  );
+};
+
+const VariantModal = () => {
+  const [isDeleteType, setIsDeleteTye] = useState(false);
+  const [isAddType, setIsAddType] = useState(false);
+
+  const { control, handleSubmit, resetField, setFocus } =
+    useForm<FieldValues>();
+  const { isVariant, actionIsVariant } = useActiveModal();
+
+  const variant = useGeneralStore((v) => v.variant);
+  const setVariant = useGeneralStore((v) => v.setVariant);
+
+  const handleAddType = () => setIsAddType((v) => !v);
+  const handleChangeType = () => setIsDeleteTye((v) => !v);
+
+  const handleSubmitType = handleSubmit(async (e) => {
+    try {
+      const type = e.type;
+      const obj = { ...variant, types: [...variant.types, type] };
+      setVariant(obj);
+    } catch (e) {
+      const error = e as Error;
+      console.error(error);
+    } finally {
+      resetField("type");
+    }
+  });
+
+  return (
+    <Modal isOpen={isVariant} closeModal={actionIsVariant}>
+      <main className="my-4">
+        <header className="flexcol gap-2">
+          <section className="flex items-center justify-between">
+            <h2 className="font-semibold">Warna</h2>
+            <button
+              className={`text-[${IconColor.red}] text-sm capitalize`}
+              title="edit"
+              onClick={handleChangeType}
+            >
+              {!isDeleteType ? "ubah" : "selesai"}
+            </button>
+          </section>
+
+          <section className="flexcol gap-2">
+            <section className="flex gap-3 flex-wrap">
+              {variant.types.length > 0 &&
+                variant.types.map((v, idx) => (
+                  <section className="relative" key={idx}>
+                    <Btn
+                      size="sm"
+                      variant="light"
+                      className="w-[6rem] border border-gray-400 text-gray-500"
+                    >
+                      {v}
+                    </Btn>
+                    {isDeleteType && (
+                      <XCircleIcon
+                        width={20}
+                        color={IconColor.red}
+                        className="absolute -top-2 -right-2 cursor-pointer"
+                        title="hapus"
+                      />
+                    )}
+                  </section>
+                ))}
+
+              <Button
+                aria-label={!isAddType ? "tambah" : "batal"}
+                endContent={
+                  !isAddType ? (
+                    <PlusIcon width={16} />
+                  ) : (
+                    <XMarkIcon width={16} />
+                  )
+                }
+                className="w-[6rem] border border-gray-400 text-gray-500"
+                color="default"
+                variant="light"
+                size="sm"
+                onClick={handleAddType}
+              />
+            </section>
+
+            {isAddType && (
+              <Textfield
+                name="type"
+                placeholder="masukkan warna"
+                control={control}
+                defaultValue=""
+                endContent={
+                  <CheckIcon
+                    width={16}
+                    className="cursor-pointer"
+                    title="Tambah"
+                    onClick={handleSubmitType}
+                  />
+                }
+              />
+            )}
+          </section>
+        </header>
+      </main>
+    </Modal>
   );
 };
 
@@ -399,6 +510,7 @@ const useFields = () => {
     actionIsDangerous,
     actionIsCondition,
     actionIsPostage,
+    actionIsVariant,
   } = useActiveModal();
 
   const fields: TextfieldProps[] = [
@@ -428,6 +540,14 @@ const useFields = () => {
       type: "modal",
       defaultValue: "Tidak",
       onClick: actionIsDangerous,
+    }),
+    objectFields({
+      label: "variasi",
+      name: "variant",
+      type: "modal",
+      defaultValue: "",
+      placeholder: "tentukan variasi",
+      onClick: actionIsVariant,
     }),
     objectFields({
       label: "harga (Rp) *",

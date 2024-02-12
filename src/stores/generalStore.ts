@@ -20,12 +20,19 @@ interface PostageProps {
   isOutOfTownDelivery: boolean;
 }
 
+interface VariantProps {
+  types: string[];
+}
+
 interface General {
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;
   clearEpoch: () => void;
   date: { startAt: string; endAt: string };
   setDate: (v: Period<string>) => void;
+
+  variant: VariantProps;
+  setVariant: (v: VariantProps) => void;
 
   bankName: string;
   setBankName: (v: string) => void;
@@ -49,6 +56,11 @@ const useGeneralStore = create<General>((set) => ({
   clearEpoch: () => set({ epoch: { startAt: 0, endAt: 0 } }),
   date: { startAt: "", endAt: "" },
   setDate: (v) => set({ date: v }),
+
+  variant: {
+    types: [],
+  },
+  setVariant: (v) => set({ variant: v }),
 
   bankName: "",
   setBankName: (v) => set({ bankName: v }),

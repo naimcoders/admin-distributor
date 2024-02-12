@@ -192,7 +192,6 @@ const VariantModal = () => {
                       size="sm"
                       variant="light"
                       className="w-[6rem] border border-gray-400 text-gray-500"
-                      onClick={() => console.log(v)}
                     >
                       {v.label}
                     </Btn>
@@ -228,20 +227,20 @@ const VariantModal = () => {
             {isAddType && (
               <Textfield
                 name="type"
-                placeholder="masukkan warna"
-                control={control}
                 defaultValue=""
+                control={control}
+                onKeyDown={handleOnKeyDown}
+                placeholder="masukkan warna"
+                errorMessage={handleErrorMessage(errors, "type")}
+                rules={{ required: { value: true, message: "masukkan warna" } }}
                 endContent={
                   <CheckIcon
                     width={16}
-                    className="cursor-pointer"
                     title="Tambah"
+                    className="cursor-pointer"
                     onClick={handleSubmitType}
                   />
                 }
-                errorMessage={handleErrorMessage(errors, "type")}
-                rules={{ required: { value: true, message: "masukkan warna" } }}
-                onKeyDown={handleOnKeyDown}
               />
             )}
           </section>
@@ -287,12 +286,6 @@ const useVariant = () => {
     }
   });
 
-  const handleDeleteType = (label: string) => {
-    const newTypes = variant.types.filter((type) => type.label !== label);
-    const obj = { ...variant, types: newTypes };
-    setVariant(obj);
-  };
-
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const val = getValues();
@@ -308,6 +301,12 @@ const useVariant = () => {
     if (e.key === "Escape") {
       setIsAddType((v) => !v);
     }
+  };
+
+  const handleDeleteType = (label: string) => {
+    const newTypes = variant.types.filter((type) => type.label !== label);
+    const obj = { ...variant, types: newTypes };
+    setVariant(obj);
   };
 
   return {
@@ -641,10 +640,11 @@ const useFields = () => {
       defaultValue: "",
     }),
     objectFields({
-      label: "ongkos kirim (berat/ukuran)",
+      label: "ongkos kirim (berat/ukuran) *",
       name: "postage",
       type: "modal",
       defaultValue: "",
+      placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
     }),
     objectFields({

@@ -10,6 +10,8 @@ import useGeneralStore from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
 
 const data: SelectDataProps[] = [
+  { label: "distributor", value: "distributor" },
+  { label: "ekspedisi", value: "ekspedisi" },
   { label: "sales", value: "sales" },
   { label: "toko", value: "toko" },
 ];

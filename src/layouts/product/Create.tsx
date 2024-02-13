@@ -222,6 +222,11 @@ const VariantModal = () => {
     handleChangeSize,
     isAddSize,
     handleAddSize,
+    handleOnKeyDownSize,
+    handleSubmitSize,
+    labelAndImage,
+    setLabelAndImage,
+    handleDeleteSize,
   } = useVariant();
 
   const [isVariantPhoto, setIsVariantPhoto] = useState(true);
@@ -246,11 +251,17 @@ const VariantModal = () => {
     }
   };
 
+  const onClickType = (label: string) => {
+    setLabelAndImage({ label });
+  };
+
   useEffect(() => {
     if (isAddType) {
       setFocus("type");
     }
   }, [isAddType]);
+
+  const variantSize = useGeneralStore((v) => v.variantSize);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
@@ -275,7 +286,12 @@ const VariantModal = () => {
                     <Btn
                       size="sm"
                       variant="light"
-                      className="w-[6rem] border border-gray-400 text-gray-500"
+                      className={cx(
+                        "w-[6rem] border border-gray-300 text-gray-500",
+                        labelAndImage?.label === v.label &&
+                          "border border-blue-800"
+                      )}
+                      onClick={() => onClickType(v.label ?? "")}
                     >
                       {v.label}
                     </Btn>
@@ -285,7 +301,7 @@ const VariantModal = () => {
                         color={IconColor.red}
                         className="absolute -top-2 -right-2 cursor-pointer"
                         title="hapus"
-                        onClick={() => handleDeleteType(v.label)}
+                        onClick={() => handleDeleteType(v.label ?? "")}
                       />
                     )}
                   </section>
@@ -300,7 +316,7 @@ const VariantModal = () => {
                     <XMarkIcon width={16} />
                   )
                 }
-                className="w-[6rem] border border-gray-400 text-gray-500"
+                className="w-[6rem] border border-gray-300 text-gray-500"
                 color="default"
                 variant="light"
                 size="sm"
@@ -358,9 +374,9 @@ const VariantModal = () => {
               {variantTypes.map((v, idx) => (
                 <Fragment key={idx}>
                   <VariantFileImage
-                    label={v.label}
+                    label={v.label ?? ""}
                     image={v.image ?? ""}
-                    onClick={() => onClick(v.label)}
+                    onClick={() => onClick(v.label ?? "")}
                     onChange={onChange}
                     ref={productPhotoRef}
                   />
@@ -372,6 +388,7 @@ const VariantModal = () => {
 
         <hr />
 
+        {/* footer */}
         <footer className="flexcol gap-2">
           <section className="flex items-center justify-between">
             <h2 className="font-semibold capitalize">size</h2>
@@ -386,30 +403,29 @@ const VariantModal = () => {
 
           <section className="flexcol gap-2">
             <section className="flex gap-3 flex-wrap">
-              {variantTypes.length > 0 &&
-                variantTypes.map(
-                  (v, idx) =>
-                    v.size && (
-                      <section className="relative" key={idx}>
-                        <Btn
-                          size="sm"
-                          variant="light"
-                          className="w-[6rem] border border-gray-400 text-gray-500"
-                        >
-                          {v.label}
-                        </Btn>
-                        {isDeleteType && (
-                          <XCircleIcon
-                            width={20}
-                            color={IconColor.red}
-                            className="absolute -top-2 -right-2 cursor-pointer"
-                            title="hapus"
-                            onClick={() => handleDeleteType(v.label)}
-                          />
-                        )}
-                      </section>
-                    )
-                )}
+              {variantSize.length > 0 &&
+                variantSize
+                  .filter((f) => f.label === labelAndImage?.label)
+                  .map((v, idx) => (
+                    <section className="relative" key={idx}>
+                      <Btn
+                        size="sm"
+                        variant="light"
+                        className="w-[6rem] border border-gray-400 text-gray-500"
+                      >
+                        {v.size}
+                      </Btn>
+                      {isDeleteSize && (
+                        <XCircleIcon
+                          width={20}
+                          color={IconColor.red}
+                          className="absolute -top-2 -right-2 cursor-pointer"
+                          title="hapus"
+                          onClick={() => handleDeleteSize(v.size ?? "")}
+                        />
+                      )}
+                    </section>
+                  ))}
 
               <Button
                 aria-label={!isAddSize ? "tambah" : "batal"}
@@ -433,7 +449,7 @@ const VariantModal = () => {
                 name="size"
                 defaultValue=""
                 control={control}
-                onKeyDown={handleOnKeyDown}
+                onKeyDown={handleOnKeyDownSize}
                 placeholder="masukkan size"
                 errorMessage={handleErrorMessage(errors, "size")}
                 rules={{
@@ -447,7 +463,7 @@ const VariantModal = () => {
                     width={16}
                     title="Tambah"
                     className="cursor-pointer"
-                    onClick={handleSubmitType}
+                    onClick={handleSubmitSize}
                   />
                 }
               />
@@ -457,6 +473,148 @@ const VariantModal = () => {
       </main>
     </Modal>
   );
+};
+
+const useVariant = () => {
+  const [isDeleteType, setIsDeleteTye] = useState(false);
+  const [isDeleteSize, setIsDeleteSize] = useState(false);
+  const [isAddType, setIsAddType] = useState(false);
+  const [isAddSize, setIsAddSize] = useState(false);
+  const [labelAndImage, setLabelAndImage] = useState<{
+    label?: string;
+    image?: string;
+    size?: { label?: string; price?: string }[];
+  }>();
+
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    setFocus,
+    getValues,
+    formState: { errors },
+  } = useForm<FieldValues>();
+
+  const { isVariant, actionIsVariant } = useActiveModal();
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantType = useGeneralStore((v) => v.setVariantType);
+
+  const handleAddType = () => setIsAddType((v) => !v);
+  const handleAddSize = () => setIsAddSize((v) => !v);
+  const handleChangeType = () => setIsDeleteTye((v) => !v);
+  const handleChangeSize = () => setIsDeleteSize((v) => !v);
+
+  const handleSubmitType = handleSubmit(async (e) => {
+    try {
+      const type = e.type;
+      setVariantType([...variantTypes, { label: type }]);
+      setFocus("type");
+    } catch (e) {
+      const error = e as Error;
+      console.error(error);
+    } finally {
+      resetField("type");
+    }
+  });
+
+  const variantSize = useGeneralStore((v) => v.variantSize);
+  const setVariantSize = useGeneralStore((v) => v.setVariantSize);
+
+  const handleSubmitSize = handleSubmit(async (e) => {
+    try {
+      const val = e.size;
+
+      // const removePrevType = variantTypes.filter(
+      //   (f) => f.label !== labelAndImage?.label
+      // );
+
+      // setVariantType([
+      //   ...removePrevType,
+      //   {
+      //     label: labelAndImage?.label,
+      //     image: labelAndImage?.image,
+      //     size: [...(labelAndImage?.size ?? []), { label: val }],
+      //   },
+      // ]);
+      setVariantSize([
+        ...variantSize,
+        { label: labelAndImage?.label, size: val },
+      ]);
+
+      setFocus("size");
+    } catch (e) {
+      const error = e as Error;
+      console.error(error);
+    } finally {
+      resetField("size");
+    }
+  });
+
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const type = getValues();
+      setVariantType([...variantTypes, { label: type.type }]);
+
+      setFocus("type");
+      resetField("type");
+      setFocus("type");
+    }
+
+    if (e.key === "Escape") {
+      setIsAddType((v) => !v);
+    }
+  };
+
+  const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const size = getValues();
+      setVariantType([...variantTypes, { label: size.type }]);
+
+      setFocus("size");
+      resetField("size");
+      setFocus("size");
+    }
+
+    if (e.key === "Escape") {
+      setIsAddSize((v) => !v);
+    }
+  };
+
+  const handleDeleteType = (label: string) => {
+    const newTypes = variantTypes.filter((type) => type.label !== label);
+    setVariantType(newTypes);
+  };
+
+  const handleDeleteSize = (size: string) => {
+    const newTypes = variantSize.filter((type) => type.size !== size);
+    setVariantSize(newTypes);
+  };
+
+  return {
+    handleDeleteSize,
+    labelAndImage,
+    setLabelAndImage,
+    handleOnKeyDownSize,
+    handleSubmitSize,
+    isDeleteSize,
+    handleChangeSize,
+    handleOnKeyDown,
+    control,
+    errors,
+    isVariant,
+    actionIsVariant,
+    handleDeleteType,
+    handleAddType,
+    handleChangeType,
+    handleSubmitType,
+    isDeleteType,
+    isAddType,
+    setFocus,
+    variantTypes,
+    setVariantType,
+    isAddSize,
+    handleAddSize,
+  };
 };
 
 const VariantFileImage = forwardRef(
@@ -514,85 +672,6 @@ const VariantFileImage = forwardRef(
     );
   }
 );
-
-const useVariant = () => {
-  const [isDeleteType, setIsDeleteTye] = useState(false);
-  const [isDeleteSize, setIsDeleteSize] = useState(false);
-  const [isAddType, setIsAddType] = useState(false);
-  const [isAddSize, setIsAddSize] = useState(false);
-
-  const {
-    control,
-    handleSubmit,
-    resetField,
-    setFocus,
-    getValues,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
-  const { isVariant, actionIsVariant } = useActiveModal();
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const setVariantType = useGeneralStore((v) => v.setVariantType);
-
-  const handleAddType = () => setIsAddType((v) => !v);
-  const handleAddSize = () => setIsAddSize((v) => !v);
-  const handleChangeType = () => setIsDeleteTye((v) => !v);
-  const handleChangeSize = () => setIsDeleteSize((v) => !v);
-
-  const handleSubmitType = handleSubmit(async (e) => {
-    try {
-      const type = e.type;
-      setVariantType([...variantTypes, { label: type }]);
-      setFocus("type");
-    } catch (e) {
-      const error = e as Error;
-      console.error(error);
-    } finally {
-      resetField("type");
-    }
-  });
-
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const type = getValues();
-      setVariantType([...variantTypes, { label: type.type }]);
-
-      setFocus("type");
-      resetField("type");
-      setFocus("type");
-    }
-
-    if (e.key === "Escape") {
-      setIsAddType((v) => !v);
-    }
-  };
-
-  const handleDeleteType = (label: string) => {
-    const newTypes = variantTypes.filter((type) => type.label !== label);
-    setVariantType(newTypes);
-  };
-
-  return {
-    isDeleteSize,
-    handleChangeSize,
-    handleOnKeyDown,
-    control,
-    errors,
-    isVariant,
-    actionIsVariant,
-    handleDeleteType,
-    handleAddType,
-    handleChangeType,
-    handleSubmitType,
-    isDeleteType,
-    isAddType,
-    setFocus,
-    variantTypes,
-    setVariantType,
-    isAddSize,
-    handleAddSize,
-  };
-};
 
 const PostageModal = () => {
   const { isPostage, actionIsPostage } = useActiveModal();

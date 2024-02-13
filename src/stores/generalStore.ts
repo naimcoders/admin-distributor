@@ -21,12 +21,13 @@ interface PostageProps {
 }
 
 interface VariantSizeProps {
-  label: string;
+  size?: string;
+  label?: string;
   price?: string;
 }
 
-interface VariantTypeProps {
-  label: string;
+export interface VariantTypeProps {
+  label?: string;
   image?: string;
   size?: VariantSizeProps[];
 }
@@ -40,6 +41,8 @@ interface General {
 
   variantTypes: VariantTypeProps[];
   setVariantType: (v: VariantTypeProps[]) => void;
+  variantSize: VariantSizeProps[];
+  setVariantSize: (v: VariantSizeProps[]) => void;
 
   bankName: string;
   setBankName: (v: string) => void;
@@ -66,6 +69,8 @@ const useGeneralStore = create<General>((set) => ({
 
   variantTypes: [],
   setVariantType: (v) => set({ variantTypes: v }),
+  variantSize: [],
+  setVariantSize: (v) => set({ variantSize: v }),
 
   bankName: "",
   setBankName: (v) => set({ bankName: v }),

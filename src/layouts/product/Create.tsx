@@ -1,3 +1,4 @@
+import cx from "classnames";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
@@ -32,7 +33,15 @@ import { useCategory } from "src/api/category.service";
 import { ListingModal } from "src/components/Category";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
-import { Radio, RadioGroup, Switch, Button as Btn } from "@nextui-org/react";
+import {
+  Radio,
+  RadioGroup,
+  Switch,
+  Button as Btn,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import useGeneralStore from "src/stores/generalStore";
@@ -44,8 +53,17 @@ const Create = () => {
     clearErrors,
     formState: { errors },
   } = useForm<FieldValues>();
-  const { productPhotoRef, onClick, onChange, photos, setPhotos } =
-    useUploadPhoto();
+
+  const {
+    productPhotoRef,
+    onClick,
+    onChange,
+    photos,
+    setPhotos,
+    handleProductSize,
+    isPopOver,
+    setIsPopOver,
+  } = useUploadPhoto();
 
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
@@ -59,10 +77,13 @@ const Create = () => {
           <header className="flex gap-6 items-center flex-wrap">
             {photos.map((v) => (
               <Image
-                src={v}
+                src={v.src}
                 alt="Product"
-                key={v}
-                className="aspect-square w-[10rem] object-cover rounded-md"
+                key={v.src}
+                className={cx(
+                  "w-[10rem] object-cover rounded-md",
+                  v.size === "1:1" ? "aspect-square" : "aspect-3/4"
+                )}
                 actions={[
                   {
                     src: <TrashIcon width={16} />,
@@ -72,17 +93,36 @@ const Create = () => {
               />
             ))}
 
-            <File
-              control={control}
-              onClick={onClick}
-              onChange={onChange}
-              name="productPhoto"
-              ref={productPhotoRef}
-              placeholder="tambah foto"
-              className="w-[10rem]"
-              readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-              startContent={<PhotoIcon width={16} color={IconColor.zinc} />}
-            />
+            <Popover placement="right" isOpen={isPopOver}>
+              <PopoverTrigger>
+                <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
+                  Tambah Foto
+                </Btn>
+              </PopoverTrigger>
+              <PopoverContent>
+                <section className="flex gap-4">
+                  {["1:1", "3:4"].map((v) => (
+                    <File
+                      key={v}
+                      control={control}
+                      onClick={() => {
+                        handleProductSize(v);
+                        onClick();
+                      }}
+                      onChange={onChange}
+                      name="productPhoto"
+                      ref={productPhotoRef}
+                      placeholder={v}
+                      className="w-[5rem]"
+                      readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                      startContent={
+                        <PhotoIcon width={16} color={IconColor.zinc} />
+                      }
+                    />
+                  ))}
+                </section>
+              </PopoverContent>
+            </Popover>
           </header>
 
           <GridInput className="grid grid-cols-3">
@@ -631,21 +671,37 @@ const ModalSubDistributor = ({
 };
 
 const useUploadPhoto = () => {
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [isPopOver, setIsPopOver] = useState(false);
+  const [photos, setPhotos] = useState<{ src: string; size: string }[]>([]);
+  const [productSize, setProductSize] = useState("1:1");
   const productPhotoRef = useRef<ChildRef>(null);
 
+  const handleProductSize = (size: string) => setProductSize(size);
+
   const onClick = () => {
-    if (productPhotoRef.current) productPhotoRef.current.click();
+    if (productPhotoRef.current) {
+      productPhotoRef.current.click();
+    }
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
 
     const blob = URL.createObjectURL(e.target.files[0]);
-    setPhotos([...photos, blob]);
+    setPhotos([...photos, { src: blob, size: productSize }]);
+    setIsPopOver((v) => !v);
   };
 
-  return { productPhotoRef, onClick, onChange, photos, setPhotos };
+  return {
+    productPhotoRef,
+    onClick,
+    onChange,
+    photos,
+    setPhotos,
+    handleProductSize,
+    isPopOver,
+    setIsPopOver,
+  };
 };
 
 const DangerousModal = (p: Pick<UseForm, "setValue">) => {

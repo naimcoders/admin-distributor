@@ -64,11 +64,14 @@ export const Currency = (currency: number): string => {
 
 export const formatToRupiah = (value: string): string => {
   const rawValue = Number(value.replace(/\D/g, ""));
-  return rawValue.toLocaleString("id-ID", {
+  let formatted = rawValue.toLocaleString("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
   });
+
+  formatted = formatted.replace(/^Rp\s*/, "");
+  return formatted;
 };
 
 interface CurrencyIDInputProps extends Pick<UseForm, "setValue"> {

@@ -25,7 +25,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { handleErrorMessage } from "src/helpers";
+import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { IconColor, UseForm } from "src/types";
 import { GridInput } from "../Index";
 import { useCategory } from "src/api/category.service";
@@ -56,7 +56,7 @@ const Create = () => {
         <Error error={findAllCategories.error} />
       ) : (
         <main className="flexcol gap-8">
-          <section className="flex gap-6 items-center flex-wrap">
+          <header className="flex gap-6 items-center flex-wrap">
             {photos.map((v) => (
               <Image
                 src={v}
@@ -83,12 +83,12 @@ const Create = () => {
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               startContent={<PhotoIcon width={16} color={IconColor.zinc} />}
             />
-          </section>
+          </header>
 
           <GridInput className="grid grid-cols-3">
             {fields.map((v) => (
               <Fragment key={v.label}>
-                {["text", "number"].includes(v.type!) && (
+                {["text", "rp"].includes(v.type!) && (
                   <Textfield
                     type={v.type}
                     name={v.name}
@@ -99,6 +99,13 @@ const Create = () => {
                     errorMessage={handleErrorMessage(errors, v.name)}
                     rules={{
                       required: { value: true, message: v.errorMessage! },
+                      onBlur: (e) =>
+                        CurrencyIDInput({
+                          type: v.type!,
+                          fieldName: v.name,
+                          setValue,
+                          value: e.target.value,
+                        }),
                     }}
                   />
                 )}
@@ -134,6 +141,8 @@ const Create = () => {
               placeholder="masukkan deskripsi"
             />
           </GridInput>
+
+          <Button aria-label="simpan" className="mx-auto mt-5" />
 
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
           <DangerousModal setValue={setValue} />
@@ -185,7 +194,7 @@ const VariantModal = () => {
       <main className="my-4 flexcol gap-6">
         <header className="flexcol gap-2">
           <section className="flex items-center justify-between">
-            <h2 className="font-semibold">Warna</h2>
+            <h2 className="font-semibold capitalize">warna/jenis/tipe</h2>
             <button
               className={`text-[${IconColor.red}] text-sm capitalize`}
               title="edit"
@@ -672,6 +681,20 @@ const useFields = () => {
     actionIsSubDistributor,
   } = useActiveModal();
 
+  // const formatToRupiah = (value: string) => {
+  //   const formatter = new Intl.NumberFormat("id-ID", {
+  //     style: "currency",
+  //     currency: "IDR",
+  //   });
+  //   return formatter.format(Number(value.replace(/\D/g, "")));
+  // };
+
+  // const handleOnInput = (getValues: UseFormGetValues<FieldValues>, fieldName: string, e: ChangeEvent<HTMLInputElement>) => {
+  //   const val= getValues(fieldName)
+  //   const rawValue = formatToRupiah(val)
+
+  // }
+
   const fields: TextfieldProps[] = [
     objectFields({
       label: "nama produk *",
@@ -711,7 +734,8 @@ const useFields = () => {
     objectFields({
       label: "harga (Rp) *",
       name: "price",
-      type: "number",
+      type: "rp",
+      placeholder: "masukkan harga",
       defaultValue: "",
     }),
     objectFields({

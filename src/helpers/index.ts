@@ -3,6 +3,7 @@ import { FieldError, FieldErrors, FieldValues } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
+import { UseForm } from "src/types";
 
 export const modalDOM = document.querySelector("#modal");
 
@@ -59,4 +60,29 @@ export const dateToEpochConvert = (date: Date) => getUnixTime(date);
 
 export const Currency = (currency: number): string => {
   return currency.toLocaleString("id-ID");
+};
+
+export const formatToRupiah = (value: string): string => {
+  const rawValue = Number(value.replace(/\D/g, ""));
+  return rawValue.toLocaleString("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  });
+};
+
+interface CurrencyIDInputProps extends Pick<UseForm, "setValue"> {
+  type: string;
+  fieldName: string;
+  value: string;
+}
+export const CurrencyIDInput = ({
+  type,
+  value,
+  fieldName,
+  setValue,
+}: CurrencyIDInputProps) => {
+  if (type === "rp") {
+    setValue(fieldName, formatToRupiah(value));
+  }
 };

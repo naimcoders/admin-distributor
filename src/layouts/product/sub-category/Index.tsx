@@ -68,11 +68,12 @@ const useCategorySub = () => {
   const columns: Columns<Category>[] = [
     {
       header: <p className="text-center">kategori produk</p>,
-      render: (v) => <Label label={v.category.name} />,
+      render: () => <Label label="dad" />,
     },
     {
       header: <p className="text-center">sub-kategori</p>,
-      render: (v) => <p>{v.subCategory.map((e) => `${e.name}`).join(", ")}</p>,
+      // render: (v) => <p>{v.subCategory.map((e) => `${e.name}`).join(", ")}</p>,
+      render: () => <Label label="dadad" />,
     },
     {
       header: <p className="text-center">aksi</p>,

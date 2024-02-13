@@ -1,6 +1,10 @@
 import ktp from "src/assets/images/ktp.png";
 import useGeneralStore from "src/stores/generalStore";
-import { ArrowUpTrayIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -16,6 +20,7 @@ import { GridInput } from "../Index";
 import { useActiveModal } from "src/stores/modalStore";
 import { CoordinateModal } from "src/components/Modal";
 import { UserCoordinate, defaultCoordinate } from "src/components/Coordinate";
+import { IconColor } from "src/types";
 
 const Detail = () => {
   const {
@@ -193,7 +198,14 @@ const useHook = () => {
           onClick,
           onChange,
         },
-        image: { deleteImage: () => setKtpBlob("") },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
       },
     }),
   ];

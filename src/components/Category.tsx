@@ -22,6 +22,7 @@ export function ListingModal({
     setValue(keyField, name);
     clearErrors(keyField);
     // TODO: set id
+    console.log(id, name);
     modal.close();
   };
 

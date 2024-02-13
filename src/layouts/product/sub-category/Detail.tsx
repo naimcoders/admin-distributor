@@ -47,7 +47,7 @@ const Detail = () => {
         control={control}
         onClick={activeBtnCreate}
         placeholder="tambah sub-kategori"
-        classNames={{ inputWrapper: "px-5 rounded-b-md" }}
+        // classNames={{ inputWrapper: "px-5 rounded-b-md" }}
         readOnly={{ isValue: !isCreate, cursor: "cursor-pointer" }}
         startContent={
           !isCreate && <PlusIcon width={16} color={IconColor.zinc} />

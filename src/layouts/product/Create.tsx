@@ -159,12 +159,15 @@ const Create = () => {
 const PostageModal = () => {
   const { isPostage, actionIsPostage } = useActiveModal();
   const { packageSize, outOfTownDeliveryField } = usePostage();
+  const [isOutOfTown, setIsOutOfTown] = useState(false);
 
   const {
     control,
     setValue,
     formState: { errors },
   } = useForm<FieldValues>();
+
+  const handleSwitchOutOfTown = () => setIsOutOfTown((v) => !v);
 
   return (
     <Modal isOpen={isPostage} closeModal={actionIsPostage}>
@@ -258,38 +261,82 @@ const PostageModal = () => {
         <section>
           <header className="flex justify-between">
             <h2 className="font-semibold capitalize">pengiriman luar kota</h2>
-            <Switch size="sm" color="success" />
+            <Switch
+              size="sm"
+              isSelected={isOutOfTown}
+              color="success"
+              onClick={handleSwitchOutOfTown}
+            />
           </header>
-          <section className="mt-4 flexcol gap-4">
-            {outOfTownDeliveryField.map((v) => (
-              <Textfield
-                type="text"
-                key={v.label}
-                name={v.name}
-                label={v.label}
-                control={control}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                readOnly={v.readOnly}
-                startContent={
-                  <div className={`text-[${IconColor.zinc}] text-sm`}>Maks</div>
-                }
-                endContent={
-                  <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
-                }
-                errorMessage={handleErrorMessage(errors, "postage")}
-                rules={{
-                  required: { value: true, message: "masukkan berat produk" },
-                }}
-              />
-            ))}
-          </section>
+          {isOutOfTown && (
+            <section className="mt-4 flexcol gap-4">
+              {outOfTownDeliveryField.map((v) => (
+                <Textfield
+                  key={v.label}
+                  name={v.name}
+                  label={v.label}
+                  control={control}
+                  readOnly={v.readOnly}
+                  description={v.description}
+                  defaultValue={v.defaultValue}
+                  startContent={
+                    <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
+                  }
+                  endContent={
+                    <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
+                  }
+                />
+              ))}
+            </section>
+          )}
         </section>
 
         <Button aria-label="simpan" className="mx-auto mt-4" />
       </section>
     </Modal>
   );
+};
+
+const usePostage = () => {
+  const packageSize: TextfieldProps[] = [
+    objectFields({
+      name: "width",
+      label: "lebar",
+      placeholder: "atur lebar",
+      defaultValue: "",
+    }),
+    objectFields({
+      name: "length",
+      label: "panjang",
+      defaultValue: "",
+      placeholder: "atur panjang",
+    }),
+    objectFields({
+      name: "height",
+      label: "tinggi",
+      defaultValue: "",
+      placeholder: "atur tinggi",
+    }),
+  ];
+
+  const outOfTownDeliveryField: TextfieldProps[] = [
+    objectFields({
+      name: "jneReguler",
+      defaultValue: "30.000",
+      label: "JNE Reguler",
+      description: "maks 50.000 g",
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+    objectFields({
+      name: "jneCargo",
+      defaultValue: "35.000",
+      label: "JNE Cargo",
+      description: "maks 50.000 g",
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+    }),
+  ];
+
+  return { packageSize, outOfTownDeliveryField };
 };
 
 const VariantModal = () => {
@@ -581,46 +628,6 @@ const ModalSubDistributor = ({
       }}
     />
   );
-};
-
-const usePostage = () => {
-  const packageSize: TextfieldProps[] = [
-    objectFields({
-      name: "width",
-      label: "lebar",
-      placeholder: "atur lebar",
-      defaultValue: "",
-    }),
-    objectFields({
-      name: "length",
-      label: "panjang",
-      defaultValue: "",
-      placeholder: "atur panjang",
-    }),
-    objectFields({
-      name: "height",
-      label: "tinggi",
-      defaultValue: "",
-      placeholder: "atur tinggi",
-    }),
-  ];
-
-  const outOfTownDeliveryField: TextfieldProps[] = [
-    objectFields({
-      name: "jneReguler",
-      defaultValue: "50.000",
-      label: "JNE Reguler",
-      readOnly: { isValue: true, cursor: "cursor-pointer" },
-    }),
-    objectFields({
-      name: "jneCargo",
-      defaultValue: "50.000",
-      label: "JNE Cargo",
-      readOnly: { isValue: true, cursor: "cursor-pointer" },
-    }),
-  ];
-
-  return { packageSize, outOfTownDeliveryField };
 };
 
 const useUploadPhoto = () => {

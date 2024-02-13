@@ -29,7 +29,6 @@ export function ListingModal({
     setValue(keyField, name);
     clearErrors(keyField);
 
-    console.log(name);
     modal.close();
   };
 

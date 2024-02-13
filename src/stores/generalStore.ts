@@ -20,9 +20,15 @@ interface PostageProps {
   isOutOfTownDelivery: boolean;
 }
 
+interface VariantSizeProps {
+  label: string;
+  price?: string;
+}
+
 interface VariantTypeProps {
   label: string;
   image?: string;
+  size?: VariantSizeProps[];
 }
 
 interface General {

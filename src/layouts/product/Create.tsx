@@ -3,7 +3,6 @@ import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
 import {
-  ArrowUpTrayIcon,
   CheckIcon,
   ChevronRightIcon,
   PhotoIcon,
@@ -15,12 +14,15 @@ import {
   ChangeEvent,
   Fragment,
   KeyboardEvent,
+  Ref,
+  forwardRef,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { ChildRef, File } from "src/components/File";
+import { ChildRef, File, FileProps } from "src/components/File";
 import {
   Textfield,
   TextfieldProps,
@@ -116,7 +118,11 @@ const Create = () => {
                       className="w-[5rem]"
                       readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                       startContent={
-                        <PhotoIcon width={16} color={IconColor.zinc} />
+                        <PhotoIcon
+                          width={16}
+                          color={IconColor.zinc}
+                          className="cursor-pointer"
+                        />
                       }
                     />
                   ))}
@@ -128,7 +134,7 @@ const Create = () => {
           <GridInput className="grid grid-cols-3">
             {fields.map((v) => (
               <Fragment key={v.label}>
-                {["text", "rp"].includes(v.type!) && (
+                {["text", "rp", "number"].includes(v.type!) && (
                   <Textfield
                     type={v.type}
                     name={v.name}
@@ -194,6 +200,398 @@ const Create = () => {
       )}
     </>
   );
+};
+
+const VariantModal = () => {
+  const {
+    isAddType,
+    isDeleteType,
+    actionIsVariant,
+    control,
+    errors,
+    handleAddType,
+    handleChangeType,
+    handleDeleteType,
+    handleOnKeyDown,
+    handleSubmitType,
+    isVariant,
+    setFocus,
+    variantTypes,
+    setVariantType,
+    isDeleteSize,
+    handleChangeSize,
+    isAddSize,
+    handleAddSize,
+  } = useVariant();
+
+  const [isVariantPhoto, setIsVariantPhoto] = useState(true);
+  const [labelProduct, setLabelProduct] = useState("");
+
+  const { productPhotoRef } = useUploadPhoto();
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return null;
+
+    const files = e.target.files[0];
+    const blob = URL.createObjectURL(files);
+
+    const filterVariant = variantTypes.filter((f) => f.label !== labelProduct);
+    setVariantType([...filterVariant, { label: labelProduct, image: blob }]);
+  };
+
+  const onClick = (label: string) => {
+    if (productPhotoRef.current) {
+      productPhotoRef.current.click();
+      setLabelProduct(label);
+    }
+  };
+
+  useEffect(() => {
+    if (isAddType) {
+      setFocus("type");
+    }
+  }, [isAddType]);
+
+  return (
+    <Modal isOpen={isVariant} closeModal={actionIsVariant}>
+      <main className="my-4 flexcol gap-6">
+        <header className="flexcol gap-2">
+          <section className="flex items-center justify-between">
+            <h2 className="font-semibold capitalize">warna/jenis/tipe</h2>
+            <button
+              className={`text-[${IconColor.red}] text-sm capitalize`}
+              title="edit"
+              onClick={handleChangeType}
+            >
+              {!isDeleteType ? "ubah" : "selesai"}
+            </button>
+          </section>
+
+          <section className="flexcol gap-2">
+            <section className="flex gap-3 flex-wrap">
+              {variantTypes.length > 0 &&
+                variantTypes.map((v, idx) => (
+                  <section className="relative" key={idx}>
+                    <Btn
+                      size="sm"
+                      variant="light"
+                      className="w-[6rem] border border-gray-400 text-gray-500"
+                    >
+                      {v.label}
+                    </Btn>
+                    {isDeleteType && (
+                      <XCircleIcon
+                        width={20}
+                        color={IconColor.red}
+                        className="absolute -top-2 -right-2 cursor-pointer"
+                        title="hapus"
+                        onClick={() => handleDeleteType(v.label)}
+                      />
+                    )}
+                  </section>
+                ))}
+
+              <Button
+                aria-label={!isAddType ? "tambah" : "batal"}
+                endContent={
+                  !isAddType ? (
+                    <PlusIcon width={16} />
+                  ) : (
+                    <XMarkIcon width={16} />
+                  )
+                }
+                className="w-[6rem] border border-gray-400 text-gray-500"
+                color="default"
+                variant="light"
+                size="sm"
+                onClick={handleAddType}
+              />
+            </section>
+
+            {isAddType && (
+              <Textfield
+                name="type"
+                defaultValue=""
+                control={control}
+                onKeyDown={handleOnKeyDown}
+                placeholder="masukkan warna/jenis/tipe"
+                errorMessage={handleErrorMessage(errors, "type")}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "masukkan warna/jenis/tipe",
+                  },
+                }}
+                endContent={
+                  <CheckIcon
+                    width={16}
+                    title="Tambah"
+                    className="cursor-pointer"
+                    onClick={handleSubmitType}
+                  />
+                }
+              />
+            )}
+          </section>
+        </header>
+
+        <hr />
+
+        <section className="flex justify-between">
+          <section>
+            <h2>Tambah foto ke variasi "Warna/Jenis/Tipe"</h2>
+            <p className={`text-sm text-[${IconColor.zinc}]`}>
+              Semua foto harus diupload apabila diaktifkan
+            </p>
+          </section>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={isVariantPhoto}
+            onClick={() => setIsVariantPhoto((v) => !v)}
+          />
+        </section>
+
+        {isVariantPhoto && variantTypes.length > 0 && (
+          <>
+            <section className="grid grid-cols-3 gap-2">
+              {variantTypes.map((v, idx) => (
+                <Fragment key={idx}>
+                  <VariantFileImage
+                    label={v.label}
+                    image={v.image ?? ""}
+                    onClick={() => onClick(v.label)}
+                    onChange={onChange}
+                    ref={productPhotoRef}
+                  />
+                </Fragment>
+              ))}
+            </section>
+          </>
+        )}
+
+        <hr />
+
+        <footer className="flexcol gap-2">
+          <section className="flex items-center justify-between">
+            <h2 className="font-semibold capitalize">size</h2>
+            <button
+              className={`text-[${IconColor.red}] text-sm capitalize`}
+              title="edit"
+              onClick={handleChangeSize}
+            >
+              {!isDeleteSize ? "ubah" : "selesai"}
+            </button>
+          </section>
+
+          <section className="flexcol gap-2">
+            <section className="flex gap-3 flex-wrap">
+              {variantTypes.length > 0 &&
+                variantTypes.map(
+                  (v, idx) =>
+                    v.size && (
+                      <section className="relative" key={idx}>
+                        <Btn
+                          size="sm"
+                          variant="light"
+                          className="w-[6rem] border border-gray-400 text-gray-500"
+                        >
+                          {v.label}
+                        </Btn>
+                        {isDeleteType && (
+                          <XCircleIcon
+                            width={20}
+                            color={IconColor.red}
+                            className="absolute -top-2 -right-2 cursor-pointer"
+                            title="hapus"
+                            onClick={() => handleDeleteType(v.label)}
+                          />
+                        )}
+                      </section>
+                    )
+                )}
+
+              <Button
+                aria-label={!isAddSize ? "tambah" : "batal"}
+                endContent={
+                  !isAddSize ? (
+                    <PlusIcon width={16} />
+                  ) : (
+                    <XMarkIcon width={16} />
+                  )
+                }
+                className="w-[6rem] border border-gray-400 text-gray-500"
+                color="default"
+                variant="light"
+                size="sm"
+                onClick={handleAddSize}
+              />
+            </section>
+
+            {isAddSize && (
+              <Textfield
+                name="size"
+                defaultValue=""
+                control={control}
+                onKeyDown={handleOnKeyDown}
+                placeholder="masukkan size"
+                errorMessage={handleErrorMessage(errors, "size")}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "masukkan size",
+                  },
+                }}
+                endContent={
+                  <CheckIcon
+                    width={16}
+                    title="Tambah"
+                    className="cursor-pointer"
+                    onClick={handleSubmitType}
+                  />
+                }
+              />
+            )}
+          </section>
+        </footer>
+      </main>
+    </Modal>
+  );
+};
+
+const VariantFileImage = forwardRef(
+  (
+    props: Partial<FileProps> & { label: string; image: string },
+    ref: Ref<ChildRef>
+  ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useImperativeHandle(ref, () => ({
+      click: () => {
+        if (inputRef.current) {
+          inputRef.current.click();
+        }
+      },
+    }));
+
+    return (
+      <>
+        <input
+          type="file"
+          ref={inputRef}
+          className="hidden"
+          onChange={props.onChange}
+        />
+
+        <section
+          className={cx(!props.image ? "cursor-pointer" : "cursor-default")}
+          onClick={!props.image ? props.onClick : undefined}
+        >
+          {!props.image ? (
+            <section className="flex gap-2 border border-dashed  border-gray-400 p-2 rounded-tl-md rounded-tr-md">
+              <PlusIcon width={16} color={IconColor.zinc} />
+              <p className={`capitalize text-sm text-[${IconColor.zinc}]`}>
+                tambah foto/video
+              </p>
+            </section>
+          ) : (
+            <Image
+              radius="none"
+              src={props.image}
+              className="rounded-tl-md rounded-tr-md aspect-video object-cover border border-gray-400"
+            />
+          )}
+          <p
+            className={cx(
+              `text-sm text-[${IconColor.zinc}] text-center border border-gray-400 rounded-br-md rounded-bl-md py-1`,
+              !props.image ? "border-dashed" : "border-solid"
+            )}
+          >
+            {props.label}
+          </p>
+        </section>
+      </>
+    );
+  }
+);
+
+const useVariant = () => {
+  const [isDeleteType, setIsDeleteTye] = useState(false);
+  const [isDeleteSize, setIsDeleteSize] = useState(false);
+  const [isAddType, setIsAddType] = useState(false);
+  const [isAddSize, setIsAddSize] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    setFocus,
+    getValues,
+    formState: { errors },
+  } = useForm<FieldValues>();
+
+  const { isVariant, actionIsVariant } = useActiveModal();
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantType = useGeneralStore((v) => v.setVariantType);
+
+  const handleAddType = () => setIsAddType((v) => !v);
+  const handleAddSize = () => setIsAddSize((v) => !v);
+  const handleChangeType = () => setIsDeleteTye((v) => !v);
+  const handleChangeSize = () => setIsDeleteSize((v) => !v);
+
+  const handleSubmitType = handleSubmit(async (e) => {
+    try {
+      const type = e.type;
+      setVariantType([...variantTypes, { label: type }]);
+      setFocus("type");
+    } catch (e) {
+      const error = e as Error;
+      console.error(error);
+    } finally {
+      resetField("type");
+    }
+  });
+
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const type = getValues();
+      setVariantType([...variantTypes, { label: type.type }]);
+
+      setFocus("type");
+      resetField("type");
+      setFocus("type");
+    }
+
+    if (e.key === "Escape") {
+      setIsAddType((v) => !v);
+    }
+  };
+
+  const handleDeleteType = (label: string) => {
+    const newTypes = variantTypes.filter((type) => type.label !== label);
+    setVariantType(newTypes);
+  };
+
+  return {
+    isDeleteSize,
+    handleChangeSize,
+    handleOnKeyDown,
+    control,
+    errors,
+    isVariant,
+    actionIsVariant,
+    handleDeleteType,
+    handleAddType,
+    handleChangeType,
+    handleSubmitType,
+    isDeleteType,
+    isAddType,
+    setFocus,
+    variantTypes,
+    setVariantType,
+    isAddSize,
+    handleAddSize,
+  };
 };
 
 const PostageModal = () => {
@@ -377,215 +775,6 @@ const usePostage = () => {
   ];
 
   return { packageSize, outOfTownDeliveryField };
-};
-
-const VariantModal = () => {
-  const {
-    isAddType,
-    isDeleteType,
-    actionIsVariant,
-    control,
-    errors,
-    handleAddType,
-    handleChangeType,
-    handleDeleteType,
-    handleOnKeyDown,
-    handleSubmitType,
-    isVariant,
-    setFocus,
-    variantTypes,
-  } = useVariant();
-
-  const fImage = useRef<ChildRef>(null);
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
-  };
-  const onClick = () => {
-    if (fImage.current) {
-      fImage.current.click();
-    }
-  };
-
-  useEffect(() => {
-    if (isAddType) {
-      setFocus("type");
-    }
-  }, [isAddType]);
-
-  return (
-    <Modal isOpen={isVariant} closeModal={actionIsVariant}>
-      <main className="my-4 flexcol gap-6">
-        <header className="flexcol gap-2">
-          <section className="flex items-center justify-between">
-            <h2 className="font-semibold capitalize">warna/jenis/tipe</h2>
-            <button
-              className={`text-[${IconColor.red}] text-sm capitalize`}
-              title="edit"
-              onClick={handleChangeType}
-            >
-              {!isDeleteType ? "ubah" : "selesai"}
-            </button>
-          </section>
-
-          <section className="flexcol gap-2">
-            <section className="flex gap-3 flex-wrap">
-              {variantTypes.length > 0 &&
-                variantTypes.map((v, idx) => (
-                  <section className="relative" key={idx}>
-                    <Btn
-                      size="sm"
-                      variant="light"
-                      className="w-[6rem] border border-gray-400 text-gray-500"
-                    >
-                      {v.label}
-                    </Btn>
-                    {isDeleteType && (
-                      <XCircleIcon
-                        width={20}
-                        color={IconColor.red}
-                        className="absolute -top-2 -right-2 cursor-pointer"
-                        title="hapus"
-                        onClick={() => handleDeleteType(v.label)}
-                      />
-                    )}
-                  </section>
-                ))}
-
-              <Button
-                aria-label={!isAddType ? "tambah" : "batal"}
-                endContent={
-                  !isAddType ? (
-                    <PlusIcon width={16} />
-                  ) : (
-                    <XMarkIcon width={16} />
-                  )
-                }
-                className="w-[6rem] border border-gray-400 text-gray-500"
-                color="default"
-                variant="light"
-                size="sm"
-                onClick={handleAddType}
-              />
-            </section>
-
-            {isAddType && (
-              <Textfield
-                name="type"
-                defaultValue=""
-                control={control}
-                onKeyDown={handleOnKeyDown}
-                placeholder="masukkan warna"
-                errorMessage={handleErrorMessage(errors, "type")}
-                rules={{ required: { value: true, message: "masukkan warna" } }}
-                endContent={
-                  <CheckIcon
-                    width={16}
-                    title="Tambah"
-                    className="cursor-pointer"
-                    onClick={handleSubmitType}
-                  />
-                }
-              />
-            )}
-          </section>
-        </header>
-
-        {/* image */}
-        {variantTypes.length > 0 && (
-          <>
-            <hr />
-            <section className="grid grid-cols-3 gap-4">
-              {variantTypes.map((v) => (
-                <File
-                  ref={fImage}
-                  name={v.label}
-                  control={control}
-                  onClick={onClick}
-                  onChange={onChange}
-                  placeholder={v.label}
-                  errorMessage={handleErrorMessage(errors, v.label)}
-                  startContent={
-                    <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
-                  }
-                  rules={{ required: { value: true, message: "unggah foto" } }}
-                />
-              ))}
-            </section>
-          </>
-        )}
-      </main>
-    </Modal>
-  );
-};
-
-const useVariant = () => {
-  const [isDeleteType, setIsDeleteTye] = useState(false);
-  const [isAddType, setIsAddType] = useState(false);
-
-  const {
-    control,
-    handleSubmit,
-    resetField,
-    setFocus,
-    getValues,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
-  const { isVariant, actionIsVariant } = useActiveModal();
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const setVariantType = useGeneralStore((v) => v.setVariantType);
-
-  const handleAddType = () => setIsAddType((v) => !v);
-  const handleChangeType = () => setIsDeleteTye((v) => !v);
-
-  const handleSubmitType = handleSubmit(async (e) => {
-    try {
-      const type = e.type;
-      setVariantType([...variantTypes, { label: type }]);
-      setFocus("type");
-    } catch (e) {
-      const error = e as Error;
-      console.error(error);
-    } finally {
-      resetField("type");
-    }
-  });
-
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const type = getValues();
-      setVariantType([...variantTypes, { label: type.type }]);
-
-      setFocus("type");
-      resetField("type");
-      setFocus("type");
-    }
-
-    if (e.key === "Escape") {
-      setIsAddType((v) => !v);
-    }
-  };
-
-  const handleDeleteType = (label: string) => {
-    const newTypes = variantTypes.filter((type) => type.label !== label);
-    setVariantType(newTypes);
-  };
-
-  return {
-    handleOnKeyDown,
-    control,
-    errors,
-    isVariant,
-    actionIsVariant,
-    handleDeleteType,
-    handleAddType,
-    handleChangeType,
-    handleSubmitType,
-    isDeleteType,
-    isAddType,
-    setFocus,
-    variantTypes,
-  };
 };
 
 const ModalCategory = ({

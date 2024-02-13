@@ -23,6 +23,8 @@ interface Modal {
   setIsPostage: (v: boolean) => void;
   isVariant: boolean;
   setIsVariant: (v: boolean) => void;
+  isSubDistributor: boolean;
+  setIsSubDistributor: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -48,6 +50,8 @@ const useModalStore = create<Modal>((set) => ({
   setIsPostage: (v) => set({ isPostage: v }),
   isVariant: false,
   setIsVariant: (v) => set({ isVariant: v }),
+  isSubDistributor: false,
+  setIsSubDistributor: (v) => set({ isSubDistributor: v }),
 }));
 
 export default useModalStore;
@@ -76,6 +80,8 @@ export const useActiveModal = () => {
     setIsPostage,
     isVariant,
     setIsVariant,
+    isSubDistributor,
+    setIsSubDistributor,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -89,6 +95,7 @@ export const useActiveModal = () => {
   const actionIsConfirm = () => setIsConfirm(!isConfirm);
   const actionIsPostage = () => setIsPostage(!isPostage);
   const actionIsVariant = () => setIsVariant(!isVariant);
+  const actionIsSubDistributor = () => setIsSubDistributor(!isSubDistributor);
 
   return {
     isBankName,
@@ -113,5 +120,7 @@ export const useActiveModal = () => {
     actionIsPostage,
     isVariant,
     actionIsVariant,
+    isSubDistributor,
+    actionIsSubDistributor,
   };
 };

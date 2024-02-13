@@ -140,6 +140,7 @@ const Create = () => {
           <ConditionModal setValue={setValue} />
           <PostageModal />
           <VariantModal />
+          <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} />
         </main>
       )}
     </>
@@ -361,14 +362,29 @@ const ModalCategory = ({
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
   const { isCategory, actionIsCategory, isSubCategory, actionIsSubCategory } =
     useActiveModal();
-  const findAllCategories = useCategory().findAll();
+  // const findAllCategories = useCategory().findAll();
+
+  const categories: string[] = [
+    "Makanan & Minuman Siap Saji",
+    "Bumbu & Bahan Makanan",
+    "Kantor & Alat Tulis",
+    "Makanan & Minuman Kemasan",
+    "Fashion & Kecantikan",
+  ];
+  const subCategories: string[] = [
+    "Sembako",
+    "Bumbu Instan",
+    "Daging & Ikan",
+    "Sayur Mayur",
+    "Bumbu Segar",
+  ];
 
   return (
     <>
       <ListingModal
         title="kategori"
         keyField="category"
-        data={findAllCategories.data}
+        data={categories}
         setValue={setValue}
         clearErrors={clearErrors}
         modal={{
@@ -380,7 +396,7 @@ const ModalCategory = ({
       <ListingModal
         title="sub kategori"
         keyField="subCategory"
-        data={findAllCategories.data}
+        data={subCategories}
         setValue={setValue}
         clearErrors={clearErrors}
         modal={{
@@ -389,6 +405,36 @@ const ModalCategory = ({
         }}
       />
     </>
+  );
+};
+
+const ModalSubDistributor = ({
+  clearErrors,
+  setValue,
+}: Pick<UseForm, "setValue" | "clearErrors">) => {
+  const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
+
+  const subDistributors: string[] = [
+    "Agung Jaya",
+    "Bintang",
+    "Arta Boga Cemerlang",
+    "Semeru",
+    "Ektong",
+    "Bintang Terang",
+  ];
+
+  return (
+    <ListingModal
+      title="sub-distributor"
+      keyField="subDistributor"
+      data={subDistributors}
+      setValue={setValue}
+      clearErrors={clearErrors}
+      modal={{
+        open: isSubDistributor,
+        close: actionIsSubDistributor,
+      }}
+    />
   );
 };
 
@@ -623,6 +669,7 @@ const useFields = () => {
     actionIsCondition,
     actionIsPostage,
     actionIsVariant,
+    actionIsSubDistributor,
   } = useActiveModal();
 
   const fields: TextfieldProps[] = [
@@ -681,6 +728,13 @@ const useFields = () => {
       type: "modal",
       defaultValue: "Baru",
       onClick: actionIsCondition,
+    }),
+    objectFields({
+      label: "sub-distributor",
+      name: "subDistributor",
+      type: "modal",
+      defaultValue: "",
+      onClick: actionIsSubDistributor,
     }),
     objectFields({
       label: "deskripsi produk",

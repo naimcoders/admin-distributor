@@ -401,10 +401,14 @@ const VariantModal = () => {
             </button>
           </section>
 
-          <section className="flexcol gap-2">
-            <section className="flex gap-3 flex-wrap">
-              {variantSize.length > 0 &&
-                variantSize
+          {!labelAndImage?.label ? (
+            <p className={`text-sm text-[${IconColor.zinc}]`}>
+              Pilih warna/jenis/tipe di atas untuk mengatur size
+            </p>
+          ) : (
+            <section className="flexcol gap-2">
+              <section className="flex gap-3 flex-wrap">
+                {variantSize
                   .filter((f) => f.label === labelAndImage?.label)
                   .map((v, idx) => (
                     <section className="relative" key={idx}>
@@ -427,49 +431,52 @@ const VariantModal = () => {
                     </section>
                   ))}
 
-              <Button
-                aria-label={!isAddSize ? "tambah" : "batal"}
-                endContent={
-                  !isAddSize ? (
-                    <PlusIcon width={16} />
-                  ) : (
-                    <XMarkIcon width={16} />
-                  )
-                }
-                className="w-[6rem] border border-gray-400 text-gray-500"
-                color="default"
-                variant="light"
-                size="sm"
-                onClick={handleAddSize}
-              />
-            </section>
+                <Button
+                  aria-label={!isAddSize ? "tambah" : "batal"}
+                  endContent={
+                    !isAddSize ? (
+                      <PlusIcon width={16} />
+                    ) : (
+                      <XMarkIcon width={16} />
+                    )
+                  }
+                  className="w-[6rem] border border-gray-400 text-gray-500"
+                  color="default"
+                  variant="light"
+                  size="sm"
+                  onClick={handleAddSize}
+                />
+              </section>
 
-            {isAddSize && (
-              <Textfield
-                name="size"
-                defaultValue=""
-                control={control}
-                onKeyDown={handleOnKeyDownSize}
-                placeholder="masukkan size"
-                errorMessage={handleErrorMessage(errors, "size")}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "masukkan size",
-                  },
-                }}
-                endContent={
-                  <CheckIcon
-                    width={16}
-                    title="Tambah"
-                    className="cursor-pointer"
-                    onClick={handleSubmitSize}
-                  />
-                }
-              />
-            )}
-          </section>
+              {isAddSize && (
+                <Textfield
+                  name="size"
+                  defaultValue=""
+                  control={control}
+                  onKeyDown={handleOnKeyDownSize}
+                  placeholder="masukkan size"
+                  errorMessage={handleErrorMessage(errors, "size")}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "masukkan size",
+                    },
+                  }}
+                  endContent={
+                    <CheckIcon
+                      width={16}
+                      title="Tambah"
+                      className="cursor-pointer"
+                      onClick={handleSubmitSize}
+                    />
+                  }
+                />
+              )}
+            </section>
+          )}
         </footer>
+
+        <Button aria-label="atur info variasi" className="mx-auto mt-4" />
       </main>
     </Modal>
   );

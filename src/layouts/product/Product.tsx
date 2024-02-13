@@ -17,6 +17,7 @@ const SubProduct = () => {
       data={data?.items ?? []}
       isNext={isNext}
       page={page}
+      isPaginate
       placeholder="cari nama produk/kategori/Sub-Kategori"
     />
   );

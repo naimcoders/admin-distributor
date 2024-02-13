@@ -2,6 +2,7 @@ import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
 import {
+  ArrowUpTrayIcon,
   CheckIcon,
   ChevronRightIcon,
   PhotoIcon,
@@ -159,8 +160,18 @@ const VariantModal = () => {
     handleSubmitType,
     isVariant,
     setFocus,
-    variant,
+    variantTypes,
   } = useVariant();
+
+  const fImage = useRef<ChildRef>(null);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
+  };
+  const onClick = () => {
+    if (fImage.current) {
+      fImage.current.click();
+    }
+  };
 
   useEffect(() => {
     if (isAddType) {
@@ -170,7 +181,7 @@ const VariantModal = () => {
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
-      <main className="my-4">
+      <main className="my-4 flexcol gap-6">
         <header className="flexcol gap-2">
           <section className="flex items-center justify-between">
             <h2 className="font-semibold">Warna</h2>
@@ -185,8 +196,8 @@ const VariantModal = () => {
 
           <section className="flexcol gap-2">
             <section className="flex gap-3 flex-wrap">
-              {variant.types.length > 0 &&
-                variant.types.map((v, idx) => (
+              {variantTypes.length > 0 &&
+                variantTypes.map((v, idx) => (
                   <section className="relative" key={idx}>
                     <Btn
                       size="sm"
@@ -245,6 +256,30 @@ const VariantModal = () => {
             )}
           </section>
         </header>
+
+        {/* image */}
+        {variantTypes.length > 0 && (
+          <>
+            <hr />
+            <section className="grid grid-cols-3 gap-4">
+              {variantTypes.map((v) => (
+                <File
+                  ref={fImage}
+                  name={v.label}
+                  control={control}
+                  onClick={onClick}
+                  onChange={onChange}
+                  placeholder={v.label}
+                  errorMessage={handleErrorMessage(errors, v.label)}
+                  startContent={
+                    <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
+                  }
+                  rules={{ required: { value: true, message: "unggah foto" } }}
+                />
+              ))}
+            </section>
+          </>
+        )}
       </main>
     </Modal>
   );
@@ -262,10 +297,10 @@ const useVariant = () => {
     getValues,
     formState: { errors },
   } = useForm<FieldValues>();
-  const { isVariant, actionIsVariant } = useActiveModal();
 
-  const variant = useGeneralStore((v) => v.variant);
-  const setVariant = useGeneralStore((v) => v.setVariant);
+  const { isVariant, actionIsVariant } = useActiveModal();
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantType = useGeneralStore((v) => v.setVariantType);
 
   const handleAddType = () => setIsAddType((v) => !v);
   const handleChangeType = () => setIsDeleteTye((v) => !v);
@@ -273,10 +308,7 @@ const useVariant = () => {
   const handleSubmitType = handleSubmit(async (e) => {
     try {
       const type = e.type;
-      setVariant({
-        ...variant,
-        types: [...variant.types, { label: type }],
-      });
+      setVariantType([...variantTypes, { label: type }]);
       setFocus("type");
     } catch (e) {
       const error = e as Error;
@@ -288,11 +320,9 @@ const useVariant = () => {
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const val = getValues();
-      setVariant({
-        ...variant,
-        types: [...variant.types, { label: val.type }],
-      });
+      const type = getValues();
+      setVariantType([...variantTypes, { label: type.type }]);
+
       setFocus("type");
       resetField("type");
       setFocus("type");
@@ -304,9 +334,8 @@ const useVariant = () => {
   };
 
   const handleDeleteType = (label: string) => {
-    const newTypes = variant.types.filter((type) => type.label !== label);
-    const obj = { ...variant, types: newTypes };
-    setVariant(obj);
+    const newTypes = variantTypes.filter((type) => type.label !== label);
+    setVariantType(newTypes);
   };
 
   return {
@@ -322,8 +351,7 @@ const useVariant = () => {
     isDeleteType,
     isAddType,
     setFocus,
-    variant,
-    setVariant,
+    variantTypes,
   };
 };
 

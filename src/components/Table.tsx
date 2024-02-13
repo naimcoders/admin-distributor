@@ -13,8 +13,8 @@ interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
     TableProps<T> {
   isTransparent?: boolean;
-  next: () => void;
-  prev: () => void;
+  next?: () => void | null;
+  prev?: () => void | null;
 }
 
 export default function Table<T extends object>(props: Table<T>) {
@@ -114,7 +114,7 @@ export function TableWithSearchAndTabs<S extends object>(
       />
 
       <Table
-        isPaginate
+        isPaginate={props.isPaginate}
         className="mt-4"
         data={props.data}
         page={props.page}

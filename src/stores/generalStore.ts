@@ -20,11 +20,9 @@ interface PostageProps {
   isOutOfTownDelivery: boolean;
 }
 
-interface VariantProps {
-  types: {
-    label: string;
-    image?: string;
-  }[];
+interface VariantTypeProps {
+  label: string;
+  image?: string;
 }
 
 interface General {
@@ -34,8 +32,8 @@ interface General {
   date: { startAt: string; endAt: string };
   setDate: (v: Period<string>) => void;
 
-  variant: VariantProps;
-  setVariant: (v: VariantProps) => void;
+  variantTypes: VariantTypeProps[];
+  setVariantType: (v: VariantTypeProps[]) => void;
 
   bankName: string;
   setBankName: (v: string) => void;
@@ -60,10 +58,8 @@ const useGeneralStore = create<General>((set) => ({
   date: { startAt: "", endAt: "" },
   setDate: (v) => set({ date: v }),
 
-  variant: {
-    types: [],
-  },
-  setVariant: (v) => set({ variant: v }),
+  variantTypes: [],
+  setVariantType: (v) => set({ variantTypes: v }),
 
   bankName: "",
   setBankName: (v) => set({ bankName: v }),

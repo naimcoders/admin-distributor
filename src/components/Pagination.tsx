@@ -4,8 +4,8 @@ import { Fragment } from "react";
 
 interface IPagination {
   page: number;
-  next: () => void;
-  prev: () => void;
+  prev?: () => void;
+  next?: () => void;
   isNext?: boolean;
 }
 
@@ -20,11 +20,13 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
   );
 
   const left = () => {
+    if (!prev) return null;
     prev();
     onPrevious();
   };
 
   const right = () => {
+    if (!next) return null;
     next();
     onNext();
   };

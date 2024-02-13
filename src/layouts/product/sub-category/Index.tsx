@@ -1,9 +1,9 @@
+import Label from "src/components/Label";
+import Error from "src/components/Error";
 import { FieldValues, useForm } from "react-hook-form";
 import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
-import Label from "src/components/Label";
 import { Category, useCategory } from "src/api/category.service";
-import Error from "src/components/Error";
 import { Actions } from "src/components/Actions";
 import { detailNavigate } from "src/helpers";
 

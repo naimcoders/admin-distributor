@@ -274,7 +274,7 @@ const VariantModal = () => {
               title="edit"
               onClick={handleChangeType}
             >
-              {!isDeleteType ? "ubah" : "selesai"}
+              {!isDeleteType ? "edit" : "selesai"}
             </button>
           </section>
 
@@ -397,7 +397,7 @@ const VariantModal = () => {
               title="edit"
               onClick={handleChangeSize}
             >
-              {!isDeleteSize ? "ubah" : "selesai"}
+              {!isDeleteSize ? "edit" : "selesai"}
             </button>
           </section>
 

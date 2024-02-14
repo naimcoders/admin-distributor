@@ -531,18 +531,6 @@ const useVariant = () => {
     try {
       const val = e.size;
 
-      // const removePrevType = variantTypes.filter(
-      //   (f) => f.label !== labelAndImage?.label
-      // );
-
-      // setVariantType([
-      //   ...removePrevType,
-      //   {
-      //     label: labelAndImage?.label,
-      //     image: labelAndImage?.image,
-      //     size: [...(labelAndImage?.size ?? []), { label: val }],
-      //   },
-      // ]);
       setVariantSize([
         ...variantSize,
         { label: labelAndImage?.label, size: val },
@@ -575,7 +563,10 @@ const useVariant = () => {
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const size = getValues();
-      setVariantType([...variantTypes, { label: size.type }]);
+      setVariantSize([
+        ...variantSize,
+        { label: labelAndImage?.label, size: size.size },
+      ]);
 
       setFocus("size");
       resetField("size");
@@ -653,7 +644,7 @@ const VariantFileImage = forwardRef(
           onClick={!props.image ? props.onClick : undefined}
         >
           {!props.image ? (
-            <section className="flex gap-2 border border-dashed  border-gray-400 p-2 rounded-tl-md rounded-tr-md">
+            <section className="flex gap-2 border aspect-square border-dashed border-gray-400 p-2 rounded-tl-md rounded-tr-md items-center">
               <PlusIcon width={16} color={IconColor.zinc} />
               <p className={`capitalize text-sm text-[${IconColor.zinc}]`}>
                 tambah foto/video
@@ -663,7 +654,7 @@ const VariantFileImage = forwardRef(
             <Image
               radius="none"
               src={props.image}
-              className="rounded-tl-md rounded-tr-md aspect-video object-cover border border-gray-400"
+              className="rounded-tl-md rounded-tr-md aspect-square object-cover border border-gray-400"
             />
           )}
           <p

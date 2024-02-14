@@ -1,3 +1,5 @@
+import square from "src/assets/images/square.png";
+import rectangle from "src/assets/images/rectangle.png";
 import cx from "classnames";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
@@ -5,7 +7,6 @@ import Textarea from "src/components/Textarea";
 import {
   CheckIcon,
   ChevronRightIcon,
-  PhotoIcon,
   PlusIcon,
   TrashIcon,
   XMarkIcon,
@@ -118,10 +119,10 @@ const Create = () => {
                       className="w-[5rem]"
                       readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                       startContent={
-                        <PhotoIcon
-                          width={16}
-                          color={IconColor.zinc}
-                          className="cursor-pointer"
+                        <img
+                          src={v === "1:1" ? square : rectangle}
+                          alt="square icon"
+                          className="w-4"
                         />
                       }
                     />
@@ -227,6 +228,7 @@ const VariantModal = () => {
     labelAndImage,
     setLabelAndImage,
     handleDeleteSize,
+    FormSize,
   } = useVariant();
 
   const [isVariantPhoto, setIsVariantPhoto] = useState(true);
@@ -391,7 +393,7 @@ const VariantModal = () => {
         {/* footer */}
         <footer className="flexcol gap-2">
           <section className="flex items-center justify-between">
-            <h2 className="font-semibold capitalize">size</h2>
+            <h2 className="font-semibold capitalize">ukuran</h2>
             <button
               className={`text-[${IconColor.red}] text-sm capitalize`}
               title="edit"
@@ -403,7 +405,7 @@ const VariantModal = () => {
 
           {!labelAndImage?.label ? (
             <p className={`text-sm text-[${IconColor.zinc}]`}>
-              Pilih warna/jenis/tipe di atas untuk mengatur size
+              Pilih warna/jenis/tipe di atas untuk mengatur ukuran
             </p>
           ) : (
             <section className="flexcol gap-2">
@@ -452,14 +454,17 @@ const VariantModal = () => {
                 <Textfield
                   name="size"
                   defaultValue=""
-                  control={control}
+                  control={FormSize.control}
                   onKeyDown={handleOnKeyDownSize}
                   placeholder="masukkan size"
-                  errorMessage={handleErrorMessage(errors, "size")}
+                  errorMessage={handleErrorMessage(
+                    FormSize.formState.errors,
+                    "size"
+                  )}
                   rules={{
                     required: {
                       value: true,
-                      message: "masukkan size",
+                      message: "masukkan ukuran",
                     },
                   }}
                   endContent={
@@ -483,6 +488,8 @@ const VariantModal = () => {
 };
 
 const useVariant = () => {
+  const FormSize = useForm<FieldValues>();
+
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isDeleteSize, setIsDeleteSize] = useState(false);
   const [isAddType, setIsAddType] = useState(false);
@@ -527,7 +534,7 @@ const useVariant = () => {
   const variantSize = useGeneralStore((v) => v.variantSize);
   const setVariantSize = useGeneralStore((v) => v.setVariantSize);
 
-  const handleSubmitSize = handleSubmit(async (e) => {
+  const handleSubmitSize = FormSize.handleSubmit(async (e) => {
     try {
       const val = e.size;
 
@@ -536,12 +543,12 @@ const useVariant = () => {
         { label: labelAndImage?.label, size: val },
       ]);
 
-      setFocus("size");
+      FormSize.setFocus("size");
     } catch (e) {
       const error = e as Error;
       console.error(error);
     } finally {
-      resetField("size");
+      FormSize.resetField("size");
     }
   });
 
@@ -562,15 +569,14 @@ const useVariant = () => {
 
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const size = getValues();
+      const size = FormSize.getValues();
       setVariantSize([
         ...variantSize,
         { label: labelAndImage?.label, size: size.size },
       ]);
 
-      setFocus("size");
-      resetField("size");
-      setFocus("size");
+      FormSize.setFocus("size");
+      FormSize.resetField("size");
     }
 
     if (e.key === "Escape") {
@@ -612,6 +618,7 @@ const useVariant = () => {
     setVariantType,
     isAddSize,
     handleAddSize,
+    FormSize,
   };
 };
 
@@ -629,6 +636,9 @@ const VariantFileImage = forwardRef(
         }
       },
     }));
+
+    const variantTypes = useGeneralStore((v) => v.variantTypes);
+    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
     return (
       <>
@@ -655,6 +665,18 @@ const VariantFileImage = forwardRef(
               radius="none"
               src={props.image}
               className="rounded-tl-md rounded-tr-md aspect-square object-cover border border-gray-400"
+              actions={[
+                {
+                  src: <TrashIcon width={16} color={IconColor.red} />,
+                  onClick: () => {
+                    const newVariants = variantTypes.filter(
+                      (f) => f.image === props.image
+                    );
+
+                    console.log(newVariants);
+                  },
+                },
+              ]}
             />
           )}
           <p
@@ -796,9 +818,6 @@ const PostageModal = () => {
                   defaultValue={v.defaultValue}
                   startContent={
                     <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-                  }
-                  endContent={
-                    <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
                   }
                 />
               ))}

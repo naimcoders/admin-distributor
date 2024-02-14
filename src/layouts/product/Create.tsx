@@ -116,13 +116,13 @@ const Create = () => {
                       name="productPhoto"
                       ref={productPhotoRef}
                       placeholder={v}
-                      className="w-[5rem]"
+                      className="w-[5rem] cursor-pointer"
                       readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                       startContent={
                         <img
                           src={v === "1:1" ? square : rectangle}
                           alt="square icon"
-                          className="w-4"
+                          className="w-4 cursor-pointer"
                         />
                       }
                     />
@@ -638,7 +638,7 @@ const VariantFileImage = forwardRef(
     }));
 
     const variantTypes = useGeneralStore((v) => v.variantTypes);
-    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
+    // const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
     return (
       <>

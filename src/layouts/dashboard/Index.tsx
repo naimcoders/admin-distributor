@@ -1,4 +1,5 @@
 import pilipayLogo from "src/assets/images/pilipay.png";
+import withdrawLogo from "src/assets/images/withdraw.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
 import transferImg from "src/assets/images/transfer.png";
 import topUpImg from "src/assets/images/top up.png";
@@ -152,6 +153,7 @@ const PilipayBalance = () => {
         />
         <BtnPiliPayActions label="top up" alt="Top Up" src={topUpImg} />
         <BtnPiliPayActions label="transfer" alt="Transfer" src={transferImg} />
+        <BtnPiliPayActions label="withdraw" alt="withdraw" src={withdrawLogo} />
       </section>
 
       <HistoryModal />

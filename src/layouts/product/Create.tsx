@@ -208,15 +208,11 @@ const VariantModal = () => {
     isAddType,
     isDeleteType,
     actionIsVariant,
-    control,
-    errors,
     handleAddType,
     handleChangeType,
     handleDeleteType,
-    handleOnKeyDown,
     handleSubmitType,
     isVariant,
-    setFocus,
     variantTypes,
     setVariantType,
     isDeleteSize,
@@ -228,7 +224,9 @@ const VariantModal = () => {
     labelAndImage,
     setLabelAndImage,
     handleDeleteSize,
-    FormSize,
+    formType,
+    formSize,
+    handleOnKeyDownType,
   } = useVariant();
 
   const [isVariantPhoto, setIsVariantPhoto] = useState(true);
@@ -270,10 +268,9 @@ const VariantModal = () => {
   };
 
   useEffect(() => {
-    if (isAddType) {
-      setFocus("type");
-    }
-  }, [isAddType]);
+    if (isAddType) formType.setFocus("type");
+    if (isAddSize) formSize.setFocus("size");
+  }, [isAddType, isAddSize]);
 
   const variantSize = useGeneralStore((v) => v.variantSize);
 
@@ -342,10 +339,13 @@ const VariantModal = () => {
               <Textfield
                 name="type"
                 defaultValue=""
-                control={control}
-                onKeyDown={handleOnKeyDown}
+                control={formType.control}
+                onKeyDown={handleOnKeyDownType}
                 placeholder="masukkan warna/jenis/tipe"
-                errorMessage={handleErrorMessage(errors, "type")}
+                errorMessage={handleErrorMessage(
+                  formType.formState.errors,
+                  "type"
+                )}
                 rules={{
                   required: {
                     value: true,
@@ -464,11 +464,11 @@ const VariantModal = () => {
                 <Textfield
                   name="size"
                   defaultValue=""
-                  control={FormSize.control}
+                  control={formSize.control}
                   onKeyDown={handleOnKeyDownSize}
                   placeholder="masukkan size"
                   errorMessage={handleErrorMessage(
-                    FormSize.formState.errors,
+                    formSize.formState.errors,
                     "size"
                   )}
                   rules={{
@@ -498,7 +498,8 @@ const VariantModal = () => {
 };
 
 const useVariant = () => {
-  const FormSize = useForm<FieldValues>();
+  const formType = useForm<FieldValues>();
+  const formSize = useForm<FieldValues>();
 
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isDeleteSize, setIsDeleteSize] = useState(false);
@@ -510,15 +511,6 @@ const useVariant = () => {
     size?: { label?: string; price?: string }[];
   }>();
 
-  const {
-    control,
-    handleSubmit,
-    resetField,
-    setFocus,
-    getValues,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
   const { isVariant, actionIsVariant } = useActiveModal();
   const variantTypes = useGeneralStore((v) => v.variantTypes);
   const setVariantType = useGeneralStore((v) => v.setVariantType);
@@ -528,23 +520,23 @@ const useVariant = () => {
   const handleChangeType = () => setIsDeleteTye((v) => !v);
   const handleChangeSize = () => setIsDeleteSize((v) => !v);
 
-  const handleSubmitType = handleSubmit(async (e) => {
+  const handleSubmitType = formType.handleSubmit(async (e) => {
     try {
       const type = e.type;
       setVariantType([...variantTypes, { label: type }]);
-      setFocus("type");
+      formType.setFocus("type");
     } catch (e) {
       const error = e as Error;
       console.error(error);
     } finally {
-      resetField("type");
+      formType.resetField("type");
     }
   });
 
   const variantSize = useGeneralStore((v) => v.variantSize);
   const setVariantSize = useGeneralStore((v) => v.setVariantSize);
 
-  const handleSubmitSize = FormSize.handleSubmit(async (e) => {
+  const handleSubmitSize = formSize.handleSubmit(async (e) => {
     try {
       const val = e.size;
 
@@ -553,23 +545,23 @@ const useVariant = () => {
         { label: labelAndImage?.label, size: val },
       ]);
 
-      FormSize.setFocus("size");
+      formSize.setFocus("size");
     } catch (e) {
       const error = e as Error;
       console.error(error);
     } finally {
-      FormSize.resetField("size");
+      formSize.resetField("size");
     }
   });
 
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const type = getValues();
+      const type = formType.getValues();
       setVariantType([...variantTypes, { label: type.type }]);
 
-      setFocus("type");
-      resetField("type");
-      setFocus("type");
+      formType.setFocus("type");
+      formType.resetField("type");
+      formType.setFocus("type");
     }
 
     if (e.key === "Escape") {
@@ -579,14 +571,14 @@ const useVariant = () => {
 
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const size = FormSize.getValues();
+      const size = formSize.getValues();
       setVariantSize([
         ...variantSize,
         { label: labelAndImage?.label, size: size.size },
       ]);
 
-      FormSize.setFocus("size");
-      FormSize.resetField("size");
+      formSize.setFocus("size");
+      formSize.resetField("size");
     }
 
     if (e.key === "Escape") {
@@ -605,6 +597,7 @@ const useVariant = () => {
   };
 
   return {
+    formType,
     handleDeleteSize,
     labelAndImage,
     setLabelAndImage,
@@ -612,9 +605,7 @@ const useVariant = () => {
     handleSubmitSize,
     isDeleteSize,
     handleChangeSize,
-    handleOnKeyDown,
-    control,
-    errors,
+    handleOnKeyDownType,
     isVariant,
     actionIsVariant,
     handleDeleteType,
@@ -623,12 +614,11 @@ const useVariant = () => {
     handleSubmitType,
     isDeleteType,
     isAddType,
-    setFocus,
     variantTypes,
     setVariantType,
     isAddSize,
     handleAddSize,
-    FormSize,
+    formSize,
   };
 };
 
@@ -803,7 +793,6 @@ const PostageModal = () => {
         </section>
 
         <hr />
-
         <section>
           <header className="flex justify-between">
             <h2 className="font-semibold capitalize">pengiriman luar kota</h2>
@@ -888,7 +877,6 @@ const ModalCategory = ({
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
   const { isCategory, actionIsCategory, isSubCategory, actionIsSubCategory } =
     useActiveModal();
-  // const findAllCategories = useCategory().findAll();
 
   const categories: string[] = [
     "Makanan & Minuman Siap Saji",
@@ -1054,20 +1042,6 @@ const useFields = () => {
     actionIsVariant,
     actionIsSubDistributor,
   } = useActiveModal();
-
-  // const formatToRupiah = (value: string) => {
-  //   const formatter = new Intl.NumberFormat("id-ID", {
-  //     style: "currency",
-  //     currency: "IDR",
-  //   });
-  //   return formatter.format(Number(value.replace(/\D/g, "")));
-  // };
-
-  // const handleOnInput = (getValues: UseFormGetValues<FieldValues>, fieldName: string, e: ChangeEvent<HTMLInputElement>) => {
-  //   const val= getValues(fieldName)
-  //   const rawValue = formatToRupiah(val)
-
-  // }
 
   const fields: TextfieldProps[] = [
     objectFields({

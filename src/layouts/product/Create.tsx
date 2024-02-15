@@ -47,7 +47,7 @@ import {
 } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import { XCircleIcon } from "@heroicons/react/24/solid";
-import useGeneralStore from "src/stores/generalStore";
+import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 
 const Create = () => {
   const {
@@ -238,12 +238,24 @@ const VariantModal = () => {
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
-
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
 
-    const filterVariant = variantTypes.filter((f) => f.label !== labelProduct);
-    setVariantType([...filterVariant, { label: labelProduct, image: blob }]);
+    const [datas] = variantTypes.filter((f) => f.label === labelProduct);
+    datas.image = blob;
+
+    let setImageValueToArr: VariantTypeProps[] = [];
+    variantTypes.forEach((e) => {
+      if (e.label === labelProduct) {
+        setImageValueToArr.push(datas);
+      }
+
+      if (e.label !== labelProduct) {
+        setImageValueToArr.push(e);
+      }
+    });
+
+    setVariantType([...setImageValueToArr]);
   };
 
   const onClick = (label: string) => {
@@ -352,7 +364,6 @@ const VariantModal = () => {
             )}
           </section>
         </header>
-
         <hr />
 
         <section className="flex justify-between">
@@ -389,7 +400,6 @@ const VariantModal = () => {
         )}
 
         <hr />
-
         {/* footer */}
         <footer className="flexcol gap-2">
           <section className="flex items-center justify-between">
@@ -638,7 +648,6 @@ const VariantFileImage = forwardRef(
     }));
 
     const variantTypes = useGeneralStore((v) => v.variantTypes);
-    // const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
     return (
       <>

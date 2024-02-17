@@ -133,6 +133,9 @@ const PilipayTransaction = () => {
 
 const PilipayBalance = () => {
   const { actionIsHistory } = useActiveModal();
+  const handleTransfer = () => {
+    console.log("Transfer");
+  };
 
   return (
     <section className="flex gap-4 items-center">
@@ -152,7 +155,12 @@ const PilipayBalance = () => {
           onClick={actionIsHistory}
         />
         <BtnPiliPayActions label="top up" alt="Top Up" src={topUpImg} />
-        <BtnPiliPayActions label="transfer" alt="Transfer" src={transferImg} />
+        <BtnPiliPayActions
+          label="transfer"
+          alt="Transfer"
+          src={transferImg}
+          onClick={handleTransfer}
+        />
         <BtnPiliPayActions label="withdraw" alt="withdraw" src={withdrawLogo} />
       </section>
 

@@ -25,6 +25,12 @@ interface Modal {
   setIsVariant: (v: boolean) => void;
   isSubDistributor: boolean;
   setIsSubDistributor: (v: boolean) => void;
+  isTransfer: boolean;
+  setIsTransfer: (v: boolean) => void;
+  isTopUp: boolean;
+  setIsTopUp: (v: boolean) => void;
+  isWithdraw: boolean;
+  setIsWithdraw: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -52,6 +58,12 @@ const useModalStore = create<Modal>((set) => ({
   setIsVariant: (v) => set({ isVariant: v }),
   isSubDistributor: false,
   setIsSubDistributor: (v) => set({ isSubDistributor: v }),
+  isTransfer: false,
+  setIsTransfer: (v) => set({ isTransfer: v }),
+  isTopUp: false,
+  setIsTopUp: (v) => set({ isTopUp: v }),
+  isWithdraw: false,
+  setIsWithdraw: (v) => set({ isWithdraw: v }),
 }));
 
 export default useModalStore;
@@ -82,6 +94,12 @@ export const useActiveModal = () => {
     setIsVariant,
     isSubDistributor,
     setIsSubDistributor,
+    isTransfer,
+    setIsTransfer,
+    isTopUp,
+    setIsTopUp,
+    isWithdraw,
+    setIsWithdraw,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -96,6 +114,9 @@ export const useActiveModal = () => {
   const actionIsPostage = () => setIsPostage(!isPostage);
   const actionIsVariant = () => setIsVariant(!isVariant);
   const actionIsSubDistributor = () => setIsSubDistributor(!isSubDistributor);
+  const actionIsTransfer = () => setIsTransfer(!isTransfer);
+  const actionIsTopUp = () => setIsTopUp(!isTopUp);
+  const actionIsWithdraw = () => setIsWithdraw(!isWithdraw);
 
   return {
     isBankName,
@@ -122,5 +143,11 @@ export const useActiveModal = () => {
     actionIsVariant,
     isSubDistributor,
     actionIsSubDistributor,
+    isTransfer,
+    actionIsTransfer,
+    isTopUp,
+    actionIsTopUp,
+    isWithdraw,
+    actionIsWithdraw,
   };
 };

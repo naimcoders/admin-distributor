@@ -1,19 +1,18 @@
-import pilipayLogo from "src/assets/images/pilipay.png";
 import withdrawLogo from "src/assets/images/withdraw.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
 import transferImg from "src/assets/images/transfer.png";
 import topUpImg from "src/assets/images/top up.png";
 import historyImg from "src/assets/images/riwayat.png";
 import cx from "classnames";
+import Label from "src/components/Label";
+import Table from "src/components/Table";
+import Image from "src/components/Image";
 import { Button } from "src/components/Button";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { Columns } from "src/types";
-import Table from "src/components/Table";
-import Image from "src/components/Image";
 import { useActiveModal } from "src/stores/modalStore";
-import { Modal } from "src/components/Modal";
 import { Currency } from "src/helpers";
-import Label from "src/components/Label";
+import { HistoryModal } from "./Modal";
 
 const Dashboard = () => {
   return (
@@ -132,10 +131,14 @@ const PilipayTransaction = () => {
 };
 
 const PilipayBalance = () => {
-  const { actionIsHistory } = useActiveModal();
-  const handleTransfer = () => {
-    console.log("Transfer");
-  };
+  const { actionIsHistory, actionIsTransfer } = useActiveModal();
+
+  const payments: { label: string; src: string; onClick?: () => void }[] = [
+    { label: "riwayat", src: historyImg, onClick: actionIsHistory },
+    { label: "top up", src: topUpImg },
+    { label: "transfer", src: transferImg, onClick: actionIsTransfer },
+    { label: "withdraw", src: withdrawLogo },
+  ];
 
   return (
     <section className="flex gap-4 items-center">
@@ -148,20 +151,15 @@ const PilipayBalance = () => {
       </section>
 
       <section className="flex gap-3">
-        <BtnPiliPayActions
-          label="riwayat"
-          alt="History"
-          src={historyImg}
-          onClick={actionIsHistory}
-        />
-        <BtnPiliPayActions label="top up" alt="Top Up" src={topUpImg} />
-        <BtnPiliPayActions
-          label="transfer"
-          alt="Transfer"
-          src={transferImg}
-          onClick={handleTransfer}
-        />
-        <BtnPiliPayActions label="withdraw" alt="withdraw" src={withdrawLogo} />
+        {payments.map((v) => (
+          <BtnPiliPayActions
+            label={v.label}
+            alt={v.label}
+            src={v.src}
+            onClick={v.onClick}
+            key={v.label}
+          />
+        ))}
       </section>
 
       <HistoryModal />
@@ -184,91 +182,6 @@ const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
     >
       <Image src={src} alt={alt} width={20} radius="none" />
       <h2 className="text-xs text-white capitalize">{label}</h2>
-    </section>
-  );
-};
-
-const CustomeHeader = () => {
-  return (
-    <header>
-      <img
-        src={pilipayLogo}
-        alt="Pilipay"
-        className="w-[10rem]"
-        loading="lazy"
-      />
-    </header>
-  );
-};
-
-const HistoryModal = () => {
-  const { isHistory, actionIsHistory } = useActiveModal();
-
-  return (
-    <Modal
-      isOpen={isHistory}
-      closeModal={actionIsHistory}
-      customHeader={<CustomeHeader />}
-    >
-      <main className="my-6 text-sm">
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Jumat, 22 Des 2023</h2>
-          <History
-            label="Top Up"
-            desc="Alfamart"
-            icon={{ src: topUpImg, alt: "Top Up Image" }}
-            total={(100000).toLocaleString("id-ID")}
-          />
-          <History
-            label="Transfer"
-            desc="08221134567"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(75000).toLocaleString("id-ID")}
-          />
-        </section>
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Kamis, 21 Des 2023</h2>
-          <History
-            label="Transfer"
-            desc="Mandiri"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(50000).toLocaleString("id-ID")}
-          />
-        </section>
-      </main>
-    </Modal>
-  );
-};
-
-const History: React.FC<{
-  icon: { src: string; alt: string };
-  label: string;
-  desc: string;
-  total: string;
-}> = (props) => {
-  return (
-    <section className="flex justify-between">
-      <section className="flex items-center gap-3">
-        <Image
-          src={props.icon.src}
-          alt={props.icon.alt}
-          width={25}
-          radius="none"
-        />
-        <section>
-          <h2 className="font-interMedium">{props.label}</h2>
-          <p className="text-xs">{props.desc}</p>
-        </section>
-      </section>
-
-      <h2
-        className={cx(
-          "font-interMedium",
-          props.label === "Top Up" && "text-[#2754bb]"
-        )}
-      >
-        {props.label === "Top Up" ? "+" : "-"}Rp {props.total}
-      </h2>
     </section>
   );
 };

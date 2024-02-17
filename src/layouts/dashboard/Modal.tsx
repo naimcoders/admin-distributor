@@ -5,16 +5,20 @@ import pilipayLogo from "src/assets/images/pilipay.png";
 import Image from "src/components/Image";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
+import { FC, ReactNode } from "react";
 
-const CustomeHeader = () => {
+const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
   return (
-    <header>
-      <img
-        src={pilipayLogo}
-        alt="Pilipay"
-        className="w-[10rem]"
-        loading="lazy"
-      />
+    <header className="flexcol gap-2">
+      <section>
+        <img
+          src={pilipayLogo}
+          alt="Pilipay"
+          className="w-[10rem]"
+          loading="lazy"
+        />
+      </section>
+      {children}
     </header>
   );
 };
@@ -26,18 +30,18 @@ export const HistoryModal = () => {
     <Modal
       isOpen={isHistory}
       closeModal={actionIsHistory}
-      customHeader={<CustomeHeader />}
+      customHeader={<BeginHeader>Lorem ipsum dolor sit amet.</BeginHeader>}
     >
-      <main className="my-6 text-sm">
+      <main className="my-4 text-sm">
         <section className="flexcol gap-4 py-4 border-t border-gray-300">
           <h2 className="font-interMedium">Jumat, 22 Des 2023</h2>
-          <History
+          <HistoryContent
             label="Top Up"
             desc="Alfamart"
             icon={{ src: topUpImg, alt: "Top Up Image" }}
             total={(100000).toLocaleString("id-ID")}
           />
-          <History
+          <HistoryContent
             label="Transfer"
             desc="08221134567"
             icon={{ src: transferImg, alt: "Transfer Image" }}
@@ -46,7 +50,7 @@ export const HistoryModal = () => {
         </section>
         <section className="flexcol gap-4 py-4 border-t border-gray-300">
           <h2 className="font-interMedium">Kamis, 21 Des 2023</h2>
-          <History
+          <HistoryContent
             label="Transfer"
             desc="Mandiri"
             icon={{ src: transferImg, alt: "Transfer Image" }}
@@ -58,7 +62,7 @@ export const HistoryModal = () => {
   );
 };
 
-const History: React.FC<{
+const HistoryContent: React.FC<{
   icon: { src: string; alt: string };
   label: string;
   desc: string;
@@ -88,5 +92,21 @@ const History: React.FC<{
         {props.label === "Top Up" ? "+" : "-"}Rp {props.total}
       </h2>
     </section>
+  );
+};
+
+// Tranfer Modal
+export const TransferModal = () => {
+  const { isTransfer, actionIsTransfer } = useActiveModal();
+  return (
+    <Modal
+      isOpen={isTransfer}
+      closeModal={actionIsTransfer}
+      customHeader={<BeginHeader />}
+    >
+      <section className="my-4 border-t border-gray-300">
+        Lorem ipsum dolor sit.
+      </section>
+    </Modal>
   );
 };

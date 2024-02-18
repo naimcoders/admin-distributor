@@ -638,6 +638,26 @@ const VariantFileImage = forwardRef(
     }));
 
     const variantTypes = useGeneralStore((v) => v.variantTypes);
+    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
+
+    const handleDeleteProductImage = () => {
+      const [byLabel] = variantTypes.filter((f) => f.label === props.label);
+
+      byLabel.image = "";
+
+      const currentValues: VariantTypeProps[] = [];
+
+      variantTypes.forEach((e) => {
+        if (e.label === props.label) {
+          currentValues.push(byLabel);
+        }
+        if (e.label !== props.label) {
+          currentValues.push(e);
+        }
+      });
+
+      setVariantTypes(currentValues);
+    };
 
     return (
       <>
@@ -667,13 +687,7 @@ const VariantFileImage = forwardRef(
               actions={[
                 {
                   src: <TrashIcon width={16} color={IconColor.red} />,
-                  onClick: () => {
-                    const newVariants = variantTypes.filter(
-                      (f) => f.image === props.image
-                    );
-
-                    console.log(newVariants);
-                  },
+                  onClick: handleDeleteProductImage,
                 },
               ]}
             />
@@ -927,7 +941,6 @@ const ModalSubDistributor = ({
   setValue,
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
   const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
-
   const subDistributors: string[] = [
     "Agung Jaya",
     "Bintang",
@@ -1015,7 +1028,6 @@ const DangerousModal = (p: Pick<UseForm, "setValue">) => {
 
 const ConditionModal = (p: Pick<UseForm, "setValue">) => {
   const { isCondition, actionIsCondition } = useActiveModal();
-
   return (
     <Modal title="kondisi" isOpen={isCondition} closeModal={actionIsCondition}>
       <RadioGroup

@@ -90,6 +90,7 @@ const Create = () => {
         deliveryPrice,
         description: e.description,
         isDangerous,
+        name: e.productName,
       };
 
       console.log(obj);

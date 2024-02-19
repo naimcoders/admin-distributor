@@ -86,6 +86,7 @@ const Create = () => {
       const obj = {
         category: { categoryId },
         deliveryPrice,
+        description: e.description,
       };
 
       console.log(obj);

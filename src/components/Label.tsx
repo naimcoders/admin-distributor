@@ -1,7 +1,7 @@
 import cx from "classnames";
 import { HTMLAttributes } from "react";
 
-interface LabelProps extends HTMLAttributes<HTMLDivElement> {
+interface LabelProps extends Pick<HTMLAttributes<HTMLDivElement>, "className"> {
   label: string | number;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;

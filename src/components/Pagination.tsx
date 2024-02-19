@@ -33,13 +33,13 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
 
   return (
     <main>
-      <ul className="flex gap-2 justify-center">
+      <ul className="flex gap-2 justify-end">
         {newRange.map((page) => (
           <Fragment key={page}>
             {page === PaginationItemType.PREV && (
               <Button
                 isIconOnly
-                color="default"
+                color="secondary"
                 aria-label="prev"
                 onClick={left}
                 isDisabled={activePage > 1 ? false : true}
@@ -52,10 +52,9 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
             {activePage === page && (
               <Button
                 isIconOnly
-                color="default"
+                color="secondary"
                 aria-label="active page"
-                className="font-interMedium"
-                variant="shadow"
+                className="text-[#27272A]"
               >
                 {activePage}
               </Button>
@@ -64,7 +63,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
             {page === PaginationItemType.NEXT && (
               <Button
                 isIconOnly
-                color="default"
+                color="secondary"
                 aria-label="next"
                 onClick={right}
                 isDisabled={isNext ? false : true}

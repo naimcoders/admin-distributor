@@ -9,7 +9,7 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
-import { useEffect, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { requestForToken } from "src/firebase";
 import { Role, useLogin } from "src/api/login.service";
 import { useNavigate } from "react-router-dom";
@@ -49,8 +49,41 @@ export const logins: TextfieldProps[] = [
   }),
 ];
 
+interface LoginFieldProps {
+  email: string;
+  password: string;
+}
+
 const Form = () => {
+  const { control, errors, onKeyDown, onSubmit, posted } = useHook();
+
+  return (
+    <section className="flexcol gap-8">
+      {logins.map((el, idx) => (
+        <Textfield
+          {...el}
+          key={idx}
+          defaultValue=""
+          control={control}
+          className="max-w-full"
+          errorMessage={handleErrorMessage(errors, el.name)}
+          rules={{ required: { value: true, message: el.errorMessage! } }}
+          onKeyDown={onKeyDown}
+        />
+      ))}
+
+      <Button
+        aria-label={posted.isPending ? "Loading..." : "Login"}
+        onClick={onSubmit}
+        className="mt-4 mx-auto text-base bg-accentYellow text-black"
+      />
+    </section>
+  );
+};
+
+const useHook = () => {
   const [token, setToken] = useState("");
+
   useEffect(() => {
     requestForToken().then((token) => {
       setToken(token);
@@ -60,6 +93,7 @@ const Form = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
 
@@ -76,33 +110,34 @@ const Form = () => {
       };
       await posted.mutateAsync(result);
       navigate("/dashboard");
-    } catch (err) {
-      const error = err as Error;
+    } catch (e) {
+      const error = e as Error;
       toast.error(error.message);
     }
   });
 
-  return (
-    <section className="flexcol gap-8">
-      {logins.map((el, idx) => (
-        <Textfield
-          {...el}
-          key={idx}
-          defaultValue=""
-          control={control}
-          className="max-w-full"
-          errorMessage={handleErrorMessage(errors, el.name)}
-          rules={{ required: { value: true, message: el.errorMessage! } }}
-        />
-      ))}
+  const onKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
+    const { email, password } = getValues() as LoginFieldProps;
 
-      <Button
-        aria-label={posted.isPending ? "Loading..." : "Login"}
-        onClick={onSubmit}
-        className="mt-4 mx-auto text-base bg-accentYellow text-black"
-      />
-    </section>
-  );
+    try {
+      if (e.key === "Enter") {
+        const result = {
+          email,
+          password,
+          role: Role.DISTRIBUTOR,
+          fcmToken: token,
+        };
+
+        await posted.mutateAsync(result);
+        navigate("/dashboard");
+      }
+    } catch (e) {
+      const error = e as Error;
+      toast.error(error.message);
+    }
+  };
+
+  return { onSubmit, onKeyDown, control, errors, posted };
 };
 
 export default LoginPage;

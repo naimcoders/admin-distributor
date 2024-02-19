@@ -34,8 +34,8 @@ export interface VariantTypeProps {
 }
 
 interface General {
-  deliveryPrice: DeliveryPrice;
-  setDeliveryPrice: (v: DeliveryPrice) => void;
+  deliveryPrice: DeliveryPrice | object;
+  setDeliveryPrice: <T extends object>(v: T) => void;
 
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;

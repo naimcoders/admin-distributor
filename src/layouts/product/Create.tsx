@@ -200,7 +200,7 @@ const Create = () => {
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
-          <PostageModal setValue={setValue} />
+          <PostageModal setValue={setValue} clearErrors={clearErrors} />
           <VariantModal />
           <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} />
         </main>
@@ -712,7 +712,10 @@ const VariantFileImage = forwardRef(
   }
 );
 
-const PostageModal: FC<Pick<UseForm, "setValue">> = ({ setValue }) => {
+const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
+  setValue,
+  clearErrors,
+}) => {
   const { isPostage, actionIsPostage } = useActiveModal();
   const { packageSize, outOfTownDeliveryField } = usePostage();
   const [isOutOfTown, setIsOutOfTown] = useState(false);
@@ -722,6 +725,7 @@ const PostageModal: FC<Pick<UseForm, "setValue">> = ({ setValue }) => {
 
   const onSubmit = postageForm.handleSubmit((e) => {
     setValue("postage", e.ongkir);
+    clearErrors("postage");
     actionIsPostage();
   });
 

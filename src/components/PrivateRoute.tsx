@@ -14,7 +14,6 @@ export const PrivateRoute = () => {
     );
 
   user?.getIdToken().then((e) => console.log(e));
-  // console.log(user?.uid);
 
   return <>{user ? <Outlet /> : <Navigate to="/" />}</>;
 };

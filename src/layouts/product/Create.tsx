@@ -83,10 +83,13 @@ const Create = () => {
 
   const onSubmit = handleSubmit((e) => {
     try {
+      const isDangerous = e.dangerous === "Tidak" ? false : true;
+
       const obj = {
         category: { categoryId },
         deliveryPrice,
         description: e.description,
+        isDangerous,
       };
 
       console.log(obj);
@@ -224,6 +227,33 @@ const Create = () => {
         </main>
       )}
     </>
+  );
+};
+
+const DangerousModal = (p: Pick<UseForm, "setValue">) => {
+  const { isDangerous, actionIsDangerous } = useActiveModal();
+  const [isStatus, setIsStatus] = useState(false);
+
+  useEffect(() => {
+    p.setValue("dangerous", isStatus ? "Ya" : "Tidak");
+  }, [isStatus]);
+
+  return (
+    <Modal isOpen={isDangerous} closeModal={actionIsDangerous}>
+      <section className="my-4 flexcol gap-5">
+        <h1>Mengandung baterai/magnet/cairan/bahan mudah terbakar</h1>
+        <Switch
+          color="success"
+          id="switch"
+          name="switch"
+          size="sm"
+          isSelected={isStatus}
+          onValueChange={setIsStatus}
+        >
+          {isStatus ? "Ya" : "Tidak"}
+        </Switch>
+      </section>
+    </Modal>
   );
 };
 
@@ -1033,33 +1063,6 @@ const useUploadPhoto = () => {
     isPopOver,
     setIsPopOver,
   };
-};
-
-const DangerousModal = (p: Pick<UseForm, "setValue">) => {
-  const { isDangerous, actionIsDangerous } = useActiveModal();
-  const [isStatus, setIsStatus] = useState(false);
-
-  useEffect(() => {
-    p.setValue("dangerous", isStatus ? "Ya" : "Tidak");
-  }, [isStatus]);
-
-  return (
-    <Modal isOpen={isDangerous} closeModal={actionIsDangerous}>
-      <section className="my-4 flexcol gap-5">
-        <h1>Mengandung baterai/magnet/cairan/bahan mudah terbakar</h1>
-        <Switch
-          color="success"
-          id="switch"
-          name="switch"
-          size="sm"
-          isSelected={isStatus}
-          onValueChange={setIsStatus}
-        >
-          {isStatus ? "Ya" : "Tidak"}
-        </Switch>
-      </section>
-    </Modal>
-  );
 };
 
 const ConditionModal = (p: Pick<UseForm, "setValue">) => {

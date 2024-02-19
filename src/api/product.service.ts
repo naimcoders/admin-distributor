@@ -1,8 +1,9 @@
 import queryString from "query-string";
 import { ReqPaging, ResPaging } from "src/interface";
 import { req } from "./request";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export interface Product {
   category: Category;
@@ -16,7 +17,7 @@ export interface Product {
   isDangerous: boolean;
   isPrimary: boolean;
   name: string;
-  price: DeliveryPrice;
+  price: Price;
   rate: number;
   updatedAt: number;
   user: User;
@@ -24,6 +25,46 @@ export interface Product {
   variantProduct: VariantProduct[];
   wishlist: number;
   yourWishlist: boolean;
+}
+
+export interface DeliveryPrice {
+  height: number;
+  isCourierInternal: boolean;
+  length: number;
+  price: number;
+  weight: number;
+  wide: number;
+}
+
+interface CreateProduct
+  extends Pick<
+    Product,
+    | "deliveryPrice"
+    | "description"
+    | "isAvailable"
+    | "isDangerous"
+    | "isPrimary"
+    | "name"
+    | "price"
+  > {
+  imageUrl: string[];
+  variant: Omit<VariantProduct, "createdAt" | "updatedAt" | "id">;
+}
+
+export interface Variant {
+  imageUrl: string;
+  name: string;
+  price: number;
+  productId: string;
+  variantColorProduct: Pick<VariantColorProduct, "name" | "imageUrl">[];
+}
+
+export interface Price {
+  expiredAt: number;
+  price: number;
+  fee: number;
+  priceDiscount: number;
+  startAt: number;
 }
 
 export interface Category {
@@ -43,8 +84,6 @@ export interface SubCategory {
   updatedAt: number;
   categoryId?: string;
 }
-
-export interface DeliveryPrice {}
 
 export interface User {
   bank: Bank;
@@ -228,10 +267,21 @@ class Api {
       path: `${this.path}/me?${query}`,
     });
   }
+
+  async create(r: CreateProduct): Promise<Product> {
+    return req<Product>({
+      method: "POST",
+      path: this.path,
+      isNoAuth: false,
+      errors: this.errors,
+      body: r,
+    });
+  }
 }
 
 interface ApiProductInfo {
   find(r: ReqPaging): Promise<ResPaging<Product>>;
+  create(r: CreateProduct): Promise<Product>;
 }
 
 export function getProductApiInfo(): ApiProductInfo {
@@ -241,6 +291,8 @@ export function getProductApiInfo(): ApiProductInfo {
 const key = "product";
 
 export const useProduct = () => {
+  const queryClient = useQueryClient();
+
   const find = () => {
     const [page, _] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -270,5 +322,30 @@ export const useProduct = () => {
     };
   };
 
-  return { find };
+  const create = () => {
+    const { data, isPending, error } = useMutation<
+      Product,
+      Error,
+      { data: CreateProduct }
+    >({
+      mutationKey: [key],
+      mutationFn: async (r) => await getProductApiInfo().create(r.data),
+      onSuccess: () => {
+        toast.success("Produk berhasil dibuat");
+        void queryClient.invalidateQueries({ queryKey: [key] });
+      },
+      onError: (e) => {
+        toast.error(e.message);
+        console.error(e.message);
+      },
+    });
+
+    return {
+      data,
+      isPending,
+      error: error?.message,
+    };
+  };
+
+  return { find, create };
 };

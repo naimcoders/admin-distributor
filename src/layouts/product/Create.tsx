@@ -54,6 +54,7 @@ const Create = () => {
     control,
     setValue,
     clearErrors,
+    getValues,
     formState: { errors },
   } = useForm<FieldValues>();
 
@@ -70,6 +71,10 @@ const Create = () => {
 
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
+
+  const onSubmit = () => {
+    console.log(getValues());
+  };
 
   return (
     <>
@@ -189,7 +194,11 @@ const Create = () => {
             />
           </GridInput>
 
-          <Button aria-label="simpan" className="mx-auto mt-5" />
+          <Button
+            aria-label="simpan"
+            className="mx-auto mt-5"
+            onClick={onSubmit}
+          />
 
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
           <DangerousModal setValue={setValue} />
@@ -889,8 +898,7 @@ const ModalCategory = ({
   clearErrors,
   setValue,
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
-  const { isCategory, actionIsCategory, isSubCategory, actionIsSubCategory } =
-    useActiveModal();
+  const { isCategory, actionIsCategory } = useActiveModal();
 
   const categories = useCategory().findAll();
 
@@ -947,14 +955,14 @@ const ModalSubDistributor = ({
   setValue,
 }: Pick<UseForm, "setValue" | "clearErrors">) => {
   const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
-  const subDistributors: string[] = [
-    "Agung Jaya",
-    "Bintang",
-    "Arta Boga Cemerlang",
-    "Semeru",
-    "Ektong",
-    "Bintang Terang",
-  ];
+  // const subDistributors: string[] = [
+  //   "Agung Jaya",
+  //   "Bintang",
+  //   "Arta Boga Cemerlang",
+  //   "Semeru",
+  //   "Ektong",
+  //   "Bintang Terang",
+  // ];
 
   return (
     <ListingModal

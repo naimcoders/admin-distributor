@@ -892,27 +892,33 @@ const ModalCategory = ({
   const { isCategory, actionIsCategory, isSubCategory, actionIsSubCategory } =
     useActiveModal();
 
-  const categories: string[] = [
-    "Makanan & Minuman Siap Saji",
-    "Bumbu & Bahan Makanan",
-    "Kantor & Alat Tulis",
-    "Makanan & Minuman Kemasan",
-    "Fashion & Kecantikan",
-  ];
-  const subCategories: string[] = [
-    "Sembako",
-    "Bumbu Instan",
-    "Daging & Ikan",
-    "Sayur Mayur",
-    "Bumbu Segar",
-  ];
+  const categories = useCategory().findAll();
+
+  // const categories: string[] = [
+  //   "Makanan & Minuman Siap Saji",
+  //   "Bumbu & Bahan Makanan",
+  //   "Kantor & Alat Tulis",
+  //   "Makanan & Minuman Kemasan",
+  //   "Fashion & Kecantikan",
+  // ];
+  // const subCategories: string[] = [
+  //   "Sembako",
+  //   "Bumbu Instan",
+  //   "Daging & Ikan",
+  //   "Sayur Mayur",
+  //   "Bumbu Segar",
+  // ];
+
+  const sortCategories = categories.data?.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   return (
     <>
       <ListingModal
         title="kategori"
         keyField="category"
-        data={categories}
+        data={sortCategories}
         setValue={setValue}
         clearErrors={clearErrors}
         modal={{
@@ -921,7 +927,7 @@ const ModalCategory = ({
         }}
       />
 
-      <ListingModal
+      {/* <ListingModal
         title="sub kategori"
         keyField="subCategory"
         data={subCategories}
@@ -931,7 +937,7 @@ const ModalCategory = ({
           open: isSubCategory,
           close: actionIsSubCategory,
         }}
-      />
+      /> */}
     </>
   );
 };
@@ -954,7 +960,7 @@ const ModalSubDistributor = ({
     <ListingModal
       title="sub-distributor"
       keyField="subDistributor"
-      data={subDistributors}
+      data={[]}
       setValue={setValue}
       clearErrors={clearErrors}
       modal={{

@@ -1,4 +1,5 @@
 import { FormEvent } from "react";
+import { DeliveryPrice } from "src/api/product.service";
 import { CoordinateProps } from "src/components/Coordinate";
 import { create } from "zustand";
 
@@ -44,6 +45,9 @@ interface General {
   variantSize: VariantSizeProps[];
   setVariantSize: (v: VariantSizeProps[]) => void;
 
+  deliveryPrice: DeliveryPrice;
+  setDeliveryPrice: (v: DeliveryPrice) => void;
+
   bankName: string;
   setBankName: (v: string) => void;
   category: CategoryProps;
@@ -61,6 +65,16 @@ interface General {
 }
 
 const useGeneralStore = create<General>((set) => ({
+  deliveryPrice: {
+    height: 0,
+    isCourierInternal: true,
+    length: 0,
+    price: 0,
+    weight: 0,
+    wide: 0,
+  },
+  setDeliveryPrice: (v) => set({ deliveryPrice: v }),
+
   epoch: { startAt: 0, endAt: 0 },
   setEpoch: (v) => set({ epoch: v }),
   clearEpoch: () => set({ epoch: { startAt: 0, endAt: 0 } }),

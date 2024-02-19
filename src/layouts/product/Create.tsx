@@ -13,6 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   ChangeEvent,
+  FC,
   Fragment,
   KeyboardEvent,
   Ref,
@@ -54,7 +55,6 @@ const Create = () => {
     control,
     setValue,
     clearErrors,
-    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
@@ -73,8 +73,13 @@ const Create = () => {
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
 
-  const onSubmit = handleSubmit(() => {
-    console.log(getValues());
+  const onSubmit = handleSubmit((e) => {
+    try {
+      console.log(e);
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+    }
   });
 
   return (
@@ -195,7 +200,7 @@ const Create = () => {
           <ModalCategory setValue={setValue} clearErrors={clearErrors} />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
-          <PostageModal />
+          <PostageModal setValue={setValue} />
           <VariantModal />
           <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} />
         </main>
@@ -707,18 +712,18 @@ const VariantFileImage = forwardRef(
   }
 );
 
-const PostageModal = () => {
+const PostageModal: FC<Pick<UseForm, "setValue">> = ({ setValue }) => {
   const { isPostage, actionIsPostage } = useActiveModal();
   const { packageSize, outOfTownDeliveryField } = usePostage();
   const [isOutOfTown, setIsOutOfTown] = useState(false);
-
-  const {
-    control,
-    setValue,
-    formState: { errors },
-  } = useForm<FieldValues>();
+  const postageForm = useForm<FieldValues>();
 
   const handleSwitchOutOfTown = () => setIsOutOfTown((v) => !v);
+
+  const onSubmit = postageForm.handleSubmit((e) => {
+    setValue("postage", e.ongkir);
+    actionIsPostage();
+  });
 
   return (
     <Modal isOpen={isPostage} closeModal={actionIsPostage}>
@@ -727,9 +732,12 @@ const PostageModal = () => {
           name="weight"
           placeholder="atur berat produk"
           label="berat produk"
-          control={control}
+          control={postageForm.control}
           defaultValue=""
-          errorMessage={handleErrorMessage(errors, "postage")}
+          errorMessage={handleErrorMessage(
+            postageForm.formState.errors,
+            "weight"
+          )}
           endContent={
             <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
           }
@@ -739,7 +747,7 @@ const PostageModal = () => {
               CurrencyIDInput({
                 type: "rp",
                 fieldName: "weight",
-                setValue,
+                setValue: postageForm.setValue,
                 value: e.target.value,
               }),
           }}
@@ -753,12 +761,12 @@ const PostageModal = () => {
             {packageSize.map((v) => (
               <Textfield
                 key={v.label}
-                name={v.name}
-                label={v.label}
-                control={control}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                errorMessage={handleErrorMessage(errors, v.name)}
+                {...v}
+                control={postageForm.control}
+                errorMessage={handleErrorMessage(
+                  postageForm.formState.errors,
+                  v.name
+                )}
                 endContent={
                   <div className={`text-[${IconColor.zinc}] text-sm`}>cm</div>
                 }
@@ -767,7 +775,7 @@ const PostageModal = () => {
                   onBlur: (e) =>
                     CurrencyIDInput({
                       type: "rp",
-                      setValue,
+                      setValue: postageForm.setValue,
                       fieldName: v.name,
                       value: e.target.value,
                     }),
@@ -784,23 +792,26 @@ const PostageModal = () => {
             pengiriman dalam kota
           </h2>
           <Textfield
-            name="postage"
+            name="ongkir"
             label="kurir distributor"
             placeholder="atur ongkir"
-            control={control}
+            control={postageForm.control}
             defaultValue=""
             type="number"
             startContent={
               <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
             }
-            errorMessage={handleErrorMessage(errors, "postage")}
+            errorMessage={handleErrorMessage(
+              postageForm.formState.errors,
+              "ongkir"
+            )}
             rules={{
-              required: { value: true, message: "masukkan berat produk" },
+              required: { value: true, message: "masukkan ongkir" },
               onBlur: (e) =>
                 CurrencyIDInput({
                   type: "rp",
-                  fieldName: "postage",
-                  setValue,
+                  fieldName: "ongkir",
+                  setValue: postageForm.setValue,
                   value: e.target.value,
                 }),
             }}
@@ -808,6 +819,7 @@ const PostageModal = () => {
         </section>
 
         <hr />
+
         <section>
           <header className="flex justify-between">
             <h2 className="font-semibold capitalize">pengiriman luar kota</h2>
@@ -825,7 +837,7 @@ const PostageModal = () => {
                   key={v.label}
                   name={v.name}
                   label={v.label}
-                  control={control}
+                  control={postageForm.control}
                   readOnly={v.readOnly}
                   description={v.description}
                   defaultValue={v.defaultValue}
@@ -838,7 +850,11 @@ const PostageModal = () => {
           )}
         </section>
 
-        <Button aria-label="simpan" className="mx-auto mt-4" />
+        <Button
+          aria-label="simpan"
+          className="mx-auto mt-4"
+          onClick={onSubmit}
+        />
       </section>
     </Modal>
   );
@@ -1105,6 +1121,7 @@ const useFields = () => {
       type: "rp",
       placeholder: "masukkan harga",
       defaultValue: "",
+      rules: { required: { value: true, message: "masukkan harga" } },
     }),
     objectFields({
       label: "ongkos kirim (berat/ukuran) *",
@@ -1113,6 +1130,7 @@ const useFields = () => {
       defaultValue: "",
       placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
+      rules: { required: { value: true, message: "atur ongkos kirim" } },
     }),
     objectFields({
       label: "kondisi *",
@@ -1120,6 +1138,7 @@ const useFields = () => {
       type: "modal",
       defaultValue: "Baru",
       onClick: actionIsCondition,
+      rules: { required: { value: true, message: "pilih kondisi" } },
     }),
     objectFields({
       label: "sub-distributor",

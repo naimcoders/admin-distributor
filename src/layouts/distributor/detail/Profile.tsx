@@ -9,7 +9,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
-import { GridInput, GridWithoutTextfield } from "src/layouts/Index";
+import { GridInput } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useDistributor } from "src/api/distributor.service";
@@ -62,7 +62,7 @@ const Profile = () => {
             ))}
           </GridInput>
 
-          <GridWithoutTextfield>
+          <GridInput className="grid-cols-3">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
                 {["file"].includes(v.type!) &&
@@ -93,7 +93,7 @@ const Profile = () => {
                   ))}
               </Fragment>
             ))}
-          </GridWithoutTextfield>
+          </GridInput>
 
           <div className="flex justify-center mt-10">
             <Button aria-label="simpan" onClick={onSubmit} />

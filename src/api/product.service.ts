@@ -335,7 +335,7 @@ export const useProduct = () => {
         void queryClient.invalidateQueries({ queryKey: [key] });
       },
       onError: (e) => {
-        toast.error(e.message);
+        // toast.error(e.message);
         console.error(e.message);
       },
     });

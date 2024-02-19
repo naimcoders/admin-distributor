@@ -5,7 +5,7 @@ import { ChildRef, File, LabelAndImage } from "src/components/File";
 import { TextfieldProps, objectFields } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
-import { GridWithoutTextfield } from "../Index";
+import { GridInput } from "../Index";
 
 const Banner = () => {
   const {
@@ -15,7 +15,7 @@ const Banner = () => {
   const { banners } = useHook();
 
   return (
-    <GridWithoutTextfield>
+    <GridInput className="grid-cols-3">
       {banners.map((v) =>
         !v.defaultValue ? (
           <File
@@ -42,7 +42,7 @@ const Banner = () => {
           />
         )
       )}
-    </GridWithoutTextfield>
+    </GridInput>
   );
 };
 

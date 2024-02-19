@@ -14,7 +14,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { GridInput, GridWithoutTextfield, WrapperInput } from "../Index";
+import { GridInput, WrapperInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
@@ -74,7 +74,7 @@ const Create = () => {
         ))}
       </GridInput>
 
-      <GridWithoutTextfield>
+      <GridInput className="grid-cols-3 ">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["coordinate"].includes(v.type!) &&
@@ -126,7 +126,7 @@ const Create = () => {
               ))}
           </Fragment>
         ))}
-      </GridWithoutTextfield>
+      </GridInput>
 
       <div className="flex justify-center mt-10">
         <Button aria-label="simpan" onClick={onSubmit} />

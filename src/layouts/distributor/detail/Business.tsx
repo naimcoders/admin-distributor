@@ -9,7 +9,7 @@ import { Fragment } from "react";
 import { Button } from "src/components/Button";
 import { handleErrorMessage } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { GridInput, GridWithoutTextfield } from "src/layouts/Index";
+import { GridInput } from "src/layouts/Index";
 import { LabelAndImage } from "src/components/File";
 import { UserCoordinate } from "src/components/Coordinate";
 import { Location, useDistributor } from "src/api/distributor.service";
@@ -69,7 +69,7 @@ const Business = () => {
             ))}
           </GridInput>
 
-          <GridWithoutTextfield>
+          <GridInput className="grid-cols-3">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
                 {["coordinate"].includes(v.type!) && (
@@ -86,7 +86,7 @@ const Business = () => {
                 )}
               </Fragment>
             ))}
-          </GridWithoutTextfield>
+          </GridInput>
 
           <div className="flex justify-center mt-10">
             <Button aria-label="simpan" />

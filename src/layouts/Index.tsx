@@ -111,16 +111,6 @@ export const GridInput: React.FC<
   );
 };
 
-export const GridWithoutTextfield: FC<
-  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
-> = ({ children, className }) => {
-  return (
-    <section className={cx("grid grid-cols-4 gap-x-8 gap-y-10", className)}>
-      {children}
-    </section>
-  );
-};
-
 export const WrapperInput: FC<
   { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
 > = ({ children, className }) => {

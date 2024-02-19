@@ -55,6 +55,7 @@ const Create = () => {
     setValue,
     clearErrors,
     getValues,
+    handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
 
@@ -72,9 +73,9 @@ const Create = () => {
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
 
-  const onSubmit = () => {
+  const onSubmit = handleSubmit(() => {
     console.log(getValues());
-  };
+  });
 
   return (
     <>
@@ -142,15 +143,12 @@ const Create = () => {
               <Fragment key={v.label}>
                 {["text", "rp", "number"].includes(v.type!) && (
                   <Textfield
+                    {...v}
                     type={v.type}
-                    name={v.name}
-                    label={v.label}
                     control={control}
-                    placeholder={v.placeholder}
-                    defaultValue={v.defaultValue}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     rules={{
-                      required: { value: true, message: v.errorMessage! },
+                      required: v.rules?.required,
                       onBlur: (e) =>
                         CurrencyIDInput({
                           type: v.type!,
@@ -164,17 +162,11 @@ const Create = () => {
 
                 {["modal"].includes(v.type!) && (
                   <Textfield
-                    name={v.name}
-                    label={v.label}
+                    {...v}
                     control={control}
-                    onClick={v.onClick}
-                    placeholder={v.placeholder}
-                    defaultValue={v.defaultValue}
+                    rules={v.rules}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    rules={{
-                      required: { value: true, message: v.errorMessage! },
-                    }}
                     endContent={
                       <ChevronRightIcon width={16} color={IconColor.zinc} />
                     }
@@ -1075,6 +1067,7 @@ const useFields = () => {
       name: "productName",
       type: "text",
       defaultValue: "",
+      rules: { required: { value: true, message: "Masukkan nama produk" } },
     }),
     objectFields({
       label: "kategori *",
@@ -1082,6 +1075,7 @@ const useFields = () => {
       type: "modal",
       defaultValue: "",
       onClick: actionIsCategory,
+      rules: { required: { value: true, message: "Pilih kategori" } },
     }),
     objectFields({
       label: "sub-kategori",

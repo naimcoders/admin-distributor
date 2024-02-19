@@ -34,6 +34,9 @@ export interface VariantTypeProps {
 }
 
 interface General {
+  deliveryPrice: DeliveryPrice;
+  setDeliveryPrice: (v: DeliveryPrice) => void;
+
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;
   clearEpoch: () => void;
@@ -44,9 +47,6 @@ interface General {
   setVariantType: (v: VariantTypeProps[]) => void;
   variantSize: VariantSizeProps[];
   setVariantSize: (v: VariantSizeProps[]) => void;
-
-  deliveryPrice: DeliveryPrice;
-  setDeliveryPrice: (v: DeliveryPrice) => void;
 
   bankName: string;
   setBankName: (v: string) => void;

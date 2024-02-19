@@ -70,12 +70,15 @@ const Create = () => {
     setIsPopOver,
   } = useUploadPhoto();
 
+  const [categoryId, setCategoryId] = useState("");
+
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
 
   const onSubmit = handleSubmit((e) => {
     try {
-      console.log(e);
+      // console.log(e);
+      console.log(categoryId);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
@@ -197,14 +200,52 @@ const Create = () => {
             onClick={onSubmit}
           />
 
-          <ModalCategory setValue={setValue} clearErrors={clearErrors} />
+          <ModalCategory
+            setCategoryId={setCategoryId}
+            setValue={setValue}
+            clearErrors={clearErrors}
+          />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
           <PostageModal setValue={setValue} clearErrors={clearErrors} />
           <VariantModal />
-          <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} />
+          {/* <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} /> */}
         </main>
       )}
+    </>
+  );
+};
+
+interface ModalCategoryProps extends Pick<UseForm, "setValue" | "clearErrors"> {
+  setCategoryId: (val: string) => void;
+}
+
+const ModalCategory: FC<ModalCategoryProps> = ({
+  clearErrors,
+  setValue,
+  setCategoryId,
+}) => {
+  const { isCategory, actionIsCategory } = useActiveModal();
+  const categories = useCategory().findAll();
+
+  const sortCategories = categories.data?.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  return (
+    <>
+      <ListingModal
+        title="kategori"
+        keyField="category"
+        data={sortCategories}
+        setValue={setValue}
+        clearErrors={clearErrors}
+        setId={setCategoryId}
+        modal={{
+          open: isCategory,
+          close: actionIsCategory,
+        }}
+      />
     </>
   );
 };
@@ -906,90 +947,34 @@ const usePostage = () => {
   return { packageSize, outOfTownDeliveryField };
 };
 
-const ModalCategory = ({
-  clearErrors,
-  setValue,
-}: Pick<UseForm, "setValue" | "clearErrors">) => {
-  const { isCategory, actionIsCategory } = useActiveModal();
+// const ModalSubDistributor = ({
+//   clearErrors,
+//   setValue,
+// }: Pick<UseForm, "setValue" | "clearErrors">) => {
+//   const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
+//   const subDistributors: string[] = [
+//     "Agung Jaya",
+//     "Bintang",
+//     "Arta Boga Cemerlang",
+//     "Semeru",
+//     "Ektong",
+//     "Bintang Terang",
+//   ];
 
-  const categories = useCategory().findAll();
-
-  // const categories: string[] = [
-  //   "Makanan & Minuman Siap Saji",
-  //   "Bumbu & Bahan Makanan",
-  //   "Kantor & Alat Tulis",
-  //   "Makanan & Minuman Kemasan",
-  //   "Fashion & Kecantikan",
-  // ];
-  // const subCategories: string[] = [
-  //   "Sembako",
-  //   "Bumbu Instan",
-  //   "Daging & Ikan",
-  //   "Sayur Mayur",
-  //   "Bumbu Segar",
-  // ];
-
-  const sortCategories = categories.data?.sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-
-  return (
-    <>
-      <ListingModal
-        title="kategori"
-        keyField="category"
-        data={sortCategories}
-        setValue={setValue}
-        clearErrors={clearErrors}
-        modal={{
-          open: isCategory,
-          close: actionIsCategory,
-        }}
-      />
-
-      {/* <ListingModal
-        title="sub kategori"
-        keyField="subCategory"
-        data={subCategories}
-        setValue={setValue}
-        clearErrors={clearErrors}
-        modal={{
-          open: isSubCategory,
-          close: actionIsSubCategory,
-        }}
-      /> */}
-    </>
-  );
-};
-
-const ModalSubDistributor = ({
-  clearErrors,
-  setValue,
-}: Pick<UseForm, "setValue" | "clearErrors">) => {
-  const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
-  // const subDistributors: string[] = [
-  //   "Agung Jaya",
-  //   "Bintang",
-  //   "Arta Boga Cemerlang",
-  //   "Semeru",
-  //   "Ektong",
-  //   "Bintang Terang",
-  // ];
-
-  return (
-    <ListingModal
-      title="sub-distributor"
-      keyField="subDistributor"
-      data={[]}
-      setValue={setValue}
-      clearErrors={clearErrors}
-      modal={{
-        open: isSubDistributor,
-        close: actionIsSubDistributor,
-      }}
-    />
-  );
-};
+//   return (
+//     <ListingModal
+//       title="sub-distributor"
+//       keyField="subDistributor"
+//       data={[]}
+//       setValue={setValue}
+//       clearErrors={clearErrors}
+//       modal={{
+//         open: isSubDistributor,
+//         close: actionIsSubDistributor,
+//       }}
+//     />
+//   );
+// };
 
 const useUploadPhoto = () => {
   const [isPopOver, setIsPopOver] = useState(false);

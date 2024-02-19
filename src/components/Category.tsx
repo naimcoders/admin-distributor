@@ -2,28 +2,29 @@ import cx from "classnames";
 import { Modal } from "./Modal";
 import { ActionModal, UseForm } from "src/types";
 import { SubCategory } from "src/api/category.service";
+import { FC } from "react";
 
 interface ListingProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   keyField: string;
   title: string;
-  data?: SubCategory[];
-  // data?: string[];
+  setId: (id: string) => void;
   modal: ActionModal;
+  data?: SubCategory[];
 }
 
-export function ListingModal({
+export const ListingModal: FC<ListingProps> = ({
   keyField,
   setValue,
   clearErrors,
   data,
   title,
   modal,
-}: ListingProps) {
+  setId,
+}) => {
   const onClick = (id: string, name: string) => {
+    setId(id);
     setValue(keyField, name);
     clearErrors(keyField);
-    // TODO: set id
-    console.log(id, name);
     modal.close();
   };
 
@@ -42,4 +43,4 @@ export function ListingModal({
       </ul>
     </Modal>
   );
-}
+};

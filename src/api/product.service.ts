@@ -36,7 +36,7 @@ export interface DeliveryPrice {
   wide: number;
 }
 
-interface CreateProduct
+export interface CreateProductProps
   extends Pick<
     Product,
     | "deliveryPrice"
@@ -47,6 +47,9 @@ interface CreateProduct
     | "name"
     | "price"
   > {
+  category: {
+    categoryId: string;
+  };
   imageUrl: string[];
   variant: Omit<VariantProduct, "createdAt" | "updatedAt" | "id">;
 }
@@ -268,7 +271,7 @@ class Api {
     });
   }
 
-  async create(r: CreateProduct): Promise<Product> {
+  async create(r: CreateProductProps): Promise<Product> {
     return req<Product>({
       method: "POST",
       path: this.path,
@@ -281,7 +284,7 @@ class Api {
 
 interface ApiProductInfo {
   find(r: ReqPaging): Promise<ResPaging<Product>>;
-  create(r: CreateProduct): Promise<Product>;
+  create(r: CreateProductProps): Promise<Product>;
 }
 
 export function getProductApiInfo(): ApiProductInfo {
@@ -326,7 +329,7 @@ export const useProduct = () => {
     const { data, isPending, error } = useMutation<
       Product,
       Error,
-      { data: CreateProduct }
+      { data: CreateProductProps }
     >({
       mutationKey: [key],
       mutationFn: async (r) => await getProductApiInfo().create(r.data),

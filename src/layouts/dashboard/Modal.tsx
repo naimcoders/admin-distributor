@@ -30,7 +30,7 @@ export const HistoryModal = () => {
     <Modal
       isOpen={isHistory}
       closeModal={actionIsHistory}
-      customHeader={<BeginHeader>Lorem ipsum dolor sit amet.</BeginHeader>}
+      customHeader={<BeginHeader />}
     >
       <main className="my-4 text-sm">
         <section className="flexcol gap-4 py-4 border-t border-gray-300">

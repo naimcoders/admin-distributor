@@ -2,6 +2,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/messaging";
 import { getMessaging, getToken } from "firebase/messaging";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpgMv7dGnkWnHxN5PNGlKuCjH9o6O0XKw",
@@ -20,8 +21,9 @@ if (!firebase.apps.length) {
 const FbApp = firebase.app();
 const FbAuth = firebase.auth();
 const FbMessage = firebase.messaging();
+const FbStorage = getStorage(firebase.app());
 
-export { FbApp, FbAuth, FbMessage };
+export { FbApp, FbAuth, FbMessage, FbStorage };
 
 const messaging = getMessaging(FbApp);
 

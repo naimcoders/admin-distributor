@@ -31,7 +31,9 @@ import { PostageModal } from "./Modals/Postage";
 import { ConditionModal } from "./Modals/Condition";
 import { ModalCategory } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
-// import {getDownloadURL, ref,StorageReference,uploadBytesResumable} from 'firebase/storage'
+import { useAuth } from "src/firebase/auth";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { FbStorage } from "src/firebase";
 
 const Create = () => {
   const {
@@ -55,11 +57,37 @@ const Create = () => {
 
   const [categoryId, setCategoryId] = useState("");
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+  const [_, setPercent] = useState(0);
 
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
 
-  const onSubmit = handleSubmit((e) => {
+  const { user } = useAuth();
+
+  const onSubmit = handleSubmit(async (e) => {
+    const productUrl: string[] = [];
+
+    photos.forEach((product) => {
+      const fileName = `temp/product/${user?.uid}/${product.name}`;
+      const storageRef = ref(FbStorage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, product.file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const percent = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setPercent(percent);
+        },
+        (err) => console.error(err.message),
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          productUrl.push(url);
+        }
+      );
+    });
+
     try {
       const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -69,6 +97,7 @@ const Create = () => {
         description: e.description,
         isDangerous,
         name: e.productName,
+        imageUrl: productUrl,
       };
 
       console.log(obj);
@@ -210,6 +239,46 @@ const Create = () => {
   );
 };
 
+export const useUploadProduct = () => {
+  const [isPopOver, setIsPopOver] = useState(false);
+  const [photos, setPhotos] = useState<
+    { src: string; name: String; size: string; file: File }[]
+  >([]);
+  const [productSize, setProductSize] = useState("1:1");
+  const productPhotoRef = useRef<ChildRef>(null);
+
+  const handleProductSize = (size: string) => setProductSize(size);
+
+  const onClick = () => {
+    if (productPhotoRef.current) {
+      productPhotoRef.current.click();
+    }
+  };
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return null;
+
+    const files = e.target.files[0];
+    const blob = URL.createObjectURL(files);
+    setPhotos([
+      ...photos,
+      { src: blob, size: productSize, name: files.name, file: files },
+    ]);
+    setIsPopOver((v) => !v);
+  };
+
+  return {
+    productPhotoRef,
+    onClick,
+    onChange,
+    photos,
+    setPhotos,
+    handleProductSize,
+    isPopOver,
+    setIsPopOver,
+  };
+};
+
 // const ModalSubDistributor = ({
 //   clearErrors,
 //   setValue,
@@ -238,40 +307,6 @@ const Create = () => {
 //     />
 //   );
 // };
-
-export const useUploadProduct = () => {
-  const [isPopOver, setIsPopOver] = useState(false);
-  const [photos, setPhotos] = useState<{ src: string; size: string }[]>([]);
-  const [productSize, setProductSize] = useState("1:1");
-  const productPhotoRef = useRef<ChildRef>(null);
-
-  const handleProductSize = (size: string) => setProductSize(size);
-
-  const onClick = () => {
-    if (productPhotoRef.current) {
-      productPhotoRef.current.click();
-    }
-  };
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return null;
-
-    const blob = URL.createObjectURL(e.target.files[0]);
-    setPhotos([...photos, { src: blob, size: productSize }]);
-    setIsPopOver((v) => !v);
-  };
-
-  return {
-    productPhotoRef,
-    onClick,
-    onChange,
-    photos,
-    setPhotos,
-    handleProductSize,
-    isPopOver,
-    setIsPopOver,
-  };
-};
 
 const useFields = () => {
   const {

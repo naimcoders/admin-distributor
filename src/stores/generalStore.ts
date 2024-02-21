@@ -22,15 +22,13 @@ interface PostageProps {
 }
 
 interface VariantSizeProps {
-  size?: string;
-  label?: string;
-  price?: string;
+  name: string;
 }
 
 export interface VariantTypeProps {
-  label: string;
-  image?: string;
-  size?: VariantSizeProps[];
+  name?: string;
+  imageUrl?: string;
+  variantColorProduct?: VariantSizeProps[];
 }
 
 interface General {

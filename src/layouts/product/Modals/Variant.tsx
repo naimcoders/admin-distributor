@@ -54,6 +54,8 @@ export const VariantModal = () => {
     formType,
     formSize,
     handleOnKeyDownType,
+    handleSubmitVariant,
+    size,
   } = useVariant();
 
   const [isVariantPhoto, setIsVariantPhoto] = useState(true);
@@ -66,16 +68,16 @@ export const VariantModal = () => {
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
 
-    const [datas] = variantTypes.filter((f) => f.label === labelProduct);
-    datas.image = blob;
+    const [datas] = variantTypes.filter((f) => f.name === labelProduct);
+    datas.imageUrl = blob;
 
     let setImageValueToArr: VariantTypeProps[] = [];
     variantTypes.forEach((e) => {
-      if (e.label === labelProduct) {
+      if (e.name === labelProduct) {
         setImageValueToArr.push(datas);
       }
 
-      if (e.label !== labelProduct) {
+      if (e.name !== labelProduct) {
         setImageValueToArr.push(e);
       }
     });
@@ -98,8 +100,6 @@ export const VariantModal = () => {
     if (isAddType) formType.setFocus("type");
     if (isAddSize) formSize.setFocus("size");
   }, [isAddType, isAddSize]);
-
-  const variantSize = useGeneralStore((v) => v.variantSize);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
@@ -126,12 +126,12 @@ export const VariantModal = () => {
                       variant="light"
                       className={cx(
                         "w-[6rem] border border-gray-300 text-gray-500",
-                        labelAndImage?.label === v.label &&
+                        labelAndImage?.label === v.name &&
                           "border border-blue-800"
                       )}
-                      onClick={() => onClickType(v.label ?? "")}
+                      onClick={() => onClickType(v.name ?? "")}
                     >
-                      {v.label}
+                      {v.name}
                     </Btn>
                     {isDeleteType && (
                       <XCircleIcon
@@ -139,7 +139,7 @@ export const VariantModal = () => {
                         color={IconColor.red}
                         className="absolute -top-2 -right-2 cursor-pointer"
                         title="hapus"
-                        onClick={() => handleDeleteType(v.label ?? "")}
+                        onClick={() => handleDeleteType(v.name ?? "")}
                       />
                     )}
                   </section>
@@ -214,9 +214,9 @@ export const VariantModal = () => {
               {variantTypes.map((v, idx) => (
                 <Fragment key={idx}>
                   <VariantFileImage
-                    label={v.label ?? ""}
-                    image={v.image ?? ""}
-                    onClick={() => onClick(v.label ?? "")}
+                    label={v.name ?? ""}
+                    image={v.imageUrl ?? ""}
+                    onClick={() => onClick(v.name ?? "")}
                     onChange={onChange}
                     ref={productPhotoRef}
                   />
@@ -246,29 +246,74 @@ export const VariantModal = () => {
             </p>
           ) : (
             <section className="flexcol gap-2">
-              <section className="flex gap-3 flex-wrap">
+              {/* <section className="flex gap-3 flex-wrap">
                 {variantSize
                   .filter((f) => f.label === labelAndImage?.label)
-                  .map((v, idx) => (
-                    <section className="relative" key={idx}>
-                      <Btn
-                        size="sm"
-                        variant="light"
-                        className="w-[6rem] border border-gray-400 text-gray-500"
-                      >
-                        {v.size}
-                      </Btn>
-                      {isDeleteSize && (
-                        <XCircleIcon
-                          width={20}
-                          color={IconColor.red}
-                          className="absolute -top-2 -right-2 cursor-pointer"
-                          title="hapus"
-                          onClick={() => handleDeleteSize(v.size ?? "")}
-                        />
-                      )}
-                    </section>
-                  ))}
+                  .map((v) =>
+                    v.size?.map((s, idx) => (
+                      <section className="relative" key={idx}>
+                        <Btn
+                          size="sm"
+                          variant="light"
+                          className="w-[6rem] border border-gray-400 text-gray-500"
+                        >
+                          {s.name}
+                        </Btn>
+                        {isDeleteSize && (
+                          <XCircleIcon
+                            width={20}
+                            color={IconColor.red}
+                            className="absolute -top-2 -right-2 cursor-pointer"
+                            title="hapus"
+                            onClick={() => handleDeleteSize(s.name ?? "")}
+                          />
+                        )}
+                      </section>
+                    ))
+                  )}
+
+                <Button
+                  aria-label={!isAddSize ? "tambah" : "batal"}
+                  endContent={
+                    !isAddSize ? (
+                      <PlusIcon width={16} />
+                    ) : (
+                      <XMarkIcon width={16} />
+                    )
+                  }
+                  className="w-[6rem] border border-gray-400 text-gray-500"
+                  color="default"
+                  variant="light"
+                  size="sm"
+                  onClick={handleAddSize}
+                />
+              </section> */}
+
+              <section className="flex gap-3 flex-wrap">
+                {size
+                  .filter((f) => f.label === labelAndImage?.label)
+                  .map((v) =>
+                    v.size.map((s, idx) => (
+                      <section className="relative" key={idx}>
+                        <Btn
+                          size="sm"
+                          variant="light"
+                          className="w-[6rem] border border-gray-400 text-gray-500"
+                        >
+                          {s.name}
+                        </Btn>
+                        {isDeleteSize && (
+                          <XCircleIcon
+                            width={20}
+                            color={IconColor.red}
+                            className="absolute -top-2 -right-2 cursor-pointer"
+                            title="hapus"
+                            onClick={() => handleDeleteSize(s.name)}
+                          />
+                        )}
+                      </section>
+                    ))
+                  )}
 
                 <Button
                   aria-label={!isAddSize ? "tambah" : "batal"}
@@ -318,7 +363,11 @@ export const VariantModal = () => {
           )}
         </footer>
 
-        <Button aria-label="atur info variasi" className="mx-auto mt-4" />
+        <Button
+          aria-label="atur info variasi"
+          className="mx-auto mt-4"
+          onClick={handleSubmitVariant}
+        />
       </main>
     </Modal>
   );
@@ -327,6 +376,10 @@ export const VariantModal = () => {
 const useVariant = () => {
   const formType = useForm<FieldValues>();
   const formSize = useForm<FieldValues>();
+
+  const [size, setSize] = useState<
+    { label: string; size: { name: string }[] }[]
+  >([]);
 
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isDeleteSize, setIsDeleteSize] = useState(false);
@@ -347,10 +400,21 @@ const useVariant = () => {
   const handleChangeType = () => setIsDeleteTye((v) => !v);
   const handleChangeSize = () => setIsDeleteSize((v) => !v);
 
+  const handleSubmitVariant = () => {
+    variantTypes.forEach((type) => {
+      const [filterByLabel] = size.filter((f) => f.label === type.name);
+      const [filterByLabelType] = variantTypes.filter(
+        (f) => f.name === type.name
+      );
+      filterByLabelType.variantColorProduct = filterByLabel?.size ?? null;
+    });
+    actionIsVariant();
+  };
+
   const handleSubmitType = formType.handleSubmit(async (e) => {
     try {
       const type = e.type;
-      setVariantType([...variantTypes, { label: type }]);
+      setVariantType([...variantTypes, { name: type }]);
       formType.setFocus("type");
     } catch (e) {
       const error = e as Error;
@@ -360,16 +424,25 @@ const useVariant = () => {
     }
   });
 
-  const variantSize = useGeneralStore((v) => v.variantSize);
-  const setVariantSize = useGeneralStore((v) => v.setVariantSize);
-
   const handleSubmitSize = formSize.handleSubmit(async (e) => {
     try {
       const val = e.size;
 
-      setVariantSize([
-        ...variantSize,
-        { label: labelAndImage?.label, size: val },
+      const [filter] = size.filter((f) => f.label === labelAndImage?.label);
+      const fixedSize = filter?.size ?? [];
+      const notSameLabel = size.filter((f) => f.label !== labelAndImage?.label);
+
+      setSize([
+        ...notSameLabel,
+        {
+          label: labelAndImage?.label ?? "",
+          size: [
+            ...fixedSize,
+            {
+              name: val,
+            },
+          ],
+        },
       ]);
 
       formSize.setFocus("size");
@@ -381,27 +454,25 @@ const useVariant = () => {
     }
   });
 
-  const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const type = formType.getValues();
-      setVariantType([...variantTypes, { label: type.type }]);
-
-      formType.setFocus("type");
-      formType.resetField("type");
-      formType.setFocus("type");
-    }
-
-    if (e.key === "Escape") {
-      setIsAddType((v) => !v);
-    }
-  };
-
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const size = formSize.getValues();
-      setVariantSize([
-        ...variantSize,
-        { label: labelAndImage?.label, size: size.size },
+      const val = formSize.getValues().size;
+
+      const [filter] = size.filter((f) => f.label === labelAndImage?.label);
+      const fixedSize = filter?.size ?? [];
+      const notSameLabel = size.filter((f) => f.label !== labelAndImage?.label);
+
+      setSize([
+        ...notSameLabel,
+        {
+          label: labelAndImage?.label ?? "",
+          size: [
+            ...fixedSize,
+            {
+              name: val,
+            },
+          ],
+        },
       ]);
 
       formSize.setFocus("size");
@@ -413,17 +484,43 @@ const useVariant = () => {
     }
   };
 
+  const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const type = formType.getValues();
+      setVariantType([...variantTypes, { name: type.type }]);
+
+      formType.setFocus("type");
+      formType.resetField("type");
+      formType.setFocus("type");
+    }
+
+    if (e.key === "Escape") {
+      setIsAddType((v) => !v);
+    }
+  };
+
+  const handleDeleteSize = (val: string) => {
+    const [newSize] = size.filter((f) => f.label === labelAndImage?.label);
+    const filterOtherLabel = size.filter(
+      (f) => f.label !== labelAndImage?.label
+    );
+    const removeSize = newSize.size.filter((f) => f.name !== val);
+
+    setSize([
+      ...filterOtherLabel,
+      { label: labelAndImage?.label ?? "", size: removeSize },
+    ]);
+  };
+
   const handleDeleteType = (label: string) => {
-    const newTypes = variantTypes.filter((type) => type.label !== label);
+    const newTypes = variantTypes.filter((type) => type.name !== label);
     setVariantType(newTypes);
   };
 
-  const handleDeleteSize = (size: string) => {
-    const newTypes = variantSize.filter((type) => type.size !== size);
-    setVariantSize(newTypes);
-  };
-
   return {
+    handleSubmitVariant,
+    size,
+    setSize,
     formType,
     handleDeleteSize,
     labelAndImage,
@@ -468,17 +565,17 @@ const VariantFileImage = forwardRef(
     const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
     const handleDeleteProductImage = () => {
-      const [byLabel] = variantTypes.filter((f) => f.label === props.label);
+      const [byLabel] = variantTypes.filter((f) => f.name === props.label);
 
-      byLabel.image = "";
+      byLabel.imageUrl = "";
 
       const currentValues: VariantTypeProps[] = [];
 
       variantTypes.forEach((e) => {
-        if (e.label === props.label) {
+        if (e.name === props.label) {
           currentValues.push(byLabel);
         }
-        if (e.label !== props.label) {
+        if (e.name !== props.label) {
           currentValues.push(e);
         }
       });

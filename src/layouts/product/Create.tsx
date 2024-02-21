@@ -89,15 +89,9 @@ const Create = () => {
       );
     });
 
-    const variant: { name: string }[] = [];
-
-    variantTypes.forEach((f) => {
-      variant.push({ name: f.label });
-    });
+    const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
-      const isDangerous = e.dangerous === "Tidak" ? false : true;
-
       const obj = {
         category: { categoryId },
         deliveryPrice,
@@ -105,7 +99,7 @@ const Create = () => {
         isDangerous,
         name: e.productName,
         imageUrl: productUrl,
-        variant,
+        variant: variantTypes,
       };
 
       console.log(obj);

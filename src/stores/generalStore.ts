@@ -28,7 +28,7 @@ interface VariantSizeProps {
 }
 
 export interface VariantTypeProps {
-  label?: string;
+  label: string;
   image?: string;
   size?: VariantSizeProps[];
 }

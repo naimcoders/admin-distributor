@@ -63,6 +63,7 @@ const Create = () => {
   const { fields } = useFields();
 
   const { user } = useAuth();
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
 
   const onSubmit = handleSubmit(async (e) => {
     const productUrl: string[] = [];
@@ -88,6 +89,12 @@ const Create = () => {
       );
     });
 
+    const variant: { name: string }[] = [];
+
+    variantTypes.forEach((f) => {
+      variant.push({ name: f.label });
+    });
+
     try {
       const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -98,6 +105,7 @@ const Create = () => {
         isDangerous,
         name: e.productName,
         imageUrl: productUrl,
+        variant,
       };
 
       console.log(obj);

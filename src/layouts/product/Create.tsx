@@ -57,7 +57,6 @@ const Create = () => {
 
   const [categoryId, setCategoryId] = useState("");
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
-  const [_, setPercent] = useState(0);
 
   const findAllCategories = useCategory().findAll();
   const { fields } = useFields();
@@ -75,12 +74,7 @@ const Create = () => {
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {
-          const percent = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setPercent(percent);
-        },
+        null,
         (err) => console.error(err.message),
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);

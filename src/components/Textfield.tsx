@@ -36,6 +36,7 @@ export interface TextfieldProps
   onClick?: () => void;
   errorMessage?: string;
   endContent?: ReactNode;
+  classNameWrapper?: string;
   startContent?: ReactNode;
   readOnly?: ReadOnlyProps;
   autoComplete?: "on" | "off";
@@ -49,7 +50,7 @@ export const Textfield = (props: TextfieldProps) => {
   const handlePass = () => setIsPass((prev) => !prev);
 
   return (
-    <section className="flexcol gap-4">
+    <section className={cx("flexcol gap-4", props.classNameWrapper)}>
       {props.label && <h2 className="text-sm capitalize">{props.label}</h2>}
       <Input
         {...field}

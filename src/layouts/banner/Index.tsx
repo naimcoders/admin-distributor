@@ -13,37 +13,39 @@ import { getFileType } from "src/helpers";
 
 const Banner = () => {
   const { control } = useForm<FieldValues>();
-  const { banners, bannerPercent } = useHook();
+  const { banners, bannerPercent, logoPercent } = useHook();
 
   return (
-    <>
-      <GridInput className="grid-cols-3">
-        {banners.map((v) => (
-          <section key={v.label} className="flexcol gap-2">
-            <File
-              name={v.name}
-              label={v.label}
-              control={control}
-              placeholder={v.placeholder}
-              ref={v.uploadImage?.file.ref}
-              onClick={v.uploadImage?.file.onClick}
-              onChange={v.uploadImage?.file.onChange}
-              startContent={<ArrowUpTrayIcon width={16} />}
-            />
-            {v.name === "banner" &&
-              bannerPercent > 0 &&
-              bannerPercent < 100 && <p>Loading: {bannerPercent}</p>}
-          </section>
-        ))}
-      </GridInput>
-    </>
+    <GridInput className="grid-cols-3">
+      {banners.map((v) => (
+        <section key={v.label} className="flexcol gap-2">
+          <File
+            name={v.name}
+            label={v.label}
+            control={control}
+            placeholder={v.placeholder}
+            ref={v.uploadImage?.file.ref}
+            onClick={v.uploadImage?.file.onClick}
+            onChange={v.uploadImage?.file.onChange}
+            startContent={<ArrowUpTrayIcon width={16} />}
+          />
+          {v.name === "banner" && bannerPercent > 0 && bannerPercent < 100 && (
+            <p>Loading: {bannerPercent}</p>
+          )}
+          {v.name === "logo" && logoPercent > 0 && logoPercent < 100 && (
+            <p>Loading: {logoPercent}</p>
+          )}
+        </section>
+      ))}
+    </GridInput>
   );
 };
 
 const useHook = () => {
   const { banner, onClickBanner, onChangeBanner, setBannerUrl, bannerPercent } =
     useBanner();
-  const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo } = useLogo();
+  const { logo, logoUrl, setLogoUrl, onClickLogo, onChangeLogo, logoPercent } =
+    useLogo();
 
   const banners: TextfieldProps[] = [
     objectFields({
@@ -92,14 +94,14 @@ const useHook = () => {
     }),
   ];
 
-  return { banners, bannerPercent };
+  return { banners, bannerPercent, logoPercent };
 };
 
 const useBanner = () => {
   const { user } = useAuth();
   const [bannerUrl, setBannerUrl] = useState("");
   const banner = useRef<ChildRef>(null);
-  const [bannerPercent, setBannerpercent] = useState(0);
+  const [bannerPercent, setBannerPercent] = useState(0);
 
   const onClickBanner = () => {
     if (banner.current) banner.current.click();
@@ -121,8 +123,7 @@ const useBanner = () => {
         const percent = Math.round(
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
-
-        setBannerpercent(percent);
+        setBannerPercent(percent);
       },
       (err) => console.error(err.message),
       async () => {
@@ -144,7 +145,9 @@ const useBanner = () => {
 };
 
 const useLogo = () => {
+  const { user } = useAuth();
   const [logoUrl, setLogoUrl] = useState("");
+  const [logoPercent, setLogoPercent] = useState(0);
   const logo = useRef<ChildRef>(null);
 
   const onClickLogo = () => {
@@ -156,9 +159,26 @@ const useLogo = () => {
 
     const files = e.target.files[0];
     const fileType = getFileType(files.type);
-    console.log(fileType);
-    // const logo = URL.createObjectURL(e.target.files[0]);
-    // setLogoUrl(logo);
+    const fileName = `${files.lastModified}.${fileType}`;
+    const fileNameFix = `distributor/${user?.uid}/${fileName}`;
+    const storageRef = ref(FbStorage, fileNameFix);
+    const uploadTask = uploadBytesResumable(storageRef, files);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setLogoPercent(percent);
+      },
+      (err) => console.error(err.message),
+      async () => {
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
+        setLogoUrl(url);
+        toast.success("Logo berhasil diunggah");
+      }
+    );
   };
 
   return {
@@ -167,6 +187,7 @@ const useLogo = () => {
     onClickLogo,
     onChangeLogo,
     setLogoUrl,
+    logoPercent,
   };
 };
 

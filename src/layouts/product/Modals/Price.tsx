@@ -1,5 +1,5 @@
-import { PencilIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment } from "react";
+import { CheckIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { FC, Fragment, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
@@ -10,24 +10,64 @@ import { useActiveModal } from "src/stores/modalStore";
 import { IconColor, UseForm } from "src/types";
 
 const PriceModal = () => {
+  const [isMassal, setIsMassal] = useState(false);
   const { isPrice, actionIsPrice } = useActiveModal();
   const { control, setValue } = useForm<FieldValues>();
   const variantTypes = useGeneralStore((v) => v.variantTypes);
 
+  const handleMassalActive = () => setIsMassal((v) => !v);
+
   return (
     <Modal isOpen={isPrice} closeModal={actionIsPrice}>
       <main className="my-4 flexcol gap-5">
-        <header className="flex gap-4 justify-between">
-          <h1 className="capitalize font-semibold">
-            Atur harga variasi produk
-          </h1>
-          <button
-            className={`text-[${IconColor.red}] text-sm capitalize hover:text-blue-500 inline-flex gap-1 items-center`}
-            title="Edit secara massal"
-          >
-            <PencilIcon width={16} />
-            massal
-          </button>
+        <header className="flexcol gap-3">
+          <section className="flex gap-4 justify-between">
+            <h1 className="capitalize font-semibold">
+              Atur harga variasi produk
+            </h1>
+            <button
+              className={`text-[${IconColor.red}] text-sm capitalize hover:text-blue-500 inline-flex gap-1 items-center`}
+              title="Edit secara massal"
+              onClick={handleMassalActive}
+            >
+              {!isMassal ? (
+                <>
+                  <PencilIcon width={16} />
+                  massal
+                </>
+              ) : (
+                <>Batal</>
+              )}
+            </button>
+          </section>
+
+          {isMassal && (
+            <Textfield
+              name="massal"
+              defaultValue=""
+              control={control}
+              startContent={
+                <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
+              }
+              endContent={
+                <CheckIcon
+                  width={16}
+                  title="Simpan"
+                  className="cursor-pointer"
+                  onClick={() => console.log("massal")}
+                />
+              }
+              rules={{
+                onBlur: (e) =>
+                  CurrencyIDInput({
+                    type: "rp",
+                    fieldName: "massal",
+                    setValue,
+                    value: e.target.value,
+                  }),
+              }}
+            />
+          )}
         </header>
 
         {variantTypes.map((v, idx) => (
@@ -76,7 +116,10 @@ const Field: FC<FieldProps> = ({ control, setValue, variant, fieldName }) => {
         name={fieldName}
         control={control}
         defaultValue=""
-        classNameWrapper="col-span-1"
+        classNameWrapper={!variant ? "col-span-3" : "col-span-1"}
+        startContent={
+          <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
+        }
         rules={{
           onBlur: (e) =>
             CurrencyIDInput({
@@ -86,9 +129,6 @@ const Field: FC<FieldProps> = ({ control, setValue, variant, fieldName }) => {
               value: e.target.value,
             }),
         }}
-        startContent={
-          <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-        }
       />
     </section>
   );

@@ -34,6 +34,7 @@ import { VariantModal } from "./Modals/Variant";
 import { useAuth } from "src/firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
+import PriceModal from "./Modals/Price";
 
 const Create = () => {
   const {
@@ -230,6 +231,7 @@ const Create = () => {
           <ConditionModal setValue={setValue} />
           <PostageModal setValue={setValue} clearErrors={clearErrors} />
           <VariantModal fieldName="variant" setValue={setValue} />
+          <PriceModal />
           {/* <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} /> */}
         </WrapperInput>
       )}

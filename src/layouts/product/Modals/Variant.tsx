@@ -394,7 +394,7 @@ const useVariant = () => {
     size?: { label?: string; price?: string }[];
   }>();
 
-  const { isVariant, actionIsVariant } = useActiveModal();
+  const { isVariant, actionIsVariant, actionIsPrice } = useActiveModal();
   const variantTypes = useGeneralStore((v) => v.variantTypes);
   const setVariantType = useGeneralStore((v) => v.setVariantType);
 
@@ -420,6 +420,7 @@ const useVariant = () => {
     form.setValue(fieldName, toSentence);
 
     actionIsVariant();
+    setTimeout(actionIsPrice, 500);
   };
 
   const handleSubmitType = formType.handleSubmit(async (e) => {

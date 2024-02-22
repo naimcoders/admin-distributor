@@ -46,6 +46,7 @@ const PriceModal = () => {
               name="massal"
               defaultValue=""
               control={control}
+              placeholder="harga massal"
               startContent={
                 <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
               }
@@ -70,32 +71,33 @@ const PriceModal = () => {
           )}
         </header>
 
-        {variantTypes.map((v, idx) => (
-          <Fragment key={idx}>
-            <hr />
-            <section className="flexcol gap-4">
-              <h2>{v.name}</h2>
-              {v.variantColorProduct ? (
-                v.variantColorProduct.map((m, num) => (
+        {!isMassal &&
+          variantTypes.map((v, idx) => (
+            <Fragment key={idx}>
+              <hr />
+              <section className="flexcol gap-4">
+                <h2>{v.name}</h2>
+                {v.variantColorProduct ? (
+                  v.variantColorProduct.map((m, num) => (
+                    <Field
+                      variant={m.name}
+                      fieldName={m.name}
+                      control={control}
+                      setValue={setValue}
+                      key={`${v.name}-${num}`}
+                    />
+                  ))
+                ) : (
                   <Field
-                    variant={m.name}
-                    fieldName={m.name}
+                    fieldName={v.name ?? ""}
                     control={control}
                     setValue={setValue}
-                    key={`${v.name}-${num}`}
+                    key={`${v.name}-${idx}`}
                   />
-                ))
-              ) : (
-                <Field
-                  fieldName={v.name ?? ""}
-                  control={control}
-                  setValue={setValue}
-                  key={`${v.name}-${idx}`}
-                />
-              )}
-            </section>
-          </Fragment>
-        ))}
+                )}
+              </section>
+            </Fragment>
+          ))}
 
         <Button aria-label="simpan" className="mx-auto mt-4" />
       </main>

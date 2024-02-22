@@ -12,10 +12,25 @@ import { IconColor, UseForm } from "src/types";
 const PriceModal = () => {
   const [isMassal, setIsMassal] = useState(false);
   const { isPrice, actionIsPrice } = useActiveModal();
-  const { control, setValue } = useForm<FieldValues>();
+  const { control, setValue, handleSubmit } = useForm<FieldValues>();
+
   const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
   const handleMassalActive = () => setIsMassal((v) => !v);
+
+  const handleSubmitPrice = handleSubmit((e) => {
+    for (const itr in e) {
+      const [type, size] = itr.split("_");
+      const [filterBySameName] = variantTypes.filter((f) => f.name === type);
+
+      filterBySameName.variantColorProduct?.forEach((f) => {
+        if (size === f.name) {
+          f.price = e[itr];
+        }
+      });
+    }
+  });
 
   return (
     <Modal isOpen={isPrice} closeModal={actionIsPrice}>
@@ -80,26 +95,30 @@ const PriceModal = () => {
                 {v.variantColorProduct ? (
                   v.variantColorProduct.map((m, num) => (
                     <Field
+                      key={num}
                       variant={m.name}
-                      fieldName={m.name}
                       control={control}
                       setValue={setValue}
-                      key={`${v.name}-${num}`}
+                      fieldName={`${v.name}_${m.name}`}
                     />
                   ))
                 ) : (
                   <Field
-                    fieldName={v.name ?? ""}
+                    key={idx}
                     control={control}
                     setValue={setValue}
-                    key={`${v.name}-${idx}`}
+                    fieldName={v.name ?? ""}
                   />
                 )}
               </section>
             </Fragment>
           ))}
 
-        <Button aria-label="simpan" className="mx-auto mt-4" />
+        <Button
+          aria-label="simpan"
+          className="mx-auto mt-4"
+          onClick={handleSubmitPrice}
+        />
       </main>
     </Modal>
   );

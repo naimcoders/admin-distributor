@@ -13,7 +13,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import { CurrencyIDInput, getFileType, handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
 import { GridInput, WrapperInput } from "../Index";
 import { useCategory } from "src/api/category.service";
@@ -68,8 +68,10 @@ const Create = () => {
     const productUrl: string[] = [];
 
     photos.forEach((product) => {
-      const fileName = `temp/product/${user?.uid}/${product.name}`;
-      const storageRef = ref(FbStorage, fileName);
+      const fileType = getFileType(product.file.type);
+      const fileName = `${product.file.lastModified}.${fileType}`;
+      const fileNameFix = `temp/product/${user?.uid}/${fileName}`;
+      const storageRef = ref(FbStorage, fileNameFix);
       const uploadTask = uploadBytesResumable(storageRef, product.file);
 
       uploadTask.on(

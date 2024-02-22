@@ -5,6 +5,8 @@ import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 
+export const getFileType = (type: string) => type.split("/").pop();
+
 export const parseTextToNumber = (val: string) => {
   const replaceDot = val.replace(/\./g, "");
   const result = parseInt(replaceDot, 10);

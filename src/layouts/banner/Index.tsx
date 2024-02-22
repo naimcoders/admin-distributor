@@ -9,6 +9,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import { useAuth } from "src/firebase/auth";
 import { toast } from "react-toastify";
+import { getFileType } from "src/helpers";
 
 const Banner = () => {
   const { control } = useForm<FieldValues>();
@@ -151,8 +152,11 @@ const useLogo = () => {
   const onChangeLogo = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
 
-    const logo = URL.createObjectURL(e.target.files[0]);
-    setLogoUrl(logo);
+    const files = e.target.files[0];
+    const fileType = getFileType(files.type);
+    console.log(fileType);
+    // const logo = URL.createObjectURL(e.target.files[0]);
+    // setLogoUrl(logo);
   };
 
   return {

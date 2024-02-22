@@ -176,15 +176,19 @@ const Create = () => {
                     type={v.type}
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
+                    readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
                     rules={{
                       required: v.rules?.required,
-                      onBlur: (e) =>
-                        CurrencyIDInput({
-                          type: v.type!,
-                          fieldName: v.name,
-                          setValue,
-                          value: e.target.value,
-                        }),
+                      onBlur:
+                        variantTypes.length < 1
+                          ? (e) =>
+                              CurrencyIDInput({
+                                type: v.type!,
+                                fieldName: v.name,
+                                setValue,
+                                value: e.target.value,
+                              })
+                          : undefined,
                     }}
                   />
                 )}
@@ -368,6 +372,7 @@ const useFields = () => {
       placeholder: "masukkan harga",
       defaultValue: "",
       rules: { required: { value: true, message: "masukkan harga" } },
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
     }),
     objectFields({
       label: "ongkos kirim (berat/ukuran) *",

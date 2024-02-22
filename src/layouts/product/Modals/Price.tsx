@@ -4,32 +4,50 @@ import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
 import { Textfield } from "src/components/Textfield";
-import { CurrencyIDInput } from "src/helpers";
+import { Currency, CurrencyIDInput, parseTextToNumber } from "src/helpers";
 import useGeneralStore from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor, UseForm } from "src/types";
 
-const PriceModal = () => {
+interface PriceProps extends Pick<UseForm, "setValue" | "clearErrors"> {
+  fieldName: string;
+}
+
+const PriceModal = (props: PriceProps) => {
   const [isMassal, setIsMassal] = useState(false);
   const { isPrice, actionIsPrice } = useActiveModal();
   const { control, setValue, handleSubmit } = useForm<FieldValues>();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
 
   const handleMassalActive = () => setIsMassal((v) => !v);
 
   const handleSubmitPrice = handleSubmit((e) => {
+    const values: number[] = [];
+    for (const iterator in e) {
+      const parseToNumber = parseTextToNumber(e[iterator]);
+      values.push(parseToNumber);
+    }
+
+    const minVal = Currency(Math.min(...values));
+    const maxVal = Currency(Math.max(...values));
+    const combineVal = `${minVal} - ${maxVal}`;
+
     for (const itr in e) {
       const [type, size] = itr.split("_");
       const [filterBySameName] = variantTypes.filter((f) => f.name === type);
 
-      filterBySameName.variantColorProduct?.forEach((f) => {
+      filterBySameName?.variantColorProduct?.forEach((f) => {
         if (size === f.name) {
-          f.price = e[itr];
+          const toNumber = parseTextToNumber(e[itr]);
+          f.price = toNumber;
         }
       });
     }
+
+    props.clearErrors(props.fieldName);
+    props.setValue(props.fieldName, combineVal);
+    actionIsPrice();
   });
 
   return (

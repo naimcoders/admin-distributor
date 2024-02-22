@@ -231,7 +231,11 @@ const Create = () => {
           <ConditionModal setValue={setValue} />
           <PostageModal setValue={setValue} clearErrors={clearErrors} />
           <VariantModal fieldName="variant" setValue={setValue} />
-          <PriceModal />
+          <PriceModal
+            fieldName="price"
+            setValue={setValue}
+            clearErrors={clearErrors}
+          />
           {/* <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} /> */}
         </WrapperInput>
       )}

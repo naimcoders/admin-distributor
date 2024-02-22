@@ -23,7 +23,7 @@ interface PostageProps {
 
 interface VariantSizeProps {
   name: string;
-  price?: string;
+  price?: number;
 }
 
 export interface VariantTypeProps {

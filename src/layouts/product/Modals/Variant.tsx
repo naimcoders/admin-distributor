@@ -419,6 +419,7 @@ const useVariant = () => {
     const toSentence = mapVariantByName.join(", ");
     form.setValue(fieldName, toSentence);
 
+    console.log(variantTypes);
     actionIsVariant();
     setTimeout(actionIsPrice, 500);
   };

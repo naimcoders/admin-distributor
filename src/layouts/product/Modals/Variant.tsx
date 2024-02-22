@@ -3,6 +3,7 @@ import cx from "classnames";
 import { Button as Btn, Switch } from "@nextui-org/react";
 import {
   ChangeEvent,
+  FC,
   Fragment,
   KeyboardEvent,
   Ref,
@@ -15,7 +16,7 @@ import {
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
 import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
-import { IconColor } from "src/types";
+import { IconColor, UseForm } from "src/types";
 import {
   CheckIcon,
   PlusIcon,
@@ -30,7 +31,9 @@ import { useActiveModal } from "src/stores/modalStore";
 import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
 
-export const VariantModal = () => {
+export const VariantModal: FC<
+  { fieldName: string } & Pick<UseForm, "setValue">
+> = ({ fieldName, setValue }) => {
   const {
     isAddType,
     isDeleteType,
@@ -366,7 +369,7 @@ export const VariantModal = () => {
         <Button
           aria-label="atur info variasi"
           className="mx-auto mt-4"
-          onClick={handleSubmitVariant}
+          onClick={() => handleSubmitVariant(fieldName, { setValue })}
         />
       </main>
     </Modal>
@@ -400,7 +403,10 @@ const useVariant = () => {
   const handleChangeType = () => setIsDeleteTye((v) => !v);
   const handleChangeSize = () => setIsDeleteSize((v) => !v);
 
-  const handleSubmitVariant = () => {
+  const handleSubmitVariant = (
+    fieldName: string,
+    form: Pick<UseForm, "setValue">
+  ) => {
     variantTypes.forEach((type) => {
       const [filterByLabel] = size.filter((f) => f.label === type.name);
       const [filterByLabelType] = variantTypes.filter(
@@ -408,6 +414,11 @@ const useVariant = () => {
       );
       filterByLabelType.variantColorProduct = filterByLabel?.size ?? null;
     });
+
+    const mapVariantByName = variantTypes.map((m) => m.name);
+    const toSentence = mapVariantByName.join(", ");
+    form.setValue(fieldName, toSentence);
+
     actionIsVariant();
   };
 

@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 interface Modal {
+  isPrice: boolean;
+  setIsPrice: (v: boolean) => void;
   isBankName: boolean;
   setIsBankName: (v: boolean) => void;
   isCategory: boolean;
@@ -34,6 +36,8 @@ interface Modal {
 }
 
 const useModalStore = create<Modal>((set) => ({
+  isPrice: false,
+  setIsPrice: (v) => set({ isPrice: v }),
   isBankName: false,
   setIsBankName: (v) => set({ isBankName: v }),
   isCategory: false,
@@ -70,6 +74,8 @@ export default useModalStore;
 
 export const useActiveModal = () => {
   const {
+    isPrice,
+    setIsPrice,
     isBankName,
     setIsBankName,
     isCategory,
@@ -117,6 +123,7 @@ export const useActiveModal = () => {
   const actionIsTransfer = () => setIsTransfer(!isTransfer);
   const actionIsTopUp = () => setIsTopUp(!isTopUp);
   const actionIsWithdraw = () => setIsWithdraw(!isWithdraw);
+  const actionIsPrice = () => setIsPrice(!isPrice);
 
   return {
     isBankName,
@@ -149,5 +156,7 @@ export const useActiveModal = () => {
     actionIsTopUp,
     isWithdraw,
     actionIsWithdraw,
+    isPrice,
+    actionIsPrice,
   };
 };

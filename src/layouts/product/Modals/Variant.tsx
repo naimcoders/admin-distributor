@@ -59,9 +59,12 @@ export const VariantModal: FC<
     handleOnKeyDownType,
     handleSubmitVariant,
     size,
+    isErrorVariant,
+    isVariantPhoto,
+    setIsErrorVariant,
+    setIsVariantPhoto,
   } = useVariant();
 
-  const [isVariantPhoto, setIsVariantPhoto] = useState(true);
   const [labelProduct, setLabelProduct] = useState("");
 
   const { productPhotoRef } = useUploadProduct();
@@ -75,6 +78,8 @@ export const VariantModal: FC<
     datas.imageUrl = blob;
 
     let setImageValueToArr: VariantTypeProps[] = [];
+
+    let error = 0;
     variantTypes.forEach((e) => {
       if (e.name === labelProduct) {
         setImageValueToArr.push(datas);
@@ -83,9 +88,15 @@ export const VariantModal: FC<
       if (e.name !== labelProduct) {
         setImageValueToArr.push(e);
       }
+
+      if (isVariantPhoto && e.imageUrl) error++;
     });
 
     setVariantType([...setImageValueToArr]);
+
+    if (error > 1) {
+      setIsErrorVariant(false);
+    }
   };
 
   const onClick = (label: string) => {
@@ -228,6 +239,8 @@ export const VariantModal: FC<
             </section>
           </>
         )}
+
+        {isErrorVariant && <p className="text-sm text-red-500">Upload foto</p>}
 
         <hr />
         {/* footer */}
@@ -384,6 +397,9 @@ const useVariant = () => {
     { label: string; size: { name: string }[] }[]
   >([]);
 
+  const [isVariantPhoto, setIsVariantPhoto] = useState(true);
+  const [isErrorVariant, setIsErrorVariant] = useState(false);
+
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isDeleteSize, setIsDeleteSize] = useState(false);
   const [isAddType, setIsAddType] = useState(false);
@@ -407,20 +423,29 @@ const useVariant = () => {
     fieldName: string,
     form: Pick<UseForm, "setValue">
   ) => {
-    variantTypes.forEach((type) => {
-      const [filterByLabel] = size.filter((f) => f.label === type.name);
-      const [filterByLabelType] = variantTypes.filter(
-        (f) => f.name === type.name
-      );
-      filterByLabelType.variantColorProduct = filterByLabel?.size ?? null;
+    let error = 0;
+    variantTypes.forEach((e) => {
+      if (isVariantPhoto && !e.imageUrl) error++;
     });
 
-    const mapVariantByName = variantTypes.map((m) => m.name);
-    const toSentence = mapVariantByName.join(", ");
-    form.setValue(fieldName, toSentence);
+    if (error > 0) {
+      setIsErrorVariant(true);
+    } else {
+      variantTypes.forEach((type) => {
+        const [filterByLabel] = size.filter((f) => f.label === type.name);
+        const [filterByLabelType] = variantTypes.filter(
+          (f) => f.name === type.name
+        );
+        filterByLabelType.variantColorProduct = filterByLabel?.size ?? null;
+      });
 
-    actionIsVariant();
-    setTimeout(actionIsPrice, 500);
+      const mapVariantByName = variantTypes.map((m) => m.name);
+      const toSentence = mapVariantByName.join(", ");
+      form.setValue(fieldName, toSentence);
+
+      actionIsVariant();
+      setTimeout(actionIsPrice, 500);
+    }
   };
 
   const handleSubmitType = formType.handleSubmit(async (e) => {
@@ -530,6 +555,10 @@ const useVariant = () => {
   };
 
   return {
+    isVariantPhoto,
+    setIsVariantPhoto,
+    isErrorVariant,
+    setIsErrorVariant,
     handleSubmitVariant,
     size,
     setSize,

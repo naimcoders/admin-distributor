@@ -177,6 +177,7 @@ const Create = () => {
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
+                    onClick={variantTypes.length > 1 ? v.onClick : undefined}
                     rules={{
                       required: v.rules?.required,
                       onBlur:
@@ -325,6 +326,7 @@ const useFields = () => {
     actionIsPostage,
     actionIsVariant,
     actionIsSubDistributor,
+    actionIsPrice,
   } = useActiveModal();
 
   const fields: TextfieldProps[] = [
@@ -373,6 +375,7 @@ const useFields = () => {
       defaultValue: "",
       rules: { required: { value: true, message: "masukkan harga" } },
       readOnly: { isValue: true, cursor: "cursor-pointer" },
+      onClick: actionIsPrice,
     }),
     objectFields({
       label: "ongkos kirim (berat/ukuran) *",

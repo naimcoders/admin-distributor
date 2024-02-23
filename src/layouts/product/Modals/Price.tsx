@@ -31,7 +31,7 @@ const PriceModal = (props: PriceProps) => {
 
     const minVal = Currency(Math.min(...values));
     const maxVal = Currency(Math.max(...values));
-    const combineVal = `${minVal} - ${maxVal}`;
+    const combineVal = minVal === maxVal ? maxVal : `${minVal} - ${maxVal}`;
 
     for (const itr in e) {
       const [type, size] = itr.split("_");

@@ -35,6 +35,7 @@ import { useAuth } from "src/firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import PriceModal from "./Modals/Price";
+import { useProduct } from "src/api/product.service";
 
 const Create = () => {
   const {
@@ -65,9 +66,10 @@ const Create = () => {
   const { user } = useAuth();
   const variantTypes = useGeneralStore((v) => v.variantTypes);
 
+  const { mutateAsync, isPending } = useProduct().create();
+
   const onSubmit = handleSubmit(async (e) => {
     const productUrl: string[] = [];
-
     photos.forEach((product) => {
       const fileType = getFileType(product.file.type);
       const fileName = `${product.file.lastModified}.${fileType}`;
@@ -99,7 +101,29 @@ const Create = () => {
         variant: variantTypes,
       };
 
-      console.log(obj);
+      mutateAsync({
+        data: {
+          category: { categoryId },
+          deliveryPrice,
+          description: e.description,
+          imageUrl: productUrl,
+          isDangerous,
+          name: e.productName,
+          price: {
+            expiredAt: 0,
+            price: 10000,
+            priceDiscount: 0,
+            startAt: 0,
+          },
+          variant: [
+            {
+              name: "Hitam",
+              price: 10000,
+              variantColorProduct: [{ name: "S" }],
+            },
+          ],
+        },
+      });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
@@ -221,7 +245,7 @@ const Create = () => {
 
           {/* submit */}
           <Button
-            aria-label="simpan"
+            aria-label={isPending ? "loading..." : "simpan"}
             className="mx-auto mt-5"
             onClick={onSubmit}
           />

@@ -33,7 +33,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
   const onSubmit = postageForm.handleSubmit((e) => {
     const isCourierInternal = !isOutOfTown ? true : false;
 
-    const fieldNames = ["weight", "height", "length", "width", "ongkir"];
+    const fieldNames = ["weight", "height", "length", "width", "price"];
     let obj: Partial<DeliveryPrice> = {};
 
     for (const v in e) {
@@ -45,7 +45,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
     obj.isCourierInternal = isCourierInternal;
     setDeliveryPrice(obj);
 
-    setValue("postage", e.ongkir);
+    setValue("postage", e.price);
     clearErrors("postage");
     actionIsPostage();
   });
@@ -117,7 +117,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
             pengiriman dalam kota
           </h2>
           <Textfield
-            name="ongkir"
+            name="price"
             label="kurir distributor"
             placeholder="atur ongkir"
             control={postageForm.control}
@@ -127,14 +127,14 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
             }
             errorMessage={handleErrorMessage(
               postageForm.formState.errors,
-              "ongkir"
+              "price"
             )}
             rules={{
               required: { value: true, message: "masukkan ongkir" },
               onBlur: (e) =>
                 CurrencyIDInput({
                   type: "rp",
-                  fieldName: "ongkir",
+                  fieldName: "price",
                   setValue: postageForm.setValue,
                   value: e.target.value,
                 }),

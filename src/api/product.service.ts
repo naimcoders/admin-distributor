@@ -6,13 +6,15 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 export interface Product {
-  category: Category;
-  categoryId: string;
+  categoryProduct: CategoryProduct;
+  categoryProductId: string;
+  subCategoryProductId: string;
+  subCategoryProduct: SubCategoryProduct;
   createdAt: number;
-  deliveryPrice: DeliveryPrice;
+  deliveryPrice: DeliveryPrice | object;
   description: string;
   id: string;
-  imageUrl: DeliveryPrice;
+  imageUrl: ImageURL;
   isAvailable: boolean;
   isDangerous: boolean;
   isPrimary: boolean;
@@ -25,67 +27,44 @@ export interface Product {
   variantProduct: VariantProduct[];
   wishlist: number;
   yourWishlist: boolean;
+  isAccept: boolean;
 }
 
-export interface DeliveryPrice {
-  height: number;
-  isCourierInternal: boolean;
-  length: number;
-  price: number;
-  weight: number;
-  wide: number;
-}
-
-export interface CreateProductProps
-  extends Pick<
-    Product,
-    | "deliveryPrice"
-    | "description"
-    | "isAvailable"
-    | "isDangerous"
-    | "isPrimary"
-    | "name"
-    | "price"
-  > {
-  category: {
-    categoryId: string;
-  };
-  imageUrl: string[];
-  variant: Omit<VariantProduct, "createdAt" | "updatedAt" | "id">;
-}
-
-export interface Variant {
-  imageUrl: string;
-  name: string;
-  price: number;
-  productId: string;
-  variantColorProduct: Pick<VariantColorProduct, "name" | "imageUrl">[];
-}
-
-export interface Price {
-  expiredAt: number;
-  price: number;
-  fee: number;
-  priceDiscount: number;
-  startAt: number;
-}
-
-export interface Category {
-  category: SubCategory;
+export interface CategoryProduct {
+  category: SubCategoryProduct;
   createdAt: number;
   id: string;
-  subCategory: SubCategory[];
+  subCategory: SubCategoryProduct[];
   updatedAt: number;
   userId: string;
 }
 
-export interface SubCategory {
+export interface SubCategoryProduct {
   createdAt: number;
   id: string;
   isActive?: boolean;
   name: string;
   updatedAt: number;
-  categoryId?: string;
+  categoryProductId?: string;
+}
+
+export interface DeliveryPrice {
+  weight: number;
+  wide: number;
+  height: number;
+  length: number;
+  isCourierInternal: boolean;
+  price: number;
+}
+
+export interface ImageURL {}
+
+export interface Price {
+  price: number;
+  priceDiscount: number;
+  fee: number;
+  startAt: null;
+  expiredAt: null;
 }
 
 export interface User {
@@ -93,6 +72,7 @@ export interface User {
   courier: Courier;
   customer: Customer;
   distributor: Distributor;
+  email: string;
   id: string;
   location: Location[];
   store: Distributor;
@@ -113,7 +93,7 @@ export interface Courier {
   courierInternal: CourierInternal;
   createdAt: number;
   details: string;
-  document: DeliveryPrice;
+  document: ImageURL;
   email: string;
   emailVerify: boolean;
   fcmToken: string;
@@ -126,7 +106,7 @@ export interface Courier {
   phoneNumber: string;
   rate: number;
   updatedAt: number;
-  vehicle: DeliveryPrice;
+  vehicle: ImageURL;
 }
 
 export interface CourierInternal {
@@ -145,7 +125,7 @@ export interface Distributor {
   banner: string;
   createdAt: number;
   details: string;
-  documents?: DeliveryPrice;
+  documents?: Documents;
   email: string;
   emailVerify: boolean;
   fcmToken: string;
@@ -161,6 +141,10 @@ export interface Distributor {
   isOpen?: boolean;
   ktpImageUrl?: string;
   storeName?: string;
+}
+
+export interface Documents {
+  ktpImage: string;
 }
 
 export interface Customer {
@@ -180,6 +164,7 @@ export interface Customer {
 }
 
 export interface Location {
+  id: string;
   addressName: string;
   city: string;
   detailAddress: string;
@@ -233,6 +218,30 @@ export interface VariantColorProduct {
   variantProductId: string;
 }
 
+export interface CreateProductProps
+  extends Pick<
+    Product,
+    "deliveryPrice" | "description" | "isDangerous" | "name"
+  > {
+  category: {
+    categoryId: string;
+  };
+  imageUrl: string[];
+  price: {
+    expiredAt: number;
+    price: number;
+    priceDiscount: number;
+    startAt: number;
+  };
+  variant: {
+    name: string;
+    price: number;
+    variantColorProduct: {
+      name: string;
+    }[];
+  }[];
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -272,7 +281,7 @@ class Api {
   }
 
   async create(r: CreateProductProps): Promise<Product> {
-    return req<Product>({
+    return await req<Product>({
       method: "POST",
       path: this.path,
       isNoAuth: false,
@@ -326,11 +335,7 @@ export const useProduct = () => {
   };
 
   const create = () => {
-    const { data, isPending, error } = useMutation<
-      Product,
-      Error,
-      { data: CreateProductProps }
-    >({
+    const mutate = useMutation<Product, Error, { data: CreateProductProps }>({
       mutationKey: [key],
       mutationFn: async (r) => await getProductApiInfo().create(r.data),
       onSuccess: () => {
@@ -338,16 +343,12 @@ export const useProduct = () => {
         void queryClient.invalidateQueries({ queryKey: [key] });
       },
       onError: (e) => {
-        // toast.error(e.message);
+        toast.error(e.message);
         console.error(e.message);
       },
     });
 
-    return {
-      data,
-      isPending,
-      error: error?.message,
-    };
+    return mutate;
   };
 
   return { find, create };

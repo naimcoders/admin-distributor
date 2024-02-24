@@ -5,6 +5,14 @@ import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 
+export const useSetSearch = (value: string, setSearch: (v: string) => void) => {
+  const debounce = useDebounce(value, 500);
+
+  useEffect(() => {
+    if (debounce) setSearch(debounce);
+  }, [debounce]);
+};
+
 export const getFileType = (type: string) => type.split("/").pop();
 
 export const parseTextToNumber = (val: string) => {

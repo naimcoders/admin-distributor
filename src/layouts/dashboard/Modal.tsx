@@ -5,11 +5,13 @@ import pilipayLogo from "src/assets/images/pilipay.png";
 import Image from "src/components/Image";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
-import { FC, ReactNode, useState } from "react";
+import { FC, Fragment, ReactNode, useState } from "react";
 import { Textfield } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
 import { CurrencyIDInput } from "src/helpers";
 import ContentTextfield from "src/components/ContentTextfield";
+import { Button } from "src/components/Button";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
   return (
@@ -101,9 +103,15 @@ const HistoryContent: React.FC<{
 
 // Tranfer Modal
 export const TransferModal = () => {
+  const [isOtherField, setIsOtherField] = useState(false);
   const { isTransfer, actionIsTransfer } = useActiveModal();
-  const { nominals, selectedNominal } = useNominal();
+  const { nominals, selectedNominal, setSelectedNominal } = useNominal();
   const { control, setValue } = useForm<FieldValues>();
+
+  const handleOther = () => {
+    setSelectedNominal("");
+    setIsOtherField((v) => !v);
+  };
 
   return (
     <Modal
@@ -111,23 +119,35 @@ export const TransferModal = () => {
       closeModal={actionIsTransfer}
       customHeader={<BeginHeader />}
     >
-      <main className="my-4 border-t border-gray-300 py-4 flexcol gap-4">
+      <main className="my-4 border-t border-gray-300 pt-4 flexcol gap-4">
         <h2 className="text-center">Transfer Pilipay</h2>
 
-        <section className="grid grid-cols-2 gap-4">
-          {nominals.map((v) => (
-            <section
-              key={v.label}
-              onClick={() => v.onClick(v.label)}
-              className={cx(
-                "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
-                selectedNominal === v.label && "bg-gray-200"
-              )}
-            >
-              {v.label}
-            </section>
-          ))}
+        {!isOtherField && (
+          <section className="grid grid-cols-2 gap-4">
+            {nominals.map((v) => (
+              <Fragment key={v.label}>
+                <section
+                  onClick={() => v.onClick(v.label)}
+                  className={cx(
+                    "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
+                    selectedNominal === v.label && "bg-gray-200"
+                  )}
+                >
+                  {v.label}
+                </section>
+              </Fragment>
+            ))}
+          </section>
+        )}
 
+        {!isOtherField ? (
+          <section
+            onClick={handleOther}
+            className="border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200"
+          >
+            Lainnya
+          </section>
+        ) : (
           <Textfield
             name="other"
             defaultValue=""
@@ -144,6 +164,22 @@ export const TransferModal = () => {
                   value: e.target.value,
                 }),
             }}
+          />
+        )}
+
+        <section className="grid grid-cols-2 gap-4 mt-4">
+          {isOtherField && (
+            <Button
+              aria-label="kembali"
+              startContent={<ArrowLeftIcon width={16} />}
+              className="w-full"
+              variant="flat"
+              onClick={handleOther}
+            />
+          )}
+          <Button
+            aria-label="selanjutnya"
+            className={cx("w-full", !isOtherField && "col-span-2")}
           />
         </section>
       </main>
@@ -167,5 +203,5 @@ const useNominal = () => {
     { label: "500k", onClick: handleNominal },
   ];
 
-  return { nominals, selectedNominal };
+  return { nominals, selectedNominal, setSelectedNominal };
 };

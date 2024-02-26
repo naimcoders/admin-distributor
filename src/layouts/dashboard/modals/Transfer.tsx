@@ -1,5 +1,5 @@
 import cx from "classnames";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Modal } from "src/components/Modal";
@@ -40,17 +40,16 @@ const Transfer = () => {
         {!isOtherField && (
           <section className="grid grid-cols-2 gap-4">
             {nominals.map((v) => (
-              <Fragment key={v.label}>
-                <section
-                  onClick={() => v.onClick(v.label)}
-                  className={cx(
-                    "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
-                    selectedNominal === v.label && "bg-gray-200"
-                  )}
-                >
-                  {v.label}
-                </section>
-              </Fragment>
+              <section
+                key={v.label}
+                onClick={() => v.onClick(v.label)}
+                className={cx(
+                  "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
+                  selectedNominal === v.label && "bg-gray-200"
+                )}
+              >
+                {v.label}
+              </section>
             ))}
           </section>
         )}

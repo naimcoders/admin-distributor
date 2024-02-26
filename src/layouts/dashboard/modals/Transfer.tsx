@@ -103,7 +103,7 @@ const Transfer = () => {
           </section>
         </main>
       </Modal>
-      <Confirm selectedNominal={selectedNominal} />
+      <Confirm selectedNominal={selectedNominal} title="transfer" />
     </>
   );
 };

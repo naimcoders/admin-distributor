@@ -103,7 +103,12 @@ const Transfer = () => {
           </section>
         </main>
       </Modal>
-      <Confirm selectedNominal={selectedNominal} title="transfer" />
+      <Confirm selectedNominal={selectedNominal} title="transfer">
+        <section className="border-t border-gray-300 py-4">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta,
+          explicabo.
+        </section>
+      </Confirm>
     </>
   );
 };

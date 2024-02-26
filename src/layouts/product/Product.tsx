@@ -38,7 +38,7 @@ const useHook = () => {
     },
     // {
     //   header: <p className="text-center">sub-kategori</p>,
-    //   render: (v) => <Label label={v.categorySub} />,
+    //   render: (v) => <Label label={v.categoryProduct.subCategory} />,
     // },
     // {
     //   header: <p className="text-right">harga (Rp)</p>,

@@ -6,6 +6,10 @@ import Image from "src/components/Image";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { FC, ReactNode, useState } from "react";
+import { Textfield } from "src/components/Textfield";
+import { FieldValues, useForm } from "react-hook-form";
+import { CurrencyIDInput } from "src/helpers";
+import ContentTextfield from "src/components/ContentTextfield";
 
 const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
   return (
@@ -98,7 +102,8 @@ const HistoryContent: React.FC<{
 // Tranfer Modal
 export const TransferModal = () => {
   const { isTransfer, actionIsTransfer } = useActiveModal();
-  const { nominals } = useNominal();
+  const { nominals, selectedNominal } = useNominal();
+  const { control, setValue } = useForm<FieldValues>();
 
   return (
     <Modal
@@ -114,11 +119,32 @@ export const TransferModal = () => {
             <section
               key={v.label}
               onClick={() => v.onClick(v.label)}
-              className="border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-100"
+              className={cx(
+                "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
+                selectedNominal === v.label && "bg-gray-200"
+              )}
             >
               {v.label}
             </section>
           ))}
+
+          <Textfield
+            name="other"
+            defaultValue=""
+            control={control}
+            classNameWrapper="col-span-2"
+            placeholder="masukkan jumlah lainnya"
+            startContent={<ContentTextfield label="Rp" />}
+            rules={{
+              onBlur: (e) =>
+                CurrencyIDInput({
+                  type: "rp",
+                  fieldName: "other",
+                  setValue,
+                  value: e.target.value,
+                }),
+            }}
+          />
         </section>
       </main>
     </Modal>
@@ -132,10 +158,7 @@ interface NominalProps {
 
 const useNominal = () => {
   const [selectedNominal, setSelectedNominal] = useState("");
-
-  const handleNominal = (nominal: string) => {
-    console.log(nominal);
-  };
+  const handleNominal = (nominal: string) => setSelectedNominal(nominal);
 
   const nominals: NominalProps[] = [
     { label: "50k", onClick: handleNominal },
@@ -144,5 +167,5 @@ const useNominal = () => {
     { label: "500k", onClick: handleNominal },
   ];
 
-  return { nominals };
+  return { nominals, selectedNominal };
 };

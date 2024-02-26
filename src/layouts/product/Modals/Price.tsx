@@ -2,6 +2,7 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { FC, Fragment, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
+import ContentTextfield from "src/components/ContentTextfield";
 import { Modal } from "src/components/Modal";
 import { Textfield } from "src/components/Textfield";
 import {
@@ -72,8 +73,7 @@ const PriceModal = (props: PriceProps) => {
     }
 
     props.clearErrors(props.fieldName);
-    console.log(variantTypes);
-    // actionIsPrice();
+    actionIsPrice();
   });
 
   return (
@@ -106,9 +106,7 @@ const PriceModal = (props: PriceProps) => {
               defaultValue=""
               control={control}
               placeholder="harga massal"
-              startContent={
-                <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-              }
+              startContent={<ContentTextfield label="Rp" />}
               errorMessage={handleErrorMessage(errors, "massal")}
               rules={{
                 required: {
@@ -186,10 +184,8 @@ const Field: FC<FieldProps> = ({
         name={fieldName}
         control={control}
         defaultValue=""
+        startContent={<ContentTextfield label="Rp" />}
         classNameWrapper={!variant ? "col-span-3" : "col-span-1"}
-        startContent={
-          <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-        }
         rules={{
           required: {
             value: true,

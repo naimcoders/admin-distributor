@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { DeliveryPrice } from "src/api/product.service";
 import { Button } from "src/components/Button";
+import ContentTextfield from "src/components/ContentTextfield";
 import { Modal } from "src/components/Modal";
 import {
   Textfield,
@@ -16,7 +17,7 @@ import {
 } from "src/helpers";
 import useGeneralStore from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
-import { IconColor, UseForm } from "src/types";
+import { UseForm } from "src/types";
 
 export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
   setValue,
@@ -63,9 +64,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
             postageForm.formState.errors,
             "weight"
           )}
-          endContent={
-            <div className={`text-[${IconColor.zinc}] text-sm`}>g</div>
-          }
+          endContent={<ContentTextfield label="g" />}
           rules={{
             required: { value: true, message: "masukkan berat produk" },
             onBlur: (e) =>
@@ -88,13 +87,11 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
                 key={v.label}
                 {...v}
                 control={postageForm.control}
+                endContent={<ContentTextfield label="cm" />}
                 errorMessage={handleErrorMessage(
                   postageForm.formState.errors,
                   v.name
                 )}
-                endContent={
-                  <div className={`text-[${IconColor.zinc}] text-sm`}>cm</div>
-                }
                 rules={{
                   required: { value: true, message: v.errorMessage! },
                   onBlur: (e) =>
@@ -122,9 +119,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
             placeholder="atur ongkir"
             control={postageForm.control}
             defaultValue=""
-            startContent={
-              <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-            }
+            startContent={<ContentTextfield label="Rp" />}
             errorMessage={handleErrorMessage(
               postageForm.formState.errors,
               "price"
@@ -165,9 +160,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
                   readOnly={v.readOnly}
                   description={v.description}
                   defaultValue={v.defaultValue}
-                  startContent={
-                    <div className={`text-[${IconColor.zinc}] text-sm`}>Rp</div>
-                  }
+                  startContent={<ContentTextfield label="Rp" />}
                 />
               ))}
             </section>

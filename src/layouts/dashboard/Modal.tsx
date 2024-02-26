@@ -5,7 +5,7 @@ import pilipayLogo from "src/assets/images/pilipay.png";
 import Image from "src/components/Image";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 
 const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
   return (
@@ -98,15 +98,51 @@ const HistoryContent: React.FC<{
 // Tranfer Modal
 export const TransferModal = () => {
   const { isTransfer, actionIsTransfer } = useActiveModal();
+  const { nominals } = useNominal();
+
   return (
     <Modal
       isOpen={isTransfer}
       closeModal={actionIsTransfer}
       customHeader={<BeginHeader />}
     >
-      <section className="my-4 border-t border-gray-300">
-        Lorem ipsum dolor sit.
-      </section>
+      <main className="my-4 border-t border-gray-300 py-4 flexcol gap-4">
+        <h2 className="text-center">Transfer Pilipay</h2>
+
+        <section className="grid grid-cols-2 gap-4">
+          {nominals.map((v) => (
+            <section
+              key={v.label}
+              onClick={() => v.onClick(v.label)}
+              className="border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-100"
+            >
+              {v.label}
+            </section>
+          ))}
+        </section>
+      </main>
     </Modal>
   );
+};
+
+interface NominalProps {
+  label: string;
+  onClick: (nominal: string) => void;
+}
+
+const useNominal = () => {
+  const [selectedNominal, setSelectedNominal] = useState("");
+
+  const handleNominal = (nominal: string) => {
+    console.log(nominal);
+  };
+
+  const nominals: NominalProps[] = [
+    { label: "50k", onClick: handleNominal },
+    { label: "100k", onClick: handleNominal },
+    { label: "200k", onClick: handleNominal },
+    { label: "500k", onClick: handleNominal },
+  ];
+
+  return { nominals };
 };

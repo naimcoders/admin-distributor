@@ -12,7 +12,8 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { Columns } from "src/types";
 import { useActiveModal } from "src/stores/modalStore";
 import { Currency } from "src/helpers";
-import { HistoryModal, TransferModal } from "./Modal";
+import History from "./modals/History";
+import Transfer from "./modals/Transfer";
 
 const Dashboard = () => {
   return (
@@ -162,8 +163,8 @@ const PilipayBalance = () => {
         ))}
       </section>
 
-      <HistoryModal />
-      <TransferModal />
+      <History />
+      <Transfer />
     </section>
   );
 };

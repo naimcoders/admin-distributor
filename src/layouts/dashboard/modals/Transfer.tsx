@@ -1,108 +1,16 @@
 import cx from "classnames";
-import transferImg from "src/assets/images/transfer.png";
-import topUpImg from "src/assets/images/top up.png";
-import pilipayLogo from "src/assets/images/pilipay.png";
-import Image from "src/components/Image";
+import { Fragment, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
-import { FC, Fragment, ReactNode, useState } from "react";
+import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
-import { FieldValues, useForm } from "react-hook-form";
-import { CurrencyIDInput } from "src/helpers";
 import ContentTextfield from "src/components/ContentTextfield";
+import { CurrencyIDInput } from "src/helpers";
 import { Button } from "src/components/Button";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
-const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
-  return (
-    <header className="flexcol gap-2">
-      <section>
-        <img
-          src={pilipayLogo}
-          alt="Pilipay"
-          className="w-[10rem]"
-          loading="lazy"
-        />
-      </section>
-      {children}
-    </header>
-  );
-};
-
-export const HistoryModal = () => {
-  const { isHistory, actionIsHistory } = useActiveModal();
-
-  return (
-    <Modal
-      isOpen={isHistory}
-      closeModal={actionIsHistory}
-      customHeader={<BeginHeader />}
-    >
-      <main className="my-4 text-sm">
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Jumat, 22 Des 2023</h2>
-          <HistoryContent
-            label="Top Up"
-            desc="Alfamart"
-            icon={{ src: topUpImg, alt: "Top Up Image" }}
-            total={(100000).toLocaleString("id-ID")}
-          />
-          <HistoryContent
-            label="Transfer"
-            desc="08221134567"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(75000).toLocaleString("id-ID")}
-          />
-        </section>
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Kamis, 21 Des 2023</h2>
-          <HistoryContent
-            label="Transfer"
-            desc="Mandiri"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(50000).toLocaleString("id-ID")}
-          />
-        </section>
-      </main>
-    </Modal>
-  );
-};
-
-const HistoryContent: React.FC<{
-  icon: { src: string; alt: string };
-  label: string;
-  desc: string;
-  total: string;
-}> = (props) => {
-  return (
-    <section className="flex justify-between">
-      <section className="flex items-center gap-3">
-        <Image
-          src={props.icon.src}
-          alt={props.icon.alt}
-          width={25}
-          radius="none"
-        />
-        <section>
-          <h2 className="font-interMedium">{props.label}</h2>
-          <p className="text-xs">{props.desc}</p>
-        </section>
-      </section>
-
-      <h2
-        className={cx(
-          "font-interMedium",
-          props.label === "Top Up" && "text-[#2754bb]"
-        )}
-      >
-        {props.label === "Top Up" ? "+" : "-"}Rp {props.total}
-      </h2>
-    </section>
-  );
-};
-
-// Tranfer Modal
-export const TransferModal = () => {
+const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const { isTransfer, actionIsTransfer } = useActiveModal();
   const { nominals, selectedNominal, setSelectedNominal } = useNominal();
@@ -111,6 +19,13 @@ export const TransferModal = () => {
   const handleOther = () => {
     setSelectedNominal("");
     setIsOtherField((v) => !v);
+  };
+
+  const handleNext = () => {
+    if (!selectedNominal && !isOtherField) {
+      toast.error("Pilih nominal transfer");
+      return;
+    }
   };
 
   return (
@@ -171,13 +86,13 @@ export const TransferModal = () => {
           {isOtherField && (
             <Button
               aria-label="kembali"
-              startContent={<ArrowLeftIcon width={16} />}
               className="w-full"
               variant="flat"
               onClick={handleOther}
             />
           )}
           <Button
+            onClick={handleNext}
             aria-label="selanjutnya"
             className={cx("w-full", !isOtherField && "col-span-2")}
           />
@@ -205,3 +120,5 @@ const useNominal = () => {
 
   return { nominals, selectedNominal, setSelectedNominal };
 };
+
+export default Transfer;

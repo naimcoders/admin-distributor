@@ -7,7 +7,7 @@ import { useActiveModal } from "src/stores/modalStore";
 import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
 import ContentTextfield from "src/components/ContentTextfield";
-import { CurrencyIDInput } from "src/helpers";
+import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { Button } from "src/components/Button";
 import Confirm from "./Confirm";
 
@@ -15,7 +15,11 @@ const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const { isTransfer, actionIsTransfer, actionIsConfirmPay } = useActiveModal();
   const { nominals, selectedNominal, setSelectedNominal } = useNominal();
-  const { control, setValue } = useForm<FieldValues>();
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<FieldValues>();
 
   const handleOther = () => {
     setSelectedNominal("");
@@ -104,9 +108,22 @@ const Transfer = () => {
         </main>
       </Modal>
       <Confirm selectedNominal={selectedNominal} title="transfer">
-        <section className="border-t border-gray-300 py-4">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta,
-          explicabo.
+        <section className="border-t border-b border-gray-300 py-4">
+          <Textfield
+            type="number"
+            defaultValue=""
+            control={control}
+            name="phoneNumber"
+            label="nomor ponsel pilipay"
+            placeholder="masukkan nomor ponsel tujuan"
+            errorMessage={handleErrorMessage(errors, "phoneNumber")}
+            rules={{
+              required: {
+                value: true,
+                message: "masukkan nomor ponsel tujuan",
+              },
+            }}
+          />
         </section>
       </Confirm>
     </>

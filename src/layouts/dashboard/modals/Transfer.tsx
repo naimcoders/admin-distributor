@@ -10,10 +10,16 @@ import ContentTextfield from "src/components/ContentTextfield";
 import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { Button } from "src/components/Button";
 import Confirm from "./Confirm";
+import PinVerification from "./PinVerification";
 
 const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
-  const { isTransfer, actionIsTransfer, actionIsConfirmPay } = useActiveModal();
+  const {
+    isTransfer,
+    actionIsTransfer,
+    actionIsConfirmPay,
+    actionIsPinVerification,
+  } = useActiveModal();
   const {
     nominals,
     selectedNominal,
@@ -44,6 +50,11 @@ const Transfer = () => {
   const onBack = () => {
     actionIsConfirmPay();
     setTimeout(actionIsTransfer, 500);
+  };
+
+  const onSubmit = () => {
+    actionIsConfirmPay();
+    setTimeout(actionIsPinVerification, 500);
   };
 
   return (
@@ -161,8 +172,10 @@ const Transfer = () => {
           <p>Rp{parseSelectedNominal()}</p>
         </section>
 
-        <Button aria-label="konfirmasi" className="w-full" />
+        <Button aria-label="konfirmasi" className="w-full" onClick={onSubmit} />
       </Confirm>
+
+      <PinVerification />
     </>
   );
 };

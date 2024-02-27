@@ -35,9 +35,13 @@ interface Modal {
   setIsWithdraw: (v: boolean) => void;
   isConfirmPay: boolean;
   setIsConfirmPay: (v: boolean) => void;
+  isPinVerification: boolean;
+  setIsPinVerification: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
+  isPinVerification: false,
+  setIsPinVerification: (v) => set({ isPinVerification: v }),
   isPrice: false,
   setIsPrice: (v) => set({ isPrice: v }),
   isBankName: false,
@@ -112,6 +116,8 @@ export const useActiveModal = () => {
     setIsWithdraw,
     isConfirmPay,
     setIsConfirmPay,
+    isPinVerification,
+    setIsPinVerification,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -131,6 +137,8 @@ export const useActiveModal = () => {
   const actionIsWithdraw = () => setIsWithdraw(!isWithdraw);
   const actionIsPrice = () => setIsPrice(!isPrice);
   const actionIsConfirmPay = () => setIsConfirmPay(!isConfirmPay);
+  const actionIsPinVerification = () =>
+    setIsPinVerification(!isPinVerification);
 
   return {
     isConfirmPay,
@@ -167,5 +175,7 @@ export const useActiveModal = () => {
     actionIsWithdraw,
     isPrice,
     actionIsPrice,
+    actionIsPinVerification,
+    isPinVerification,
   };
 };

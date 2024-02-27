@@ -35,11 +35,11 @@ const Confirm: FC<ConfirmProps> = ({
 };
 
 interface HeaderProps {
-  title: "top up" | "transfer";
+  title: string;
   onBack: () => void;
 }
 
-const ConfirmHeader: FC<HeaderProps> = ({ title, onBack }) => {
+export const ConfirmHeader: FC<HeaderProps> = ({ title, onBack }) => {
   return (
     <header className="flex border-b border-gray-300 pb-4 mb-4">
       <nav
@@ -50,7 +50,7 @@ const ConfirmHeader: FC<HeaderProps> = ({ title, onBack }) => {
         <ChevronLeftIcon width={18} />
       </nav>
       <h1 className="capitalize text-center w-full text-lg font-semibold">
-        konfirmasi {title}
+        {title}
       </h1>
     </header>
   );

@@ -108,23 +108,24 @@ const Transfer = () => {
         </main>
       </Modal>
       <Confirm selectedNominal={selectedNominal} title="transfer">
-        <section className="border-t border-b border-gray-300 py-4">
-          <Textfield
-            type="number"
-            defaultValue=""
-            control={control}
-            name="phoneNumber"
-            label="nomor ponsel pilipay"
-            placeholder="masukkan nomor ponsel tujuan"
-            errorMessage={handleErrorMessage(errors, "phoneNumber")}
-            rules={{
-              required: {
-                value: true,
-                message: "masukkan nomor ponsel tujuan",
-              },
-            }}
-          />
-        </section>
+        <Textfield
+          type="number"
+          defaultValue=""
+          control={control}
+          name="phoneNumber"
+          label="nomor ponsel pilipay"
+          placeholder="masukkan nomor ponsel tujuan"
+          errorMessage={handleErrorMessage(errors, "phoneNumber")}
+          classNameWrapper="border-t border-gray-300 py-4"
+          rules={{
+            required: {
+              value: true,
+              message: "masukkan nomor ponsel tujuan",
+            },
+          }}
+        />
+
+        {/* summary */}
       </Confirm>
     </>
   );

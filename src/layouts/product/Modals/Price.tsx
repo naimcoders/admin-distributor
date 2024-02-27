@@ -21,7 +21,7 @@ interface PriceProps extends Pick<UseForm, "setValue" | "clearErrors"> {
 
 const PriceModal = (props: PriceProps) => {
   const [isMassal, setIsMassal] = useState(false);
-  const { isPrice, actionIsPrice } = useActiveModal();
+  const { isPrice, actionIsPrice, actionIsVariant } = useActiveModal();
   const {
     control,
     setValue,
@@ -75,6 +75,11 @@ const PriceModal = (props: PriceProps) => {
     props.clearErrors(props.fieldName);
     actionIsPrice();
   });
+
+  const handleBack = () => {
+    actionIsPrice();
+    setTimeout(actionIsVariant, 500);
+  };
 
   return (
     <Modal isOpen={isPrice} closeModal={actionIsPrice}>
@@ -155,11 +160,19 @@ const PriceModal = (props: PriceProps) => {
             </Fragment>
           ))}
 
-        <Button
-          aria-label="simpan"
-          className="mx-auto mt-4"
-          onClick={handleSubmitPrice}
-        />
+        <section className="flex gap-4 mt-4">
+          <Button
+            variant="flat"
+            aria-label="kembali"
+            className="w-full"
+            onClick={handleBack}
+          />
+          <Button
+            aria-label="simpan"
+            className="w-full"
+            onClick={handleSubmitPrice}
+          />
+        </section>
       </main>
     </Modal>
   );

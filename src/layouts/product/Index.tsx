@@ -1,10 +1,10 @@
+import Error from "src/components/Error";
 import Tabs, { ITabs } from "src/components/Tabs";
+import CategorySub from "./sub-category/Index";
 import SubProduct from "./Product";
 import { Button } from "src/components/Button";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import CategorySub from "./sub-category/Index";
 import { useProduct } from "src/api/product.service";
-import Error from "src/components/Error";
 import { detailNavigate } from "src/helpers";
 
 const Product = () => {

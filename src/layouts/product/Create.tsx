@@ -4,6 +4,8 @@ import cx from "classnames";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
+import PriceModal from "./Modals/Price";
+import useGeneralStore from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -25,7 +27,6 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 import { Button } from "src/components/Button";
-import useGeneralStore from "src/stores/generalStore";
 import { DangerousModal } from "./Modals/Dangerous";
 import { PostageModal } from "./Modals/Postage";
 import { ConditionModal } from "./Modals/Condition";
@@ -34,8 +35,8 @@ import { VariantModal } from "./Modals/Variant";
 import { useAuth } from "src/firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
-import PriceModal from "./Modals/Price";
 import { useProduct } from "src/api/product.service";
+import { useNavigate } from "react-router-dom";
 
 const Create = () => {
   const {
@@ -67,6 +68,7 @@ const Create = () => {
   const variantTypes = useGeneralStore((v) => v.variantTypes);
 
   const { mutateAsync, isPending } = useProduct().create();
+  const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (e) => {
     const productUrl: string[] = [];
@@ -91,15 +93,15 @@ const Create = () => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
-      const obj = {
-        category: { categoryId },
-        deliveryPrice,
-        description: e.description,
-        isDangerous,
-        name: e.productName,
-        imageUrl: productUrl,
-        variant: variantTypes,
-      };
+      // const obj = {
+      //   category: { categoryId },
+      //   deliveryPrice,
+      //   description: e.description,
+      //   isDangerous,
+      //   name: e.productName,
+      //   imageUrl: productUrl,
+      //   variant: variantTypes,
+      // };
 
       mutateAsync({
         data: {
@@ -111,19 +113,21 @@ const Create = () => {
           name: e.productName,
           price: {
             expiredAt: 0,
-            price: 10000,
+            price: 25000,
             priceDiscount: 0,
             startAt: 0,
           },
           variant: [
             {
-              name: "Hitam",
-              price: 10000,
-              variantColorProduct: [{ name: "S" }],
+              name: "Putih",
+              price: 25000,
+              variantColorProduct: [{ name: "S" }, { name: "M" }],
             },
           ],
         },
       });
+
+      navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

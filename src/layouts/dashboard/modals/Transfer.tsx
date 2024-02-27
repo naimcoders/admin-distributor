@@ -14,7 +14,12 @@ import Confirm from "./Confirm";
 const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const { isTransfer, actionIsTransfer, actionIsConfirmPay } = useActiveModal();
-  const { nominals, selectedNominal, setSelectedNominal } = useNominal();
+  const {
+    nominals,
+    selectedNominal,
+    setSelectedNominal,
+    parseSelectedNominal,
+  } = useNominal();
   const {
     control,
     setValue,
@@ -53,7 +58,7 @@ const Transfer = () => {
                   key={v.label}
                   onClick={() => v.onClick(v.label)}
                   className={cx(
-                    "border border-gray-400 text-center py-2 rounded-xl cursor-pointer hover:bg-gray-200",
+                    "border border-gray-400 text-center py-2 rounded-xl cursor-pointer",
                     selectedNominal === v.label && "bg-gray-200"
                   )}
                 >
@@ -116,7 +121,7 @@ const Transfer = () => {
           label="nomor ponsel pilipay"
           placeholder="masukkan nomor ponsel tujuan"
           errorMessage={handleErrorMessage(errors, "phoneNumber")}
-          classNameWrapper="border-t border-gray-300 py-4"
+          classNameWrapper="border-t border-gray-300 pt-4 pb-2"
           rules={{
             required: {
               value: true,
@@ -125,7 +130,27 @@ const Transfer = () => {
           }}
         />
 
-        {/* summary */}
+        <section className="flexcol gap-2 border-t border-gray-300 pt-4">
+          <h2>Ringkasan Transaksi</h2>
+
+          <section className="text-sm">
+            <section className="flex justify-between">
+              <h2>Jumlah Transfer</h2>
+              <p>Rp{parseSelectedNominal()}.000</p>
+            </section>
+            <section className="flex justify-between">
+              <h2>Biaya Transfer</h2>
+              <p>Rp0</p>
+            </section>
+          </section>
+        </section>
+
+        <section className="border-t border-gray-300 py-4 flex justify-between font-semibold">
+          <h2>Total</h2>
+          <p>Rp{parseSelectedNominal()}.000</p>
+        </section>
+
+        <Button aria-label="konfirmasi" className="w-full" />
       </Confirm>
     </>
   );
@@ -138,7 +163,10 @@ interface NominalProps {
 
 const useNominal = () => {
   const [selectedNominal, setSelectedNominal] = useState("");
-  const handleNominal = (nominal: string) => setSelectedNominal(nominal);
+  const handleNominal = (nominal: string) => {
+    if (nominal === selectedNominal) setSelectedNominal("");
+    else setSelectedNominal(nominal);
+  };
 
   const nominals: NominalProps[] = [
     { label: "50k", onClick: handleNominal },
@@ -147,7 +175,16 @@ const useNominal = () => {
     { label: "500k", onClick: handleNominal },
   ];
 
-  return { nominals, selectedNominal, setSelectedNominal };
+  const parseSelectedNominal = () => {
+    return selectedNominal.split("k")[0];
+  };
+
+  return {
+    nominals,
+    selectedNominal,
+    setSelectedNominal,
+    parseSelectedNominal,
+  };
 };
 
 export default Transfer;

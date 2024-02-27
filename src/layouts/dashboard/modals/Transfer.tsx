@@ -41,6 +41,11 @@ const Transfer = () => {
     setTimeout(actionIsConfirmPay, 500);
   };
 
+  const onBack = () => {
+    actionIsConfirmPay();
+    setTimeout(actionIsTransfer, 500);
+  };
+
   return (
     <>
       <Modal
@@ -112,7 +117,13 @@ const Transfer = () => {
           </section>
         </main>
       </Modal>
-      <Confirm selectedNominal={selectedNominal} title="transfer">
+
+      {/* transfer confirm */}
+      <Confirm
+        selectedNominal={parseSelectedNominal()}
+        title="transfer"
+        onBack={onBack}
+      >
         <Textfield
           type="number"
           defaultValue=""
@@ -136,7 +147,7 @@ const Transfer = () => {
           <section className="text-sm">
             <section className="flex justify-between">
               <h2>Jumlah Transfer</h2>
-              <p>Rp{parseSelectedNominal()}.000</p>
+              <p>Rp{parseSelectedNominal()}</p>
             </section>
             <section className="flex justify-between">
               <h2>Biaya Transfer</h2>
@@ -147,7 +158,7 @@ const Transfer = () => {
 
         <section className="border-t border-gray-300 py-4 flex justify-between font-semibold">
           <h2>Total</h2>
-          <p>Rp{parseSelectedNominal()}.000</p>
+          <p>Rp{parseSelectedNominal()}</p>
         </section>
 
         <Button aria-label="konfirmasi" className="w-full" />
@@ -175,8 +186,9 @@ const useNominal = () => {
     { label: "500k", onClick: handleNominal },
   ];
 
-  const parseSelectedNominal = () => {
-    return selectedNominal.split("k")[0];
+  const parseSelectedNominal = (): string => {
+    const parseit = selectedNominal.split("k")[0];
+    return `${parseit}.000`;
   };
 
   return {

@@ -12,6 +12,8 @@ const SubProduct = () => {
   const { data, isLoading, page, isNext, setSearch } = useProduct().find();
   useSetSearch(watch("search"), setSearch);
 
+  // console.log(data?.items);
+
   return (
     <TableWithSearchAndTabs
       columns={columns}

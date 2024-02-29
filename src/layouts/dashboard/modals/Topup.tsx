@@ -5,23 +5,17 @@ import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
-import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import { CurrencyIDInput } from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
-import PinVerification from "./PinVerification";
 import Confirm from "./Confirm";
 import cx from "classnames";
+import { useNominal } from "./Transfer";
 
-const Transfer = () => {
+const Topup = () => {
   const [isOtherField, setIsOtherField] = useState(false);
-
-  const {
-    isTransfer,
-    actionIsTransfer,
-    actionIsConfirmTransfer,
-    actionIsPinVerification,
-    isConfirmTransfer,
-  } = useActiveModal();
+  const { isTopUp, actionIsTopUp, actionIsConfirmTopUp, isConfirmTopup } =
+    useActiveModal();
 
   const {
     nominals,
@@ -30,11 +24,7 @@ const Transfer = () => {
     parseSelectedNominal,
   } = useNominal();
 
-  const {
-    control,
-    setValue,
-    formState: { errors },
-  } = useForm<FieldValues>();
+  const { control, setValue } = useForm<FieldValues>();
 
   const handleOther = () => {
     setSelectedNominal("");
@@ -43,33 +33,28 @@ const Transfer = () => {
 
   const handleNext = () => {
     if (!selectedNominal && !isOtherField) {
-      toast.error("Pilih nominal transfer");
+      toast.error("Pilih nominal top up");
       return;
     }
 
-    actionIsTransfer();
-    setTimeout(actionIsConfirmTransfer, 500);
+    actionIsTopUp();
+    setTimeout(actionIsConfirmTopUp, 500);
   };
 
   const onBack = () => {
-    actionIsConfirmTransfer();
-    setTimeout(actionIsTransfer, 500);
-  };
-
-  const onSubmit = () => {
-    actionIsConfirmTransfer();
-    setTimeout(actionIsPinVerification, 500);
+    actionIsConfirmTopUp();
+    setTimeout(actionIsTopUp, 500);
   };
 
   return (
     <>
       <Modal
-        isOpen={isTransfer}
-        closeModal={actionIsTransfer}
+        isOpen={isTopUp}
+        closeModal={actionIsTopUp}
         customHeader={<BeginHeader />}
       >
         <main className="my-4 border-t border-gray-300 pt-4 flexcol gap-4">
-          <h2 className="text-center">Transfer Pilipay</h2>
+          <h2 className="text-center">Top Up Pilipay</h2>
 
           {!isOtherField && (
             <section className="grid grid-cols-2 gap-4">
@@ -134,87 +119,16 @@ const Transfer = () => {
       </Modal>
 
       <Confirm
+        title="top up"
         onBack={onBack}
-        title="transfer"
-        isModal={isConfirmTransfer}
-        actionModal={actionIsConfirmTransfer}
+        isModal={isConfirmTopup}
+        actionModal={actionIsConfirmTopUp}
         selectedNominal={parseSelectedNominal()}
       >
-        <Textfield
-          type="number"
-          defaultValue=""
-          control={control}
-          name="phoneNumber"
-          label="nomor ponsel pilipay"
-          placeholder="masukkan nomor ponsel tujuan"
-          errorMessage={handleErrorMessage(errors, "phoneNumber")}
-          classNameWrapper="border-t border-gray-300 pt-4 pb-2"
-          rules={{
-            required: {
-              value: true,
-              message: "masukkan nomor ponsel tujuan",
-            },
-          }}
-        />
-
-        <section className="flexcol gap-2 border-t border-gray-300 pt-4">
-          <h2>Ringkasan Transaksi</h2>
-
-          <section className="text-sm">
-            <section className="flex justify-between">
-              <h2>Jumlah Transfer</h2>
-              <p>Rp{parseSelectedNominal()}</p>
-            </section>
-            <section className="flex justify-between">
-              <h2>Biaya Transfer</h2>
-              <p>Rp0</p>
-            </section>
-          </section>
-        </section>
-
-        <section className="border-t border-gray-300 py-4 flex justify-between font-semibold">
-          <h2>Total</h2>
-          <p>Rp{parseSelectedNominal()}</p>
-        </section>
-
-        <Button aria-label="konfirmasi" className="w-full" onClick={onSubmit} />
+        Lorem ipsum dolor sit amet.
       </Confirm>
-
-      <PinVerification />
     </>
   );
 };
 
-interface NominalProps {
-  label: string;
-  onClick: (nominal: string) => void;
-}
-
-export const useNominal = () => {
-  const [selectedNominal, setSelectedNominal] = useState("");
-  const handleNominal = (nominal: string) => {
-    if (nominal === selectedNominal) setSelectedNominal("");
-    else setSelectedNominal(nominal);
-  };
-
-  const nominals: NominalProps[] = [
-    { label: "50k", onClick: handleNominal },
-    { label: "100k", onClick: handleNominal },
-    { label: "200k", onClick: handleNominal },
-    { label: "500k", onClick: handleNominal },
-  ];
-
-  const parseSelectedNominal = (): string => {
-    const parseit = selectedNominal.split("k")[0];
-    return `${parseit}.000`;
-  };
-
-  return {
-    nominals,
-    selectedNominal,
-    setSelectedNominal,
-    parseSelectedNominal,
-  };
-};
-
-export default Transfer;
+export default Topup;

@@ -33,8 +33,10 @@ interface Modal {
   setIsTopUp: (v: boolean) => void;
   isWithdraw: boolean;
   setIsWithdraw: (v: boolean) => void;
-  isConfirmPay: boolean;
-  setIsConfirmPay: (v: boolean) => void;
+  isConfirmTransfer: boolean;
+  setIsConfirmTransfer: (v: boolean) => void;
+  isConfirmTopup: boolean;
+  setIsConfirmTopup: (v: boolean) => void;
   isPinVerification: boolean;
   setIsPinVerification: (v: boolean) => void;
 }
@@ -74,8 +76,10 @@ const useModalStore = create<Modal>((set) => ({
   setIsTopUp: (v) => set({ isTopUp: v }),
   isWithdraw: false,
   setIsWithdraw: (v) => set({ isWithdraw: v }),
-  isConfirmPay: false,
-  setIsConfirmPay: (v) => set({ isConfirmPay: v }),
+  isConfirmTransfer: false,
+  setIsConfirmTransfer: (v) => set({ isConfirmTransfer: v }),
+  isConfirmTopup: false,
+  setIsConfirmTopup: (v) => set({ isConfirmTopup: v }),
 }));
 
 export default useModalStore;
@@ -114,10 +118,12 @@ export const useActiveModal = () => {
     setIsTopUp,
     isWithdraw,
     setIsWithdraw,
-    isConfirmPay,
-    setIsConfirmPay,
+    isConfirmTransfer,
+    setIsConfirmTransfer,
     isPinVerification,
     setIsPinVerification,
+    isConfirmTopup,
+    setIsConfirmTopup,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -136,13 +142,17 @@ export const useActiveModal = () => {
   const actionIsTopUp = () => setIsTopUp(!isTopUp);
   const actionIsWithdraw = () => setIsWithdraw(!isWithdraw);
   const actionIsPrice = () => setIsPrice(!isPrice);
-  const actionIsConfirmPay = () => setIsConfirmPay(!isConfirmPay);
+  const actionIsConfirmTransfer = () =>
+    setIsConfirmTransfer(!isConfirmTransfer);
+  const actionIsConfirmTopUp = () => setIsConfirmTopup(!isConfirmTopup);
   const actionIsPinVerification = () =>
     setIsPinVerification(!isPinVerification);
 
   return {
-    isConfirmPay,
-    actionIsConfirmPay,
+    isConfirmTopup,
+    actionIsConfirmTopUp,
+    isConfirmTransfer,
+    actionIsConfirmTransfer,
     isBankName,
     actionIsBankName,
     isCategory,

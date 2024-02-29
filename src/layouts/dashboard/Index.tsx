@@ -14,6 +14,7 @@ import { useActiveModal } from "src/stores/modalStore";
 import { Currency } from "src/helpers";
 import History from "./modals/History";
 import Transfer from "./modals/Transfer";
+import Topup from "./modals/Topup";
 
 const Dashboard = () => {
   return (
@@ -132,11 +133,11 @@ const PilipayTransaction = () => {
 };
 
 const PilipayBalance = () => {
-  const { actionIsHistory, actionIsTransfer } = useActiveModal();
+  const { actionIsHistory, actionIsTransfer, actionIsTopUp } = useActiveModal();
 
   const payments: { label: string; src: string; onClick?: () => void }[] = [
     { label: "riwayat", src: historyImg, onClick: actionIsHistory },
-    { label: "top up", src: topUpImg },
+    { label: "top up", src: topUpImg, onClick: actionIsTopUp },
     { label: "transfer", src: transferImg, onClick: actionIsTransfer },
     { label: "withdraw", src: withdrawLogo },
   ];
@@ -165,6 +166,7 @@ const PilipayBalance = () => {
 
       <History />
       <Transfer />
+      <Topup />
     </section>
   );
 };

@@ -7,7 +7,7 @@ import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
 import useGeneralStore from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File } from "src/components/File";
 import {
@@ -37,6 +37,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Create = () => {
   const {
@@ -59,19 +60,25 @@ const Create = () => {
   } = useUploadProduct();
 
   const [categoryId, setCategoryId] = useState("");
-  const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+  const [isErrorroductImg, setIsErrorProductImg] = useState(false);
 
   const findAllCategories = useCategory().findAll();
-  const { fields } = useFields();
-
-  const { user } = useAuth();
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-
   const { mutateAsync, isPending } = useProduct().create();
+  const { fields } = useFields();
+  const { user } = useAuth();
+
+  const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (e) => {
     const productUrl: string[] = [];
+
+    if (photos.length < 1) {
+      toast.error("Tambah foto produk");
+      return;
+    }
+
     photos.forEach((product) => {
       const fileType = getFileType(product.file.type);
       const fileName = `${product.file.lastModified}.${fileType}`;
@@ -140,59 +147,64 @@ const Create = () => {
         <Error error={findAllCategories.error} />
       ) : (
         <main className="flexcol gap-5 lg:gap-8">
-          <header className="flex gap-6 items-center flex-wrap">
-            {photos.map((v) => (
-              <Image
-                src={v.src}
-                alt="Product"
-                key={v.src}
-                className={cx(
-                  "w-[10rem] object-cover rounded-md",
-                  v.size === "1:1" ? "aspect-square" : "aspect-3/4"
-                )}
-                actions={[
-                  {
-                    src: <TrashIcon width={16} />,
-                    onClick: () => setPhotos(photos.filter((e) => e !== v)),
-                  },
-                ]}
-              />
-            ))}
+          <header className="flexcol gap-4">
+            <section className="flex gap-6 items-center flex-wrap">
+              {photos.map((v) => (
+                <Image
+                  src={v.src}
+                  alt="Product"
+                  key={v.src}
+                  className={cx(
+                    "w-[10rem] object-cover rounded-md",
+                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
+                  )}
+                  actions={[
+                    {
+                      src: <TrashIcon width={16} />,
+                      onClick: () => setPhotos(photos.filter((e) => e !== v)),
+                    },
+                  ]}
+                />
+              ))}
+              <Popover placement="right" isOpen={isPopOver}>
+                <PopoverTrigger>
+                  <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
+                    Tambah Foto
+                  </Btn>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <section className="flex gap-4">
+                    {["1:1", "3:4"].map((v) => (
+                      <File
+                        key={v}
+                        control={control}
+                        onClick={() => {
+                          handleProductSize(v);
+                          onClick();
+                        }}
+                        onChange={onChange}
+                        name="productPhoto"
+                        ref={productPhotoRef}
+                        placeholder={v}
+                        className="w-[5rem] cursor-pointer"
+                        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                        startContent={
+                          <img
+                            src={v === "1:1" ? square : rectangle}
+                            alt="square icon"
+                            className="w-4 cursor-pointer"
+                          />
+                        }
+                      />
+                    ))}
+                  </section>
+                </PopoverContent>
+              </Popover>
+            </section>
 
-            <Popover placement="right" isOpen={isPopOver}>
-              <PopoverTrigger>
-                <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
-                  Tambah Foto
-                </Btn>
-              </PopoverTrigger>
-              <PopoverContent>
-                <section className="flex gap-4">
-                  {["1:1", "3:4"].map((v) => (
-                    <File
-                      key={v}
-                      control={control}
-                      onClick={() => {
-                        handleProductSize(v);
-                        onClick();
-                      }}
-                      onChange={onChange}
-                      name="productPhoto"
-                      ref={productPhotoRef}
-                      placeholder={v}
-                      className="w-[5rem] cursor-pointer"
-                      readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                      startContent={
-                        <img
-                          src={v === "1:1" ? square : rectangle}
-                          alt="square icon"
-                          className="w-4 cursor-pointer"
-                        />
-                      }
-                    />
-                  ))}
-                </section>
-              </PopoverContent>
-            </Popover>
+            {/* {isErrorroductImg && (
+              <p className="text-red-500">Upload foto produk</p>
+            )} */}
           </header>
 
           <GridInput className="grid grid-cols-3">

@@ -7,7 +7,7 @@ import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
 import useGeneralStore from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File } from "src/components/File";
 import {
@@ -60,7 +60,6 @@ const Create = () => {
   } = useUploadProduct();
 
   const [categoryId, setCategoryId] = useState("");
-  const [isErrorroductImg, setIsErrorProductImg] = useState(false);
 
   const findAllCategories = useCategory().findAll();
   const { mutateAsync, isPending } = useProduct().create();

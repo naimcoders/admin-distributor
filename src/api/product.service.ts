@@ -49,6 +49,7 @@ export interface SubCategoryProduct {
 }
 
 export interface DeliveryPrice {
+  id: string;
   weight: number;
   wide: number;
   height: number;
@@ -218,26 +219,30 @@ export interface VariantColorProduct {
   variantProductId: string;
 }
 
-export interface CreateProductProps
-  extends Pick<
-    Product,
-    "deliveryPrice" | "description" | "isDangerous" | "name"
-  > {
+interface CreateProductProps {
   category: {
     categoryId: string;
   };
+  deliveryPrice: DeliveryPrice;
+  description: string;
   imageUrl: string[];
+  isDangerous: boolean;
+  name: string;
   price: {
-    expiredAt: number;
+    id: string;
     price: number;
     priceDiscount: number;
+    fee: number;
     startAt: number;
+    expiredAt: number;
   };
   variant: {
+    imageUrl?: string;
     name: string;
-    price: number;
     variantColorProduct: {
       name: string;
+      imageUrl?: string;
+      price?: number;
     }[];
   }[];
 }

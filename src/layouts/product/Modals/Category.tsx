@@ -21,19 +21,17 @@ export const ModalCategory: FC<ModalCategoryProps> = ({
   );
 
   return (
-    <>
-      <ListingDataModal
-        title="kategori"
-        keyField="category"
-        data={sortCategories}
-        setValue={setValue}
-        clearErrors={clearErrors}
-        setId={setCategoryId}
-        modal={{
-          open: isCategory,
-          close: actionIsCategory,
-        }}
-      />
-    </>
+    <ListingDataModal
+      title="kategori"
+      keyField="category"
+      data={sortCategories}
+      setValue={setValue}
+      clearErrors={clearErrors}
+      setId={setCategoryId}
+      modal={{
+        open: isCategory,
+        close: actionIsCategory,
+      }}
+    />
   );
 };

@@ -118,18 +118,14 @@ const Create = () => {
           isDangerous,
           name: e.productName,
           price: {
+            id: "",
+            fee: 0,
             expiredAt: 0,
             price: 25000,
             priceDiscount: 0,
             startAt: 0,
           },
-          variant: [
-            {
-              name: "Putih",
-              price: 25000,
-              variantColorProduct: [{ name: "S" }, { name: "M" }],
-            },
-          ],
+          variant: variantTypes,
         },
       });
 

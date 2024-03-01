@@ -24,17 +24,18 @@ interface PostageProps {
 interface VariantSizeProps {
   name: string;
   price?: number;
+  imageUrl?: string;
 }
 
 export interface VariantTypeProps {
-  name?: string;
+  name: string;
   imageUrl?: string;
-  variantColorProduct?: VariantSizeProps[];
+  variantColorProduct: VariantSizeProps[];
 }
 
 interface General {
-  deliveryPrice: DeliveryPrice | object;
-  setDeliveryPrice: <T extends object>(v: T) => void;
+  deliveryPrice: DeliveryPrice;
+  setDeliveryPrice: (v: DeliveryPrice) => void;
 
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;
@@ -65,6 +66,7 @@ interface General {
 
 const useGeneralStore = create<General>((set) => ({
   deliveryPrice: {
+    id: "",
     height: 0,
     isCourierInternal: true,
     length: 0,

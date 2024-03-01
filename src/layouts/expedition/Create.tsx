@@ -14,7 +14,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { GridInput, WrapperInput } from "../Index";
+import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
@@ -37,7 +37,7 @@ const Create = () => {
   const { actionIsCoordinate } = useActiveModal();
 
   return (
-    <WrapperInput>
+    <main className="flexcol gap-5 lg:gap-8">
       <GridInput>
         {fields.map((v, idx) => (
           <Fragment key={idx}>
@@ -133,7 +133,7 @@ const Create = () => {
       </div>
 
       <CoordinateModal />
-    </WrapperInput>
+    </main>
   );
 };
 

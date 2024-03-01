@@ -17,7 +17,7 @@ import {
 } from "src/components/Textfield";
 import { CurrencyIDInput, getFileType, handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
-import { GridInput, WrapperInput } from "../Index";
+import { GridInput } from "../Index";
 import { useCategory } from "src/api/category.service";
 import { useActiveModal } from "src/stores/modalStore";
 import {
@@ -139,7 +139,7 @@ const Create = () => {
       {findAllCategories.error ? (
         <Error error={findAllCategories.error} />
       ) : (
-        <WrapperInput>
+        <main className="flexcol gap-5 lg:gap-8">
           <header className="flex gap-6 items-center flex-wrap">
             {photos.map((v) => (
               <Image
@@ -270,7 +270,7 @@ const Create = () => {
             clearErrors={clearErrors}
           />
           {/* <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} /> */}
-        </WrapperInput>
+        </main>
       )}
     </>
   );

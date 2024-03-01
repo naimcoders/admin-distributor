@@ -3,7 +3,7 @@ import Image from "src/components/Image";
 import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { FC, HTMLAttributes, useEffect, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
@@ -109,12 +109,6 @@ export const GridInput: React.FC<
       {children}
     </section>
   );
-};
-
-export const WrapperInput: FC<
-  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
-> = ({ children, className }) => {
-  return <main className={cx("flexcol gap-8", className)}>{children}</main>;
 };
 
 export default Layout;

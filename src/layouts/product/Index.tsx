@@ -16,7 +16,7 @@ const Product = () => {
       {error ? (
         <Error error={error} />
       ) : (
-        <div className="relative">
+        <main className="relative">
           <Tabs items={tabs} color="primary" />
           <Button
             aria-label="produk"
@@ -24,7 +24,7 @@ const Product = () => {
             className="absolute top-0 left-[300px]"
             onClick={() => onNav("tambah")}
           />
-        </div>
+        </main>
       )}
     </>
   );

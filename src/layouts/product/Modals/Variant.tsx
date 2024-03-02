@@ -262,49 +262,6 @@ export const VariantModal: FC<
             </p>
           ) : (
             <section className="flexcol gap-2">
-              {/* <section className="flex gap-3 flex-wrap">
-                {variantSize
-                  .filter((f) => f.label === labelAndImage?.label)
-                  .map((v) =>
-                    v.size?.map((s, idx) => (
-                      <section className="relative" key={idx}>
-                        <Btn
-                          size="sm"
-                          variant="light"
-                          className="w-[6rem] border border-gray-400 text-gray-500"
-                        >
-                          {s.name}
-                        </Btn>
-                        {isDeleteSize && (
-                          <XCircleIcon
-                            width={20}
-                            color={IconColor.red}
-                            className="absolute -top-2 -right-2 cursor-pointer"
-                            title="hapus"
-                            onClick={() => handleDeleteSize(s.name ?? "")}
-                          />
-                        )}
-                      </section>
-                    ))
-                  )}
-
-                <Button
-                  aria-label={!isAddSize ? "tambah" : "batal"}
-                  endContent={
-                    !isAddSize ? (
-                      <PlusIcon width={16} />
-                    ) : (
-                      <XMarkIcon width={16} />
-                    )
-                  }
-                  className="w-[6rem] border border-gray-400 text-gray-500"
-                  color="default"
-                  variant="light"
-                  size="sm"
-                  onClick={handleAddSize}
-                />
-              </section> */}
-
               <section className="flex gap-3 flex-wrap">
                 {size
                   .filter((f) => f.label === labelAndImage?.label)
@@ -451,7 +408,11 @@ const useVariant = () => {
   const handleSubmitType = formType.handleSubmit(async (e) => {
     try {
       const type = e.type;
-      setVariantType([...variantTypes, { name: type }]);
+      setVariantType([
+        ...variantTypes,
+        { name: type, variantColorProduct: [] },
+      ]);
+
       formType.setFocus("type");
     } catch (e) {
       const error = e as Error;
@@ -524,7 +485,10 @@ const useVariant = () => {
   const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const type = formType.getValues();
-      setVariantType([...variantTypes, { name: type.type }]);
+      setVariantType([
+        ...variantTypes,
+        { name: type.type, variantColorProduct: [] },
+      ]);
 
       formType.setFocus("type");
       formType.resetField("type");

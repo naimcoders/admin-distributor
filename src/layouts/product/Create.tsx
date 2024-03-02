@@ -72,6 +72,7 @@ const Create = () => {
 
   const onSubmit = handleSubmit(async (e) => {
     const productUrl: string[] = [];
+    const variantImage: string[] = [];
 
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
@@ -96,6 +97,12 @@ const Create = () => {
       );
     });
 
+    const mapByImageUrlVariant = variantTypes.map((e) => {
+      return e.imageUrl;
+    });
+
+    console.log(mapByImageUrlVariant);
+
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
@@ -108,28 +115,25 @@ const Create = () => {
       //   imageUrl: productUrl,
       //   variant: variantTypes,
       // };
-
-      mutateAsync({
-        data: {
-          category: { categoryId },
-          deliveryPrice,
-          description: e.description,
-          imageUrl: productUrl,
-          isDangerous,
-          name: e.productName,
-          price: {
-            id: "",
-            fee: 0,
-            expiredAt: 0,
-            price: 25000,
-            priceDiscount: 0,
-            startAt: 0,
-          },
-          variant: variantTypes,
-        },
-      });
-
-      navigate(-1);
+      // mutateAsync({
+      //   data: {
+      //     category: { categoryId },
+      //     deliveryPrice,
+      //     description: e.description,
+      //     imageUrl: productUrl,
+      //     isDangerous,
+      //     name: e.productName,
+      //     price: {
+      //       id: "",
+      //       fee: 0,
+      //       expiredAt: 0,
+      //       price: 25000,
+      //       priceDiscount: 0,
+      //       startAt: 0,
+      //     },
+      //     variant: variantTypes,
+      //   },
+      // });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

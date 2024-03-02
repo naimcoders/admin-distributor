@@ -66,37 +66,34 @@ export const VariantModal: FC<
   } = useVariant();
 
   const [labelProduct, setLabelProduct] = useState("");
-
   const { productPhotoRef } = useUploadProduct();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
-    const blob = URL.createObjectURL(files);
 
+    const blob = URL.createObjectURL(files);
     const [datas] = variantTypes.filter((f) => f.name === labelProduct);
     datas.imageUrl = blob;
 
-    let setImageValueToArr: VariantTypeProps[] = [];
+    let setImageValues: VariantTypeProps[] = [];
 
     let error = 0;
     variantTypes.forEach((e) => {
       if (e.name === labelProduct) {
-        setImageValueToArr.push(datas);
+        setImageValues.push(datas);
       }
 
       if (e.name !== labelProduct) {
-        setImageValueToArr.push(e);
+        setImageValues.push(e);
       }
 
       if (isVariantPhoto && e.imageUrl) error++;
     });
 
-    setVariantType([...setImageValueToArr]);
+    setVariantType([...setImageValues]);
 
-    if (error > 1) {
-      setIsErrorVariant(false);
-    }
+    if (error > 1) setIsErrorVariant(false);
   };
 
   const onClick = (label: string) => {
@@ -108,6 +105,16 @@ export const VariantModal: FC<
 
   const onClickType = (label: string) => {
     setLabelAndImage({ label });
+  };
+
+  const onShowVariantImage = () => {
+    setIsVariantPhoto((v) => !v);
+    // remove image value in variant when the switch is off
+    variantTypes.forEach((e) => {
+      if (e.imageUrl) {
+        e.imageUrl = "";
+      }
+    });
   };
 
   useEffect(() => {
@@ -215,10 +222,10 @@ export const VariantModal: FC<
             </p>
           </section>
           <Switch
-            color="success"
             size="sm"
+            color="success"
             isSelected={isVariantPhoto}
-            onClick={() => setIsVariantPhoto((v) => !v)}
+            onClick={onShowVariantImage}
           />
         </section>
 

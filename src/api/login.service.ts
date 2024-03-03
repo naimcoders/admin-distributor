@@ -46,9 +46,10 @@ export function getLoginApiInfo(): ApiLoginInfo {
   return Api.getInstance();
 }
 
+const key = "login";
 export const useLogin = () => {
   return useMutation({
-    mutationKey: ["login"],
+    mutationKey: [key],
     mutationFn: async (r: ReqLogin) => await getLoginApiInfo().login(r),
   });
 };

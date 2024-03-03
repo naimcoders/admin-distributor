@@ -126,7 +126,7 @@ export const ListingDataModal: FC<CategoryLoopProps> = ({
             key={v.id}
             onClick={() => onClick(v.id, v.name)}
             className={cx(
-              "hover:font-interBold cursor-pointer w-max",
+              "hover:font-bold cursor-pointer w-max",
               v.id === id && "font-bold"
             )}
           >

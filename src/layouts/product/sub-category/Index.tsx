@@ -3,14 +3,17 @@ import Error from "src/components/Error";
 import { FieldValues, useForm } from "react-hook-form";
 import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
-import { Category, useCategory } from "src/api/category.service";
 import { Actions } from "src/components/Actions";
 import { detailNavigate } from "src/helpers";
+import {
+  ProductCategory,
+  useProductCategory,
+} from "src/api/product-category.service";
 
 export default function CategorySub() {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useCategorySub();
-  const { data, isLoading, error } = useCategory().find();
+  const { data, error, isLoading } = useProductCategory().find();
 
   return (
     <>
@@ -44,15 +47,16 @@ export default function CategorySub() {
 const useCategorySub = () => {
   const { onNav } = detailNavigate();
 
-  const columns: Columns<Category>[] = [
+  const columns: Columns<ProductCategory>[] = [
     {
       header: <p className="text-center">kategori produk</p>,
-      render: (v) => <Label label={v.name} />,
+      render: (v) => <Label label={v.category.name} />,
     },
     {
       header: <p className="text-center">sub-kategori</p>,
-      // render: (v) => <p>{v.subCategory.map((e) => `${e.name}`).join(", ")}</p>,
-      render: () => <Label label="dadad" />,
+      render: (v) => (
+        <Label label={v.subCategory.map((e) => e.name).join(", ")} />
+      ),
     },
     {
       header: <p className="text-center">aksi</p>,

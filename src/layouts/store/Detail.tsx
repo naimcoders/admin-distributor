@@ -63,7 +63,8 @@ const Detail = () => {
 const useHook = () => {
   const { id } = useParams() as { id: string };
   const { data, isLoading, error } = useStore().findByid(id);
-  const location = data?.details.location[0];
+  const location = data?.location[0];
+  console.log(location);
   const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
 
   const fields: TextfieldProps[] = [

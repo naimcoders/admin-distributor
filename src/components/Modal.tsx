@@ -1,6 +1,5 @@
 import cx from "classnames";
 import { ActionModal, UseForm } from "src/types";
-import { SubCategory } from "src/api/category.service";
 import { FC } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
@@ -9,6 +8,7 @@ import React, { Fragment } from "react";
 import { modalDOM } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import Coordinate from "./Coordinate";
+import { Category } from "src/api/category.service";
 
 interface Modal {
   isOpen: boolean;
@@ -92,15 +92,16 @@ export const Modal = ({
   );
 };
 
-interface ListingDataProps extends Pick<UseForm, "setValue" | "clearErrors"> {
+interface CategoryLoopProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   keyField: string;
   title: string;
+  id: string;
   setId: (id: string) => void;
   modal: ActionModal;
-  data?: SubCategory[];
+  data?: Category[];
 }
 
-export const ListingDataModal: FC<ListingDataProps> = ({
+export const ListingDataModal: FC<CategoryLoopProps> = ({
   keyField,
   setValue,
   clearErrors,
@@ -108,6 +109,7 @@ export const ListingDataModal: FC<ListingDataProps> = ({
   title,
   modal,
   setId,
+  id,
 }) => {
   const onClick = (id: string, name: string) => {
     setId(id);
@@ -122,8 +124,11 @@ export const ListingDataModal: FC<ListingDataProps> = ({
         {data?.map((v) => (
           <li
             key={v.id}
-            className={cx("hover:font-interBold cursor-pointer w-max")}
             onClick={() => onClick(v.id, v.name)}
+            className={cx(
+              "hover:font-interBold cursor-pointer w-max",
+              v.id === id && "font-bold"
+            )}
           >
             {v.name}
           </li>
@@ -142,9 +147,9 @@ export const CoordinateModal = () => {
       isOpen={isCoordinate}
       closeModal={actionIsCoordinate}
     >
-      <section className="my-4">
+      <main className="my-4">
         <Coordinate />
-      </section>
+      </main>
     </Modal>
   );
 };

@@ -9,7 +9,7 @@ import useGeneralStore from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { ChildRef, File } from "src/components/File";
+import { ChildRef, File as FileComp } from "src/components/File";
 import {
   Textfield,
   TextfieldProps,
@@ -59,25 +59,25 @@ const Create = () => {
     setIsPopOver,
   } = useUploadProduct();
 
+  const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState("");
 
-  const findAllCategories = useCategory().findAll();
+  const findCategories = useCategory().find();
   const { mutateAsync, isPending } = useProduct().create();
   const { fields } = useFields();
   const { user } = useAuth();
 
-  const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const navigate = useNavigate();
+  const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
 
   const onSubmit = handleSubmit(async (e) => {
-    const productUrl: string[] = [];
-    const variantImage: string[] = [];
-
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
       return;
     }
+
+    const productUrl: string[] = [];
+    const variantImage: string[] = [];
 
     photos.forEach((product) => {
       const fileType = getFileType(product.file.type);
@@ -97,11 +97,13 @@ const Create = () => {
       );
     });
 
-    const mapByImageUrlVariant = variantTypes.map((e) => {
-      return e.imageUrl;
+    // FIXME: handle file
+    variantTypes.forEach((e) => {
+      if (e.imageUrl) {
+        const file = new File([e.imageUrl], "my");
+        console.log(file);
+      }
     });
-
-    console.log(mapByImageUrlVariant);
 
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -142,8 +144,8 @@ const Create = () => {
 
   return (
     <>
-      {findAllCategories.error ? (
-        <Error error={findAllCategories.error} />
+      {findCategories.error ? (
+        <Error error={findCategories.error} />
       ) : (
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
@@ -174,7 +176,7 @@ const Create = () => {
                 <PopoverContent>
                   <section className="flex gap-4">
                     {["1:1", "3:4"].map((v) => (
-                      <File
+                      <FileComp
                         key={v}
                         control={control}
                         onClick={() => {
@@ -267,10 +269,12 @@ const Create = () => {
 
           {/* modal */}
           <ModalCategory
-            setCategoryId={setCategoryId}
             setValue={setValue}
+            categoryId={categoryId}
             clearErrors={clearErrors}
+            setCategoryId={setCategoryId}
           />
+
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
           <PostageModal setValue={setValue} clearErrors={clearErrors} />
@@ -326,35 +330,6 @@ export const useUploadProduct = () => {
     setIsPopOver,
   };
 };
-
-// const ModalSubDistributor = ({
-//   clearErrors,
-//   setValue,
-// }: Pick<UseForm, "setValue" | "clearErrors">) => {
-//   const { actionIsSubDistributor, isSubDistributor } = useActiveModal();
-//   const subDistributors: string[] = [
-//     "Agung Jaya",
-//     "Bintang",
-//     "Arta Boga Cemerlang",
-//     "Semeru",
-//     "Ektong",
-//     "Bintang Terang",
-//   ];
-
-//   return (
-//     <ListingModal
-//       title="sub-distributor"
-//       keyField="subDistributor"
-//       data={[]}
-//       setValue={setValue}
-//       clearErrors={clearErrors}
-//       modal={{
-//         open: isSubDistributor,
-//         close: actionIsSubDistributor,
-//       }}
-//     />
-//   );
-// };
 
 const useFields = () => {
   const {

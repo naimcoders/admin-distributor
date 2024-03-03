@@ -2,21 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { req } from "./request";
 
 export interface Category {
-  category: SubCategory;
-  createdAt: number;
-  id: string;
-  subCategory: SubCategory[];
-  updatedAt: number;
-  userId: string;
-}
-
-export interface SubCategory {
   createdAt: number;
   id: string;
   isActive?: boolean;
   name: string;
   updatedAt: number;
-  categoryId?: string;
 }
 
 class Api {
@@ -47,20 +37,10 @@ class Api {
       errors: this.errors,
     });
   }
-
-  async findAll(): Promise<SubCategory[]> {
-    return await req<SubCategory[]>({
-      method: "GET",
-      path: `${this.path}/all`,
-      isNoAuth: false,
-      errors: this.errors,
-    });
-  }
 }
 
 interface ApiCategoryInfo {
   find(): Promise<Category[]>;
-  findAll(): Promise<SubCategory[]>;
 }
 
 export function getCategoryApiInfo(): ApiCategoryInfo {
@@ -84,19 +64,5 @@ export const useCategory = () => {
     };
   };
 
-  const findAll = () => {
-    const get = async () => await getCategoryApiInfo().findAll();
-    const { data, isLoading, error } = useQuery<SubCategory[], Error>({
-      queryKey: [key],
-      queryFn: get,
-    });
-
-    return {
-      data,
-      isLoading,
-      error: error?.message,
-    };
-  };
-
-  return { find, findAll };
+  return { find };
 };

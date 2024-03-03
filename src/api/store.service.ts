@@ -5,139 +5,38 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export interface Store {
-  banner: string;
-  createdAt: number;
-  details: Details;
-  email: string;
-  emailVerify: boolean;
-  fcmToken: string;
   id: string;
-  imageUrl: string;
-  isOpen: boolean;
-  isSuspend: boolean;
-  isVerify: boolean;
-  ktpImageUrl: string;
   ownerName: string;
-  phoneNumber: string;
-  rate: number;
+  email: string;
   storeName: string;
-  updatedAt: number;
-}
-
-export interface Details {
-  bank: Bank;
-  courier: Courier;
-  customer: Customer;
-  distributor: Distributor;
-  location: Location[];
-  store: string;
-  wallet: Wallet;
-}
-
-export interface Bank {
-  accountName: string;
-  accountNumber: string;
-  bankName: string;
-  createdAt: number;
-  id: string;
-  updatedAt: number;
-  userId: string;
-}
-
-export interface Courier {
-  createdAt: number;
-  details: string;
-  document: Document;
-  email: string;
-  emailVerify: boolean;
-  fcmToken: string;
-  id: string;
-  imageUrl: string;
-  isActive: boolean;
-  isSuspend: boolean;
-  name: string;
   phoneNumber: string;
-  rate: number;
-  updatedAt: number;
-  vehicle: Document;
-}
-
-export interface Document {}
-
-export interface Customer {
-  createdAt: number;
-  dateBirth: string;
-  details: string;
-  email: string;
-  emailVerify: boolean;
   fcmToken: string;
-  gender: string;
-  id: string;
-  imageUrl: string;
-  isSuspend: boolean;
-  name: string;
-  phoneNumber: string;
-  updatedAt: number;
-}
-
-export interface Distributor {
   banner: string;
-  createdAt: number;
-  deletedAt: DeletedAt;
-  details: string;
-  documents: Document;
-  email: string;
-  emailVerify: boolean;
-  fcmToken: string;
-  id: string;
-  imageUrl: string;
-  isSuspend: boolean;
   isVerify: boolean;
-  name: string;
-  ownerName: string;
-  phoneNumber: string;
+  isOpen: boolean;
   rate: number;
+  isSuspend: boolean;
+  emailVerify: boolean;
+  imageUrl: string;
+  ktpImageUrl: string;
+  location: Location[];
+  createdAt: number;
   updatedAt: number;
-}
-
-export interface DeletedAt {
-  time: string;
-  valid: boolean;
 }
 
 export interface Location {
-  addressName: string;
-  city: string;
-  detailAddress: string;
-  district: string;
-  isPrimary: boolean;
+  id: string;
+  userId: string;
   lat: number;
   lng: number;
   province: string;
+  city: string;
+  district: string;
   type: string;
-  userId: string;
   zipCode: string;
-}
-
-export interface Wallet {
-  active: boolean;
-  balance: number;
-  createdAt: number;
-  history: History[];
-  id: string;
-  updatedAt: number;
-  userId: string;
-}
-
-export interface History {
-  amount: number;
-  createdAt: number;
-  description: string;
-  id: string;
-  isCredit: boolean;
-  status: string;
-  transactionId: string;
-  walletId: string;
+  isPrimary: boolean;
+  addressName: string;
+  detailAddress: string;
 }
 
 class Api {

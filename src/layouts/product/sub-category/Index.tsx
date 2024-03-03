@@ -41,34 +41,13 @@ export default function CategorySub() {
   );
 }
 
-// interface Sub {
-//   id: number;
-//   name: string;
-// }
-// interface CatergorySub {
-//   id: number;
-//   category: string;
-//   sub: Sub[];
-// }
-
-// const categories: CatergorySub[] = [
-//   {
-//     id: 1,
-//     category: "elektronik",
-//     sub: [
-//       { id: 1, name: "Naim" },
-//       { id: 2, name: "Shihab" },
-//     ],
-//   },
-// ];
-
 const useCategorySub = () => {
   const { onNav } = detailNavigate();
 
   const columns: Columns<Category>[] = [
     {
       header: <p className="text-center">kategori produk</p>,
-      render: () => <Label label="dad" />,
+      render: (v) => <Label label={v.name} />,
     },
     {
       header: <p className="text-center">sub-kategori</p>,

@@ -18,7 +18,7 @@ export const ModalCategory: FC<ModalCategoryProps> = ({
   const { isCategory, actionIsCategory } = useActiveModal();
   const { data } = useCategory().find();
 
-  const sortCategories = data?.sort((a, b) => a.name.localeCompare(b.name));
+  const sortCategories = data?.sort((a, b) => a.name?.localeCompare(b.name));
 
   return (
     <ListingDataModal

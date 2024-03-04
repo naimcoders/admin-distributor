@@ -65,10 +65,10 @@ const Form = () => {
           key={idx}
           defaultValue=""
           control={control}
+          onKeyDown={onKeyDown}
           className="max-w-full"
           errorMessage={handleErrorMessage(errors, el.name)}
           rules={{ required: { value: true, message: el.errorMessage! } }}
-          onKeyDown={onKeyDown}
         />
       ))}
 
@@ -108,6 +108,7 @@ const useHook = () => {
         role: Role.DISTRIBUTOR,
         fcmToken: token,
       };
+
       await posted.mutateAsync(result);
       navigate("/dashboard");
     } catch (e) {

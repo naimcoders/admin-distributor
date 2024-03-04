@@ -30,7 +30,7 @@ import { Button } from "src/components/Button";
 import { DangerousModal } from "./Modals/Dangerous";
 import { PostageModal } from "./Modals/Postage";
 import { ConditionModal } from "./Modals/Condition";
-import { ModalCategory } from "./Modals/Category";
+import { ModalCategory, ModalSubCategory } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
 import { useAuth } from "src/firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -61,6 +61,7 @@ const Create = () => {
 
   const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState("");
+  const [subCategoryId, setSubCategoryId] = useState("");
 
   const findCategories = useCategory().find();
   const { mutateAsync, isPending } = useProduct().create();
@@ -69,6 +70,10 @@ const Create = () => {
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+
+  const onClickSubCategory = () => {
+    console.log(categoryId);
+  };
 
   const onSubmit = handleSubmit(async (e) => {
     if (photos.length < 1) {
@@ -167,6 +172,7 @@ const Create = () => {
                   ]}
                 />
               ))}
+
               <Popover placement="right" isOpen={isPopOver}>
                 <PopoverTrigger>
                   <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
@@ -269,12 +275,17 @@ const Create = () => {
 
           {/* modal */}
           <ModalCategory
+            id={categoryId}
             setValue={setValue}
-            categoryId={categoryId}
+            setId={setCategoryId}
             clearErrors={clearErrors}
-            setCategoryId={setCategoryId}
           />
-
+          <ModalSubCategory
+            id={subCategoryId}
+            setValue={setValue}
+            setId={setSubCategoryId}
+            clearErrors={clearErrors}
+          />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
           <PostageModal setValue={setValue} clearErrors={clearErrors} />
@@ -284,7 +295,6 @@ const Create = () => {
             setValue={setValue}
             clearErrors={clearErrors}
           />
-          {/* <ModalSubDistributor setValue={setValue} clearErrors={clearErrors} /> */}
         </main>
       )}
     </>

@@ -24,7 +24,7 @@ class Api {
     return Api.instance;
   }
 
-  private path = "login-admin";
+  private path = "auth/login-admin";
 
   async login(r: ReqLogin): Promise<void> {
     const token = await req<string>({

@@ -59,22 +59,24 @@ const Create = () => {
     setIsPopOver,
   } = useUploadProduct();
 
-  const navigate = useNavigate();
-  const [categoryId, setCategoryId] = useState("");
-  const [subCategoryId, setSubCategoryId] = useState("");
+  const {
+    fields,
+    categoryId,
+    subCategoryId,
+    setCategoryId,
+    setSubCategoryId,
+    onClickSubCategory,
+  } = useFields();
 
+  const navigate = useNavigate();
   const findCategories = useCategory().find();
   const { mutateAsync, isPending } = useProduct().create();
-  const { fields } = useFields();
   const { user } = useAuth();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
 
-  const onClickSubCategory = () => {
-    console.log(categoryId);
-  };
-
+  // onSubmit
   const onSubmit = handleSubmit(async (e) => {
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
@@ -214,7 +216,7 @@ const Create = () => {
             )} */}
           </header>
 
-          <GridInput className="grid grid-cols-3">
+          <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
             {fields.map((v) => (
               <Fragment key={v.label}>
                 {["text", "rp", "number"].includes(v.type!) && (
@@ -254,9 +256,9 @@ const Create = () => {
                 )}
               </Fragment>
             ))}
-          </GridInput>
+          </main>
 
-          <GridInput className="grid grid-cols-3">
+          <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
             <Textarea
               label="deskripsi"
               name="description"
@@ -264,7 +266,7 @@ const Create = () => {
               control={control}
               placeholder="masukkan deskripsi"
             />
-          </GridInput>
+          </main>
 
           {/* submit */}
           <Button
@@ -353,6 +355,19 @@ const useFields = () => {
     actionIsPrice,
   } = useActiveModal();
 
+  const [categoryId, setCategoryId] = useState("");
+  const [subCategoryId, setSubCategoryId] = useState("");
+
+  const onClickSubCategory = () => {
+    if (!categoryId) {
+      toast.error("Pilih kategori");
+      return;
+    }
+
+    actionIsSubCategory();
+    console.log(categoryId);
+  };
+
   const fields: TextfieldProps[] = [
     objectFields({
       label: "nama produk *",
@@ -374,7 +389,7 @@ const useFields = () => {
       name: "subCategory",
       type: "modal",
       defaultValue: "",
-      onClick: actionIsSubCategory,
+      onClick: onClickSubCategory,
     }),
     objectFields({
       label: "produk berbahaya",
@@ -433,7 +448,14 @@ const useFields = () => {
     }),
   ];
 
-  return { fields };
+  return {
+    fields,
+    categoryId,
+    setCategoryId,
+    subCategoryId,
+    setSubCategoryId,
+    onClickSubCategory,
+  };
 };
 
 export default Create;

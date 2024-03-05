@@ -235,10 +235,6 @@ const Create = () => {
                 </PopoverContent>
               </Popover>
             </section>
-
-            {/* {isErrorroductImg && (
-              <p className="text-red-500">Upload foto produk</p>
-            )} */}
           </header>
 
           <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">

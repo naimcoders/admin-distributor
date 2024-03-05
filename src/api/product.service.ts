@@ -311,7 +311,7 @@ export const useProduct = () => {
   const queryClient = useQueryClient();
 
   const find = () => {
-    const [page, _] = useState(1);
+    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 
@@ -336,6 +336,7 @@ export const useProduct = () => {
       setLimit,
       setSearch,
       isNext: data?.canNext,
+      setPage,
     };
   };
 

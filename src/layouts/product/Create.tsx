@@ -82,38 +82,74 @@ const Create = () => {
       return;
     }
 
-    const productUrl: string[] = [];
-    const variantImage: string[] = [];
+    const productUrls: Promise<string>[] = [];
+    const variantUrls: Promise<string>[] = [];
 
-    photos.forEach((product) => {
-      const fileType = getFileType(product.file.type);
-      const fileName = `${product.file.lastModified}.${fileType}`;
-      const fileNameFix = `temp/product/${user?.uid}/${fileName}`;
-      const storageRef = ref(FbStorage, fileNameFix);
-      const uploadTask = uploadBytesResumable(storageRef, product.file);
+    await Promise.all(
+      photos.map(async (product) => {
+        const fileType = getFileType(product.file.type);
+        const fileName = `${product.file.lastModified}.${fileType}`;
+        const fileNameFix = `temp/product/${user?.uid}/${fileName}`;
+        const storageRef = ref(FbStorage, fileNameFix);
+        const uploadTask = uploadBytesResumable(storageRef, product.file);
 
-      uploadTask.on(
-        "state_changed",
-        null,
-        (err) => console.error(err.message),
-        async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          productUrl.push(url);
-        }
-      );
-    });
+        const promise = new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (err) => {
+              console.error(err.message);
+              reject(err);
+            },
+            async () => {
+              const url = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(url);
+            }
+          );
+        });
 
-    // FIXME: handle file
-    variantTypes.forEach((e) => {
-      if (e.imageUrl) {
-        const file = new File([e.imageUrl], "my");
-        console.log(file);
-      }
-    });
+        productUrls.push(promise);
+        return promise;
+      })
+    );
+
+    await Promise.all(
+      variantTypes.map(async (type) => {
+        const fileType = getFileType(type.files?.type ?? "");
+        const fileName = `${type.files?.lastModified}.${fileType}`;
+        const fileNameFix = `temp/product/product_variant/${user?.uid}/${fileName}`;
+        const storageRef = ref(FbStorage, fileNameFix);
+        const uploadTask = uploadBytesResumable(storageRef, type.files!);
+
+        const promise = new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (err) => {
+              console.error(err.message);
+              reject(err);
+            },
+            async () => {
+              const url = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(url);
+            }
+          );
+        });
+
+        variantUrls.push(promise);
+        return promise;
+      })
+    );
+
+    await Promise.all(productUrls);
+    await Promise.all(variantUrls);
 
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
+      // if (!productUrl) {
+      //   throw Error({ error: "Gagal mengunggah foto produk " });
+      // }
       // const obj = {
       //   category: { categoryId },
       //   deliveryPrice,
@@ -128,7 +164,7 @@ const Create = () => {
       //     category: { categoryId },
       //     deliveryPrice,
       //     description: e.description,
-      //     imageUrl: productUrl,
+      //     imageUrl: productUrls,
       //     isDangerous,
       //     name: e.productName,
       //     price: {

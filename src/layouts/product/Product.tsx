@@ -9,10 +9,14 @@ import { useSetSearch } from "src/helpers";
 const SubProduct = () => {
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useHook();
-  const { data, isLoading, page, isNext, setSearch } = useProduct().find();
+  const { data, isLoading, page, isNext, setSearch, setPage } =
+    useProduct().find();
   useSetSearch(watch("search"), setSearch);
 
-  // console.log(data?.items);
+  // console.log(data);
+
+  const onNext = () => setPage((v) => v + 1);
+  const onPrev = () => setPage((v) => v - 1);
 
   return (
     <TableWithSearchAndTabs
@@ -22,6 +26,8 @@ const SubProduct = () => {
       data={data?.items ?? []}
       isNext={isNext}
       page={page}
+      next={onNext}
+      prev={onPrev}
       isPaginate
       placeholder="cari nama produk/kategori/Sub-Kategori"
     />

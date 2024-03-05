@@ -29,6 +29,7 @@ interface VariantSizeProps {
 
 export interface VariantTypeProps {
   name: string;
+  files?: File;
   imageUrl?: string;
   variantColorProduct: VariantSizeProps[];
 }

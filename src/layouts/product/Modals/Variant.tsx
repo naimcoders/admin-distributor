@@ -74,11 +74,12 @@ export const VariantModal: FC<
 
     const blob = URL.createObjectURL(files);
     const [datas] = variantTypes.filter((f) => f.name === labelProduct);
+    datas.files = files;
     datas.imageUrl = blob;
 
     let setImageValues: VariantTypeProps[] = [];
-
     let error = 0;
+
     variantTypes.forEach((e) => {
       if (e.name === labelProduct) {
         setImageValues.push(datas);
@@ -109,7 +110,6 @@ export const VariantModal: FC<
 
   const onShowVariantImage = () => {
     setIsVariantPhoto((v) => !v);
-    // remove image value in variant when the switch is off
     variantTypes.forEach((e) => {
       if (e.imageUrl) {
         e.imageUrl = "";

@@ -17,7 +17,6 @@ import {
 } from "src/components/Textfield";
 import { CurrencyIDInput, getFileType, handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
-import { GridInput } from "../Index";
 import { useCategory } from "src/api/category.service";
 import { useActiveModal } from "src/stores/modalStore";
 import {

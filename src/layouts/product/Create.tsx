@@ -287,6 +287,7 @@ const Create = () => {
             setValue={setValue}
             setId={setSubCategoryId}
             clearErrors={clearErrors}
+            categoryId={categoryId}
           />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />

@@ -1,12 +1,15 @@
+import cx from "classnames";
 import { FC } from "react";
 import { useCategory } from "src/api/category.service";
-import { ListingDataModal } from "src/components/Modal";
+import { useProductCategory } from "src/api/product-category.service";
+import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 
 interface ModalCategoryProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   id: string;
   setId: (val: string) => void;
+  categoryId?: string;
 }
 
 export const ModalCategory: FC<ModalCategoryProps> = ({
@@ -18,22 +21,33 @@ export const ModalCategory: FC<ModalCategoryProps> = ({
   const { isCategory, actionIsCategory } = useActiveModal();
   const { data } = useCategory().find();
 
+  const key = "category";
+  const onClick = (id: string, name: string) => {
+    setId(id);
+    clearErrors(key);
+    setValue(key, name);
+    actionIsCategory();
+  };
+
   const sortCategories = data?.sort((a, b) => a.name?.localeCompare(b.name));
 
   return (
-    <ListingDataModal
-      id={id}
-      title="kategori"
-      keyField="category"
-      data={sortCategories}
-      setValue={setValue}
-      clearErrors={clearErrors}
-      setId={setId}
-      modal={{
-        open: isCategory,
-        close: actionIsCategory,
-      }}
-    />
+    <Modal title="kategori" isOpen={isCategory} closeModal={actionIsCategory}>
+      <ul className="flex flex-col gap-2 my-4">
+        {sortCategories?.map((v) => (
+          <li
+            key={v.id}
+            onClick={() => onClick(v.id, v.name)}
+            className={cx(
+              "hover:font-bold cursor-pointer w-max",
+              v.id === id && "font-bold"
+            )}
+          >
+            {v.name}
+          </li>
+        ))}
+      </ul>
+    </Modal>
   );
 };
 
@@ -42,25 +56,45 @@ export const ModalSubCategory: FC<ModalCategoryProps> = ({
   setValue,
   id,
   setId,
+  categoryId,
 }) => {
   const { isSubCategory, actionIsSubCategory } = useActiveModal();
-  const { data } = useCategory().find();
+  const productCategory = useProductCategory().find();
 
-  const sortCategories = data?.sort((a, b) => a.name?.localeCompare(b.name));
+  const filterByCategoryId = productCategory.data?.filter(
+    (category) => category.category.id === categoryId
+  );
+
+  const key = "subCategory";
+  const onClick = (id: string, name: string) => {
+    setId(id);
+    clearErrors(key);
+    setValue(key, name);
+    actionIsSubCategory();
+  };
 
   return (
-    <ListingDataModal
-      id={id}
-      title="sub-kategori"
-      keyField="subCategory"
-      data={sortCategories}
-      setValue={setValue}
-      clearErrors={clearErrors}
-      setId={setId}
-      modal={{
-        open: isSubCategory,
-        close: actionIsSubCategory,
-      }}
-    />
+    <Modal
+      title="kategori"
+      isOpen={isSubCategory}
+      closeModal={actionIsSubCategory}
+    >
+      <ul className="flex flex-col gap-2 my-4">
+        {filterByCategoryId?.map((v) =>
+          v.subCategory.map((e) => (
+            <li
+              key={e.id}
+              onClick={() => onClick(e.id, e.name)}
+              className={cx(
+                "hover:font-bold cursor-pointer w-max",
+                v.id === id && "font-bold"
+              )}
+            >
+              {e.name}
+            </li>
+          ))
+        )}
+      </ul>
+    </Modal>
   );
 };

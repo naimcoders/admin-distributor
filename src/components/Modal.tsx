@@ -1,14 +1,8 @@
-import cx from "classnames";
-import { ActionModal, UseForm } from "src/types";
-import { FC } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { Fragment } from "react";
 import { modalDOM } from "src/helpers";
-import { useActiveModal } from "src/stores/modalStore";
-import Coordinate from "./Coordinate";
-import { Category } from "src/api/category.service";
 
 interface Modal {
   isOpen: boolean;
@@ -89,67 +83,5 @@ export const Modal = ({
             modalDOM
           )}
     </>
-  );
-};
-
-interface CategoryLoopProps extends Pick<UseForm, "setValue" | "clearErrors"> {
-  keyField: string;
-  title: string;
-  id: string;
-  setId: (id: string) => void;
-  modal: ActionModal;
-  data?: Category[];
-}
-
-export const ListingDataModal: FC<CategoryLoopProps> = ({
-  keyField,
-  setValue,
-  clearErrors,
-  data,
-  title,
-  modal,
-  setId,
-  id,
-}) => {
-  const onClick = (id: string, name: string) => {
-    setId(id);
-    setValue(keyField, name);
-    clearErrors(keyField);
-    modal.close();
-  };
-
-  return (
-    <Modal title={title} isOpen={modal.open} closeModal={modal.close}>
-      <ul className="flex flex-col gap-2 my-4">
-        {data?.map((v) => (
-          <li
-            key={v.id}
-            onClick={() => onClick(v.id, v.name)}
-            className={cx(
-              "hover:font-bold cursor-pointer w-max",
-              v.id === id && "font-bold"
-            )}
-          >
-            {v.name}
-          </li>
-        ))}
-      </ul>
-    </Modal>
-  );
-};
-
-export const CoordinateModal = () => {
-  const { isCoordinate, actionIsCoordinate } = useActiveModal();
-
-  return (
-    <Modal
-      title="koordinat usaha"
-      isOpen={isCoordinate}
-      closeModal={actionIsCoordinate}
-    >
-      <main className="my-4">
-        <Coordinate />
-      </main>
-    </Modal>
   );
 };

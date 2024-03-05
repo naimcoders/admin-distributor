@@ -229,7 +229,6 @@ interface CreateProductProps {
   isDangerous: boolean;
   name: string;
   price: {
-    id: string;
     price: number;
     priceDiscount: number;
     fee: number;

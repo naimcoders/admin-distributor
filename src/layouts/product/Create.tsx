@@ -82,8 +82,8 @@ const Create = () => {
       return;
     }
 
-    const productUrls: Promise<string>[] = [];
-    const variantUrls: Promise<string>[] = [];
+    const productUrls: string[] = [];
+    const variantUrls: string[] = [];
 
     await Promise.all(
       photos.map(async (product) => {
@@ -108,8 +108,7 @@ const Create = () => {
           );
         });
 
-        productUrls.push(promise);
-        return promise;
+        productUrls.push(await promise);
       })
     );
 
@@ -136,48 +135,39 @@ const Create = () => {
           );
         });
 
-        variantUrls.push(promise);
+        variantUrls.push(await promise);
         return promise;
       })
     );
 
-    await Promise.all(productUrls);
-    await Promise.all(variantUrls);
+    variantTypes.map((m, k) => {
+      m.imageUrl = variantUrls[k];
+    });
 
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
-      // if (!productUrl) {
-      //   throw Error({ error: "Gagal mengunggah foto produk " });
-      // }
-      // const obj = {
-      //   category: { categoryId },
-      //   deliveryPrice,
-      //   description: e.description,
-      //   isDangerous,
-      //   name: e.productName,
-      //   imageUrl: productUrl,
-      //   variant: variantTypes,
-      // };
-      // mutateAsync({
-      //   data: {
-      //     category: { categoryId },
-      //     deliveryPrice,
-      //     description: e.description,
-      //     imageUrl: productUrls,
-      //     isDangerous,
-      //     name: e.productName,
-      //     price: {
-      //       id: "",
-      //       fee: 0,
-      //       expiredAt: 0,
-      //       price: 25000,
-      //       priceDiscount: 0,
-      //       startAt: 0,
-      //     },
-      //     variant: variantTypes,
-      //   },
-      // });
+      const price = e.price;
+      const name = e.productName;
+
+      mutateAsync({
+        data: {
+          name,
+          isDangerous,
+          deliveryPrice,
+          imageUrl: productUrls,
+          variant: variantTypes,
+          category: { categoryId },
+          description: e.description,
+          price: {
+            price,
+            fee: 0,
+            startAt: 0,
+            expiredAt: 0,
+            priceDiscount: 0,
+          },
+        },
+      });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

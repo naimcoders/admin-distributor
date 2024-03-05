@@ -75,7 +75,7 @@ export const ModalSubCategory: FC<ModalCategoryProps> = ({
 
   return (
     <Modal
-      title="kategori"
+      title="sub kategori"
       isOpen={isSubCategory}
       closeModal={actionIsSubCategory}
     >

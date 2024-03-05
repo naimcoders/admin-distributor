@@ -109,12 +109,15 @@ export const VariantModal: FC<
   };
 
   const onShowVariantImage = () => {
-    setIsVariantPhoto((v) => !v);
-    variantTypes.forEach((e) => {
-      if (e.imageUrl) {
-        e.imageUrl = "";
-      }
+    const newVariant = variantTypes.map((item) => {
+      const newItem = { ...item };
+      delete newItem.imageUrl;
+      delete newItem.files;
+      return newItem;
     });
+
+    setVariantType(newVariant);
+    setIsVariantPhoto((v) => !v);
   };
 
   useEffect(() => {

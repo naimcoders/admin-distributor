@@ -112,37 +112,40 @@ const Create = () => {
       })
     );
 
-    await Promise.all(
-      variantTypes.map(async (type) => {
-        const fileType = getFileType(type.files?.type ?? "");
-        const fileName = `${type.files?.lastModified}.${fileType}`;
-        const fileNameFix = `temp/product/product_variant/${user?.uid}/${fileName}`;
-        const storageRef = ref(FbStorage, fileNameFix);
-        const uploadTask = uploadBytesResumable(storageRef, type.files!);
+    const availableVariant = Boolean(variantTypes[0].imageUrl);
+    if (availableVariant) {
+      await Promise.all(
+        variantTypes.map(async (type) => {
+          const fileType = getFileType(type.files?.type ?? "");
+          const fileName = `${type.files?.lastModified}.${fileType}`;
+          const fileNameFix = `temp/product/product_variant/${user?.uid}/${fileName}`;
+          const storageRef = ref(FbStorage, fileNameFix);
+          const uploadTask = uploadBytesResumable(storageRef, type.files!);
 
-        const promise = new Promise<string>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            null,
-            (err) => {
-              console.error(err.message);
-              reject(err);
-            },
-            async () => {
-              const url = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve(url);
-            }
-          );
-        });
+          const promise = new Promise<string>((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              null,
+              (err) => {
+                console.error(err.message);
+                reject(err);
+              },
+              async () => {
+                const url = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(url);
+              }
+            );
+          });
 
-        variantUrls.push(await promise);
-        return promise;
-      })
-    );
+          variantUrls.push(await promise);
+          return promise;
+        })
+      );
 
-    variantTypes.map((m, k) => {
-      m.imageUrl = variantUrls[k];
-    });
+      variantTypes.map((m, k) => {
+        m.imageUrl = variantUrls[k];
+      });
+    }
 
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -150,24 +153,26 @@ const Create = () => {
       const price = e.price;
       const name = e.productName;
 
-      mutateAsync({
-        data: {
-          name,
-          isDangerous,
-          deliveryPrice,
-          imageUrl: productUrls,
-          variant: variantTypes,
-          category: { categoryId },
-          description: e.description,
-          price: {
-            price,
-            fee: 0,
-            startAt: 0,
-            expiredAt: 0,
-            priceDiscount: 0,
-          },
-        },
-      });
+      console.log(variantTypes);
+
+      // mutateAsync({
+      //   data: {
+      //     name,
+      //     isDangerous,
+      //     deliveryPrice,
+      //     imageUrl: productUrls,
+      //     variant: variantTypes,
+      //     category: { categoryId },
+      //     description: e.description,
+      //     price: {
+      //       price,
+      //       fee: 0,
+      //       startAt: 0,
+      //       expiredAt: 0,
+      //       priceDiscount: 0,
+      //     },
+      //   },
+      // });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

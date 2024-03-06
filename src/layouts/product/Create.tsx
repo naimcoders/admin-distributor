@@ -153,7 +153,10 @@ const Create = () => {
       const price = e.price;
       const name = e.productName;
 
-      console.log(variantTypes);
+      console.log({
+        price,
+        variantTypes,
+      });
 
       // mutateAsync({
       //   data: {

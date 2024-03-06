@@ -54,9 +54,12 @@ const useCategorySub = () => {
     },
     {
       header: <p className="text-center">sub-kategori</p>,
-      render: (v) => (
-        <Label label={v.subCategory.map((e) => e.name).join(", ")} />
-      ),
+      render: (v) =>
+        v.subCategory.length < 1 ? (
+          <p className="text-gray-400 cursor-default">Tambah Sub-Kategori</p>
+        ) : (
+          <Label label={v.subCategory.map((e) => e.name).join(", ")} />
+        ),
     },
     {
       header: <p className="text-center">aksi</p>,

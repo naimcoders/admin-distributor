@@ -1,6 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Textfield } from "src/components/Textfield";
@@ -8,7 +8,8 @@ import { IconColor } from "src/types";
 
 const Detail = () => {
   const [isCreate, setIsCreate] = useState(false);
-  const { handleSubmit, control, resetField } = useForm<FieldValues>();
+  const { handleSubmit, control, resetField, getValues } =
+    useForm<FieldValues>();
   const name = "subCategory";
 
   const activeBtnCreate = () => setIsCreate((prev) => !prev);
@@ -25,17 +26,31 @@ const Detail = () => {
     }
   });
 
+  const onSubmitKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const value = getValues(name);
+    if (e.key === "Escape") {
+      setIsCreate((v) => !v);
+    }
+
+    if (e.key === "Enter") {
+      try {
+        if (!value) throw new Error("Masukkan sub kategori");
+        console.log(value);
+      } catch (e) {
+        const error = e as Error;
+        toast.error(error.message);
+      }
+    }
+  };
+
   return (
     <main className="bg-white rounded-md">
-      <Header />
+      <header className="border-b-2 border-gray-300 p-4">
+        <h2 className="font-interBold">Elektronik</h2>
+      </header>
 
       <Listing
         label="Pendingin Ruangan"
-        update={() => console.log("edit")}
-        remove={() => console.log("delete")}
-      />
-      <Listing
-        label="Lemari Es"
         update={() => console.log("edit")}
         remove={() => console.log("delete")}
       />
@@ -47,7 +62,6 @@ const Detail = () => {
         control={control}
         onClick={activeBtnCreate}
         placeholder="tambah sub-kategori"
-        // classNames={{ inputWrapper: "px-5 rounded-b-md" }}
         readOnly={{ isValue: !isCreate, cursor: "cursor-pointer" }}
         startContent={
           !isCreate && <PlusIcon width={16} color={IconColor.zinc} />
@@ -62,21 +76,13 @@ const Detail = () => {
             />
           )
         }
-        className="max-w-full"
+        onKeyDown={onSubmitKeyDown}
       />
     </main>
   );
 };
 
 export default Detail;
-
-const Header = () => {
-  return (
-    <header className="border-b-2 border-gray-300 p-4">
-      <h2 className="font-interBold">Elektronik</h2>
-    </header>
-  );
-};
 
 interface ListingProps {
   label: string;
@@ -93,9 +99,9 @@ const Listing = ({ label, update, remove }: ListingProps) => {
         <PencilIcon width={16} className="cursor-pointer" onClick={update} />
         <TrashIcon
           width={16}
+          onClick={remove}
           color={IconColor.red}
           className="cursor-pointer"
-          onClick={remove}
         />
       </section>
     </section>

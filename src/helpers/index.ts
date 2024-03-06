@@ -5,6 +5,8 @@ import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 
+export const checkForDash = (value: string) => /-/.test(value);
+
 export const useSetSearch = (value: string, setSearch: (v: string) => void) => {
   const debounce = useDebounce(value, 500);
 

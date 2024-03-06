@@ -15,7 +15,13 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { CurrencyIDInput, getFileType, handleErrorMessage } from "src/helpers";
+import {
+  CurrencyIDInput,
+  checkForDash,
+  getFileType,
+  handleErrorMessage,
+  parseTextToNumber,
+} from "src/helpers";
 import { IconColor } from "src/types";
 import { useCategory } from "src/api/category.service";
 import { useActiveModal } from "src/stores/modalStore";
@@ -150,13 +156,9 @@ const Create = () => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
-      const price = e.price;
+      const price = e.price as string;
       const name = e.productName;
-
-      console.log({
-        price,
-        variantTypes,
-      });
+      const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
       // mutateAsync({
       //   data: {
@@ -168,10 +170,10 @@ const Create = () => {
       //     category: { categoryId },
       //     description: e.description,
       //     price: {
-      //       price,
       //       fee: 0,
       //       startAt: 0,
       //       expiredAt: 0,
+      //       price: newPrice,
       //       priceDiscount: 0,
       //     },
       //   },

@@ -15,6 +15,7 @@ import PlacesAutocomplete, {
 import { Input } from "@nextui-org/react";
 import { Button } from "./Button";
 import { useActiveModal } from "src/stores/modalStore";
+import { Modal } from "./Modal";
 
 export interface CoordinateProps {
   lat: number;
@@ -257,4 +258,13 @@ const useMaps = () => {
   });
 
   return { isLoaded, loadError };
+};
+
+export const CoordinateModal = () => {
+  const { isCoordinate, actionIsCoordinate } = useActiveModal();
+  return (
+    <Modal isOpen={isCoordinate} closeModal={actionIsCoordinate}>
+      <Coordinate />
+    </Modal>
+  );
 };

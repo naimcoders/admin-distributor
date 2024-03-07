@@ -18,8 +18,11 @@ import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useKtp } from "./Create";
 import { GridInput } from "../Index";
 import { useActiveModal } from "src/stores/modalStore";
-import { CoordinateModal } from "src/components/Modal";
-import { UserCoordinate, defaultCoordinate } from "src/components/Coordinate";
+import {
+  CoordinateModal,
+  UserCoordinate,
+  defaultCoordinate,
+} from "src/components/Coordinate";
 import { IconColor } from "src/types";
 
 const Detail = () => {

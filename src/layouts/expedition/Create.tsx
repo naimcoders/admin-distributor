@@ -16,10 +16,9 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
-import { UserCoordinate } from "src/components/Coordinate";
+import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor } from "src/types";
-import { CoordinateModal } from "src/components/Modal";
 
 const Create = () => {
   const {

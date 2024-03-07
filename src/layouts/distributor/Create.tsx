@@ -16,9 +16,8 @@ import {
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
-import { CoordinateModal } from "src/components/Modal";
 import { IconColor } from "src/types";
-import { UserCoordinate } from "src/components/Coordinate";
+import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 
 const Create = () => {

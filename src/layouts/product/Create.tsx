@@ -147,7 +147,6 @@ const Create = () => {
     try {
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
-
       variantUrls.forEach((url) => {
         const filter = variantTypes.filter((f) => f.name === url.name);
         filter.map((m) => (m.imageUrl = url.imageUrl));

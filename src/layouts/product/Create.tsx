@@ -5,7 +5,7 @@ import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
-import useGeneralStore from "src/stores/generalStore";
+import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -69,7 +69,7 @@ const Create = () => {
 
   const navigate = useNavigate();
   const findCategories = useCategory().find();
-  const { mutate, isPending } = useProduct().create();
+  const { mutateAsync, isPending } = useProduct().create();
   const { user } = useAuth();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
@@ -77,12 +77,18 @@ const Create = () => {
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
 
+  const currentTypes: VariantTypeProps[] = [];
+
   // onSubmit
   const onSubmit = handleSubmit(async (e) => {
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
       return;
     }
+
+    variantTypes.forEach((e) => {
+      currentTypes.push(e);
+    });
 
     const productUrls: string[] = [];
 
@@ -152,7 +158,7 @@ const Create = () => {
         filter.map((m) => (m.imageUrl = url.imageUrl));
       });
 
-      mutate({
+      const result = await mutateAsync({
         data: {
           name: e.productName,
           isDangerous,
@@ -171,16 +177,19 @@ const Create = () => {
         },
       });
 
-      setPhotos([]);
-      setVariantType([]);
-      setCategoryId("");
-      setSubCategoryId("");
-      clearDeliveryPrice();
-      reset();
-      navigate(-1);
+      if (Boolean(result.id)) {
+        setPhotos([]);
+        setVariantType([]);
+        setCategoryId("");
+        setSubCategoryId("");
+        clearDeliveryPrice();
+        reset();
+        navigate(-1);
+      }
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
+      setVariantType(currentTypes);
     }
   });
 

@@ -154,41 +154,24 @@ const Create = () => {
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
-      console.log({
-        isDangerous,
-        deliveryPrice,
-        name: e.productName,
-        imageUrl: productUrls,
-        variant: variantTypes,
-        category: { categoryId },
-        description: e.description,
-        price: {
-          fee: 0,
-          startAt: 0,
-          expiredAt: 0,
-          price: newPrice,
-          priceDiscount: 0,
+      await mutateAsync({
+        data: {
+          name: e.productName,
+          isDangerous,
+          deliveryPrice,
+          imageUrl: productUrls,
+          variant: variantTypes,
+          category: { categoryId },
+          description: e.description,
+          price: {
+            fee: 0,
+            startAt: 0,
+            expiredAt: 0,
+            price: newPrice,
+            priceDiscount: 0,
+          },
         },
       });
-
-      // await mutateAsync({
-      //   data: {
-      //     name,
-      //     isDangerous,
-      //     deliveryPrice,
-      //     imageUrl: productUrls,
-      //     variant: variantTypes,
-      //     category: { categoryId },
-      //     description: e.description,
-      //     price: {
-      //       fee: 0,
-      //       startAt: 0,
-      //       expiredAt: 0,
-      //       price: newPrice,
-      //       priceDiscount: 0,
-      //     },
-      //   },
-      // });
 
       setPhotos([]);
       setVariantType([]);
@@ -196,6 +179,7 @@ const Create = () => {
       setSubCategoryId("");
       clearDeliveryPrice();
       reset();
+      navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

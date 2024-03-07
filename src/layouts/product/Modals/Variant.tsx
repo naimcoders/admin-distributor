@@ -31,9 +31,14 @@ import { useActiveModal } from "src/stores/modalStore";
 import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
 
-export const VariantModal: FC<
-  { fieldName: string } & Pick<UseForm, "setValue">
-> = ({ fieldName, setValue }) => {
+interface VariantModalProps extends Pick<UseForm, "setValue"> {
+  fieldName: string;
+}
+
+export const VariantModal: FC<VariantModalProps> = ({
+  fieldName,
+  setValue,
+}) => {
   const {
     isAddType,
     isDeleteType,
@@ -363,10 +368,8 @@ const useVariant = () => {
   const [size, setSize] = useState<
     { label: string; size: { name: string }[] }[]
   >([]);
-
   const [isVariantPhoto, setIsVariantPhoto] = useState(true);
   const [isErrorVariant, setIsErrorVariant] = useState(false);
-
   const [isDeleteType, setIsDeleteTye] = useState(false);
   const [isDeleteSize, setIsDeleteSize] = useState(false);
   const [isAddType, setIsAddType] = useState(false);

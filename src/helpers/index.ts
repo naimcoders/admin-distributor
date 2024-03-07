@@ -11,7 +11,7 @@ export const useSetSearch = (value: string, setSearch: (v: string) => void) => {
   const debounce = useDebounce(value, 500);
 
   useEffect(() => {
-    if (debounce) setSearch(debounce);
+    setSearch(debounce);
   }, [debounce]);
 };
 

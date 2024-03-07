@@ -1,15 +1,14 @@
 import { Modal } from "src/components/Modal";
 import { ConfirmHeader } from "./Confirm";
 import { useActiveModal } from "src/stores/modalStore";
+import { FC } from "react";
 
-const PinVerification = () => {
-  const { actionIsPinVerification, isPinVerification, actionIsConfirmPay } =
-    useActiveModal();
+interface Verificationprops {
+  onBack: () => void;
+}
 
-  const onBack = () => {
-    actionIsPinVerification();
-    setTimeout(actionIsConfirmPay, 500);
-  };
+const PinVerification: FC<Verificationprops> = ({ onBack }) => {
+  const { actionIsPinVerification, isPinVerification } = useActiveModal();
 
   return (
     <Modal

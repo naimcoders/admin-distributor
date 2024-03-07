@@ -33,6 +33,7 @@ const Transfer = () => {
   const {
     control,
     setValue,
+    handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
 
@@ -56,10 +57,16 @@ const Transfer = () => {
     setTimeout(actionIsTransfer, 500);
   };
 
-  const onSubmit = () => {
+  const onBackPinVerification = () => {
+    actionIsPinVerification();
+    setTimeout(actionIsConfirmTransfer, 500);
+  };
+
+  const onSubmit = handleSubmit((e) => {
+    console.log(e);
     actionIsConfirmTransfer();
     setTimeout(actionIsPinVerification, 500);
-  };
+  });
 
   return (
     <>
@@ -180,7 +187,7 @@ const Transfer = () => {
         <Button aria-label="konfirmasi" className="w-full" onClick={onSubmit} />
       </Confirm>
 
-      <PinVerification />
+      <PinVerification onBack={onBackPinVerification} />
     </>
   );
 };

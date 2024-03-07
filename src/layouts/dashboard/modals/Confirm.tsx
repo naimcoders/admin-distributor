@@ -51,7 +51,7 @@ export const ConfirmHeader: FC<HeaderProps> = ({ title, onBack }) => {
         <ChevronLeftIcon width={18} />
       </nav>
       <h1 className="capitalize text-center w-full text-lg font-semibold">
-        Konfirmasi {title}
+        {title}
       </h1>
     </header>
   );

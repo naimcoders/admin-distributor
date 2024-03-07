@@ -174,19 +174,17 @@ const Create = () => {
         },
       });
 
-      if (Boolean(result.id)) {
-        setPhotos([]);
-        setVariantType([]);
-        setCategoryId("");
-        setSubCategoryId("");
-        clearDeliveryPrice();
-        reset();
-        navigate(-1);
-      }
+      if (Boolean(result.id)) navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
-      setVariantType(currentTypes);
+    } finally {
+      setPhotos([]);
+      setVariantType([]);
+      setCategoryId("");
+      setSubCategoryId("");
+      clearDeliveryPrice();
+      reset();
     }
   });
 

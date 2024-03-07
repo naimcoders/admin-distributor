@@ -64,14 +64,8 @@ const Create = () => {
     setIsPopOver,
   } = useUploadProduct();
 
-  const {
-    fields,
-    categoryId,
-    subCategoryId,
-    setCategoryId,
-    setSubCategoryId,
-    // onClickSubCategory,
-  } = useFields();
+  const { fields, categoryId, subCategoryId, setCategoryId, setSubCategoryId } =
+    useFields();
 
   const navigate = useNavigate();
   const findCategories = useCategory().find();
@@ -488,7 +482,6 @@ const useFields = () => {
     setCategoryId,
     subCategoryId,
     setSubCategoryId,
-    onClickSubCategory,
   };
 };
 

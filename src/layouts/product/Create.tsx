@@ -69,7 +69,7 @@ const Create = () => {
 
   const navigate = useNavigate();
   const findCategories = useCategory().find();
-  const { mutateAsync, isPending } = useProduct().create();
+  const { mutate, isPending } = useProduct().create();
   const { user } = useAuth();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
@@ -111,6 +111,7 @@ const Create = () => {
       })
     );
 
+    const variantUrls: { name: string; imageUrl: string }[] = [];
     const availableVariant = Boolean(variantTypes[0]?.imageUrl);
     if (availableVariant) {
       await Promise.all(
@@ -136,8 +137,7 @@ const Create = () => {
             );
           });
 
-          const f = variantTypes.filter((t) => t.name === type.name);
-          f.map(async (m) => (m.imageUrl = await promise));
+          variantUrls.push({ name: type.name, imageUrl: await promise });
         })
       );
     }
@@ -148,7 +148,12 @@ const Create = () => {
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
-      await mutateAsync({
+      variantUrls.forEach((url) => {
+        const filter = variantTypes.filter((f) => f.name === url.name);
+        filter.map((m) => (m.imageUrl = url.imageUrl));
+      });
+
+      mutate({
         data: {
           name: e.productName,
           isDangerous,

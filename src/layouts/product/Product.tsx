@@ -13,7 +13,7 @@ const SubProduct = () => {
     useProduct().find();
   useSetSearch(watch("search"), setSearch);
 
-  // console.log(data);
+  console.log(data?.items);
 
   const onNext = () => setPage((v) => v + 1);
   const onPrev = () => setPage((v) => v - 1);

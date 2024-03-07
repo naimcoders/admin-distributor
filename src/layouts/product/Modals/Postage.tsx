@@ -15,7 +15,9 @@ import {
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
-import useGeneralStore from "src/stores/generalStore";
+import useGeneralStore, {
+  defaultValueDeliveryPrice,
+} from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 
@@ -34,8 +36,8 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
   const onSubmit = postageForm.handleSubmit((e) => {
     const isCourierInternal = !isOutOfTown ? true : false;
 
-    const fieldNames = ["weight", "height", "length", "width", "price"];
-    let obj: Partial<DeliveryPrice> = {};
+    const fieldNames = ["weight", "height", "length", "wide", "price"];
+    let obj: DeliveryPrice = defaultValueDeliveryPrice;
 
     for (const v in e) {
       if (fieldNames.includes(v)) {
@@ -48,6 +50,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
 
     setValue("postage", e.price);
     clearErrors("postage");
+    postageForm.reset();
     actionIsPostage();
   });
 
@@ -180,7 +183,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
 export const usePostage = () => {
   const packageSize: TextfieldProps[] = [
     objectFields({
-      name: "width",
+      name: "wide",
       label: "lebar",
       placeholder: "atur lebar",
       defaultValue: "",

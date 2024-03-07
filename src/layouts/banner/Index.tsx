@@ -9,7 +9,6 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import { useAuth } from "src/firebase/auth";
 import { toast } from "react-toastify";
-import { getFileType } from "src/helpers";
 
 const Banner = () => {
   const { control } = useForm<FieldValues>();
@@ -111,9 +110,7 @@ const useBanner = () => {
     if (!e.target.files) return null;
 
     const files = e.target.files[0];
-    const fileType = getFileType(files.type);
-    const fileName = `${files.lastModified}.${fileType}`;
-    const fileNameFix = `banner/distributor/${user?.uid}/${fileName}`;
+    const fileNameFix = `banner/distributor/${user?.uid}/${Date.now()}.png`;
     const storageRef = ref(FbStorage, fileNameFix);
     const uploadTask = uploadBytesResumable(storageRef, files);
 
@@ -158,9 +155,7 @@ const useLogo = () => {
     if (!e.target.files) return null;
 
     const files = e.target.files[0];
-    const fileType = getFileType(files.type);
-    const fileName = `${files.lastModified}.${fileType}`;
-    const fileNameFix = `distributor/${user?.uid}/${fileName}`;
+    const fileNameFix = `distributor/${user?.uid}/${Date.now()}.png`;
     const storageRef = ref(FbStorage, fileNameFix);
     const uploadTask = uploadBytesResumable(storageRef, files);
 

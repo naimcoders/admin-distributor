@@ -15,8 +15,6 @@ export const useSetSearch = (value: string, setSearch: (v: string) => void) => {
   }, [debounce]);
 };
 
-export const getFileType = (type: string) => type.split("/").pop();
-
 export const parseTextToNumber = (val: string) => {
   const replaceDot = val.replace(/\./g, "");
   const result = parseInt(replaceDot, 10);

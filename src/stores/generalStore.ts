@@ -37,6 +37,7 @@ export interface VariantTypeProps {
 interface General {
   deliveryPrice: DeliveryPrice;
   setDeliveryPrice: (v: DeliveryPrice) => void;
+  clearDeliveryPrice: () => void;
 
   epoch: { startAt: number; endAt: number };
   setEpoch: (v: Period<number>) => void;
@@ -63,17 +64,20 @@ interface General {
   setPostageProduct: (v: PostageProps) => void;
 }
 
+export const defaultValueDeliveryPrice = {
+  id: "",
+  height: 0,
+  isCourierInternal: true,
+  length: 0,
+  price: 0,
+  weight: 0,
+  wide: 0,
+};
+
 const useGeneralStore = create<General>((set) => ({
-  deliveryPrice: {
-    id: "",
-    height: 0,
-    isCourierInternal: true,
-    length: 0,
-    price: 0,
-    weight: 0,
-    wide: 0,
-  },
+  deliveryPrice: defaultValueDeliveryPrice,
   setDeliveryPrice: (v) => set({ deliveryPrice: v }),
+  clearDeliveryPrice: () => set({ deliveryPrice: defaultValueDeliveryPrice }),
 
   epoch: { startAt: 0, endAt: 0 },
   setEpoch: (v) => set({ epoch: v }),

@@ -18,7 +18,6 @@ import {
 import {
   CurrencyIDInput,
   checkForDash,
-  getFileType,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -46,6 +45,7 @@ import { toast } from "react-toastify";
 
 const Create = () => {
   const {
+    reset,
     control,
     setValue,
     clearErrors,
@@ -70,7 +70,7 @@ const Create = () => {
     subCategoryId,
     setCategoryId,
     setSubCategoryId,
-    onClickSubCategory,
+    // onClickSubCategory,
   } = useFields();
 
   const navigate = useNavigate();
@@ -79,7 +79,9 @@ const Create = () => {
   const { user } = useAuth();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantType = useGeneralStore((v) => v.setVariantType);
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+  const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
 
   // onSubmit
   const onSubmit = handleSubmit(async (e) => {
@@ -89,14 +91,11 @@ const Create = () => {
     }
 
     const productUrls: string[] = [];
-    const variantUrls: string[] = [];
 
     await Promise.all(
       photos.map(async (product) => {
-        const fileType = getFileType(product.file.type);
-        const fileName = `${product.file.lastModified}.${fileType}`;
-        const fileNameFix = `temp/product/${user?.uid}/${fileName}`;
-        const storageRef = ref(FbStorage, fileNameFix);
+        const path = `temp/product/${user?.uid}/${Date.now()}.png`;
+        const storageRef = ref(FbStorage, path);
         const uploadTask = uploadBytesResumable(storageRef, product.file);
 
         const promise = new Promise<string>((resolve, reject) => {
@@ -118,13 +117,13 @@ const Create = () => {
       })
     );
 
-    const availableVariant = Boolean(variantTypes[0].imageUrl);
+    const availableVariant = Boolean(variantTypes[0]?.imageUrl);
     if (availableVariant) {
       await Promise.all(
         variantTypes.map(async (type) => {
-          const fileType = getFileType(type.files?.type ?? "");
-          const fileName = `${type.files?.lastModified}.${fileType}`;
-          const fileNameFix = `temp/product/product_variant/${user?.uid}/${fileName}`;
+          const fileNameFix = `temp/product/product_variant/${
+            user?.uid
+          }/${Date.now()}.png`;
           const storageRef = ref(FbStorage, fileNameFix);
           const uploadTask = uploadBytesResumable(storageRef, type.files!);
 
@@ -143,24 +142,36 @@ const Create = () => {
             );
           });
 
-          variantUrls.push(await promise);
-          return promise;
+          const f = variantTypes.filter((t) => t.name === type.name);
+          f.map(async (m) => (m.imageUrl = await promise));
         })
       );
-
-      variantTypes.map((m, k) => {
-        m.imageUrl = variantUrls[k];
-      });
     }
 
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {
       const price = e.price as string;
-      const name = e.productName;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
-      // mutateAsync({
+      console.log({
+        isDangerous,
+        deliveryPrice,
+        name: e.productName,
+        imageUrl: productUrls,
+        variant: variantTypes,
+        category: { categoryId },
+        description: e.description,
+        price: {
+          fee: 0,
+          startAt: 0,
+          expiredAt: 0,
+          price: newPrice,
+          priceDiscount: 0,
+        },
+      });
+
+      // await mutateAsync({
       //   data: {
       //     name,
       //     isDangerous,
@@ -178,6 +189,13 @@ const Create = () => {
       //     },
       //   },
       // });
+
+      setPhotos([]);
+      setVariantType([]);
+      setCategoryId("");
+      setSubCategoryId("");
+      clearDeliveryPrice();
+      reset();
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

@@ -37,7 +37,7 @@ import { ConditionModal } from "./Modals/Condition";
 import { ModalCategory, ModalSubCategory } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
 import { useAuth } from "src/firebase/auth";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
@@ -91,7 +91,6 @@ const Create = () => {
     });
 
     const productUrls: string[] = [];
-
     await Promise.all(
       photos.map(async (product) => {
         const path = `temp/product/${user?.uid}/${Date.now()}.png`;
@@ -107,8 +106,7 @@ const Create = () => {
               reject(err);
             },
             async () => {
-              const url = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve(url);
+              resolve(path);
             }
           );
         });
@@ -122,10 +120,10 @@ const Create = () => {
     if (availableVariant) {
       await Promise.all(
         variantTypes.map(async (type) => {
-          const fileNameFix = `temp/product/product_variant/${
+          const path = `temp/product/product_variant/${
             user?.uid
           }/${Date.now()}.png`;
-          const storageRef = ref(FbStorage, fileNameFix);
+          const storageRef = ref(FbStorage, path);
           const uploadTask = uploadBytesResumable(storageRef, type.files!);
 
           const promise = new Promise<string>((resolve, reject) => {
@@ -136,9 +134,8 @@ const Create = () => {
                 console.error(err.message);
                 reject(err);
               },
-              async () => {
-                const url = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve(url);
+              () => {
+                resolve(path);
               }
             );
           });
@@ -157,6 +154,8 @@ const Create = () => {
         const filter = variantTypes.filter((f) => f.name === url.name);
         filter.map((m) => (m.imageUrl = url.imageUrl));
       });
+
+      console.log({ variantTypes, productUrls });
 
       const result = await mutateAsync({
         data: {

@@ -18,8 +18,10 @@ const Textarea = (props: TextfieldProps) => {
         radius={props.radius}
         description={props.description}
         placeholder={props.placeholder}
+        errorMessage={props.errorMessage}
         classNames={{
           input: "placeholder:capitalize",
+          errorMessage: "capitalize font-interMedium",
         }}
       />
     </section>

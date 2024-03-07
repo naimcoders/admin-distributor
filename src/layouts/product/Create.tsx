@@ -292,6 +292,10 @@ const Create = () => {
               defaultValue=""
               control={control}
               placeholder="masukkan deskripsi"
+              errorMessage={handleErrorMessage(errors, "description")}
+              rules={{
+                required: { value: true, message: "Masukkan deskripsi" },
+              }}
             />
           </main>
 

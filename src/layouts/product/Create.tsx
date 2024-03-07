@@ -155,6 +155,8 @@ const Create = () => {
         filter.map((m) => (m.imageUrl = url.imageUrl));
       });
 
+      console.log({ variantTypes, productUrls, variantUrls });
+
       const result = await mutateAsync({
         data: {
           name: e.productName,

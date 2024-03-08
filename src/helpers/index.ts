@@ -57,14 +57,6 @@ export const detailNavigate = () => {
   return { onNav };
 };
 
-export const CreateObject = <T extends object>(data: T): T => {
-  let resultObj = {} as T;
-  for (const key in data) {
-    resultObj[key] = data[key];
-  }
-  return resultObj;
-};
-
 export const epochToDateConvert = (unixTime?: number): string => {
   if (!unixTime) return "-";
   const date = fromUnixTime(unixTime);

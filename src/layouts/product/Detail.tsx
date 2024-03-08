@@ -20,7 +20,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { handleErrorMessage } from "src/helpers";
+import { Currency, handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
 import Textarea from "src/components/Textarea";
 import { Button } from "src/components/Button";
@@ -307,7 +307,7 @@ const useFields = () => {
       name: "price",
       type: "rp",
       placeholder: "masukkan harga",
-      defaultValue: data?.price.price,
+      defaultValue: Currency(data?.price.price ?? 0),
       rules: { required: { value: true, message: "masukkan harga" } },
       readOnly: { isValue: true, cursor: "cursor-pointer" },
       onClick: actionIsPrice,
@@ -316,7 +316,7 @@ const useFields = () => {
       label: "ongkos kirim (berat/ukuran) *",
       name: "postage",
       type: "modal",
-      defaultValue: data?.deliveryPrice?.price,
+      defaultValue: Currency(data?.deliveryPrice?.price ?? 0),
       placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
       rules: { required: { value: true, message: "atur ongkos kirim" } },

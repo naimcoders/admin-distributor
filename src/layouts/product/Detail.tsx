@@ -84,7 +84,7 @@ const Detail = () => {
     productImageRef,
   } = useProductImage();
 
-  const { fields, isLoading, error } = useFields();
+  const { fields, isLoading, error, data } = useFields();
 
   return (
     <>
@@ -96,6 +96,21 @@ const Detail = () => {
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
             <section className="flex gap-6 items-center flex-wrap">
+              {data?.imageUrl.map((v, k) => (
+                <Image
+                  src={v}
+                  key={k}
+                  alt="Product Image"
+                  className={cx("w-[10rem] object-cover rounded-md")}
+                  actions={[
+                    {
+                      src: <TrashIcon width={16} />,
+                      onClick: () => console.log(v),
+                    },
+                  ]}
+                />
+              ))}
+
               {currentProductImage.map((v) => (
                 <Image
                   src={v.src}
@@ -337,6 +352,7 @@ const useFields = () => {
     setSubCategoryId,
     isLoading,
     error,
+    data,
   };
 };
 

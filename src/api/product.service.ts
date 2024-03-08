@@ -14,7 +14,7 @@ export interface Product {
   deliveryPrice: DeliveryPrice;
   description: string;
   id: string;
-  imageUrl: ImageURL;
+  imageUrl: string[];
   isAvailable: boolean;
   isDangerous: boolean;
   isPrimary: boolean;

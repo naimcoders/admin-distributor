@@ -76,8 +76,6 @@ const Detail = () => {
     formState: { errors },
   } = useForm<FieldValues>();
 
-  const [categoryId, setCategoryId] = React.useState("");
-
   const {
     currentProductImage,
     setCurrentProductImage,
@@ -89,7 +87,8 @@ const Detail = () => {
     productImageRef,
   } = useProductImage();
 
-  const { fields, isLoading, error, data } = useFields();
+  const { fields, isLoading, error, data, categoryId, setCategoryId } =
+    useFields();
 
   return (
     <>
@@ -263,18 +262,18 @@ const useFields = () => {
   const [categoryId, setCategoryId] = React.useState("");
   const [subCategoryId, setSubCategoryId] = React.useState("");
 
+  const { id } = useParams() as { id: string };
+  const { isLoading, error, data } = useProduct().findById(id);
+
   const onClickSubCategory = () => {
-    if (!categoryId) {
+    if (!data?.categoryProduct.category.name) {
       toast.error("Pilih kategori");
       return;
     }
 
     actionIsSubCategory();
-    console.log(categoryId);
+    console.log(data?.categoryProduct.category.name);
   };
-
-  const { id } = useParams() as { id: string };
-  const { isLoading, error, data } = useProduct().findById(id);
 
   const fields: TextfieldProps[] = [
     objectFields({

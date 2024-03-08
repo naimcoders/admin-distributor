@@ -337,7 +337,7 @@ const useFields = () => {
       onClick: actionIsSubDistributor,
     }),
     objectFields({
-      label: "deskripsi",
+      label: "deskripsi *",
       name: "description",
       type: "textarea",
       defaultValue: data?.description,

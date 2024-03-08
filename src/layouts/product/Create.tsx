@@ -295,7 +295,7 @@ const Create = () => {
 
           <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
             <Textarea
-              label="deskripsi"
+              label="deskripsi *"
               name="description"
               defaultValue=""
               control={control}
@@ -484,12 +484,6 @@ const useFields = () => {
       type: "modal",
       defaultValue: "",
       onClick: actionIsSubDistributor,
-    }),
-    objectFields({
-      label: "deskripsi produk",
-      name: "description",
-      type: "textarea",
-      defaultValue: "",
     }),
   ];
 

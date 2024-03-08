@@ -345,11 +345,16 @@ const Create = () => {
   );
 };
 
+export interface CurrentProductImageProps {
+  src: string;
+  name: String;
+  size: string;
+  file: File;
+}
+
 export const useUploadProduct = () => {
   const [isPopOver, setIsPopOver] = useState(false);
-  const [photos, setPhotos] = useState<
-    { src: string; name: String; size: string; file: File }[]
-  >([]);
+  const [photos, setPhotos] = useState<CurrentProductImageProps[]>([]);
   const [productSize, setProductSize] = useState("1:1");
   const productPhotoRef = useRef<ChildRef>(null);
 

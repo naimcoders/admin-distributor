@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { useController } from "react-hook-form";
 import { TextfieldProps } from "./Textfield";
 import { Textarea as Txtarea } from "@nextui-org/react";
@@ -6,7 +7,7 @@ const Textarea = (props: TextfieldProps) => {
   const { field } = useController(props);
 
   return (
-    <section className="flexcol gap-4">
+    <section className={cx("flexcol gap-4", props.classNameWrapper)}>
       {props.label && (
         <label htmlFor={props.label} className="text-sm capitalize">
           {props.label}

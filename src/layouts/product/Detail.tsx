@@ -224,6 +224,7 @@ const Detail = () => {
                     key={v.label}
                     control={control}
                     defaultValue={v.defaultValue}
+                    classNameWrapper="col-span-2"
                     errorMessage={handleErrorMessage(errors, v.name)}
                     rules={{
                       required: { value: true, message: v.errorMessage! },

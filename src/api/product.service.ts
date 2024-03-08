@@ -11,7 +11,7 @@ export interface Product {
   subCategoryProductId: string;
   subCategoryProduct: SubCategoryProduct;
   createdAt: number;
-  deliveryPrice: DeliveryPrice | object;
+  deliveryPrice: DeliveryPrice;
   description: string;
   id: string;
   imageUrl: ImageURL;

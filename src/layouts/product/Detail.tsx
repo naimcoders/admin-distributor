@@ -202,6 +202,7 @@ const Detail = () => {
                 ["textarea"].includes(v.type!) && (
                   <Textarea
                     {...v}
+                    key={v.label}
                     control={control}
                     defaultValue={v.defaultValue}
                     errorMessage={handleErrorMessage(errors, v.name)}
@@ -300,7 +301,7 @@ const useFields = () => {
       label: "ongkos kirim (berat/ukuran) *",
       name: "postage",
       type: "modal",
-      defaultValue: "",
+      defaultValue: data?.deliveryPrice?.price,
       placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
       rules: { required: { value: true, message: "atur ongkos kirim" } },

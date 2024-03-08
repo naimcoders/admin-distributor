@@ -268,15 +268,15 @@ const useFields = () => {
       label: "sub-kategori",
       name: "subCategory",
       type: "modal",
-      defaultValue: "",
       onClick: onClickSubCategory,
+      defaultValue: data?.subCategoryProduct?.name,
     }),
     objectFields({
       label: "produk berbahaya",
       name: "dangerous",
       type: "modal",
-      defaultValue: "Tidak",
       onClick: actionIsDangerous,
+      defaultValue: data?.isDangerous ? "Ya" : "Tidak",
     }),
     objectFields({
       label: "variasi",

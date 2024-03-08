@@ -276,7 +276,7 @@ const useFields = () => {
       label: "kategori *",
       name: "category",
       type: "modal",
-      defaultValue: "",
+      defaultValue: data?.categoryProduct.category.name,
       onClick: actionIsCategory,
       rules: { required: { value: true, message: "Pilih kategori" } },
     }),

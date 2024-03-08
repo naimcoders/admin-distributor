@@ -298,7 +298,7 @@ const useFields = () => {
       label: "variasi",
       name: "variant",
       type: "modal",
-      defaultValue: "",
+      defaultValue: data?.variantProduct.map((m) => m.name).join(", "),
       placeholder: "tentukan variasi",
       onClick: actionIsVariant,
     }),

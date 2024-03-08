@@ -5,6 +5,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
 import { useSetSearch } from "src/helpers";
+import { useNavigate } from "react-router-dom";
 
 const SubProduct = () => {
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
@@ -35,6 +36,7 @@ const SubProduct = () => {
 };
 
 const useHook = () => {
+  const navigate = useNavigate();
   const columns: Columns<Product>[] = [
     {
       header: <p className="text-center">nama produk</p>,
@@ -60,7 +62,7 @@ const useHook = () => {
         <Actions
           action="both"
           id={idx}
-          detail={{ onClick: () => console.log(v.id) }}
+          detail={{ onClick: () => navigate(`/produk/${v.id}`) }}
         />
       ),
       width: "w-40",

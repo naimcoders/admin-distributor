@@ -284,6 +284,15 @@ class Api {
     });
   }
 
+  async findById(productId: string): Promise<Product> {
+    return await req<Product>({
+      method: "GET",
+      isNoAuth: false,
+      errors: this.errors,
+      path: `${this.path}/${productId}`,
+    });
+  }
+
   async create(r: CreateProductProps): Promise<Product> {
     return await req<Product>({
       method: "POST",
@@ -297,6 +306,7 @@ class Api {
 
 interface ApiProductInfo {
   find(r: ReqPaging): Promise<ResPaging<Product>>;
+  findById(productId: string): Promise<Product>;
   create(r: CreateProductProps): Promise<Product>;
 }
 
@@ -339,6 +349,16 @@ export const useProduct = () => {
     };
   };
 
+  const findById = (productId: string) => {
+    const find = async () => getProductApiInfo().findById(productId);
+    const { data, isLoading, error } = useQuery<Product, Error>({
+      queryKey: [key, productId],
+      queryFn: find,
+    });
+
+    return { data, isLoading, error: error?.message };
+  };
+
   const create = () => {
     const mutate = useMutation<Product, Error, { data: CreateProductProps }>({
       mutationKey: [key],
@@ -356,5 +376,5 @@ export const useProduct = () => {
     return mutate;
   };
 
-  return { find, create };
+  return { find, findById, create };
 };

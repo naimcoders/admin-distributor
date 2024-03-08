@@ -28,6 +28,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { CurrentProductImageProps } from "./Create";
 import { toast } from "react-toastify";
 import { useActiveModal } from "src/stores/modalStore";
+import { ModalCategory } from "./Modals/Category";
 
 const useProductImage = () => {
   const [isPopOver, setIsPopOver] = React.useState(false);
@@ -70,8 +71,12 @@ const useProductImage = () => {
 const Detail = () => {
   const {
     control,
+    setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<FieldValues>();
+
+  const [categoryId, setCategoryId] = React.useState("");
 
   const {
     currentProductImage,
@@ -232,6 +237,13 @@ const Detail = () => {
           <Button aria-label="simpan" className="mx-auto mt-5" />
         </main>
       )}
+
+      <ModalCategory
+        id={categoryId}
+        setValue={setValue}
+        setId={setCategoryId}
+        clearErrors={clearErrors}
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { Switch } from "@nextui-org/react";
-import { FC, useState } from "react";
+import React from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { DeliveryPrice } from "src/api/product.service";
 import { Button } from "src/components/Button";
@@ -11,6 +11,7 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import {
+  Currency,
   CurrencyIDInput,
   handleErrorMessage,
   parseTextToNumber,
@@ -21,14 +22,19 @@ import useGeneralStore, {
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 
-export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
+interface PostageProps extends Pick<UseForm, "setValue" | "clearErrors"> {
+  data?: DeliveryPrice;
+}
+
+export const PostageModal: React.FC<PostageProps> = ({
   setValue,
   clearErrors,
+  data,
 }) => {
-  const { isPostage, actionIsPostage } = useActiveModal();
-  const { packageSize, outOfTownDeliveryField } = usePostage();
-  const [isOutOfTown, setIsOutOfTown] = useState(false);
+  const [isOutOfTown, setIsOutOfTown] = React.useState(false);
   const postageForm = useForm<FieldValues>();
+  const { isPostage, actionIsPostage } = useActiveModal();
+  const { packageSize, outOfTownDeliveryField } = usePostage(data);
 
   const handleSwitchOutOfTown = () => setIsOutOfTown((v) => !v);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
@@ -62,7 +68,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
           placeholder="atur berat produk"
           label="berat produk"
           control={postageForm.control}
-          defaultValue=""
+          defaultValue={String(data?.weight)}
           errorMessage={handleErrorMessage(
             postageForm.formState.errors,
             "weight"
@@ -87,8 +93,9 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
           <section className="flexcol gap-4 mt-4">
             {packageSize.map((v) => (
               <Textfield
-                key={v.label}
                 {...v}
+                key={v.label}
+                defaultValue={String(v.defaultValue)}
                 control={postageForm.control}
                 endContent={<ContentTextfield label="cm" />}
                 errorMessage={handleErrorMessage(
@@ -121,7 +128,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
             label="kurir distributor"
             placeholder="atur ongkir"
             control={postageForm.control}
-            defaultValue=""
+            defaultValue={String(Currency(data?.price ?? 0))}
             startContent={<ContentTextfield label="Rp" />}
             errorMessage={handleErrorMessage(
               postageForm.formState.errors,
@@ -152,6 +159,7 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
               onClick={handleSwitchOutOfTown}
             />
           </header>
+
           {isOutOfTown && (
             <section className="mt-4 flexcol gap-4">
               {outOfTownDeliveryField.map((v) => (
@@ -180,24 +188,24 @@ export const PostageModal: FC<Pick<UseForm, "setValue" | "clearErrors">> = ({
   );
 };
 
-export const usePostage = () => {
+export const usePostage = (data?: DeliveryPrice) => {
   const packageSize: TextfieldProps[] = [
     objectFields({
       name: "wide",
       label: "lebar",
       placeholder: "atur lebar",
-      defaultValue: "",
+      defaultValue: data?.wide,
     }),
     objectFields({
       name: "length",
       label: "panjang",
-      defaultValue: "",
+      defaultValue: data?.length,
       placeholder: "atur panjang",
     }),
     objectFields({
       name: "height",
       label: "tinggi",
-      defaultValue: "",
+      defaultValue: data?.height,
       placeholder: "atur tinggi",
     }),
   ];

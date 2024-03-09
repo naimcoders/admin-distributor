@@ -30,6 +30,7 @@ import { toast } from "react-toastify";
 import { useActiveModal } from "src/stores/modalStore";
 import { ModalCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
+import { ConditionModal } from "./Modals/Condition";
 
 const useProductImage = () => {
   const [isPopOver, setIsPopOver] = React.useState(false);
@@ -246,6 +247,7 @@ const Detail = () => {
         clearErrors={clearErrors}
       />
       <DangerousModal setValue={setValue} />
+      <ConditionModal setValue={setValue} />
     </>
   );
 };

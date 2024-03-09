@@ -156,6 +156,9 @@ export const VariantModal: FC<VariantModalProps> = ({
                       className={cx(
                         "w-[6rem] border border-gray-300 text-gray-500",
                         labelAndImage?.label === v.name &&
+                          "border border-blue-800",
+                        variantTypes[0].name === v.name &&
+                          !labelAndImage &&
                           "border border-blue-800"
                       )}
                       onClick={() => onClickType(v.name ?? "")}
@@ -240,8 +243,8 @@ export const VariantModal: FC<VariantModalProps> = ({
         {isVariantPhoto && variantTypes.length > 0 && (
           <>
             <section className="grid grid-cols-3 gap-2">
-              {variantTypes.map((v, idx) => (
-                <Fragment key={idx}>
+              {variantTypes.map((v, k) => (
+                <Fragment key={k}>
                   <VariantFileImage
                     label={v.name ?? ""}
                     image={v.imageUrl ?? ""}

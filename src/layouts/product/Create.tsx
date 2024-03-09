@@ -95,7 +95,7 @@ const Create = () => {
       photos.map(async (product) => {
         const path = `temp/product/${user?.uid}/${Date.now()}.png`;
         const storageRef = ref(FbStorage, path);
-        const uploadTask = uploadBytesResumable(storageRef, product.file);
+        const uploadTask = uploadBytesResumable(storageRef, product.file!);
 
         const promise = new Promise<string>((resolve, reject) => {
           uploadTask.on(
@@ -347,7 +347,7 @@ export interface CurrentProductImageProps {
   src: string;
   name: String;
   size: string;
-  file: File;
+  file?: File;
 }
 
 export const useUploadProduct = () => {

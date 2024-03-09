@@ -33,6 +33,7 @@ import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
 import { VariantModal } from "./Modals/Variant";
+import useGeneralStore from "src/stores/generalStore";
 
 const useProductImage = () => {
   const [isPopOver, setIsPopOver] = React.useState(false);
@@ -94,6 +95,24 @@ const Detail = () => {
   const { fields, isLoading, error, data, categoryId, setCategoryId } =
     useFields();
 
+  React.useEffect(() => {
+    if (data?.imageUrl) {
+      data.imageUrl.forEach((e) => {
+        setCurrentProductImage([
+          ...currentProductImage,
+          { name: e, size: "1:1", src: e },
+        ]);
+      });
+    }
+  }, [data]);
+
+  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
+  React.useEffect(() => {
+    if (data?.variantProduct) {
+      setVariantTypes(data.variantProduct);
+    }
+  }, [data]);
+
   return (
     <>
       {error ? (
@@ -104,7 +123,7 @@ const Detail = () => {
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
             <section className="flex gap-6 items-center flex-wrap">
-              {data?.imageUrl.map((v, k) => (
+              {/* {data?.imageUrl.map((v, k) => (
                 <Image
                   src={v}
                   key={k}
@@ -117,17 +136,14 @@ const Detail = () => {
                     },
                   ]}
                 />
-              ))}
+              ))} */}
 
               {currentProductImage.map((v) => (
                 <Image
                   src={v.src}
                   alt="Product"
                   key={v.src}
-                  className={cx(
-                    "w-[10rem] object-cover rounded-md",
-                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
-                  )}
+                  className={cx("w-[10rem] object-cover rounded-md", v.size)}
                   actions={[
                     {
                       src: <TrashIcon width={16} />,

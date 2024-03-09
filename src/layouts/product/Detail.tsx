@@ -143,7 +143,10 @@ const Detail = () => {
                   src={v.src}
                   alt="Product"
                   key={v.src}
-                  className={cx("w-[10rem] object-cover rounded-md", v.size)}
+                  className={cx(
+                    "w-[10rem] object-cover rounded-md",
+                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
+                  )}
                   actions={[
                     {
                       src: <TrashIcon width={16} />,

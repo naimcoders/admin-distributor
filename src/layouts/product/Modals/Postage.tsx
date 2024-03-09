@@ -68,7 +68,7 @@ export const PostageModal: React.FC<PostageProps> = ({
           placeholder="atur berat produk"
           label="berat produk"
           control={postageForm.control}
-          defaultValue={String(data?.weight)}
+          defaultValue={!data ? "" : String(data?.weight)}
           errorMessage={handleErrorMessage(
             postageForm.formState.errors,
             "weight"
@@ -95,7 +95,7 @@ export const PostageModal: React.FC<PostageProps> = ({
               <Textfield
                 {...v}
                 key={v.label}
-                defaultValue={String(v.defaultValue)}
+                defaultValue={!data ? "" : String(v.defaultValue)}
                 control={postageForm.control}
                 endContent={<ContentTextfield label="cm" />}
                 errorMessage={handleErrorMessage(
@@ -128,7 +128,7 @@ export const PostageModal: React.FC<PostageProps> = ({
             label="kurir distributor"
             placeholder="atur ongkir"
             control={postageForm.control}
-            defaultValue={String(Currency(data?.price ?? 0))}
+            defaultValue={!data ? "" : String(Currency(data?.price ?? 0))}
             startContent={<ContentTextfield label="Rp" />}
             errorMessage={handleErrorMessage(
               postageForm.formState.errors,

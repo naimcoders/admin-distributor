@@ -32,6 +32,7 @@ import { ModalCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
+import { VariantModal } from "./Modals/Variant";
 
 const useProductImage = () => {
   const [isPopOver, setIsPopOver] = React.useState(false);
@@ -249,6 +250,7 @@ const Detail = () => {
       />
       <DangerousModal setValue={setValue} />
       <ConditionModal setValue={setValue} />
+      <VariantModal fieldName="variant" setValue={setValue} />
       <PostageModal
         setValue={setValue}
         clearErrors={clearErrors}

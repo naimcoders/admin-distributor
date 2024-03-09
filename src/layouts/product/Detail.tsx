@@ -20,7 +20,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { Currency, handleErrorMessage } from "src/helpers";
+import { Currency, CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { IconColor } from "src/types";
 import Textarea from "src/components/Textarea";
 import { Button } from "src/components/Button";
@@ -32,10 +32,16 @@ import { ModalCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
-import { VariantModal } from "./Modals/Variant";
 import useGeneralStore from "src/stores/generalStore";
+import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
+import PriceModal from "./Modals/Price";
 
-const useProductImage = () => {
+const Detail = () => {
+  const [isMassal, setIsMassal] = React.useState(false);
+
+  const { id } = useParams() as { id: string };
+  const { isLoading, error, data } = useProduct().findById(id);
+
   const [isPopOver, setIsPopOver] = React.useState(false);
   const [productSize, setProductSize] = React.useState("1:1");
   const [currentProductImage, setCurrentProductImage] = React.useState<
@@ -61,19 +67,23 @@ const useProductImage = () => {
     setIsPopOver((v) => !v);
   };
 
-  return {
-    currentProductImage,
-    setCurrentProductImage,
-    isPopOver,
-    setIsPopOver,
-    onOpenExplorer,
-    onChange,
-    setProductSize,
-    productImageRef,
-  };
-};
+  const setVariantTypes = useGeneralStore(
+    (v) => v.setVariantTypesDetailProduct
+  );
 
-const Detail = () => {
+  React.useEffect(() => {
+    if (data) {
+      setCurrentProductImage(
+        data.imageUrl.map((imageUrl) => ({
+          name: imageUrl,
+          size: "1:1",
+          src: imageUrl,
+        }))
+      );
+      setVariantTypes(data.variantProduct);
+    }
+  }, [data]);
+
   const {
     control,
     setValue,
@@ -81,203 +91,8 @@ const Detail = () => {
     formState: { errors },
   } = useForm<FieldValues>();
 
-  const {
-    currentProductImage,
-    setCurrentProductImage,
-    isPopOver,
-    setIsPopOver,
-    onOpenExplorer,
-    onChange,
-    setProductSize,
-    productImageRef,
-  } = useProductImage();
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
 
-  const { fields, isLoading, error, data, categoryId, setCategoryId } =
-    useFields();
-
-  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
-  React.useEffect(() => {
-    if (data?.imageUrl) {
-      data.imageUrl.forEach((e) => {
-        setCurrentProductImage([
-          ...currentProductImage,
-          { name: e, size: "1:1", src: e },
-        ]);
-      });
-    }
-
-    if (data?.variantProduct) {
-      setVariantTypes(data.variantProduct);
-    }
-  }, [data]);
-
-  return (
-    <>
-      {error ? (
-        <Error error={error} />
-      ) : isLoading ? (
-        <Skeleton />
-      ) : (
-        <main className="flexcol gap-5 lg:gap-8">
-          <header className="flexcol gap-4">
-            <section className="flex gap-6 items-center flex-wrap">
-              {/* {data?.imageUrl.map((v, k) => (
-                <Image
-                  src={v}
-                  key={k}
-                  alt="Product Image"
-                  className={cx("w-[10rem] object-cover rounded-md")}
-                  actions={[
-                    {
-                      src: <TrashIcon width={16} />,
-                      onClick: () => console.log(v),
-                    },
-                  ]}
-                />
-              ))} */}
-
-              {currentProductImage.map((v) => (
-                <Image
-                  src={v.src}
-                  alt="Product"
-                  key={v.src}
-                  className={cx(
-                    "w-[10rem] object-cover rounded-md",
-                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
-                  )}
-                  actions={[
-                    {
-                      src: <TrashIcon width={16} />,
-                      onClick: () =>
-                        setCurrentProductImage(
-                          currentProductImage.filter((e) => e !== v)
-                        ),
-                    },
-                  ]}
-                />
-              ))}
-
-              <Popover placement="right" isOpen={isPopOver}>
-                <PopoverTrigger>
-                  <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
-                    Tambah Foto
-                  </Btn>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <section className="flex gap-4">
-                    {["1:1", "3:4"].map((v) => (
-                      <FileComp
-                        key={v}
-                        control={control}
-                        onClick={() => {
-                          setProductSize(v);
-                          onOpenExplorer();
-                        }}
-                        onChange={onChange}
-                        name="productPhoto"
-                        ref={productImageRef}
-                        placeholder={v}
-                        className="w-[5rem] cursor-pointer"
-                        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                        startContent={
-                          <img
-                            src={v === "1:1" ? square : rectangle}
-                            alt="square icon"
-                            className="w-4 cursor-pointer"
-                          />
-                        }
-                      />
-                    ))}
-                  </section>
-                </PopoverContent>
-              </Popover>
-            </section>
-          </header>
-
-          <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
-            {fields.map((v) => (
-              <React.Fragment key={v.label}>
-                {["text", "rp"].includes(v.type!) && (
-                  <Textfield
-                    {...v}
-                    type={v.type}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    // readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
-                    // onClick={variantTypes.length > 1 ? v.onClick : undefined}
-                    rules={{
-                      required: v.rules?.required,
-                      // onBlur:
-                      //   variantTypes.length < 1
-                      //     ? (e) =>
-                      //         CurrencyIDInput({
-                      //           type: v.type!,
-                      //           fieldName: v.name,
-                      //           setValue,
-                      //           value: e.target.value,
-                      //         })
-                      //     : undefined,
-                    }}
-                  />
-                )}
-
-                {["modal"].includes(v.type!) && (
-                  <Textfield
-                    {...v}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    endContent={
-                      <ChevronRightIcon width={16} color={IconColor.zinc} />
-                    }
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </main>
-
-          <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
-            {fields.map(
-              (v) =>
-                ["textarea"].includes(v.type!) && (
-                  <Textarea
-                    {...v}
-                    key={v.label}
-                    control={control}
-                    defaultValue={v.defaultValue}
-                    classNameWrapper="col-span-2"
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    rules={{
-                      required: { value: true, message: v.errorMessage! },
-                    }}
-                  />
-                )
-            )}
-          </main>
-
-          <Button aria-label="simpan" className="mx-auto mt-5" />
-        </main>
-      )}
-
-      <ModalCategory
-        id={categoryId}
-        setValue={setValue}
-        setId={setCategoryId}
-        clearErrors={clearErrors}
-      />
-      <DangerousModal setValue={setValue} />
-      <ConditionModal setValue={setValue} />
-      <VariantModal fieldName="variant" setValue={setValue} />
-      <PostageModal
-        setValue={setValue}
-        clearErrors={clearErrors}
-        data={data?.deliveryPrice}
-      />
-    </>
-  );
-};
-
-const useFields = () => {
   const {
     actionIsCategory,
     actionIsSubCategory,
@@ -290,10 +105,7 @@ const useFields = () => {
   } = useActiveModal();
 
   const [categoryId, setCategoryId] = React.useState("");
-  const [subCategoryId, setSubCategoryId] = React.useState("");
-
-  const { id } = useParams() as { id: string };
-  const { isLoading, error, data } = useProduct().findById(id);
+  // const [subCategoryId, setSubCategoryId] = React.useState("");
 
   const onClickSubCategory = () => {
     if (!data?.categoryProduct.category.name) {
@@ -385,16 +197,168 @@ const useFields = () => {
     }),
   ];
 
-  return {
-    fields,
-    categoryId,
-    setCategoryId,
-    subCategoryId,
-    setSubCategoryId,
-    isLoading,
-    error,
-    data,
-  };
+  return (
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
+        <Skeleton />
+      ) : (
+        <main className="flexcol gap-5 lg:gap-8">
+          <header className="flexcol gap-4">
+            <section className="flex gap-6 items-center flex-wrap">
+              {currentProductImage.map((v, k) => (
+                <Image
+                  key={k}
+                  src={v.src}
+                  alt="Product"
+                  className={cx(
+                    "w-[10rem] object-cover rounded-md",
+                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
+                  )}
+                  actions={[
+                    {
+                      src: <TrashIcon width={16} />,
+                      onClick: () =>
+                        setCurrentProductImage(
+                          currentProductImage.filter((e) => e !== v)
+                        ),
+                    },
+                  ]}
+                />
+              ))}
+
+              <Popover placement="right" isOpen={isPopOver}>
+                <PopoverTrigger>
+                  <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
+                    Tambah Foto
+                  </Btn>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <section className="flex gap-4">
+                    {["1:1", "3:4"].map((v) => (
+                      <FileComp
+                        key={v}
+                        control={control}
+                        onClick={() => {
+                          setProductSize(v);
+                          onOpenExplorer();
+                        }}
+                        onChange={onChange}
+                        name="productPhoto"
+                        ref={productImageRef}
+                        placeholder={v}
+                        className="w-[5rem] cursor-pointer"
+                        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                        startContent={
+                          <img
+                            src={v === "1:1" ? square : rectangle}
+                            alt="square icon"
+                            className="w-4 cursor-pointer"
+                          />
+                        }
+                      />
+                    ))}
+                  </section>
+                </PopoverContent>
+              </Popover>
+            </section>
+          </header>
+
+          <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
+            {fields.map((v) => (
+              <React.Fragment key={v.label}>
+                {["text", "rp"].includes(v.type!) && (
+                  <Textfield
+                    {...v}
+                    control={control}
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
+                    onClick={variantTypes.length > 1 ? v.onClick : undefined}
+                    endContent={
+                      variantTypes.length > 1 &&
+                      v.name === "price" && (
+                        <ChevronRightIcon width={16} color={IconColor.zinc} />
+                      )
+                    }
+                    rules={{
+                      required: v.rules?.required,
+                      onBlur:
+                        variantTypes.length < 1
+                          ? (e) =>
+                              CurrencyIDInput({
+                                type: v.type!,
+                                fieldName: v.name,
+                                setValue,
+                                value: e.target.value,
+                              })
+                          : undefined,
+                    }}
+                  />
+                )}
+
+                {["modal"].includes(v.type!) && (
+                  <Textfield
+                    {...v}
+                    control={control}
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                    endContent={
+                      <ChevronRightIcon width={16} color={IconColor.zinc} />
+                    }
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </main>
+
+          <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
+            {fields.map(
+              (v) =>
+                ["textarea"].includes(v.type!) && (
+                  <Textarea
+                    {...v}
+                    key={v.label}
+                    control={control}
+                    defaultValue={v.defaultValue}
+                    classNameWrapper="col-span-2"
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    rules={{
+                      required: { value: true, message: v.errorMessage! },
+                    }}
+                  />
+                )
+            )}
+          </main>
+
+          <Button aria-label="simpan" className="mx-auto mt-5" />
+        </main>
+      )}
+
+      <ModalCategory
+        id={categoryId}
+        setValue={setValue}
+        setId={setCategoryId}
+        clearErrors={clearErrors}
+      />
+      <DangerousModal setValue={setValue} />
+      <ConditionModal setValue={setValue} />
+      <VariantDetailProductModal fieldName="variant" setValue={setValue} />
+      <PostageModal
+        setValue={setValue}
+        clearErrors={clearErrors}
+        data={data?.deliveryPrice}
+      />
+      <PriceModal
+        fieldName="price"
+        setValue={setValue}
+        clearErrors={clearErrors}
+        isMassal={isMassal}
+        setIsMassal={setIsMassal}
+        variantTypes={variantTypes}
+      />
+    </>
+  );
 };
 
 export default Detail;

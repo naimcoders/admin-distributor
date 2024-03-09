@@ -1,5 +1,5 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
@@ -11,16 +11,18 @@ import {
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
-import useGeneralStore from "src/stores/generalStore";
+import { VariantTypeProps } from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor, UseForm } from "src/types";
 
 interface PriceProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   fieldName: string;
+  isMassal: boolean;
+  setIsMassal: React.Dispatch<React.SetStateAction<boolean>>;
+  variantTypes: VariantTypeProps[];
 }
 
-const PriceModal = (props: PriceProps) => {
-  const [isMassal, setIsMassal] = useState(false);
+const PriceModal: React.FC<PriceProps> = (props) => {
   const { isPrice, actionIsPrice, actionIsVariant } = useActiveModal();
   const {
     control,
@@ -30,15 +32,13 @@ const PriceModal = (props: PriceProps) => {
     formState: { errors },
   } = useForm<FieldValues>();
 
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-
   const handleMassalActive = () => {
-    setIsMassal((v) => !v);
+    props.setIsMassal((v) => !v);
     reset();
   };
 
   const handleSubmitPrice = handleSubmit((e) => {
-    if (!isMassal) {
+    if (!props.isMassal) {
       const values: number[] = [];
       for (const iterator in e) {
         const parseToNumber = parseTextToNumber(e[iterator]);
@@ -51,7 +51,9 @@ const PriceModal = (props: PriceProps) => {
 
       for (const itr in e) {
         const [type, size] = itr.split("_");
-        const [filterBySameName] = variantTypes.filter((f) => f.name === type);
+        const [filterBySameName] = props.variantTypes.filter(
+          (f) => f.name === type
+        );
 
         filterBySameName?.variantColorProduct?.forEach((f) => {
           if (size === f.name) {
@@ -64,7 +66,7 @@ const PriceModal = (props: PriceProps) => {
       props.setValue(props.fieldName, resultVal);
     } else {
       const massalPrice = e.massal;
-      variantTypes.forEach((e) => {
+      props.variantTypes.forEach((e) => {
         e.variantColorProduct?.forEach((f) => {
           f.price = parseTextToNumber(massalPrice);
         });
@@ -94,7 +96,7 @@ const PriceModal = (props: PriceProps) => {
               title="Edit secara massal"
               onClick={handleMassalActive}
             >
-              {!isMassal ? (
+              {!props.isMassal ? (
                 <>
                   <PencilIcon width={16} />
                   massal
@@ -105,7 +107,7 @@ const PriceModal = (props: PriceProps) => {
             </button>
           </section>
 
-          {isMassal && (
+          {props.isMassal && (
             <Textfield
               name="massal"
               defaultValue=""
@@ -130,8 +132,8 @@ const PriceModal = (props: PriceProps) => {
           )}
         </header>
 
-        {!isMassal &&
-          variantTypes.map((v, idx) => (
+        {!props.isMassal &&
+          props.variantTypes.map((v, idx) => (
             <Fragment key={idx}>
               <hr />
               <section className="flexcol gap-4">
@@ -145,6 +147,9 @@ const PriceModal = (props: PriceProps) => {
                       setValue={setValue}
                       fieldName={`${v.name}_${m.name}`}
                       errors={errors}
+                      defaultValue={
+                        m.price ? String(Currency(m.price ?? 0)) : ""
+                      }
                     />
                   ))
                 ) : (
@@ -181,6 +186,7 @@ const PriceModal = (props: PriceProps) => {
 interface FieldProps extends Pick<UseForm, "control" | "setValue" | "errors"> {
   fieldName: string;
   variant?: string;
+  defaultValue?: string;
 }
 
 const Field: FC<FieldProps> = ({
@@ -189,6 +195,7 @@ const Field: FC<FieldProps> = ({
   variant,
   fieldName,
   errors,
+  defaultValue,
 }) => {
   return (
     <section className="grid grid-cols-3 items-center gap-2">
@@ -196,7 +203,7 @@ const Field: FC<FieldProps> = ({
       <Textfield
         name={fieldName}
         control={control}
-        defaultValue=""
+        defaultValue={defaultValue}
         startContent={<ContentTextfield label="Rp" />}
         classNameWrapper={!variant ? "col-span-3" : "col-span-1"}
         rules={{

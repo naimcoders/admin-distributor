@@ -44,6 +44,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Create = () => {
+  const [isMassal, setIsMassal] = useState(false);
+
   const {
     reset,
     control,
@@ -254,14 +256,19 @@ const Create = () => {
           <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
             {fields.map((v) => (
               <Fragment key={v.label}>
-                {["text", "rp", "number"].includes(v.type!) && (
+                {["text", "rp"].includes(v.type!) && (
                   <Textfield
                     {...v}
-                    type={v.type}
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
                     onClick={variantTypes.length > 1 ? v.onClick : undefined}
+                    endContent={
+                      variantTypes.length > 1 &&
+                      v.name === "price" && (
+                        <ChevronRightIcon width={16} color={IconColor.zinc} />
+                      )
+                    }
                     rules={{
                       required: v.rules?.required,
                       onBlur:
@@ -336,6 +343,9 @@ const Create = () => {
             fieldName="price"
             setValue={setValue}
             clearErrors={clearErrors}
+            isMassal={isMassal}
+            setIsMassal={setIsMassal}
+            variantTypes={variantTypes}
           />
         </main>
       )}

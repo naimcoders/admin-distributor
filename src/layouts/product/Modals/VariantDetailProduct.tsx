@@ -35,7 +35,7 @@ interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
 }
 
-export const VariantModal: FC<VariantModalProps> = ({
+export const VariantDetailProductModal: FC<VariantModalProps> = ({
   fieldName,
   setValue,
 }) => {
@@ -48,8 +48,6 @@ export const VariantModal: FC<VariantModalProps> = ({
     handleDeleteType,
     handleSubmitType,
     isVariant,
-    variantTypes,
-    setVariantType,
     isDeleteSize,
     handleChangeSize,
     isAddSize,
@@ -72,6 +70,9 @@ export const VariantModal: FC<VariantModalProps> = ({
 
   const [labelProduct, setLabelProduct] = useState("");
   const { productPhotoRef } = useUploadProduct();
+
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const setVariantType = useGeneralStore((v) => v.setVariantTypesDetailProduct);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
@@ -156,6 +157,9 @@ export const VariantModal: FC<VariantModalProps> = ({
                       className={cx(
                         "w-[6rem] border border-gray-300 text-gray-500",
                         labelAndImage?.label === v.name &&
+                          "border border-blue-800",
+                        variantTypes[0].name === v.name &&
+                          !labelAndImage &&
                           "border border-blue-800"
                       )}
                       onClick={() => onClickType(v.name ?? "")}
@@ -381,8 +385,8 @@ const useVariant = () => {
   }>();
 
   const { isVariant, actionIsVariant, actionIsPrice } = useActiveModal();
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const setVariantType = useGeneralStore((v) => v.setVariantType);
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const setVariantType = useGeneralStore((v) => v.setVariantTypesDetailProduct);
 
   const handleAddType = () => setIsAddType((v) => !v);
   const handleAddSize = () => setIsAddSize((v) => !v);
@@ -435,10 +439,9 @@ const useVariant = () => {
     }
   });
 
-  const handleSubmitSize = formSize.handleSubmit(async (e) => {
+  const handleSubmitSize = formSize.handleSubmit((e) => {
     try {
       const val = e.size;
-
       const [filter] = size.filter((f) => f.label === labelAndImage?.label);
       const fixedSize = filter?.size ?? [];
       const notSameLabel = size.filter((f) => f.label !== labelAndImage?.label);
@@ -468,7 +471,6 @@ const useVariant = () => {
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const val = formSize.getValues().size;
-
       const [filter] = size.filter((f) => f.label === labelAndImage?.label);
       const fixedSize = filter?.size ?? [];
       const notSameLabel = size.filter((f) => f.label !== labelAndImage?.label);
@@ -579,8 +581,10 @@ const VariantFileImage = forwardRef(
       },
     }));
 
-    const variantTypes = useGeneralStore((v) => v.variantTypes);
-    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
+    const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+    const setVariantTypes = useGeneralStore(
+      (v) => v.setVariantTypesDetailProduct
+    );
 
     const handleDeleteProductImage = () => {
       const [byLabel] = variantTypes.filter((f) => f.name === props.label);

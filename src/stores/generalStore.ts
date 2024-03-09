@@ -47,6 +47,8 @@ interface General {
 
   variantTypes: VariantTypeProps[];
   setVariantType: (v: VariantTypeProps[]) => void;
+  variantTypesDetailProduct: VariantTypeProps[];
+  setVariantTypesDetailProduct: (v: VariantTypeProps[]) => void;
 
   bankName: string;
   setBankName: (v: string) => void;
@@ -87,6 +89,8 @@ const useGeneralStore = create<General>((set) => ({
 
   variantTypes: [],
   setVariantType: (v) => set({ variantTypes: v }),
+  variantTypesDetailProduct: [],
+  setVariantTypesDetailProduct: (v) => set({ variantTypesDetailProduct: v }),
 
   bankName: "",
   setBankName: (v) => set({ bankName: v }),

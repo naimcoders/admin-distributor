@@ -95,6 +95,7 @@ const Detail = () => {
   const { fields, isLoading, error, data, categoryId, setCategoryId } =
     useFields();
 
+  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
   React.useEffect(() => {
     if (data?.imageUrl) {
       data.imageUrl.forEach((e) => {
@@ -104,10 +105,7 @@ const Detail = () => {
         ]);
       });
     }
-  }, [data]);
 
-  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
-  React.useEffect(() => {
     if (data?.variantProduct) {
       setVariantTypes(data.variantProduct);
     }

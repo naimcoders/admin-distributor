@@ -17,19 +17,13 @@ import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
 import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import { IconColor, UseForm } from "src/types";
-import {
-  CheckIcon,
-  PlusIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { XCircleIcon } from "@heroicons/react/24/solid";
-import { Textfield } from "src/components/Textfield";
-import { handleErrorMessage } from "src/helpers";
 import { ChildRef, FileProps } from "src/components/File";
 import { useActiveModal } from "src/stores/modalStore";
 import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
+import { ItemVariant } from "src/components/VariantItem";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -75,7 +69,6 @@ export const VariantModal: FC<VariantModalProps> = ({
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
-
     const blob = URL.createObjectURL(files);
     const [datas] = variantTypes.filter((f) => f.name === labelProduct);
     datas.files = files;
@@ -85,17 +78,10 @@ export const VariantModal: FC<VariantModalProps> = ({
     let error = 0;
 
     variantTypes.forEach((e) => {
-      if (e.name === labelProduct) {
-        setImageValues.push(datas);
-      }
-
-      if (e.name !== labelProduct) {
-        setImageValues.push(e);
-      }
-
+      if (e.name === labelProduct) setImageValues.push(datas);
+      if (e.name !== labelProduct) setImageValues.push(e);
       if (isVariantPhoto && e.imageUrl) error++;
     });
-
     setVariantType([...setImageValues]);
 
     if (error > 1) setIsErrorVariant(false);
@@ -108,9 +94,7 @@ export const VariantModal: FC<VariantModalProps> = ({
     }
   };
 
-  const onClickType = (label: string) => {
-    setLabelAndImage({ label });
-  };
+  const onClickType = (label: string) => setLabelAndImage({ label });
 
   const onShowVariantImage = () => {
     const newVariant = variantTypes.map((item) => {
@@ -132,95 +116,47 @@ export const VariantModal: FC<VariantModalProps> = ({
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
       <main className="my-4 flexcol gap-6">
-        <header className="flexcol gap-2">
-          <section className="flex items-center justify-between">
-            <h2 className="font-semibold capitalize">warna/jenis/tipe</h2>
-            <button
-              className={`text-[${IconColor.red}] text-sm capitalize`}
-              title="edit"
-              onClick={handleChangeType}
-            >
-              {!isDeleteType ? "edit" : "selesai"}
-            </button>
-          </section>
-
-          <section className="flexcol gap-2">
-            <section className="flex gap-3 flex-wrap">
-              {variantTypes.length > 0 &&
-                variantTypes.map((v, idx) => (
-                  <section className="relative" key={idx}>
-                    <Btn
-                      size="sm"
-                      variant="light"
-                      className={cx(
-                        "w-[6rem] border border-gray-300 text-gray-500",
-                        labelAndImage?.label === v.name &&
-                          "border border-blue-800"
-                      )}
-                      onClick={() => onClickType(v.name ?? "")}
-                    >
-                      {v.name}
-                    </Btn>
-                    {isDeleteType && (
-                      <XCircleIcon
-                        width={20}
-                        color={IconColor.red}
-                        className="absolute -top-2 -right-2 cursor-pointer"
-                        title="hapus"
-                        onClick={() => handleDeleteType(v.name ?? "")}
-                      />
-                    )}
-                  </section>
-                ))}
-
-              <Button
-                aria-label={!isAddType ? "tambah" : "batal"}
-                endContent={
-                  !isAddType ? (
-                    <PlusIcon width={16} />
-                  ) : (
-                    <XMarkIcon width={16} />
-                  )
-                }
-                className="w-[6rem] border border-gray-300 text-gray-500"
-                color="default"
-                variant="light"
-                size="sm"
-                onClick={handleAddType}
-              />
-            </section>
-
-            {isAddType && (
-              <Textfield
-                name="type"
-                defaultValue=""
-                control={formType.control}
-                onKeyDown={handleOnKeyDownType}
-                placeholder="masukkan warna/jenis/tipe"
-                errorMessage={handleErrorMessage(
-                  formType.formState.errors,
-                  "type"
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "masukkan warna/jenis/tipe",
-                  },
-                }}
-                endContent={
-                  <CheckIcon
-                    width={16}
-                    title="Tambah"
-                    className="cursor-pointer"
-                    onClick={handleSubmitType}
+        <ItemVariant
+          title="warna/jenis/tipe"
+          control={formType.control}
+          errors={formType.formState.errors}
+          add={{
+            errorMessage: "masukkan warna/jenis/tipe",
+            fieldName: "type",
+            isAdd: isAddType,
+            onAdd: handleAddType,
+            onKeyDown: handleOnKeyDownType,
+            onSubmit: handleSubmitType,
+          }}
+          update={{ isUpdate: isDeleteType, onEdit: handleChangeType }}
+        >
+          {variantTypes.length > 0 &&
+            variantTypes.map((v, idx) => (
+              <section className="relative" key={idx}>
+                <Btn
+                  size="sm"
+                  variant="light"
+                  className={cx(
+                    "w-[6rem] border border-gray-300 text-gray-500",
+                    labelAndImage?.label === v.name && "border border-blue-800"
+                  )}
+                  onClick={() => onClickType(v.name ?? "")}
+                >
+                  {v.name}
+                </Btn>
+                {isDeleteType && (
+                  <XCircleIcon
+                    width={20}
+                    color={IconColor.red}
+                    className="absolute -top-2 -right-2 cursor-pointer"
+                    title="hapus"
+                    onClick={() => handleDeleteType(v.name ?? "")}
                   />
-                }
-              />
-            )}
-          </section>
-        </header>
+                )}
+              </section>
+            ))}
+        </ItemVariant>
         <hr />
-
         <section className="flex justify-between">
           <section>
             <h2>Tambah foto ke variasi "Warna/Jenis/Tipe"</h2>
@@ -253,108 +189,60 @@ export const VariantModal: FC<VariantModalProps> = ({
             </section>
           </>
         )}
-
         {isErrorVariant && <p className="text-sm text-red-500">Upload foto</p>}
-
         <hr />
-
-        {/* footer */}
-        <footer className="flexcol gap-2">
-          <section className="flex items-center justify-between">
-            <h2 className="font-semibold capitalize">ukuran</h2>
-            <button
-              title="edit"
-              onClick={handleChangeSize}
-              className={`text-[${IconColor.red}] text-sm capitalize`}
-            >
-              {!isDeleteSize ? "edit" : "selesai"}
-            </button>
-          </section>
-
+        <ItemVariant
+          title="ukuran"
+          control={formSize.control}
+          errors={formSize.formState.errors}
+          add={{
+            errorMessage: "masukkan ukuran",
+            fieldName: "size",
+            isAdd: isAddSize,
+            onAdd: handleAddSize,
+            onKeyDown: handleOnKeyDownSize,
+            onSubmit: handleSubmitSize,
+          }}
+          update={{ isUpdate: isDeleteSize, onEdit: handleChangeSize }}
+          isActiveItem={!labelAndImage?.label}
+        >
           {!labelAndImage?.label ? (
             <p className={`text-sm text-[${IconColor.zinc}]`}>
               Pilih warna/jenis/tipe di atas untuk mengatur ukuran
             </p>
           ) : (
-            <section className="flexcol gap-2">
-              <section className="flex gap-3 flex-wrap">
-                {variantTypes
-                  .filter((f) => f.name === labelAndImage?.label)
-                  .map((v) =>
-                    v.variantColorProduct.map((s, idx) => (
-                      <section className="relative" key={idx}>
-                        <Btn
-                          size="sm"
-                          variant="light"
-                          className="w-[6rem] border border-gray-400 text-gray-500"
-                        >
-                          {s.name}
-                        </Btn>
-                        {isDeleteSize && (
-                          <XCircleIcon
-                            width={20}
-                            color={IconColor.red}
-                            className="absolute -top-2 -right-2 cursor-pointer"
-                            title="hapus"
-                            onClick={() => handleDeleteSize(s.name)}
-                          />
-                        )}
-                      </section>
-                    ))
-                  )}
-
-                <Button
-                  aria-label={!isAddSize ? "tambah" : "batal"}
-                  size="sm"
-                  color="default"
-                  variant="light"
-                  onClick={handleAddSize}
-                  className="w-[6rem] border border-gray-400 text-gray-500"
-                  endContent={
-                    !isAddSize ? (
-                      <PlusIcon width={16} />
-                    ) : (
-                      <XMarkIcon width={16} />
-                    )
-                  }
-                />
-              </section>
-
-              {isAddSize && (
-                <Textfield
-                  name="size"
-                  defaultValue=""
-                  control={formSize.control}
-                  onKeyDown={handleOnKeyDownSize}
-                  placeholder="masukkan size"
-                  errorMessage={handleErrorMessage(
-                    formSize.formState.errors,
-                    "size"
-                  )}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: "masukkan ukuran",
-                    },
-                  }}
-                  endContent={
-                    <CheckIcon
-                      width={16}
-                      title="Tambah"
-                      className="cursor-pointer"
-                      onClick={handleSubmitSize}
-                    />
-                  }
-                />
-              )}
-            </section>
+            <>
+              {variantTypes
+                .filter((f) => f.name === labelAndImage?.label)
+                .map((v) =>
+                  v.variantColorProduct.map((s, idx) => (
+                    <section className="relative" key={idx}>
+                      <Btn
+                        size="sm"
+                        variant="light"
+                        className="w-[6rem] border border-gray-400 text-gray-500"
+                      >
+                        {s.name}
+                      </Btn>
+                      {isDeleteSize && (
+                        <XCircleIcon
+                          width={20}
+                          color={IconColor.red}
+                          className="absolute -top-2 -right-2 cursor-pointer"
+                          title="hapus"
+                          onClick={() => handleDeleteSize(s.name)}
+                        />
+                      )}
+                    </section>
+                  ))
+                )}
+            </>
           )}
-        </footer>
-
+        </ItemVariant>
         <Button
           aria-label="atur info variasi"
           className="mx-auto mt-4"
-          onClick={() => handleSubmitVariant(fieldName, { setValue })}
+          onClick={() => handleSubmitVariant(fieldName, setValue)}
         />
       </main>
     </Modal>
@@ -390,7 +278,7 @@ export const useVariant = () => {
 
   const handleSubmitVariant = (
     fieldName: string,
-    form: Pick<UseForm, "setValue">
+    setValue: Pick<UseForm, "setValue">["setValue"]
   ) => {
     let error = 0;
     variantTypes.forEach((e) => {
@@ -401,7 +289,7 @@ export const useVariant = () => {
     else {
       const value = variantTypes.map((m) => m.name).join(", ");
       console.log(value, variantTypes);
-      form.setValue(fieldName, value);
+      setValue(fieldName, value);
       actionIsVariant();
       setTimeout(actionIsPrice, 500);
     }
@@ -525,20 +413,12 @@ const VariantFileImage = forwardRef(
 
     const handleDeleteProductImage = () => {
       const [byLabel] = variantTypes.filter((f) => f.name === props.label);
-
       byLabel.imageUrl = "";
-
       const currentValues: VariantTypeProps[] = [];
-
       variantTypes.forEach((e) => {
-        if (e.name === props.label) {
-          currentValues.push(byLabel);
-        }
-        if (e.name !== props.label) {
-          currentValues.push(e);
-        }
+        if (e.name === props.label) currentValues.push(byLabel);
+        if (e.name !== props.label) currentValues.push(e);
       });
-
       setVariantTypes(currentValues);
     };
 

@@ -1,0 +1,93 @@
+import { CheckIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "./Button";
+import { Textfield } from "./Textfield";
+import { IconColor, UseForm } from "src/types";
+import { handleErrorMessage } from "src/helpers";
+
+interface ItemProps extends Pick<UseForm, "control" | "errors"> {
+  title: string;
+  update: {
+    isUpdate: boolean;
+    onEdit: () => void;
+  };
+  add: {
+    isAdd: boolean;
+    onAdd: () => void;
+    fieldName: string;
+    errorMessage: string;
+    onSubmit: () => void;
+    onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  };
+  children?: React.ReactNode;
+  isActiveItem?: boolean;
+}
+
+export const ItemVariant: React.FC<ItemProps> = ({
+  title,
+  update,
+  children,
+  add,
+  control,
+  errors,
+  isActiveItem,
+}) => {
+  return (
+    <section className="flexcol gap-2">
+      <section className="flex items-center justify-between">
+        <h2 className="font-semibold capitalize">{title}</h2>
+        <button
+          title="edit"
+          onClick={update.onEdit}
+          className={`text-[${IconColor.red}] text-sm capitalize`}
+        >
+          {!update.isUpdate ? "edit" : "selesai"}
+        </button>
+      </section>
+
+      <section className="flexcol gap-2">
+        <section className="flex gap-3 flex-wrap">
+          {children}
+
+          {!isActiveItem && (
+            <Button
+              aria-label={!add.isAdd ? "tambah" : "batal"}
+              endContent={
+                !add.isAdd ? <PlusIcon width={16} /> : <XMarkIcon width={16} />
+              }
+              className="w-[6rem] border border-gray-300 text-gray-500"
+              color="default"
+              variant="light"
+              size="sm"
+              onClick={add.onAdd}
+            />
+          )}
+        </section>
+
+        {add.isAdd && (
+          <Textfield
+            name={add.fieldName}
+            defaultValue=""
+            control={control}
+            onKeyDown={add.onKeyDown}
+            placeholder={add.errorMessage}
+            errorMessage={handleErrorMessage(errors, add.fieldName)}
+            rules={{
+              required: {
+                value: true,
+                message: add.errorMessage,
+              },
+            }}
+            endContent={
+              <CheckIcon
+                width={16}
+                title="Tambah"
+                className="cursor-pointer"
+                onClick={add.onSubmit}
+              />
+            }
+          />
+        )}
+      </section>
+    </section>
+  );
+};

@@ -27,7 +27,6 @@ export default function Image({
   className,
 }: Image) {
   const [onHover, setOnHover] = useState(false);
-
   const mouseEnter = () => setOnHover(true);
   const mouseLeave = () => setOnHover(false);
 
@@ -36,12 +35,12 @@ export default function Image({
       <Img
         alt={alt}
         src={src}
-        className={cx("z-0", className)}
+        width={width}
         loading={loading}
         radius={radius ?? "sm"}
-        width={width}
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
+        className={cx("z-0", className)}
       />
 
       {actions && (

@@ -572,7 +572,6 @@ const VariantFileImage = forwardRef(
     ref: Ref<ChildRef>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
-
     useImperativeHandle(ref, () => ({
       click: () => {
         if (inputRef.current) {
@@ -588,9 +587,7 @@ const VariantFileImage = forwardRef(
 
     const handleDeleteProductImage = () => {
       const [byLabel] = variantTypes.filter((f) => f.name === props.label);
-
       byLabel.imageUrl = "";
-
       const currentValues: VariantTypeProps[] = [];
 
       variantTypes.forEach((e) => {
@@ -628,6 +625,7 @@ const VariantFileImage = forwardRef(
           ) : (
             <Image
               radius="none"
+              loading="lazy"
               src={props.image}
               className="rounded-tl-md rounded-tr-md aspect-square object-cover border border-gray-400"
               actions={[

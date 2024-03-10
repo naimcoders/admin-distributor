@@ -138,7 +138,7 @@ const PriceModal: React.FC<PriceProps> = (props) => {
               <hr />
               <section className="flexcol gap-4">
                 <h2>{v.name}</h2>
-                {v.variantColorProduct ? (
+                {v.variantColorProduct.length > 0 ? (
                   v.variantColorProduct.map((m, num) => (
                     <Field
                       key={num}
@@ -203,7 +203,7 @@ const Field: FC<FieldProps> = ({
       <Textfield
         name={fieldName}
         control={control}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue ?? ""}
         startContent={<ContentTextfield label="Rp" />}
         classNameWrapper={!variant ? "col-span-3" : "col-span-1"}
         rules={{

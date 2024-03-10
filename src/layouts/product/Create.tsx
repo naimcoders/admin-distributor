@@ -140,7 +140,6 @@ const Create = () => {
         })
       );
     }
-
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
     try {

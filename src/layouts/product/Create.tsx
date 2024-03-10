@@ -5,7 +5,7 @@ import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
-import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
+import useGeneralStore from "src/stores/generalStore";
 import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -79,18 +79,12 @@ const Create = () => {
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
 
-  const currentTypes: VariantTypeProps[] = [];
-
   // onSubmit
   const onSubmit = handleSubmit(async (e) => {
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
       return;
     }
-
-    variantTypes.forEach((e) => {
-      currentTypes.push(e);
-    });
 
     const productUrls: string[] = [];
     await Promise.all(
@@ -316,9 +310,9 @@ const Create = () => {
 
           {/* submit */}
           <Button
-            aria-label={isPending ? "loading..." : "simpan"}
-            className="mx-auto mt-5"
             onClick={onSubmit}
+            className="mx-auto mt-5"
+            aria-label={isPending ? "loading..." : "simpan"}
           />
 
           {/* modal */}

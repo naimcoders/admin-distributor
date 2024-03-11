@@ -172,6 +172,8 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                     onChange={onChange}
                     ref={productPhotoRef}
                     onClick={() => onClick(v.name ?? "")}
+                    variantTypes={variantTypes}
+                    setVariantTypes={setVariantTypes}
                   />
                 </React.Fragment>
               ))}

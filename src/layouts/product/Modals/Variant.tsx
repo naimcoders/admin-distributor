@@ -178,6 +178,8 @@ export const VariantModal: FC<VariantModalProps> = ({
                     onClick={() => onClick(v.name ?? "")}
                     onChange={onChange}
                     ref={productPhotoRef}
+                    variantTypes={variantTypes}
+                    setVariantTypes={setVariantTypes}
                   />
                 </Fragment>
               ))}
@@ -250,7 +252,7 @@ interface LabelAndImageProps {
   size?: { label?: string; price?: string }[];
 }
 
-interface UseVariantProps {
+export interface UseVariantProps {
   variantTypes: VariantTypeProps[];
   setVariantTypes: (v: VariantTypeProps[]) => void;
 }

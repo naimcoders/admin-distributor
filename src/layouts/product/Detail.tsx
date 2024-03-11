@@ -67,6 +67,7 @@ const Detail = () => {
     setIsPopOver((v) => !v);
   };
 
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
     (v) => v.setVariantTypesDetailProduct
   );
@@ -90,8 +91,6 @@ const Detail = () => {
     clearErrors,
     formState: { errors },
   } = useForm<FieldValues>();
-
-  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
 
   const {
     actionIsCategory,

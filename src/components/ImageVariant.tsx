@@ -2,13 +2,16 @@ import React from "react";
 import Image from "./Image";
 import cx from "classnames";
 import { ChildRef, FileProps } from "./File";
-import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { IconColor } from "src/types";
+import { UseVariantProps } from "src/layouts/product/Modals/Variant";
 
 const VariantImage = React.forwardRef(
   (
-    props: Partial<FileProps> & { label: string; image: string },
+    props: Partial<FileProps> & {
+      label: string;
+      image: string;
+    } & UseVariantProps,
     ref: React.Ref<ChildRef>
   ) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -21,18 +24,14 @@ const VariantImage = React.forwardRef(
       },
     }));
 
-    const variantTypes = useGeneralStore((v) => v.variantTypes);
-    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
-
     const handleDeleteProductImage = () => {
-      const [byLabel] = variantTypes.filter((f) => f.name === props.label);
-      byLabel.imageUrl = "";
-      const currentValues: VariantTypeProps[] = [];
-      variantTypes.forEach((e) => {
-        if (e.name === props.label) currentValues.push(byLabel);
-        if (e.name !== props.label) currentValues.push(e);
-      });
-      setVariantTypes(currentValues);
+      const mapping = props.variantTypes.map((type) => ({
+        ...type,
+        name: type.name,
+        variantColorProduct: type.variantColorProduct,
+        imageUrl: props.label === type.name ? "" : type.imageUrl,
+      }));
+      props.setVariantTypes(mapping);
     };
 
     return (

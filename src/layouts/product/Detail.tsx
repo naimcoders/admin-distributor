@@ -76,7 +76,7 @@ const Detail = () => {
     }
   };
 
-  const { mutateAsync } = useProduct().update(id);
+  const { mutateAsync, isPending } = useProduct().update(id);
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -371,9 +371,9 @@ const Detail = () => {
           </main>
 
           <Button
-            aria-label="simpan"
-            className="mx-auto mt-5"
             onClick={onSubmit}
+            className="mx-auto mt-5"
+            aria-label={isPending ? "loading..." : "simpan"}
           />
         </main>
       )}

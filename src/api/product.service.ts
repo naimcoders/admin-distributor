@@ -65,8 +65,8 @@ export interface Price {
   price: number;
   priceDiscount: number;
   fee: number;
-  startAt: null;
-  expiredAt: null;
+  startAt: number;
+  expiredAt: number;
 }
 
 export interface User {

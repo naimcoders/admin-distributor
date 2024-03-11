@@ -103,7 +103,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     setLabelAndImage({
       label: variantTypes[0]?.name,
     });
-  }, [isAddType, isAddSize, variantTypes]);
+  }, [isAddType, isAddSize]);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>

@@ -217,6 +217,7 @@ export interface VariantColorProduct {
   id: string;
   imageUrl: string;
   name: string;
+  price: number;
   variantProductId: string;
 }
 
@@ -241,6 +242,7 @@ interface CreateProduct {
     name: string;
     variantColorProduct: {
       name: string;
+      id?: string;
       imageUrl?: string;
       price?: number;
     }[];

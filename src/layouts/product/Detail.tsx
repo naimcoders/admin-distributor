@@ -84,24 +84,26 @@ const Detail = () => {
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    await Promise.all(
-      currentProductImage.map(async (product) => {
-        const path = `product/${id}/${Date.now()}.png`;
-        const storageRef = ref(FbStorage, path);
-        const uploadTask = uploadBytesResumable(storageRef, product.file!);
-        new Promise<string>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            null,
-            (err) => {
-              console.error(err.message);
-              reject(err);
-            },
-            () => resolve(path)
-          );
-        });
-      })
-    );
+    // handle case if the user want to add a new variant color product. id is empty string
+
+    // await Promise.all(
+    //   currentProductImage.map(async (product) => {
+    //     const path = `product/${id}/${Date.now()}.png`;
+    //     const storageRef = ref(FbStorage, path);
+    //     const uploadTask = uploadBytesResumable(storageRef, product.file!);
+    //     new Promise<string>((resolve, reject) => {
+    //       uploadTask.on(
+    //         "state_changed",
+    //         null,
+    //         (err) => {
+    //           console.error(err.message);
+    //           reject(err);
+    //         },
+    //         () => resolve(path)
+    //       );
+    //     });
+    //   })
+    // );
 
     try {
       const price = e.price;
@@ -119,7 +121,7 @@ const Detail = () => {
         },
       };
 
-      await mutateAsync({ data: obj });
+      // await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

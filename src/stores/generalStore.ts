@@ -24,6 +24,7 @@ interface PostageProps {
 interface VariantSizeProps {
   name: string;
   price?: number;
+  id?: string;
   imageUrl?: string;
 }
 
@@ -39,8 +40,8 @@ export const defaultValuePrice: Price = {
   price: 0,
   priceDiscount: 0,
   fee: 0,
-  startAt: null,
-  expiredAt: null,
+  startAt: 0,
+  expiredAt: 0,
 };
 
 interface General {

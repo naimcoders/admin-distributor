@@ -41,6 +41,8 @@ import { PostageModal } from "./Modals/Postage";
 import useGeneralStore from "src/stores/generalStore";
 import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
+import { ref, uploadBytesResumable } from "firebase/storage";
+import { FbStorage } from "src/firebase";
 
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
@@ -78,8 +80,28 @@ const Detail = () => {
   };
 
   const { mutateAsync, isPending } = useProduct().update(id);
+
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
+
+    await Promise.all(
+      currentProductImage.map(async (product) => {
+        const path = `product/${id}/${Date.now()}.png`;
+        const storageRef = ref(FbStorage, path);
+        const uploadTask = uploadBytesResumable(storageRef, product.file!);
+        new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (err) => {
+              console.error(err.message);
+              reject(err);
+            },
+            () => resolve(path)
+          );
+        });
+      })
+    );
 
     try {
       const price = e.price;

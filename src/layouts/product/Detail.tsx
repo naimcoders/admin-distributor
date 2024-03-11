@@ -43,6 +43,7 @@ import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
+import { useVariant } from "src/api/variant.service";
 
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
@@ -80,11 +81,25 @@ const Detail = () => {
   };
 
   const { mutateAsync, isPending } = useProduct().update(id);
+  const variantApi = useVariant().update();
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    // handle case if the user want to add a new variant color product. id is empty string
+    // update
+    variantTypes.forEach((type) => {
+      type.variantColorProduct.forEach(async (variant) => {
+        try {
+          variantApi.mutateAsync({
+            variantId: variant.id ?? "",
+            data: type,
+          });
+        } catch (e) {
+          const error = e as Error;
+          console.error(error.message);
+        }
+      });
+    });
 
     // await Promise.all(
     //   currentProductImage.map(async (product) => {
@@ -121,7 +136,7 @@ const Detail = () => {
         },
       };
 
-      // await mutateAsync({ data: obj });
+      await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

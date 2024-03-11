@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import { DeliveryPrice, Price } from "src/api/product.service";
+import { DeliveryPrice, Price, VariantProduct } from "src/api/product.service";
 import { CoordinateProps } from "src/components/Coordinate";
 import { create } from "zustand";
 
@@ -21,18 +21,8 @@ interface PostageProps {
   isOutOfTownDelivery: boolean;
 }
 
-interface VariantSizeProps {
-  name: string;
-  price?: number;
-  id?: string;
-  imageUrl?: string;
-}
-
-export interface VariantTypeProps {
-  name: string;
+export interface VariantTypeProps extends VariantProduct {
   files?: File;
-  imageUrl?: string;
-  variantColorProduct: VariantSizeProps[];
 }
 
 export const defaultValuePrice: Price = {

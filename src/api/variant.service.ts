@@ -49,20 +49,20 @@ const key = "variant";
 export const useVariant = () => {
   const queryClient = useQueryClient();
 
-  const update = (productId: string) => {
+  const update = () => {
     const mutate = useMutation<
       VariantProduct,
       Error,
       { data: VariantProduct; variantId: string }
     >({
-      mutationKey: [key, productId],
+      mutationKey: [key],
       mutationFn: async (r) =>
         await getVariantApiInfo().update(r.variantId, r.data),
-      onSuccess: () => {
-        void queryClient.invalidateQueries({
-          queryKey: ["product", productId],
-        });
-      },
+      // onSuccess: () => {
+      //   void queryClient.invalidateQueries({
+      //     queryKey: ["product", productId],
+      //   });
+      // },
       onError: (e) => toast.error(e.message),
     });
     return mutate;

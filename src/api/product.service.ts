@@ -202,23 +202,23 @@ export interface History {
 }
 
 export interface VariantProduct {
-  createdAt: number;
-  id: string;
-  imageUrl: string;
+  createdAt?: number;
+  id?: string;
+  imageUrl?: string;
   name: string;
-  price: number;
-  productId: string;
-  updatedAt: number;
+  price?: number;
+  productId?: string;
+  updatedAt?: number;
   variantColorProduct: VariantColorProduct[];
 }
 
 export interface VariantColorProduct {
-  createdAt: number;
-  id: string;
-  imageUrl: string;
+  createdAt?: number;
+  id?: string;
+  imageUrl?: string;
   name: string;
-  price: number;
-  variantProductId: string;
+  price?: number;
+  variantProductId?: string;
 }
 
 interface CreateProduct {

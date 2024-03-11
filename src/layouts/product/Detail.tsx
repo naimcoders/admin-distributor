@@ -33,8 +33,8 @@ import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
 import useGeneralStore from "src/stores/generalStore";
-import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import PriceModal from "./Modals/Price";
+import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);

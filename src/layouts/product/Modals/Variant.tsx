@@ -1,4 +1,3 @@
-import Image from "src/components/Image";
 import cx from "classnames";
 import { Button as Btn, Switch } from "@nextui-org/react";
 import {
@@ -6,24 +5,19 @@ import {
   FC,
   Fragment,
   KeyboardEvent,
-  Ref,
-  forwardRef,
   useEffect,
-  useImperativeHandle,
-  useRef,
   useState,
 } from "react";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
 import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import { IconColor, UseForm } from "src/types";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { XCircleIcon } from "@heroicons/react/24/solid";
-import { ChildRef, FileProps } from "src/components/File";
 import { useActiveModal } from "src/stores/modalStore";
 import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
 import { ItemVariant } from "src/components/VariantItem";
+import VariantImage from "src/components/ImageVariant";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -33,6 +27,9 @@ export const VariantModal: FC<VariantModalProps> = ({
   fieldName,
   setValue,
 }) => {
+  const variantTypes = useGeneralStore((v) => v.variantTypes);
+  const setVariantTypes = useGeneralStore((v) => v.setVariantType);
+
   const {
     isAddType,
     isDeleteType,
@@ -42,8 +39,6 @@ export const VariantModal: FC<VariantModalProps> = ({
     handleDeleteType,
     handleSubmitType,
     isVariant,
-    variantTypes,
-    setVariantType,
     isDeleteSize,
     handleChangeSize,
     isAddSize,
@@ -61,7 +56,7 @@ export const VariantModal: FC<VariantModalProps> = ({
     isVariantPhoto,
     setIsErrorVariant,
     setIsVariantPhoto,
-  } = useVariant();
+  } = useVariant({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = useState("");
   const { productPhotoRef } = useUploadProduct();
@@ -82,7 +77,7 @@ export const VariantModal: FC<VariantModalProps> = ({
       if (e.name !== labelProduct) setImageValues.push(e);
       if (isVariantPhoto && e.imageUrl) error++;
     });
-    setVariantType([...setImageValues]);
+    setVariantTypes([...setImageValues]);
 
     if (error > 1) setIsErrorVariant(false);
   };
@@ -104,7 +99,7 @@ export const VariantModal: FC<VariantModalProps> = ({
       return newItem;
     });
 
-    setVariantType(newVariant);
+    setVariantTypes(newVariant);
     setIsVariantPhoto((v) => !v);
   };
 
@@ -177,7 +172,7 @@ export const VariantModal: FC<VariantModalProps> = ({
             <section className="grid grid-cols-3 gap-2">
               {variantTypes.map((v, k) => (
                 <Fragment key={k}>
-                  <VariantFileImage
+                  <VariantImage
                     label={v.name ?? ""}
                     image={v.imageUrl ?? ""}
                     onClick={() => onClick(v.name ?? "")}
@@ -255,7 +250,15 @@ interface LabelAndImageProps {
   size?: { label?: string; price?: string }[];
 }
 
-export const useVariant = () => {
+interface UseVariantProps {
+  variantTypes: VariantTypeProps[];
+  setVariantTypes: (v: VariantTypeProps[]) => void;
+}
+
+export const useVariant = ({
+  variantTypes,
+  setVariantTypes,
+}: UseVariantProps) => {
   const formType = useForm<FieldValues>();
   const formSize = useForm<FieldValues>();
 
@@ -266,10 +269,7 @@ export const useVariant = () => {
   const [isAddType, setIsAddType] = useState(false);
   const [isAddSize, setIsAddSize] = useState(false);
   const [labelAndImage, setLabelAndImage] = useState<LabelAndImageProps>();
-
   const { isVariant, actionIsVariant, actionIsPrice } = useActiveModal();
-  const variantTypes = useGeneralStore((v) => v.variantTypes);
-  const setVariantType = useGeneralStore((v) => v.setVariantType);
 
   const handleAddType = () => setIsAddType((v) => !v);
   const handleAddSize = () => setIsAddSize((v) => !v);
@@ -297,7 +297,7 @@ export const useVariant = () => {
 
   const handleSubmitType = formType.handleSubmit((e) => {
     const type = e.type;
-    setVariantType([...variantTypes, { name: type, variantColorProduct: [] }]);
+    setVariantTypes([...variantTypes, { name: type, variantColorProduct: [] }]);
     formType.setFocus("type");
     formType.resetField("type");
   });
@@ -328,11 +328,10 @@ export const useVariant = () => {
   const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const type = formType.getValues();
-      setVariantType([
+      setVariantTypes([
         ...variantTypes,
         { name: type.type, variantColorProduct: [] },
       ]);
-
       formType.setFocus("type");
       formType.resetField("type");
       formType.setFocus("type");
@@ -342,7 +341,7 @@ export const useVariant = () => {
 
   const handleDeleteType = (label: string) => {
     const newTypes = variantTypes.filter((type) => type.name !== label);
-    setVariantType(newTypes);
+    setVariantTypes(newTypes);
   };
 
   const handleDeleteSize = (val: string) => {
@@ -359,7 +358,7 @@ export const useVariant = () => {
           ? subVariant
           : type.variantColorProduct,
     }));
-    setVariantType(mappingType);
+    setVariantTypes(mappingType);
   };
 
   return {
@@ -385,86 +384,8 @@ export const useVariant = () => {
     handleSubmitType,
     isDeleteType,
     isAddType,
-    variantTypes,
-    setVariantType,
     isAddSize,
     handleAddSize,
     formSize,
   };
 };
-
-const VariantFileImage = forwardRef(
-  (
-    props: Partial<FileProps> & { label: string; image: string },
-    ref: Ref<ChildRef>
-  ) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    useImperativeHandle(ref, () => ({
-      click: () => {
-        if (inputRef.current) {
-          inputRef.current.click();
-        }
-      },
-    }));
-
-    const variantTypes = useGeneralStore((v) => v.variantTypes);
-    const setVariantTypes = useGeneralStore((v) => v.setVariantType);
-
-    const handleDeleteProductImage = () => {
-      const [byLabel] = variantTypes.filter((f) => f.name === props.label);
-      byLabel.imageUrl = "";
-      const currentValues: VariantTypeProps[] = [];
-      variantTypes.forEach((e) => {
-        if (e.name === props.label) currentValues.push(byLabel);
-        if (e.name !== props.label) currentValues.push(e);
-      });
-      setVariantTypes(currentValues);
-    };
-
-    return (
-      <>
-        <input
-          type="file"
-          ref={inputRef}
-          className="hidden"
-          onChange={props.onChange}
-        />
-
-        <section
-          className={cx(!props.image ? "cursor-pointer" : "cursor-default")}
-          onClick={!props.image ? props.onClick : undefined}
-        >
-          {!props.image ? (
-            <section className="flex gap-2 border aspect-square border-dashed border-gray-400 p-2 rounded-tl-md rounded-tr-md items-center">
-              <PlusIcon width={16} color={IconColor.zinc} />
-              <p className={`capitalize text-sm text-[${IconColor.zinc}]`}>
-                tambah foto/video
-              </p>
-            </section>
-          ) : (
-            <Image
-              radius="none"
-              src={props.image}
-              className="rounded-tl-md rounded-tr-md aspect-square object-cover border border-gray-400"
-              actions={[
-                {
-                  src: <TrashIcon width={16} color={IconColor.red} />,
-                  onClick: handleDeleteProductImage,
-                },
-              ]}
-            />
-          )}
-          <p
-            className={cx(
-              `text-sm text-[${IconColor.zinc}] text-center border border-gray-400 rounded-br-md rounded-bl-md py-1`,
-              !props.image ? "border-dashed" : "border-solid"
-            )}
-          >
-            {props.label}
-          </p>
-        </section>
-      </>
-    );
-  }
-);

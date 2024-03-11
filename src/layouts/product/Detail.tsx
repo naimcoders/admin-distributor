@@ -45,6 +45,7 @@ import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
+  const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   // const [subCategoryId, setSubCategoryId] = React.useState("");
 
   const { id } = useParams() as { id: string };
@@ -89,6 +90,7 @@ const Detail = () => {
         deliveryPrice,
         category: { categoryId },
         description: e.description,
+        imageUrl,
         price: {
           ...priceStore,
           price: newPrice,
@@ -132,6 +134,7 @@ const Detail = () => {
       setCategoryId(data.categoryProduct.category.id);
       setDeliveryPrice(data.deliveryPrice);
       setPriceStore(data.price);
+      setImageUrl(data.imageUrl);
     }
   }, [data]);
 

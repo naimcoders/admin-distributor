@@ -20,7 +20,13 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { Currency, CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import {
+  Currency,
+  CurrencyIDInput,
+  checkForDash,
+  handleErrorMessage,
+  parseTextToNumber,
+} from "src/helpers";
 import { IconColor } from "src/types";
 import Textarea from "src/components/Textarea";
 import { Button } from "src/components/Button";
@@ -38,9 +44,16 @@ import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
+  const [categoryId, setCategoryId] = React.useState("");
+  // const [subCategoryId, setSubCategoryId] = React.useState("");
 
   const { id } = useParams() as { id: string };
   const { isLoading, error, data } = useProduct().findById(id);
+
+  const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
+  const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
+  const priceStore = useGeneralStore((v) => v.price);
+  const setPriceStore = useGeneralStore((v) => v.setPrice);
 
   const {
     control,
@@ -63,8 +76,30 @@ const Detail = () => {
     }
   };
 
+  const { mutateAsync } = useProduct().update(id);
   const onSubmit = handleSubmit(async (e) => {
-    console.log(e);
+    const isDangerous = e.dangerous === "Tidak" ? false : true;
+
+    try {
+      const price = e.price;
+      const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
+      const obj = {
+        name: e.productName,
+        isDangerous,
+        deliveryPrice,
+        category: { categoryId },
+        description: e.description,
+        price: {
+          ...priceStore,
+          price: newPrice,
+        },
+      };
+
+      await mutateAsync({ data: obj });
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+    }
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +129,9 @@ const Detail = () => {
         }))
       );
       setVariantTypes(data.variantProduct);
+      setCategoryId(data.categoryProduct.category.id);
+      setDeliveryPrice(data.deliveryPrice);
+      setPriceStore(data.price);
     }
   }, [data]);
 
@@ -107,9 +145,6 @@ const Detail = () => {
     actionIsSubDistributor,
     actionIsPrice,
   } = useActiveModal();
-
-  const [categoryId, setCategoryId] = React.useState("");
-  // const [subCategoryId, setSubCategoryId] = React.useState("");
 
   const onClickSubCategory = () => {
     if (!data?.categoryProduct.category.name) {

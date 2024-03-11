@@ -61,6 +61,7 @@ export interface DeliveryPrice {
 export interface ImageURL {}
 
 export interface Price {
+  id: string;
   price: number;
   priceDiscount: number;
   fee: number;

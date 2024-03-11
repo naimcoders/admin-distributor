@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import { DeliveryPrice } from "src/api/product.service";
+import { DeliveryPrice, Price } from "src/api/product.service";
 import { CoordinateProps } from "src/components/Coordinate";
 import { create } from "zustand";
 
@@ -34,7 +34,18 @@ export interface VariantTypeProps {
   variantColorProduct: VariantSizeProps[];
 }
 
+export const defaultValuePrice: Price = {
+  id: "",
+  price: 0,
+  priceDiscount: 0,
+  fee: 0,
+  startAt: null,
+  expiredAt: null,
+};
+
 interface General {
+  price: Price;
+  setPrice: (v: Price) => void;
   deliveryPrice: DeliveryPrice;
   setDeliveryPrice: (v: DeliveryPrice) => void;
   clearDeliveryPrice: () => void;
@@ -77,6 +88,8 @@ export const defaultValueDeliveryPrice = {
 };
 
 const useGeneralStore = create<General>((set) => ({
+  price: defaultValuePrice,
+  setPrice: (v) => set({ price: v }),
   deliveryPrice: defaultValueDeliveryPrice,
   setDeliveryPrice: (v) => set({ deliveryPrice: v }),
   clearDeliveryPrice: () => set({ deliveryPrice: defaultValueDeliveryPrice }),

@@ -158,7 +158,7 @@ const Detail = () => {
       setPriceStore(data.price);
       setImageUrl(data.imageUrl);
     }
-  }, [data]);
+  }, [data, setCurrentProductImage]);
 
   const {
     actionIsCategory,

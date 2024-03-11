@@ -42,6 +42,14 @@ const Detail = () => {
   const { id } = useParams() as { id: string };
   const { isLoading, error, data } = useProduct().findById(id);
 
+  const {
+    control,
+    setValue,
+    clearErrors,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>();
+
   const [isPopOver, setIsPopOver] = React.useState(false);
   const [productSize, setProductSize] = React.useState("1:1");
   const [currentProductImage, setCurrentProductImage] = React.useState<
@@ -54,6 +62,10 @@ const Detail = () => {
       productImageRef.current.click();
     }
   };
+
+  const onSubmit = handleSubmit(async (e) => {
+    console.log(e);
+  });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
@@ -84,13 +96,6 @@ const Detail = () => {
       setVariantTypes(data.variantProduct);
     }
   }, [data]);
-
-  const {
-    control,
-    setValue,
-    clearErrors,
-    formState: { errors },
-  } = useForm<FieldValues>();
 
   const {
     actionIsCategory,
@@ -330,7 +335,11 @@ const Detail = () => {
             )}
           </main>
 
-          <Button aria-label="simpan" className="mx-auto mt-5" />
+          <Button
+            aria-label="simpan"
+            className="mx-auto mt-5"
+            onClick={onSubmit}
+          />
         </main>
       )}
 

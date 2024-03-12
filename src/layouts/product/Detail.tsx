@@ -114,14 +114,17 @@ const Detail = () => {
     );
 
     // update
-    if (variantTypes.length !== variantTypesPrev.length) {
-      variantTypes.forEach(async (type) => {
+    variantTypes.forEach(async (type) => {
+      try {
         await variantApi.mutateAsync({
           variantId: type.id ?? "",
           data: type,
         });
-      });
-    }
+      } catch (e) {
+        const error = e as Error;
+        console.error(error.message);
+      }
+    });
 
     try {
       const price = e.price;

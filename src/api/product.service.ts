@@ -342,7 +342,7 @@ export const useProduct = () => {
         await getProductApiInfo().update(productId, r.data),
       onSuccess: () => {
         toast.success("Produk berhasil diperbarui");
-        queryClient.invalidateQueries({ queryKey: [key, productId] });
+        void queryClient.invalidateQueries({ queryKey: [key, productId] });
       },
       onError: (e) => toast.error(e.message),
     });
@@ -355,7 +355,7 @@ export const useProduct = () => {
       mutationFn: async (r) => await getProductApiInfo().create(r.data),
       onSuccess: () => {
         toast.success("Produk berhasil dibuat");
-        queryClient.invalidateQueries({ queryKey: [key] });
+        void queryClient.invalidateQueries({ queryKey: [key] });
       },
       onError: (e) => toast.error(e.message),
     });

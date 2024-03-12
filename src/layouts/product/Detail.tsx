@@ -94,6 +94,8 @@ const Detail = () => {
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
+    // TODO: fix : save the data but not changes the product images
+
     await Promise.all(
       currentProductImage.map(async (product) => {
         const path = `product/${id}/${Date.now()}.png`;

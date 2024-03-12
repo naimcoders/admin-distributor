@@ -100,10 +100,12 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   React.useEffect(() => {
     if (isAddType) formType.setFocus("type");
     if (isAddSize) formSize.setFocus("size");
-    setLabelAndImage({
-      label: variantTypes[0]?.name,
-    });
-  }, [isAddType, isAddSize]);
+    if (!labelAndImage?.label) {
+      setLabelAndImage({
+        label: variantTypes[0]?.name,
+      });
+    }
+  }, [isAddType, isAddSize, variantTypes]);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>

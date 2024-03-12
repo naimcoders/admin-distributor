@@ -34,10 +34,20 @@ class Api {
       path: `${this.path}/${variantId}`,
     });
   }
+
+  async remove(variantId: string): Promise<{}> {
+    return await req<VariantProduct>({
+      method: "DELETE",
+      isNoAuth: false,
+      errors: this.errors,
+      path: `${this.path}/${variantId}`,
+    });
+  }
 }
 
 interface ApiVariantInfo {
   update(variantId: string, r: UpdateVariant): Promise<VariantProduct>;
+  remove(variantId: string): Promise<{}>;
 }
 
 function getVariantApiInfo(): ApiVariantInfo {
@@ -49,24 +59,33 @@ const key = "variant";
 export const useVariant = () => {
   const queryClient = useQueryClient();
 
-  const update = () => {
+  const update = (productId: string) => {
     const mutate = useMutation<
       VariantProduct,
       Error,
       { data: VariantProduct; variantId: string }
     >({
-      mutationKey: [key],
+      mutationKey: [key, productId],
       mutationFn: async (r) =>
         await getVariantApiInfo().update(r.variantId, r.data),
-      // onSuccess: () => {
-      //   void queryClient.invalidateQueries({
-      //     queryKey: ["product", productId],
-      //   });
-      // },
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: ["product", productId],
+        });
+      },
       onError: (e) => toast.error(e.message),
     });
     return mutate;
   };
 
-  return { update };
+  const remove = (productId: string) => {
+    const mutate = useMutation<{}, Error, { variantId: string }>({
+      mutationKey: [key, productId],
+      mutationFn: async (r) => await getVariantApiInfo().remove(r.variantId),
+      onError: (e) => toast.error(e.message),
+    });
+    return mutate;
+  };
+
+  return { update, remove };
 };

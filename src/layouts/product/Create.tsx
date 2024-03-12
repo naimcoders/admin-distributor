@@ -101,9 +101,7 @@ const Create = () => {
               console.error(err.message);
               reject(err);
             },
-            async () => {
-              resolve(path);
-            }
+            () => resolve(path)
           );
         });
 
@@ -130,9 +128,7 @@ const Create = () => {
                 console.error(err.message);
                 reject(err);
               },
-              () => {
-                resolve(path);
-              }
+              () => resolve(path)
             );
           });
 
@@ -169,7 +165,7 @@ const Create = () => {
         },
       });
 
-      if (Boolean(result.id)) navigate(-1);
+      if (result.id) navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

@@ -38,7 +38,7 @@ import { ModalCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
-import useGeneralStore from "src/stores/generalStore";
+import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import { ref, uploadBytesResumable } from "firebase/storage";
@@ -50,6 +50,11 @@ const Detail = () => {
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   // const [subCategoryId, setSubCategoryId] = React.useState("");
+
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const setVariantTypes = useGeneralStore(
+    (v) => v.setVariantTypesDetailProduct
+  );
 
   const { id } = useParams() as { id: string };
   const { isLoading, error, data } = useProduct().findById(id);
@@ -72,6 +77,9 @@ const Detail = () => {
   const [currentProductImage, setCurrentProductImage] = React.useState<
     CurrentProductImageProps[]
   >([]);
+  const [variantTypesPrev, setVariantTypesPrev] = React.useState<
+    VariantTypeProps[]
+  >([]);
 
   const productImageRef = React.useRef<ChildRef>(null);
   const onOpenExplorer = () => {
@@ -81,44 +89,39 @@ const Detail = () => {
   };
 
   const { mutateAsync, isPending } = useProduct().update(id);
-  const variantApi = useVariant().update();
+  const variantApi = useVariant().update(id);
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    // update
-    variantTypes.forEach((type) => {
-      type.variantColorProduct.forEach(async (variant) => {
-        try {
-          variantApi.mutateAsync({
-            variantId: variant.id ?? "",
-            data: type,
-          });
-        } catch (e) {
-          const error = e as Error;
-          console.error(error.message);
-        }
-      });
-    });
+    await Promise.all(
+      currentProductImage.map(async (product) => {
+        const path = `product/${id}/${Date.now()}.png`;
+        const storageRef = ref(FbStorage, path);
+        const uploadTask = uploadBytesResumable(storageRef, product.file!);
+        new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (err) => {
+              console.error(err.message);
+              reject(err);
+            },
+            () => resolve(path)
+          );
+        });
+      })
+    );
 
-    // await Promise.all(
-    //   currentProductImage.map(async (product) => {
-    //     const path = `product/${id}/${Date.now()}.png`;
-    //     const storageRef = ref(FbStorage, path);
-    //     const uploadTask = uploadBytesResumable(storageRef, product.file!);
-    //     new Promise<string>((resolve, reject) => {
-    //       uploadTask.on(
-    //         "state_changed",
-    //         null,
-    //         (err) => {
-    //           console.error(err.message);
-    //           reject(err);
-    //         },
-    //         () => resolve(path)
-    //       );
-    //     });
-    //   })
-    // );
+    // update
+    if (variantTypes.length !== variantTypesPrev.length) {
+      variantTypes.forEach(async (type) => {
+        await variantApi.mutateAsync({
+          variantId: type.id ?? "",
+          data: type,
+        });
+      });
+    }
 
     try {
       const price = e.price;
@@ -143,23 +146,6 @@ const Detail = () => {
     }
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return null;
-
-    const files = e.target.files[0];
-    const blob = URL.createObjectURL(files);
-    setCurrentProductImage([
-      ...currentProductImage,
-      { src: blob, size: productSize, name: files.name, file: files },
-    ]);
-    setIsPopOver((v) => !v);
-  };
-
-  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
-  const setVariantTypes = useGeneralStore(
-    (v) => v.setVariantTypesDetailProduct
-  );
-
   React.useEffect(() => {
     if (data) {
       setCurrentProductImage(
@@ -174,8 +160,21 @@ const Detail = () => {
       setDeliveryPrice(data.deliveryPrice);
       setPriceStore(data.price);
       setImageUrl(data.imageUrl);
+      setVariantTypesPrev(data.variantProduct);
     }
-  }, [data, setCurrentProductImage]);
+  }, [data, imageUrl]);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return null;
+
+    const files = e.target.files[0];
+    const blob = URL.createObjectURL(files);
+    setCurrentProductImage([
+      ...currentProductImage,
+      { src: blob, size: productSize, name: files.name, file: files },
+    ]);
+    setIsPopOver((v) => !v);
+  };
 
   const {
     actionIsCategory,

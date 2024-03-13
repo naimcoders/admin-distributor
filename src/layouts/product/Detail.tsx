@@ -112,7 +112,6 @@ const Detail = () => {
     // update
     variantTypes.forEach(async (type) => {
       try {
-        // update variant with id variant color
         await updateVariant.mutateAsync({
           variantId: type.id ?? "",
           data: type,

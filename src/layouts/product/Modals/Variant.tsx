@@ -290,7 +290,6 @@ export const useVariant = ({
     if (error > 0) setIsErrorVariant(true);
     else {
       const value = variantTypes.map((m) => m.name).join(", ");
-      console.log(value, variantTypes);
       setValue(fieldName, value);
       actionIsVariant();
       setTimeout(actionIsPrice, 500);

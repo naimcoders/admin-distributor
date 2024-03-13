@@ -112,8 +112,6 @@ const Detail = () => {
     // update
     variantTypes.forEach(async (type) => {
       try {
-        // TODO: update variant if i add a new variant color. the id is empty string
-
         // update variant with id variant color
         await updateVariant.mutateAsync({
           variantId: type.id ?? "",
@@ -140,6 +138,8 @@ const Detail = () => {
           price: newPrice,
         },
       };
+
+      // console.log(variantTypes);
 
       await mutateAsync({ data: obj });
     } catch (e) {

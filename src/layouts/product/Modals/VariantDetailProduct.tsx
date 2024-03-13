@@ -63,7 +63,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     datas.files = files;
     datas.imageUrl = blob;
 
-    let setImageValues: VariantTypeProps[] = [];
+    const setImageValues: VariantTypeProps[] = [];
     let error = 0;
 
     variantTypes.forEach((e) => {

@@ -100,24 +100,21 @@ const Detail = () => {
           const path = `product/${id}/${Date.now()}.png`;
           const storageRef = ref(FbStorage, path);
           const uploadTask = uploadBytesResumable(storageRef, product.file!);
-          new Promise<string>((resolve, reject) => {
-            uploadTask.on(
-              "state_changed",
-              null,
-              (err) => {
-                console.error(err.message);
-                reject(err);
-              },
-              () => resolve(path)
-            );
+          new Promise<string>(() => {
+            uploadTask.on("state_changed", null, (err) => {
+              console.error(err.message);
+            });
           });
         })
       );
     }
 
-    // // update
+    // update
     variantTypes.forEach(async (type) => {
       try {
+        // TODO: update variant if i add a new variant color. the id is empty string
+
+        // update variant with id variant color
         await variantApi.mutateAsync({
           variantId: type.id ?? "",
           data: type,

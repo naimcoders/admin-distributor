@@ -94,28 +94,28 @@ const Detail = () => {
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    // TODO: fix : save the data but not changes the product images
+    if (imageUrl.length !== currentProductImage.length) {
+      await Promise.all(
+        currentProductImage.map(async (product) => {
+          const path = `product/${id}/${Date.now()}.png`;
+          const storageRef = ref(FbStorage, path);
+          const uploadTask = uploadBytesResumable(storageRef, product.file!);
+          new Promise<string>((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              null,
+              (err) => {
+                console.error(err.message);
+                reject(err);
+              },
+              () => resolve(path)
+            );
+          });
+        })
+      );
+    }
 
-    await Promise.all(
-      currentProductImage.map(async (product) => {
-        const path = `product/${id}/${Date.now()}.png`;
-        const storageRef = ref(FbStorage, path);
-        const uploadTask = uploadBytesResumable(storageRef, product.file!);
-        new Promise<string>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            null,
-            (err) => {
-              console.error(err.message);
-              reject(err);
-            },
-            () => resolve(path)
-          );
-        });
-      })
-    );
-
-    // update
+    // // update
     variantTypes.forEach(async (type) => {
       try {
         await variantApi.mutateAsync({

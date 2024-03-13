@@ -89,7 +89,7 @@ const Detail = () => {
   };
 
   const { mutateAsync, isPending } = useProduct().update(id);
-  const variantApi = useVariant().update(id);
+  const updateVariant = useVariant().update(id);
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
@@ -115,7 +115,7 @@ const Detail = () => {
         // TODO: update variant if i add a new variant color. the id is empty string
 
         // update variant with id variant color
-        await variantApi.mutateAsync({
+        await updateVariant.mutateAsync({
           variantId: type.id ?? "",
           data: type,
         });

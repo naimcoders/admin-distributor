@@ -139,8 +139,6 @@ const Detail = () => {
         },
       };
 
-      // console.log(variantTypes);
-
       await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;

@@ -308,7 +308,7 @@ export const useVariant = ({
     const [typeByName] = variantTypes.filter(
       (type) => type.name === labelAndImage?.label
     );
-    typeByName.variantColorProduct.push({ name: val });
+    typeByName.variantColorProduct.push({ name: val, id: "" });
     formSize.setFocus("size");
     formSize.resetField("size");
   });
@@ -319,7 +319,7 @@ export const useVariant = ({
       const [typeByName] = variantTypes.filter(
         (type) => type.name === labelAndImage?.label
       );
-      typeByName.variantColorProduct.push({ name: val });
+      typeByName.variantColorProduct.push({ name: val, id: "" });
       formSize.setFocus("size");
       formSize.resetField("size");
     }

@@ -117,7 +117,7 @@ const Detail = () => {
       );
     }
 
-    // TODO: create variant
+    // create variant
     const variantUrls: { name: string; imageUrl: string }[] = [];
     if (variantTypes.length > variantTypesPrev.length) {
       variantTypes.forEach(async (type) => {
@@ -160,48 +160,50 @@ const Detail = () => {
     }
 
     // update & remove variant
-    variantTypesPrev.forEach((typePrev) => {
-      variantTypes.forEach(async (type) => {
-        if (typePrev.name !== type.name) {
-          try {
-            await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
-          } catch (e) {
-            const error = e as Error;
-            console.error(
-              `Something wrong to remove variant : ${error.message}`
-            );
-          }
-        } else {
-          try {
-            await updateVariant.mutateAsync({
-              variantId: typePrev.id ?? "",
-              data: typePrev,
-            });
-          } catch (e) {
-            const error = e as Error;
-            console.error(
-              `Something wrong to update variant : ${error.message}`
-            );
-          }
-
-          typePrev.variantColorProduct.forEach(async (subVariantPrev) => {
-            const typesByName = type.variantColorProduct.map((e) => e.name);
-            if (!typesByName.includes(subVariantPrev.name)) {
-              try {
-                await removeVarColor.mutateAsync({
-                  variantColorId: subVariantPrev.id ?? "",
-                });
-              } catch (e) {
-                const error = e as Error;
-                console.error(
-                  `Something wrong to remove variant color : ${error.message}`
-                );
-              }
+    if (variantTypes.length > 0) {
+      variantTypesPrev.forEach((typePrev) => {
+        variantTypes.forEach(async (type) => {
+          if (typePrev.name !== type.name) {
+            try {
+              await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
+            } catch (e) {
+              const error = e as Error;
+              console.error(
+                `Something wrong to remove variant : ${error.message}`
+              );
             }
-          });
-        }
+          } else {
+            try {
+              await updateVariant.mutateAsync({
+                variantId: typePrev.id ?? "",
+                data: typePrev,
+              });
+            } catch (e) {
+              const error = e as Error;
+              console.error(
+                `Something wrong to update variant : ${error.message}`
+              );
+            }
+
+            typePrev.variantColorProduct.forEach(async (subVariantPrev) => {
+              const typesByName = type.variantColorProduct.map((e) => e.name);
+              if (!typesByName.includes(subVariantPrev.name)) {
+                try {
+                  await removeVarColor.mutateAsync({
+                    variantColorId: subVariantPrev.id ?? "",
+                  });
+                } catch (e) {
+                  const error = e as Error;
+                  console.error(
+                    `Something wrong to remove variant color : ${error.message}`
+                  );
+                }
+              }
+            });
+          }
+        });
       });
-    });
+    }
 
     try {
       const price = e.price;

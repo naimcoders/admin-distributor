@@ -388,8 +388,8 @@ const Detail = () => {
                     {...v}
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
-                    onClick={variantTypes.length > 1 ? v.onClick : undefined}
+                    readOnly={variantTypes.length > 0 ? v.readOnly : undefined}
+                    onClick={variantTypes.length > 0 ? v.onClick : undefined}
                     endContent={
                       variantTypes.length > 1 &&
                       v.name === "price" && (
@@ -466,7 +466,7 @@ const Detail = () => {
       <PostageModal
         setValue={setValue}
         clearErrors={clearErrors}
-        data={data?.deliveryPrice}
+        data={deliveryPrice}
       />
       <PriceModal
         fieldName="price"

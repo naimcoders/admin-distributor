@@ -367,7 +367,7 @@ export const useProduct = () => {
     const { data, isLoading, error } = useQuery<Product, Error>({
       queryKey: [key, productId],
       queryFn: find,
-      enabled: !!productId,
+      // enabled: !!productId,
     });
 
     return { data, isLoading, error: error?.message };

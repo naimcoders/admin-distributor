@@ -90,9 +90,10 @@ const Detail = () => {
 
   const { mutateAsync, isPending } = useProduct().update(id);
 
-  const { remove, update } = useVariant();
+  const { remove, update, removeVariantColor } = useVariant();
   const updateVariant = update(id);
   const removeVariant = remove(id);
+  const removeVarColor = removeVariantColor(id);
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
@@ -125,6 +126,24 @@ const Detail = () => {
             );
           }
         } else {
+          typePrev.variantColorProduct.forEach((variantColor) => {
+            type.variantColorProduct.forEach(async (e) => {
+              if (e.id !== variantColor.id) {
+                try {
+                  await removeVarColor.mutateAsync({
+                    variantId: typePrev.id ?? "",
+                    variantColorId: variantColor.id ?? "",
+                  });
+                } catch (e) {
+                  const error = e as Error;
+                  console.error(
+                    `Something wrong to remove variant color : ${error.message}`
+                  );
+                }
+              }
+            });
+          });
+
           try {
             await updateVariant.mutateAsync({
               variantId: typePrev.id ?? "",
@@ -185,7 +204,6 @@ const Detail = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
-
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
     setCurrentProductImage([
@@ -211,7 +229,6 @@ const Detail = () => {
       toast.error("Pilih kategori");
       return;
     }
-
     actionIsSubCategory();
     console.log(data?.categoryProduct.category.name);
   };

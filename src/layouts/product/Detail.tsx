@@ -44,6 +44,7 @@ import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
 import { useVariant } from "src/api/variant.service";
+import { useAuth } from "src/firebase/auth";
 
 const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
@@ -96,6 +97,8 @@ const Detail = () => {
   const removeVarColor = removeVariantColor(id);
   const createVariant = create(id);
 
+  const { user } = useAuth();
+
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
@@ -112,6 +115,48 @@ const Detail = () => {
           });
         })
       );
+    }
+
+    // TODO: create variant
+    const variantUrls: { name: string; imageUrl: string }[] = [];
+    if (variantTypes.length > variantTypesPrev.length) {
+      variantTypes.forEach(async (type) => {
+        const typeByName = variantTypesPrev.map((typePrev) => typePrev.name);
+
+        if (!typeByName.includes(type.name)) {
+          await Promise.all(
+            variantTypes.map(async (type) => {
+              const path = `temp/product/product_variant/${
+                user?.uid
+              }/${Date.now()}.png`;
+              const storageRef = ref(FbStorage, path);
+              const uploadTask = uploadBytesResumable(storageRef, type.files!);
+              new Promise<string>(() => {
+                uploadTask.on("state_changed", null, (err) =>
+                  console.error(err.message)
+                );
+              });
+
+              variantUrls.push({ name: type.name, imageUrl: path });
+            })
+          );
+
+          variantUrls.forEach((url) => {
+            const [typeByName] = variantTypes.filter(
+              (f) => f.name === url.name
+            );
+            typeByName.imageUrl = url.imageUrl;
+          });
+
+          createVariant.mutateAsync({
+            data: {
+              name: type.name,
+              variantColorProduct: type.variantColorProduct,
+              imageUrl: type.imageUrl,
+            },
+          });
+        }
+      });
     }
 
     // update & remove variant
@@ -157,8 +202,6 @@ const Detail = () => {
         }
       });
     });
-
-    // console.log({ variantTypes, variantTypesPrev });
 
     try {
       const price = e.price;

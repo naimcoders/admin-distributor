@@ -93,19 +93,13 @@ const Create = () => {
         const storageRef = ref(FbStorage, path);
         const uploadTask = uploadBytesResumable(storageRef, product.file!);
 
-        const promise = new Promise<string>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            null,
-            (err) => {
-              console.error(err.message);
-              reject(err);
-            },
-            () => resolve(path)
+        new Promise<string>(() => {
+          uploadTask.on("state_changed", null, (err) =>
+            console.error(err.message)
           );
         });
 
-        productUrls.push(await promise);
+        productUrls.push(path);
       })
     );
 
@@ -120,19 +114,13 @@ const Create = () => {
           const storageRef = ref(FbStorage, path);
           const uploadTask = uploadBytesResumable(storageRef, type.files!);
 
-          const promise = new Promise<string>((resolve, reject) => {
-            uploadTask.on(
-              "state_changed",
-              null,
-              (err) => {
-                console.error(err.message);
-                reject(err);
-              },
-              () => resolve(path)
+          new Promise<string>(() => {
+            uploadTask.on("state_changed", null, (err) =>
+              console.error(err.message)
             );
           });
 
-          variantUrls.push({ name: type.name, imageUrl: await promise });
+          variantUrls.push({ name: type.name, imageUrl: path });
         })
       );
     }
@@ -164,6 +152,23 @@ const Create = () => {
           },
         },
       });
+
+      // console.log({
+      //   name: e.productName,
+      //   isDangerous,
+      //   deliveryPrice,
+      //   imageUrl: productUrls,
+      //   variant: variantTypes,
+      //   category: { categoryId },
+      //   description: e.description,
+      //   price: {
+      //     fee: 0,
+      //     startAt: 0,
+      //     expiredAt: 0,
+      //     price: newPrice,
+      //     priceDiscount: 0,
+      //   },
+      // });
 
       if (result.id) navigate(-1);
     } catch (e) {

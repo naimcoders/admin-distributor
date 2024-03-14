@@ -226,7 +226,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                           color={IconColor.red}
                           className="absolute -top-2 -right-2 cursor-pointer"
                           title="hapus"
-                          onClick={() => handleDeleteSize(s.name)}
+                          onClick={() => handleDeleteSize(s.name, s.id!)}
                         />
                       )}
                     </section>

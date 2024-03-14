@@ -227,7 +227,7 @@ export const VariantModal: FC<VariantModalProps> = ({
                           color={IconColor.red}
                           className="absolute -top-2 -right-2 cursor-pointer"
                           title="hapus"
-                          onClick={() => handleDeleteSize(s.name)}
+                          onClick={() => handleDeleteSize(s.name, s.id!)}
                         />
                       )}
                     </section>
@@ -345,7 +345,10 @@ export const useVariant = ({
     setVariantTypes(newTypes);
   };
 
-  const handleDeleteSize = (val: string) => {
+  const setGeneralId = useGeneralStore((v) => v.setGeneralId);
+
+  const handleDeleteSize = (val: string, id: string) => {
+    setGeneralId(id);
     const [typeByName] = variantTypes.filter(
       (type) => type.name === labelAndImage?.label
     );

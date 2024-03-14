@@ -85,6 +85,9 @@ export const useVariant = () => {
       mutationKey: [key, productId],
       mutationFn: async (r) => await getVariantApiInfo().create(r.data),
       onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: ["product", productId],
+        });
         console.log("variant created successfully");
       },
       onError: (e) => {
@@ -101,6 +104,9 @@ export const useVariant = () => {
       mutationFn: async (r) =>
         await getVariantApiInfo().removeVariantColor(r.variantColorId),
       onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: ["product", productId],
+        });
         console.log("removed the variant color successfully");
       },
       onError: (e) => {
@@ -118,6 +124,9 @@ export const useVariant = () => {
       mutationKey: [key, productId],
       mutationFn: async (r) => await getVariantApiInfo().remove(r.variantId),
       onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: ["product", productId],
+        });
         console.log("removed the variant successfully");
       },
       onError: (e) =>
@@ -139,7 +148,6 @@ export const useVariant = () => {
         void queryClient.invalidateQueries({
           queryKey: ["product", productId],
         });
-        console.log("updated successfully");
       },
       onError: (e) =>
         toast.error(`Something wrong to update the variant : ${e.message}`),

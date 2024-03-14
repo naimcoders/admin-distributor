@@ -121,7 +121,6 @@ const Detail = () => {
         ) {
           try {
             await removeVariant.mutateAsync({ variantId: type.id ?? "" });
-            console.log("removed");
           } catch (e) {
             const error = e as Error;
             console.error(

@@ -36,7 +36,7 @@ class Api {
   }
 
   async remove(variantId: string): Promise<{}> {
-    return await req<VariantProduct>({
+    return await req<{}>({
       method: "DELETE",
       isNoAuth: false,
       errors: this.errors,
@@ -99,6 +99,9 @@ export const useVariant = () => {
     const mutate = useMutation<{}, Error, { variantId: string }>({
       mutationKey: [key, productId],
       mutationFn: async (r) => await getVariantApiInfo().remove(r.variantId),
+      onSuccess: () => {
+        console.log("removed the variant successfully");
+      },
       onError: (e) =>
         toast.error(`Something wrong to remove variant : ${e.message}`),
     });

@@ -115,12 +115,9 @@ const Detail = () => {
     // update & remove variant
     variantTypesPrev.forEach((typePrev) => {
       variantTypes.forEach(async (type) => {
-        if (
-          typePrev.name !== type.name &&
-          variantTypesPrev.length > variantTypes.length
-        ) {
+        if (typePrev.name !== type.name) {
           try {
-            await removeVariant.mutateAsync({ variantId: type.id ?? "" });
+            await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
           } catch (e) {
             const error = e as Error;
             console.error(
@@ -143,7 +140,7 @@ const Detail = () => {
       });
     });
 
-    console.log({ variantTypes, variantTypesPrev });
+    // console.log({ variantTypes, variantTypesPrev });
 
     try {
       const price = e.price;

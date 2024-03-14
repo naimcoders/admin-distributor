@@ -90,10 +90,11 @@ const Detail = () => {
 
   const { mutateAsync, isPending } = useProduct().update(id);
 
-  const { remove, update, removeVariantColor } = useVariant();
+  const { remove, update, removeVariantColor, create } = useVariant();
   const updateVariant = update(id);
   const removeVariant = remove(id);
   const removeVarColor = removeVariantColor(id);
+  const createVariant = create(id);
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
@@ -126,24 +127,6 @@ const Detail = () => {
             );
           }
         } else {
-          typePrev.variantColorProduct.forEach((variantColor) => {
-            type.variantColorProduct.forEach(async (e) => {
-              if (e.id !== variantColor.id) {
-                try {
-                  await removeVarColor.mutateAsync({
-                    variantId: typePrev.id ?? "",
-                    variantColorId: variantColor.id ?? "",
-                  });
-                } catch (e) {
-                  const error = e as Error;
-                  console.error(
-                    `Something wrong to remove variant color : ${error.message}`
-                  );
-                }
-              }
-            });
-          });
-
           try {
             await updateVariant.mutateAsync({
               variantId: typePrev.id ?? "",
@@ -155,6 +138,22 @@ const Detail = () => {
               `Something wrong to update variant : ${error.message}`
             );
           }
+
+          typePrev.variantColorProduct.forEach(async (subVariantPrev) => {
+            const typesByName = type.variantColorProduct.map((e) => e.name);
+            if (!typesByName.includes(subVariantPrev.name)) {
+              try {
+                await removeVarColor.mutateAsync({
+                  variantColorId: subVariantPrev.id ?? "",
+                });
+              } catch (e) {
+                const error = e as Error;
+                console.error(
+                  `Something wrong to remove variant color : ${error.message}`
+                );
+              }
+            }
+          });
         }
       });
     });

@@ -221,7 +221,7 @@ export interface VariantColorProduct {
   variantProductId?: string;
 }
 
-interface CreateProduct {
+export interface CreateProduct {
   category: {
     categoryId: string;
   };

@@ -1,9 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
-import { VariantProduct } from "./product.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreateProduct, VariantProduct } from "./product.service";
 import { req } from "./request";
 import { toast } from "react-toastify";
 
 interface UpdateVariant extends VariantProduct {}
+interface CreateVariant extends Omit<CreateProduct, "variant"> {}
 
 class Api {
   private static instance: Api;
@@ -25,6 +26,16 @@ class Api {
     500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
   };
 
+  async create(r: CreateVariant): Promise<{}> {
+    return await req<{}>({
+      method: "POST",
+      body: r,
+      isNoAuth: false,
+      errors: this.errors,
+      path: this.path,
+    });
+  }
+
   async update(variantId: string, r: UpdateVariant): Promise<VariantProduct> {
     return await req<VariantProduct>({
       method: "PUT",
@@ -44,15 +55,12 @@ class Api {
     });
   }
 
-  async removeVariantColor(
-    variantId: string,
-    variantColorId: string
-  ): Promise<{}> {
+  async removeVariantColor(variantColorId: string): Promise<{}> {
     return await req<{}>({
       method: "DELETE",
       isNoAuth: false,
       errors: this.errors,
-      path: `${this.path}/${variantId}/color/${variantColorId}`,
+      path: `${this.path}/variant-color/${variantColorId}`,
     });
   }
 }
@@ -60,7 +68,8 @@ class Api {
 interface ApiVariantInfo {
   update(variantId: string, r: UpdateVariant): Promise<VariantProduct>;
   remove(variantId: string): Promise<{}>;
-  removeVariantColor(variantId: string, variantColorId: string): Promise<{}>;
+  removeVariantColor(variantColorId: string): Promise<{}>;
+  create(r: CreateVariant): Promise<{}>;
 }
 
 function getVariantApiInfo(): ApiVariantInfo {
@@ -70,18 +79,28 @@ function getVariantApiInfo(): ApiVariantInfo {
 const key = "variant";
 
 export const useVariant = () => {
+  const queryClient = useQueryClient();
+
+  const create = (productId: string) => {
+    const mutate = useMutation<{}, Error, { data: CreateVariant }>({
+      mutationKey: [key, productId],
+      mutationFn: async (r) => await getVariantApiInfo().create(r.data),
+      onSuccess: () => {
+        console.log("variant created successfully");
+      },
+      onError: (e) => {
+        toast.error(`Something wrong to create variant : ${e.message}`);
+      },
+    });
+
+    return mutate;
+  };
+
   const removeVariantColor = (productId: string) => {
-    const mutate = useMutation<
-      {},
-      Error,
-      { variantId: string; variantColorId: string }
-    >({
+    const mutate = useMutation<{}, Error, { variantColorId: string }>({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
-        await getVariantApiInfo().removeVariantColor(
-          r.variantId,
-          r.variantColorId
-        ),
+        await getVariantApiInfo().removeVariantColor(r.variantColorId),
       onSuccess: () => {
         console.log("removed the variant color successfully");
       },
@@ -118,9 +137,9 @@ export const useVariant = () => {
       mutationFn: async (r) =>
         await getVariantApiInfo().update(r.variantId, r.data),
       onSuccess: () => {
-        // void queryClient.invalidateQueries({
-        //   queryKey: ["product", productId],
-        // });
+        void queryClient.invalidateQueries({
+          queryKey: ["product", productId],
+        });
         console.log("updated successfully");
       },
       onError: (e) =>
@@ -129,5 +148,5 @@ export const useVariant = () => {
     return mutate;
   };
 
-  return { update, remove, removeVariantColor };
+  return { update, remove, removeVariantColor, create };
 };

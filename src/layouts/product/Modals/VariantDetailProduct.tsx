@@ -202,7 +202,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           update={{ isUpdate: isDeleteSize, onEdit: handleChangeSize }}
           isActiveItem={!labelAndImage?.label}
         >
-          {!labelAndImage?.label ? (
+          {!labelAndImage?.label || variantTypes.length < 1 ? (
             <p className={`text-sm text-[${IconColor.zinc}]`}>
               Pilih warna/jenis/tipe di atas untuk mengatur ukuran
             </p>

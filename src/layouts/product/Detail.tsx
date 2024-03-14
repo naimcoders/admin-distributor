@@ -113,25 +113,35 @@ const Detail = () => {
     }
 
     // update & remove variant
-    variantTypes.forEach(async (type, index) => {
-      if (type.name !== variantTypesPrev[index].name) {
-        try {
-          await removeVariant.mutateAsync({ variantId: type.id ?? "" });
-        } catch (e) {
-          const error = e as Error;
-          console.error(`Something wrong to remove variant : ${error.message}`);
+    variantTypesPrev.forEach((typePrev) => {
+      variantTypes.forEach(async (type) => {
+        if (
+          typePrev.name !== type.name &&
+          variantTypesPrev.length > variantTypes.length
+        ) {
+          try {
+            await removeVariant.mutateAsync({ variantId: type.id ?? "" });
+            console.log("removed");
+          } catch (e) {
+            const error = e as Error;
+            console.error(
+              `Something wrong to remove variant : ${error.message}`
+            );
+          }
+        } else {
+          try {
+            await updateVariant.mutateAsync({
+              variantId: typePrev.id ?? "",
+              data: typePrev,
+            });
+          } catch (e) {
+            const error = e as Error;
+            console.error(
+              `Something wrong to update variant : ${error.message}`
+            );
+          }
         }
-      } else {
-        try {
-          await updateVariant.mutateAsync({
-            variantId: type.id ?? "",
-            data: type,
-          });
-        } catch (e) {
-          const error = e as Error;
-          console.error(`Something wrong to update variant : ${error.message}`);
-        }
-      }
+      });
     });
 
     console.log({ variantTypes, variantTypesPrev });
@@ -152,7 +162,7 @@ const Detail = () => {
         },
       };
 
-      // await mutateAsync({ data: obj });
+      await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

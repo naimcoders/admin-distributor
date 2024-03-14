@@ -110,7 +110,7 @@ const useBanner = () => {
     if (!e.target.files) return null;
 
     const files = e.target.files[0];
-    const fileNameFix = `banner/distributor/${user?.uid}/${Date.now()}.png`;
+    const fileNameFix = `distributor_banner/${user?.uid}/${Date.now()}.png`;
     const storageRef = ref(FbStorage, fileNameFix);
     const uploadTask = uploadBytesResumable(storageRef, files);
 

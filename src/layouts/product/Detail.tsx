@@ -96,7 +96,6 @@ const Detail = () => {
   const removeVariant = remove(id);
   const removeVarColor = removeVariantColor(id);
   const createVariant = create(id);
-
   const { user } = useAuth();
 
   const onSubmit = handleSubmit(async (e) => {
@@ -148,62 +147,73 @@ const Detail = () => {
             typeByName.imageUrl = url.imageUrl;
           });
 
-          createVariant.mutateAsync({
+          await createVariant.mutateAsync({
             data: {
               name: type.name,
               variantColorProduct: type.variantColorProduct,
               imageUrl: type.imageUrl,
+              productId: id,
             },
           });
         }
       });
     }
 
-    // update & remove variant
-    if (variantTypes.length > 0) {
-      variantTypesPrev.forEach((typePrev) => {
-        variantTypes.forEach(async (type) => {
-          if (typePrev.name !== type.name) {
-            try {
-              await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
-            } catch (e) {
-              const error = e as Error;
-              console.error(
-                `Something wrong to remove variant : ${error.message}`
-              );
-            }
-          } else {
-            try {
-              await updateVariant.mutateAsync({
-                variantId: typePrev.id ?? "",
-                data: typePrev,
-              });
-            } catch (e) {
-              const error = e as Error;
-              console.error(
-                `Something wrong to update variant : ${error.message}`
-              );
-            }
+    variantTypesPrev.forEach(async (typePrev) => {
+      const typeById = variantTypes.map((type) => type.id);
+      if (!typeById.includes(typePrev.id) || variantTypes.length < 1) {
+        try {
+          await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
+        } catch (e) {
+          const error = e as Error;
+          console.error(`Something wrong to remove variant : ${error.message}`);
+        }
+      }
+    });
 
-            typePrev.variantColorProduct.forEach(async (subVariantPrev) => {
-              const typesByName = type.variantColorProduct.map((e) => e.name);
-              if (!typesByName.includes(subVariantPrev.name)) {
-                try {
-                  await removeVarColor.mutateAsync({
-                    variantColorId: subVariantPrev.id ?? "",
-                  });
-                } catch (e) {
-                  const error = e as Error;
-                  console.error(
-                    `Something wrong to remove variant color : ${error.message}`
-                  );
-                }
-              }
-            });
-          }
-        });
-      });
-    }
+    // update & remove variant
+    // variantTypesPrev.forEach((typePrev) => {
+    //   variantTypes.forEach(async (type) => {
+    //     if (typePrev.name !== type.name || variantTypes.length < 1) {
+    //       try {
+    //         await removeVariant.mutateAsync({ variantId: typePrev.id ?? "" });
+    //       } catch (e) {
+    //         const error = e as Error;
+    //         console.error(
+    //           `Something wrong to remove variant : ${error.message}`
+    //         );
+    //       }
+    //     } else {
+    //       try {
+    //         await updateVariant.mutateAsync({
+    //           variantId: typePrev.id ?? "",
+    //           data: typePrev,
+    //         });
+    //       } catch (e) {
+    //         const error = e as Error;
+    //         console.error(
+    //           `Something wrong to update variant : ${error.message}`
+    //         );
+    //       }
+
+    //       typePrev.variantColorProduct.forEach(async (subVariantPrev) => {
+    //         const typesByName = type.variantColorProduct.map((e) => e.name);
+    //         if (!typesByName.includes(subVariantPrev.name)) {
+    //           try {
+    //             await removeVarColor.mutateAsync({
+    //               variantColorId: subVariantPrev.id ?? "",
+    //             });
+    //           } catch (e) {
+    //             const error = e as Error;
+    //             console.error(
+    //               `Something wrong to remove variant color : ${error.message}`
+    //             );
+    //           }
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
 
     try {
       const price = e.price;
@@ -222,29 +232,12 @@ const Detail = () => {
       };
 
       await mutateAsync({ data: obj });
+      console.log({ variantTypes, variantTypesPrev });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
     }
   });
-
-  React.useEffect(() => {
-    if (data) {
-      setCurrentProductImage(
-        data.imageUrl.map((imageUrl) => ({
-          name: imageUrl,
-          size: "1:1",
-          src: imageUrl,
-        }))
-      );
-      setVariantTypes(data.variantProduct);
-      setCategoryId(data.categoryProduct.category.id);
-      setDeliveryPrice(data.deliveryPrice);
-      setPriceStore(data.price);
-      setImageUrl(data.imageUrl);
-      setVariantTypesPrev(data.variantProduct);
-    }
-  }, [data, imageUrl]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
@@ -277,19 +270,46 @@ const Detail = () => {
     console.log(data?.categoryProduct.category.name);
   };
 
+  React.useEffect(() => {
+    if (data) {
+      setCurrentProductImage(
+        data.imageUrl.map((imageUrl) => ({
+          name: imageUrl,
+          size: "1:1",
+          src: imageUrl,
+        }))
+      );
+      setVariantTypes(data.variantProduct);
+      setCategoryId(data.categoryProduct.category.id);
+      setDeliveryPrice(data.deliveryPrice);
+      setPriceStore(data.price);
+      setImageUrl(data.imageUrl);
+      setVariantTypesPrev(data.variantProduct);
+
+      setValue("productName", data.name);
+      setValue("category", data.categoryProduct.category.name);
+      setValue("subCategory", data.subCategoryProduct?.name ?? "-");
+      setValue("dangerous", data.isDangerous ? "Ya" : "Tidak");
+      setValue("variant", data.variantProduct.map((e) => e.name).join(", "));
+      setValue("price", Currency(data.price.price ?? 0));
+      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
+      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
+      setValue("condition", "Baru");
+      setValue("description", data.description);
+    }
+  }, [data, imageUrl]);
+
   const fields: TextfieldProps[] = [
     objectFields({
       label: "nama produk *",
       name: "productName",
       type: "text",
-      defaultValue: data?.name,
       rules: { required: { value: true, message: "Masukkan nama produk" } },
     }),
     objectFields({
       label: "kategori *",
       name: "category",
       type: "modal",
-      defaultValue: data?.categoryProduct.category.name,
       onClick: actionIsCategory,
       rules: { required: { value: true, message: "Pilih kategori" } },
     }),
@@ -298,20 +318,17 @@ const Detail = () => {
       name: "subCategory",
       type: "modal",
       onClick: onClickSubCategory,
-      defaultValue: data?.subCategoryProduct?.name ?? "-",
     }),
     objectFields({
       label: "produk berbahaya",
       name: "dangerous",
       type: "modal",
       onClick: actionIsDangerous,
-      defaultValue: data?.isDangerous ? "Ya" : "Tidak",
     }),
     objectFields({
       label: "variasi",
       name: "variant",
       type: "modal",
-      defaultValue: data?.variantProduct.map((m) => m.name).join(", "),
       placeholder: "tentukan variasi",
       onClick: actionIsVariant,
     }),
@@ -320,7 +337,6 @@ const Detail = () => {
       name: "price",
       type: "rp",
       placeholder: "masukkan harga",
-      defaultValue: Currency(data?.price.price ?? 0),
       rules: { required: { value: true, message: "masukkan harga" } },
       readOnly: { isValue: true, cursor: "cursor-pointer" },
       onClick: actionIsPrice,
@@ -338,7 +354,6 @@ const Detail = () => {
       label: "kondisi *",
       name: "condition",
       type: "modal",
-      defaultValue: "Baru",
       onClick: actionIsCondition,
       rules: { required: { value: true, message: "pilih kondisi" } },
     }),
@@ -346,14 +361,12 @@ const Detail = () => {
       label: "sub-distributor",
       name: "subDistributor",
       type: "modal",
-      defaultValue: "",
       onClick: actionIsSubDistributor,
     }),
     objectFields({
       label: "deskripsi *",
       name: "description",
       type: "textarea",
-      defaultValue: data?.description,
     }),
   ];
 
@@ -435,6 +448,7 @@ const Detail = () => {
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={variantTypes.length > 0 ? v.readOnly : undefined}
                     onClick={variantTypes.length > 0 ? v.onClick : undefined}
+                    defaultValue=""
                     endContent={
                       variantTypes.length > 1 &&
                       v.name === "price" && (
@@ -463,6 +477,7 @@ const Detail = () => {
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                    defaultValue=""
                     endContent={
                       <ChevronRightIcon width={16} color={IconColor.zinc} />
                     }
@@ -480,7 +495,7 @@ const Detail = () => {
                     {...v}
                     key={v.label}
                     control={control}
-                    defaultValue={v.defaultValue}
+                    defaultValue=""
                     classNameWrapper="col-span-2"
                     errorMessage={handleErrorMessage(errors, v.name)}
                     rules={{

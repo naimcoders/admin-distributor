@@ -51,9 +51,7 @@ interface General {
   setVariantType: (v: VariantTypeProps[]) => void;
   variantTypesDetailProduct: VariantTypeProps[];
   setVariantTypesDetailProduct: (v: VariantTypeProps[]) => void;
-  generalId: string[];
-  setGeneralId: (v: string) => void;
-  clearGeneralId: () => void;
+
   bankName: string;
   setBankName: (v: string) => void;
   category: CategoryProps;
@@ -80,7 +78,7 @@ export const defaultValueDeliveryPrice = {
   wide: 0,
 };
 
-const useGeneralStore = create<General>((set, get) => ({
+const useGeneralStore = create<General>((set) => ({
   price: defaultValuePrice,
   setPrice: (v) => set({ price: v }),
   deliveryPrice: defaultValueDeliveryPrice,
@@ -97,12 +95,6 @@ const useGeneralStore = create<General>((set, get) => ({
   setVariantType: (v) => set({ variantTypes: v }),
   variantTypesDetailProduct: [],
   setVariantTypesDetailProduct: (v) => set({ variantTypesDetailProduct: v }),
-  generalId: [],
-  setGeneralId: (val) => {
-    const d: string[] = [...get().generalId, val];
-    return set({ generalId: d });
-  },
-  clearGeneralId: () => set({ generalId: [] }),
 
   bankName: "",
   setBankName: (v) => set({ bankName: v }),
@@ -126,3 +118,27 @@ const useGeneralStore = create<General>((set, get) => ({
 }));
 
 export default useGeneralStore;
+
+interface VariantIdProps {
+  variantId: string[];
+  setVariantId: (v: string) => void;
+  clearVariantId: () => void;
+  variantColorId: string[];
+  setVariantColorId: (v: string) => void;
+  clearVariantColorId: () => void;
+}
+
+export const useVariantIdStore = create<VariantIdProps>((set, get) => ({
+  variantId: [],
+  setVariantId: (val) => {
+    const d: string[] = [...get().variantId, val];
+    return set({ variantId: d });
+  },
+  clearVariantId: () => set({ variantId: [] }),
+  variantColorId: [],
+  setVariantColorId: (val) => {
+    const d: string[] = [...get().variantColorId, val];
+    return set({ variantColorId: d });
+  },
+  clearVariantColorId: () => set({ variantColorId: [] }),
+}));

@@ -10,7 +10,10 @@ import {
 } from "react";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
-import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
+import useGeneralStore, {
+  VariantTypeProps,
+  useVariantIdStore,
+} from "src/stores/generalStore";
 import { IconColor, UseForm } from "src/types";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { useActiveModal } from "src/stores/modalStore";
@@ -144,8 +147,8 @@ export const VariantModal: FC<VariantModalProps> = ({
                     width={20}
                     color={IconColor.red}
                     className="absolute -top-2 -right-2 cursor-pointer"
-                    title="hapus"
-                    onClick={() => handleDeleteType(v.name ?? "")}
+                    title="hapus sss"
+                    onClick={() => handleDeleteType(v.name ?? "", v.id ?? "")}
                   />
                 )}
               </section>
@@ -340,15 +343,17 @@ export const useVariant = ({
     if (e.key === "Escape") setIsAddType((v) => !v);
   };
 
-  const handleDeleteType = (label: string) => {
+  const setVariantId = useVariantIdStore((v) => v.setVariantId);
+  const setVariantColorId = useVariantIdStore((v) => v.setVariantColorId);
+
+  const handleDeleteType = (label: string, id: string) => {
+    setVariantId(id);
     const newTypes = variantTypes.filter((type) => type.name !== label);
     setVariantTypes(newTypes);
   };
 
-  const setGeneralId = useGeneralStore((v) => v.setGeneralId);
-
   const handleDeleteSize = (val: string, id: string) => {
-    setGeneralId(id);
+    setVariantColorId(id);
     const [typeByName] = variantTypes.filter(
       (type) => type.name === labelAndImage?.label
     );

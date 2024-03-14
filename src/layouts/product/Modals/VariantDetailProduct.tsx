@@ -144,7 +144,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                     color={IconColor.red}
                     className="absolute -top-2 -right-2 cursor-pointer"
                     title="hapus"
-                    onClick={() => handleDeleteType(v.name ?? "")}
+                    onClick={() => handleDeleteType(v.name ?? "", v.id ?? "")}
                   />
                 )}
               </section>

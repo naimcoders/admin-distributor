@@ -38,7 +38,10 @@ import { ModalCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
-import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
+import useGeneralStore, {
+  VariantTypeProps,
+  useVariantIdStore,
+} from "src/stores/generalStore";
 import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import { ref, uploadBytesResumable } from "firebase/storage";
@@ -98,8 +101,10 @@ const Detail = () => {
   const createVariant = create(id);
   const { user } = useAuth();
 
-  const generalId = useGeneralStore((v) => v.generalId);
-  const clearGeneralId = useGeneralStore((v) => v.clearGeneralId);
+  const variantId = useVariantIdStore((v) => v.variantId);
+  const clearVariantId = useVariantIdStore((v) => v.clearVariantId);
+  const variantColorId = useVariantIdStore((v) => v.variantColorId);
+  const clearVariantColorId = useVariantIdStore((v) => v.clearVariantColorId);
 
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
@@ -162,10 +167,23 @@ const Detail = () => {
       });
     }
 
-    if (generalId.length) {
-      generalId.forEach(async (e) => {
+    if (variantId.length) {
+      variantId.forEach(async (id) => {
         try {
-          await removeVarColor.mutateAsync({ variantColorId: e });
+          await removeVariant.mutateAsync({ variantId: id });
+        } catch (e) {
+          const error = e as Error;
+          console.error(
+            `Something wrong to remove variant color : ${error.message}`
+          );
+        }
+      });
+    }
+
+    if (variantColorId.length) {
+      variantColorId.forEach(async (id) => {
+        try {
+          await removeVarColor.mutateAsync({ variantColorId: id });
         } catch (e) {
           const error = e as Error;
           console.error(
@@ -196,7 +214,8 @@ const Detail = () => {
       const error = e as Error;
       console.error(error.message);
     } finally {
-      clearGeneralId();
+      clearVariantId();
+      clearVariantColorId();
     }
   });
 

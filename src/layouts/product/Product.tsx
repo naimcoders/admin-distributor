@@ -44,10 +44,6 @@ const useHook = () => {
       header: <p className="text-center">kategori</p>,
       render: (v) => <Label label={v.categoryProduct.category.name} />,
     },
-    // {
-    //   header: <p className="text-center">sub-kategori</p>,
-    //   render: (v) => <Label label={v.categoryProduct.subCategory} />,
-    // },
     {
       header: <p className="text-center">tanggal dibuat</p>,
       render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,

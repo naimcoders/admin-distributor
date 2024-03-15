@@ -174,16 +174,15 @@ const Create = () => {
       });
 
       // if (result.id) navigate(-1);
-    } catch (e) {
-      const error = e as Error;
-      console.error(error.message);
-    } finally {
       setPhotos([]);
       setVariantType([]);
       setCategoryId("");
       setSubCategoryId("");
       clearDeliveryPrice();
       reset();
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Something wrong to create product : ${error.message}`);
     }
   });
 

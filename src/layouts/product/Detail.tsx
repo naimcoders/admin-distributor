@@ -271,7 +271,7 @@ const Detail = () => {
   React.useEffect(() => {
     if (data) {
       setCurrentProductImage(
-        data.imageUrl.map((imageUrl) => ({
+        data.imageUrl?.map((imageUrl) => ({
           name: imageUrl,
           size: "1:1",
           src: imageUrl,
@@ -378,7 +378,7 @@ const Detail = () => {
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
             <section className="flex gap-6 items-center flex-wrap">
-              {currentProductImage.map((v, k) => (
+              {currentProductImage?.map((v, k) => (
                 <Image
                   key={k}
                   src={v.src}

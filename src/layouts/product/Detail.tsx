@@ -193,16 +193,22 @@ const Detail = () => {
       });
     }
 
-    variantTypes.forEach(async (e) => {
-      try {
-        await updateVariant.mutateAsync({
-          data: e,
-          variantId: e.id ?? "",
-        });
-      } catch (e) {
-        const error = e as Error;
-        console.error(`Something wrong to update variant : ${error.message}`);
-      }
+    variantTypesPrev.map((typePrev) => {
+      variantTypes.map(async (type) => {
+        if (typePrev.name === type.name) {
+          try {
+            await updateVariant.mutateAsync({
+              data: typePrev,
+              variantId: typePrev.id ?? "",
+            });
+          } catch (e) {
+            const error = e as Error;
+            console.error(
+              `Something wrong to update variant : ${error.message}`
+            );
+          }
+        }
+      });
     });
 
     try {

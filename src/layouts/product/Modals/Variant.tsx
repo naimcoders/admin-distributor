@@ -292,10 +292,12 @@ export const useVariant = ({
 
     if (error > 0) setIsErrorVariant(true);
     else {
-      const value = variantTypes.map((m) => m.name).join(", ");
-      setValue(fieldName, value);
-      actionIsVariant();
-      setTimeout(actionIsPrice, 500);
+      if (variantTypes.length) {
+        const value = variantTypes.map((m) => m.name).join(", ");
+        setValue(fieldName, value);
+        actionIsVariant();
+        setTimeout(actionIsPrice, 500);
+      } else actionIsVariant();
     }
   };
 

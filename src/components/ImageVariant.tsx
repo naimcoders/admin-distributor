@@ -69,7 +69,7 @@ const VariantImage = React.forwardRef(
           )}
           <p
             className={cx(
-              `text-sm text-[${IconColor.zinc}] text-center border border-gray-400 rounded-br-md rounded-bl-md py-1`,
+              `text-sm text-[${IconColor.zinc}] text-center border border-gray-400 rounded-br-md rounded-bl-md py-1 truncate px-3`,
               !props.image ? "border-dashed" : "border-solid"
             )}
           >

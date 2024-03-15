@@ -98,7 +98,9 @@ const Create = () => {
 
         new Promise<string>(() => {
           uploadTask.on("state_changed", null, (err) =>
-            console.error(err.message)
+            console.error(
+              `Something wrong to upload product image : ${err.message}`
+            )
           );
         });
 
@@ -119,7 +121,9 @@ const Create = () => {
 
           new Promise<string>(() => {
             uploadTask.on("state_changed", null, (err) =>
-              console.error(err.message)
+              console.error(
+                `Something wrong to upload variant : ${err.message}`
+              )
             );
           });
 

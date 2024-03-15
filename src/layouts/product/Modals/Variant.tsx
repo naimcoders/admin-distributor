@@ -287,6 +287,15 @@ export const useVariant = ({
     return variantByName.includes(value);
   };
 
+  const checkVariantSize = (value: string) => {
+    // const filter = variantTypes.filter(type)
+    const [variantByColor] = variantTypes.map(
+      (type) => type.variantColorProduct
+    );
+    const sizeByName = variantByColor.map((e) => e.name);
+    return sizeByName.includes(value);
+  };
+
   const handleSubmitVariant = (
     fieldName: string,
     setValue: Pick<UseForm, "setValue">["setValue"]
@@ -311,6 +320,7 @@ export const useVariant = ({
     const type = e.type;
     if (checkVariantName(type)) {
       toast.error(`Tipe ${type} sudah ada`);
+      formType.reset();
       return;
     }
     setVariantTypes([...variantTypes, { name: type, variantColorProduct: [] }]);
@@ -320,6 +330,11 @@ export const useVariant = ({
 
   const handleSubmitSize = formSize.handleSubmit((e) => {
     const val = e.size;
+    if (checkVariantSize(val)) {
+      toast.error(`Ukuran ${val} sudah ada`);
+      formSize.reset();
+      return;
+    }
     const [typeByName] = variantTypes.filter(
       (type) => type.name === labelAndImage?.label
     );
@@ -331,6 +346,12 @@ export const useVariant = ({
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const val = formSize.getValues().size;
+      if (checkVariantSize(val)) {
+        toast.error(`Ukuran ${val} sudah ada`);
+        formSize.reset();
+        return;
+      }
+
       const [typeByName] = variantTypes.filter(
         (type) => type.name === labelAndImage?.label
       );
@@ -346,6 +367,7 @@ export const useVariant = ({
       const type = formType.getValues().type;
       if (checkVariantName(type)) {
         toast.error(`Tipe ${type} sudah ada`);
+        formType.reset();
         return;
       }
       setVariantTypes([

@@ -241,10 +241,17 @@ const Detail = () => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
-    setCurrentProductImage([
-      ...currentProductImage,
-      { src: blob, size: productSize, name: files.name, file: files },
-    ]);
+
+    if (currentProductImage?.length) {
+      setCurrentProductImage([
+        ...currentProductImage,
+        { src: blob, size: productSize, name: files.name, file: files },
+      ]);
+    } else {
+      setCurrentProductImage([
+        { src: blob, size: productSize, name: files.name, file: files },
+      ]);
+    }
     setIsPopOver((v) => !v);
   };
 

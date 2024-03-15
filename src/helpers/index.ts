@@ -5,6 +5,17 @@ import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 
+export const generateRandomString = (length: number): string => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
 export const checkForDash = (value: string) => /-/.test(value);
 
 export const useSetSearch = (value: string, setSearch: (v: string) => void) => {

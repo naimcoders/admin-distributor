@@ -18,6 +18,7 @@ import {
 import {
   CurrencyIDInput,
   checkForDash,
+  generateRandomString,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -89,7 +90,9 @@ const Create = () => {
     const productUrls: string[] = [];
     await Promise.all(
       photos.map(async (product) => {
-        const path = `temp/product/${user?.uid}/${Date.now()}.png`;
+        const path = `temp/product/${user?.uid}/${generateRandomString(
+          13
+        )}.png`;
         const storageRef = ref(FbStorage, path);
         const uploadTask = uploadBytesResumable(storageRef, product.file!);
 
@@ -110,7 +113,7 @@ const Create = () => {
         variantTypes.map(async (type) => {
           const path = `temp/product/product_variant/${
             user?.uid
-          }/${Date.now()}.png`;
+          }/${generateRandomString(13)}.png`;
           const storageRef = ref(FbStorage, path);
           const uploadTask = uploadBytesResumable(storageRef, type.files!);
 
@@ -134,43 +137,43 @@ const Create = () => {
         filter.map((m) => (m.imageUrl = url.imageUrl));
       });
 
-      const result = await mutateAsync({
-        data: {
-          name: e.productName,
-          isDangerous,
-          deliveryPrice,
-          imageUrl: productUrls,
-          variant: variantTypes,
-          category: { categoryId },
-          description: e.description,
-          price: {
-            fee: 0,
-            startAt: 0,
-            expiredAt: 0,
-            price: newPrice,
-            priceDiscount: 0,
-          },
-        },
-      });
-
-      // console.log({
-      //   name: e.productName,
-      //   isDangerous,
-      //   deliveryPrice,
-      //   imageUrl: productUrls,
-      //   variant: variantTypes,
-      //   category: { categoryId },
-      //   description: e.description,
-      //   price: {
-      //     fee: 0,
-      //     startAt: 0,
-      //     expiredAt: 0,
-      //     price: newPrice,
-      //     priceDiscount: 0,
+      // const result = await mutateAsync({
+      //   data: {
+      //     name: e.productName,
+      //     isDangerous,
+      //     deliveryPrice,
+      //     imageUrl: productUrls,
+      //     variant: variantTypes,
+      //     category: { categoryId },
+      //     description: e.description,
+      //     price: {
+      //       fee: 0,
+      //       startAt: 0,
+      //       expiredAt: 0,
+      //       price: newPrice,
+      //       priceDiscount: 0,
+      //     },
       //   },
       // });
 
-      if (result.id) navigate(-1);
+      console.log({
+        name: e.productName,
+        isDangerous,
+        deliveryPrice,
+        imageUrl: productUrls,
+        variant: variantTypes,
+        category: { categoryId },
+        description: e.description,
+        price: {
+          fee: 0,
+          startAt: 0,
+          expiredAt: 0,
+          price: newPrice,
+          priceDiscount: 0,
+        },
+      });
+
+      // if (result.id) navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

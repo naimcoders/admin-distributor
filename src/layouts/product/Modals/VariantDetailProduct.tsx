@@ -72,7 +72,6 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       if (isVariantPhoto && e.imageUrl) error++;
     });
     setVariantTypes([...setImageValues]);
-
     if (error > 1) setIsErrorVariant(false);
   };
 

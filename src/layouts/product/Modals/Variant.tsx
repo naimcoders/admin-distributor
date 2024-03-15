@@ -21,6 +21,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
 import { ItemVariant } from "src/components/VariantItem";
 import VariantImage from "src/components/ImageVariant";
+import { toast } from "react-toastify";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -281,6 +282,11 @@ export const useVariant = ({
   const handleChangeType = () => setIsDeleteTye((v) => !v);
   const handleChangeSize = () => setIsDeleteSize((v) => !v);
 
+  const checkVariantName = (value: string) => {
+    const variantByName = variantTypes.map((type) => type.name);
+    return variantByName.includes(value);
+  };
+
   const handleSubmitVariant = (
     fieldName: string,
     setValue: Pick<UseForm, "setValue">["setValue"]
@@ -303,6 +309,10 @@ export const useVariant = ({
 
   const handleSubmitType = formType.handleSubmit((e) => {
     const type = e.type;
+    if (checkVariantName(type)) {
+      toast.error(`Tipe ${type} sudah ada`);
+      return;
+    }
     setVariantTypes([...variantTypes, { name: type, variantColorProduct: [] }]);
     formType.setFocus("type");
     formType.resetField("type");
@@ -333,10 +343,14 @@ export const useVariant = ({
 
   const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const type = formType.getValues();
+      const type = formType.getValues().type;
+      if (checkVariantName(type)) {
+        toast.error(`Tipe ${type} sudah ada`);
+        return;
+      }
       setVariantTypes([
         ...variantTypes,
-        { name: type.type, variantColorProduct: [] },
+        { name: type, variantColorProduct: [] },
       ]);
       formType.setFocus("type");
       formType.resetField("type");

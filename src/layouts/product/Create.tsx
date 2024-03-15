@@ -95,7 +95,6 @@ const Create = () => {
         )}.png`;
         const storageRef = ref(FbStorage, path);
         const uploadTask = uploadBytesResumable(storageRef, product.file!);
-
         new Promise<string>(() => {
           uploadTask.on("state_changed", null, (err) =>
             console.error(
@@ -103,7 +102,6 @@ const Create = () => {
             )
           );
         });
-
         productUrls.push(path);
       })
     );
@@ -118,7 +116,6 @@ const Create = () => {
           }/${generateRandomString(13)}.png`;
           const storageRef = ref(FbStorage, path);
           const uploadTask = uploadBytesResumable(storageRef, type.files!);
-
           new Promise<string>(() => {
             uploadTask.on("state_changed", null, (err) =>
               console.error(
@@ -126,7 +123,6 @@ const Create = () => {
               )
             );
           });
-
           variantUrls.push({ name: type.name, imageUrl: path });
         })
       );

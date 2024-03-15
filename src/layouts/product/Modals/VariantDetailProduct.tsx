@@ -92,7 +92,6 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       delete newItem.files;
       return newItem;
     });
-
     setVariantTypes(newVariant);
     setIsVariantPhoto((v) => !v);
   };
@@ -105,6 +104,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
         label: variantTypes[0]?.name,
       });
     }
+    if (variantTypes.length < 1) setLabelAndImage({ label: "" });
   }, [isAddType, isAddSize, variantTypes]);
 
   return (
@@ -202,9 +202,9 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           update={{ isUpdate: isDeleteSize, onEdit: handleChangeSize }}
           isActiveItem={!labelAndImage?.label}
         >
-          {!labelAndImage?.label || variantTypes.length < 1 ? (
+          {!labelAndImage?.label ? (
             <p className={`text-sm text-[${IconColor.zinc}]`}>
-              Pilih warna/jenis/tipe di atas untuk mengatur ukuran
+              Pilih warna/jenis/tipe di atas untuk melihat/mengatur ukuran
             </p>
           ) : (
             <>

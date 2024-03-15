@@ -193,6 +193,18 @@ const Detail = () => {
       });
     }
 
+    variantTypes.forEach(async (e) => {
+      try {
+        await updateVariant.mutateAsync({
+          data: e,
+          variantId: e.id ?? "",
+        });
+      } catch (e) {
+        const error = e as Error;
+        console.error(`Something wrong to update variant : ${error.message}`);
+      }
+    });
+
     try {
       const price = e.price;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
@@ -430,7 +442,7 @@ const Detail = () => {
                     onClick={variantTypes.length > 0 ? v.onClick : undefined}
                     defaultValue=""
                     endContent={
-                      variantTypes.length > 1 &&
+                      variantTypes.length &&
                       v.name === "price" && (
                         <ChevronRightIcon width={16} color={IconColor.zinc} />
                       )

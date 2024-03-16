@@ -43,6 +43,7 @@ import { uploadFile } from "src/firebase/upload";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     reset,
@@ -83,9 +84,11 @@ const Create = () => {
       return;
     }
     try {
+      setIsLoading(true);
       const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
+
       const result = await create.mutateAsync({
         data: {
           name: e.productName,
@@ -110,6 +113,30 @@ const Create = () => {
           },
         },
       });
+
+      // console.log({
+      //   name: e.productName,
+      //   isDangerous,
+      //   deliveryPrice,
+      //   variant: variantTypes.map((v) => ({
+      //     name: v.name,
+      //     imageUrl: "",
+      //     variantColorProduct: v.variantColorProduct.map((o) => ({
+      //       name: o.name,
+      //       price: o.price,
+      //     })),
+      //   })),
+      //   category: { categoryId },
+      //   description: e.description,
+      //   price: {
+      //     fee: 0,
+      //     startAt: 0,
+      //     expiredAt: 0,
+      //     price: newPrice,
+      //     priceDiscount: 0,
+      //   },
+      // });
+      // console.log(variantTypes);
 
       // ON UPLOAD IMAGE PRODUCTS
       for (let i = 0; i < photos.length; i++) {
@@ -141,10 +168,13 @@ const Create = () => {
       clearDeliveryPrice();
       reset();
       toast.success("Produk berhasil dibuat");
-      if (result.id) navigate(-1);
+      navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to create product : ${error.message}`);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   });
 
@@ -276,7 +306,7 @@ const Create = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={create.isPending ? "loading..." : "simpan"}
+            aria-label={create.isPending || isLoading ? "loading..." : "simpan"}
           />
 
           {/* modal */}

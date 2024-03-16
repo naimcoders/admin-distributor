@@ -299,11 +299,11 @@ export const useVariant = ({
     return variantByName.includes(value);
   };
 
-  const checkVariantSize = (value: string) => {
-    const [variantByColor] = variantTypes.map(
-      (type) => type.variantColorProduct
+  const checkVariantSize = (value: string): boolean => {
+    const [typeByName] = variantTypes.filter(
+      (e) => e.name === labelAndImage?.label
     );
-    const sizeByName = variantByColor.map((e) => e.name);
+    const sizeByName = typeByName.variantColorProduct.map((e) => e.name);
     return sizeByName.includes(value);
   };
 

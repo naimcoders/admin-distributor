@@ -254,7 +254,7 @@ export const VariantModal: FC<VariantModalProps> = ({
           )}
         </ItemVariant>
         <Button
-          aria-label="atur info variasi"
+          aria-label="simpan"
           className="mx-auto mt-4"
           onClick={onSubmit}
         />

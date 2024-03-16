@@ -270,11 +270,11 @@ const Detail = () => {
     if (currentProductImage?.length) {
       setCurrentProductImage([
         ...currentProductImage,
-        { src: blob, size: productSize, name: files.name, file: files },
+        { src: blob, size: productSize, name: files.name },
       ]);
     } else {
       setCurrentProductImage([
-        { src: blob, size: productSize, name: files.name, file: files },
+        { src: blob, size: productSize, name: files.name },
       ]);
     }
     setIsPopOver((v) => !v);

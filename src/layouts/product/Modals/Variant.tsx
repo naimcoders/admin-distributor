@@ -326,6 +326,7 @@ export const useVariant = ({
         setTimeout(actionIsPrice, 500);
       } else {
         setValue(fieldName, "");
+        setValue("price", "");
         actionIsVariant();
       }
     }

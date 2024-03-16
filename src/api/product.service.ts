@@ -332,17 +332,17 @@ export function getProductApiInfo(): ApiProductInfo {
 
 const key = "product";
 
-export const useProduct = () => {
+export const useProduct = (productId: string) => {
   const queryClient = useQueryClient();
 
-  const update = (productId: string) => {
+  const update = () => {
     return useMutation<Product, Error, { data: UpdateProduct }>({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
         await getProductApiInfo().update(productId, r.data),
       onSuccess: () => {
         toast.success("Produk berhasil diperbarui");
-        void queryClient.invalidateQueries({ queryKey: [key, productId] });
+        void queryClient.invalidateQueries({ queryKey: [key] });
       },
       onError: (e) => toast.error(e.message),
     });
@@ -358,11 +358,12 @@ export const useProduct = () => {
     onError: (e) => toast.error(e.message),
   });
 
-  const findById = (productId: string) => {
+  const findById = () => {
     const find = async () => getProductApiInfo().findById(productId);
     const { data, isLoading, error } = useQuery<Product, Error>({
       queryKey: [key, productId],
       queryFn: find,
+      enabled: !!productId,
     });
 
     return { data, isLoading, error: error?.message };

@@ -2,7 +2,7 @@ import cx from "classnames";
 import { Button as Btn, Switch } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
-import { VariantTypeProps } from "src/stores/generalStore";
+import useGeneralStore, { VariantTypeProps } from "src/stores/generalStore";
 import { IconColor, UseForm } from "src/types";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { useUploadProduct } from "../Create";
@@ -14,16 +14,17 @@ import { toast } from "react-toastify";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
-  variantTypes: VariantTypeProps[];
-  setVariantTypes: (v: VariantTypeProps[]) => void;
 }
 
 export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   fieldName,
   setValue,
-  setVariantTypes,
-  variantTypes,
 }) => {
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const setVariantTypes = useGeneralStore(
+    (v) => v.setVariantTypesDetailProduct
+  );
+
   const {
     isAddType,
     isDeleteType,

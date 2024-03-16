@@ -49,6 +49,12 @@ import { uploadFile } from "src/firebase/upload";
 
 const Detail = () => {
   const [newImageFile, setNewImageFile] = React.useState<File>();
+  const [newVariantFile, setNewVariantFile] = React.useState<
+    {
+      files: File;
+      variantId?: string;
+    }[]
+  >([]);
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
@@ -60,7 +66,7 @@ const Detail = () => {
   );
 
   const { id } = useParams() as { id: string };
-  const { isLoading, error, data } = useProduct().findById(id);
+  const { isLoading, error, data } = useProduct(id).findById();
 
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
@@ -91,7 +97,7 @@ const Detail = () => {
     }
   };
 
-  const { mutateAsync, isPending } = useProduct().update(id);
+  const { mutateAsync, isPending } = useProduct(id).update();
   const { remove, update, removeVariantColor, create } = useVariant(id);
 
   const variantId = useVariantIdStore((v) => v.variantId);
@@ -100,10 +106,38 @@ const Detail = () => {
   const clearVariantColorId = useVariantIdStore((v) => v.clearVariantColorId);
 
   React.useEffect(() => {
-    if (newImageFile) {
-      onUploadImage();
+    if (data) {
+      setCurrentProductImage(
+        data.imageUrl?.map((imageUrl) => ({
+          name: imageUrl,
+          size: "1:1",
+          src: imageUrl,
+        }))
+      );
+      setVariantTypes(data.variantProduct);
+      setCategoryId(data.categoryProduct.category.id);
+      setDeliveryPrice(data.deliveryPrice);
+      setPriceStore(data.price);
+      setImageUrl(data.imageUrl);
+      setVariantTypesPrev(data.variantProduct);
+
+      setValue("productName", data.name);
+      setValue("category", data.categoryProduct.category.name);
+      setValue("subCategory", data.subCategoryProduct?.name ?? "-");
+      setValue("dangerous", data.isDangerous ? "Ya" : "Tidak");
+      setValue("variant", data.variantProduct.map((e) => e.name).join(", "));
+      setValue("price", Currency(data.price.price ?? 0));
+      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
+      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
+      setValue("condition", "Baru");
+      setValue("description", data.description);
     }
-  }, [newImageFile]);
+  }, [data, imageUrl]);
+
+  React.useEffect(() => {
+    if (newImageFile) onUploadImage();
+    if (newVariantFile.length > 0) onUploadVariant();
+  }, [newImageFile, newVariantFile]);
 
   const onUploadImage = async () => {
     try {
@@ -126,6 +160,24 @@ const Detail = () => {
     }
   };
 
+  const onUploadVariant = () => {
+    if (newVariantFile.length < 1) return;
+    newVariantFile.forEach(async (variant) => {
+      try {
+        await uploadFile({
+          file: variant.files,
+          prefix: `product_variant/${variant.variantId}/${Date.now()}.png`,
+        });
+      } catch (err) {
+        const error = err as Error;
+        console.log(`Error upload variant ` + `${error.message}`);
+        toast.error(`Gagal upload foto variant`);
+      } finally {
+        setNewVariantFile([]);
+      }
+    });
+  };
+
   const onSubmit = handleSubmit(async (e) => {
     // ON CREATE VARIANT
     if (variantTypesPrev.length < variantTypes.length) {
@@ -143,10 +195,10 @@ const Detail = () => {
             });
 
             if (!type.files) return;
-            await uploadFile({
-              file: type.files,
-              prefix: `product_variant/${newVariant.id}/${Date.now()}.png`,
-            });
+            setNewVariantFile([
+              ...newVariantFile,
+              { files: type.files, variantId: newVariant.id },
+            ]);
           } catch (err) {
             const error = err as Error;
             console.error(
@@ -269,35 +321,6 @@ const Detail = () => {
     actionIsSubCategory();
     console.log(data?.categoryProduct.category.name);
   };
-
-  React.useEffect(() => {
-    if (data) {
-      setCurrentProductImage(
-        data.imageUrl?.map((imageUrl) => ({
-          name: imageUrl,
-          size: "1:1",
-          src: imageUrl,
-        }))
-      );
-      setVariantTypes(data.variantProduct);
-      setCategoryId(data.categoryProduct.category.id);
-      setDeliveryPrice(data.deliveryPrice);
-      setPriceStore(data.price);
-      setImageUrl(data.imageUrl);
-      setVariantTypesPrev(data.variantProduct);
-
-      setValue("productName", data.name);
-      setValue("category", data.categoryProduct.category.name);
-      setValue("subCategory", data.subCategoryProduct?.name ?? "-");
-      setValue("dangerous", data.isDangerous ? "Ya" : "Tidak");
-      setValue("variant", data.variantProduct.map((e) => e.name).join(", "));
-      setValue("price", Currency(data.price.price ?? 0));
-      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
-      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
-      setValue("condition", "Baru");
-      setValue("description", data.description);
-    }
-  }, [data, imageUrl]);
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -522,12 +545,7 @@ const Detail = () => {
       />
       <DangerousModal setValue={setValue} />
       <ConditionModal setValue={setValue} />
-      <VariantDetailProductModal
-        fieldName="variant"
-        setValue={setValue}
-        variantTypes={variantTypes}
-        setVariantTypes={setVariantTypes}
-      />
+      <VariantDetailProductModal fieldName="variant" setValue={setValue} />
       <PostageModal
         setValue={setValue}
         clearErrors={clearErrors}

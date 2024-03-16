@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { VariantProduct } from "./product.service";
 import { req } from "./request";
 import { toast } from "react-toastify";
@@ -78,9 +78,13 @@ function getVariantApiInfo(): ApiVariantInfo {
 const key = "variant";
 
 export const useVariant = (productId: string) => {
+  const queryClient = useQueryClient();
+
   const create = useMutation<VariantProduct, Error, { data: VariantProduct }>({
-    mutationKey: [key, productId],
+    mutationKey: [key, "create", productId],
     mutationFn: async (r) => await getVariantApiInfo().create(r.data),
+    onSuccess: () =>
+      void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
     onError: (e) => {
       toast.error(`Something wrong to create variant : ${e.message}`);
     },
@@ -88,7 +92,7 @@ export const useVariant = (productId: string) => {
 
   const removeVariantColor = useMutation<{}, Error, { variantColorId: string }>(
     {
-      mutationKey: [key, productId],
+      mutationKey: [key, "remove-variant-color", productId],
       mutationFn: async (r) =>
         await getVariantApiInfo().removeVariantColor(r.variantColorId),
       onError: (e) => {
@@ -100,7 +104,7 @@ export const useVariant = (productId: string) => {
   );
 
   const remove = useMutation<{}, Error, { variantId: string }>({
-    mutationKey: [key, productId],
+    mutationKey: [key, "remove", productId],
     mutationFn: async (r) => await getVariantApiInfo().remove(r.variantId),
     onError: (e) =>
       toast.error(`Something wrong to remove variant : ${e.message}`),
@@ -111,9 +115,11 @@ export const useVariant = (productId: string) => {
     Error,
     { data: VariantProduct; variantId: string }
   >({
-    mutationKey: [key, productId],
+    mutationKey: [key, "update", productId],
     mutationFn: async (r) =>
       await getVariantApiInfo().update(r.variantId, r.data),
+    onSuccess: () =>
+      void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
     onError: (e) =>
       toast.error(`Something wrong to update the variant : ${e.message}`),
   });

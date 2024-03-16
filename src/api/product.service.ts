@@ -342,7 +342,7 @@ export const useProduct = (productId: string) => {
         await getProductApiInfo().update(productId, r.data),
       onSuccess: () => {
         toast.success("Produk berhasil diperbarui");
-        void queryClient.invalidateQueries({ queryKey: [key] });
+        void queryClient.invalidateQueries({ queryKey: [key, productId] });
       },
       onError: (e) => toast.error(e.message),
     });

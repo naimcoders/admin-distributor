@@ -9,7 +9,7 @@ import {
   Button as Btn,
   PopoverContent,
 } from "@nextui-org/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useProduct } from "src/api/product.service";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
@@ -49,12 +49,6 @@ import { uploadFile } from "src/firebase/upload";
 
 const Detail = () => {
   const [newImageFile, setNewImageFile] = React.useState<File>();
-  const [newVariantFile, setNewVariantFile] = React.useState<
-    {
-      files: File;
-      variantId?: string;
-    }[]
-  >([]);
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
@@ -72,6 +66,7 @@ const Detail = () => {
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
   const priceStore = useGeneralStore((v) => v.price);
   const setPriceStore = useGeneralStore((v) => v.setPrice);
+  const navigate = useNavigate();
 
   const {
     control,
@@ -136,8 +131,7 @@ const Detail = () => {
 
   React.useEffect(() => {
     if (newImageFile) onUploadImage();
-    if (newVariantFile.length > 0) onUploadVariant();
-  }, [newImageFile, newVariantFile]);
+  }, [newImageFile]);
 
   const onUploadImage = async () => {
     try {
@@ -160,24 +154,6 @@ const Detail = () => {
     }
   };
 
-  const onUploadVariant = () => {
-    if (newVariantFile.length < 1) return;
-    newVariantFile.forEach(async (variant) => {
-      try {
-        await uploadFile({
-          file: variant.files,
-          prefix: `product_variant/${variant.variantId}/${Date.now()}.png`,
-        });
-      } catch (err) {
-        const error = err as Error;
-        console.log(`Error upload variant ` + `${error.message}`);
-        toast.error(`Gagal upload foto variant`);
-      } finally {
-        setNewVariantFile([]);
-      }
-    });
-  };
-
   const onSubmit = handleSubmit(async (e) => {
     // ON CREATE VARIANT
     if (variantTypesPrev.length < variantTypes.length) {
@@ -195,10 +171,10 @@ const Detail = () => {
             });
 
             if (!type.files) return;
-            setNewVariantFile([
-              ...newVariantFile,
-              { files: type.files, variantId: newVariant.id },
-            ]);
+            await uploadFile({
+              file: type.files,
+              prefix: `product_variant/${newVariant.id}/${Date.now()}.png`,
+            });
           } catch (err) {
             const error = err as Error;
             console.error(
@@ -273,7 +249,8 @@ const Detail = () => {
         },
       };
 
-      await mutateAsync({ data: obj });
+      const result = await mutateAsync({ data: obj });
+      if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
       console.error(`Something wrong to update : ${error.message}`);

@@ -54,6 +54,9 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     onDisabled,
   } = useVariant({ variantTypes, setVariantTypes });
 
+  // const [newVariantTypes, setNewVariantTypes] = React.useState<
+  //   VariantTypeProps[]
+  // >([]);
   const [labelProduct, setLabelProduct] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
 

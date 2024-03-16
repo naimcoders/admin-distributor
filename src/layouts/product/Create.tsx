@@ -140,6 +140,7 @@ const Create = () => {
       setSubCategoryId("");
       clearDeliveryPrice();
       reset();
+      toast.success("Produk berhasil dibuat");
       if (result.id) navigate(-1);
     } catch (e) {
       const error = e as Error;

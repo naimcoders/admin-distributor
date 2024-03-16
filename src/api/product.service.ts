@@ -332,14 +332,14 @@ export function getProductApiInfo(): ApiProductInfo {
 
 const key = "product";
 
-export const useProduct = (productId: string) => {
+export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
   const update = () => {
     return useMutation<Product, Error, { data: UpdateProduct }>({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
-        await getProductApiInfo().update(productId, r.data),
+        await getProductApiInfo().update(productId ?? "", r.data),
       onSuccess: () => {
         toast.success("Produk berhasil diperbarui");
         void queryClient.invalidateQueries({ queryKey: [key, productId] });
@@ -351,15 +351,12 @@ export const useProduct = (productId: string) => {
   const create = useMutation<Product, Error, { data: CreateProduct }>({
     mutationKey: [key],
     mutationFn: async (r) => await getProductApiInfo().create(r.data),
-    onSuccess: () => {
-      toast.success("Produk berhasil dibuat");
-      void queryClient.invalidateQueries({ queryKey: [key] });
-    },
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
     onError: (e) => toast.error(e.message),
   });
 
   const findById = () => {
-    const find = async () => getProductApiInfo().findById(productId);
+    const find = async () => getProductApiInfo().findById(productId ?? "");
     const { data, isLoading, error } = useQuery<Product, Error>({
       queryKey: [key, productId],
       queryFn: find,

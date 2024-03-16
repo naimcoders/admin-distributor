@@ -131,43 +131,32 @@ const Detail = () => {
   };
 
   const onSubmit = handleSubmit(async (e) => {
-    const isDangerous = e.dangerous === "Tidak" ? false : true;
-
-    // const variantUrls: { name: string; imageUrl: string }[] = [];
-    if (variantTypes.length > variantTypesPrev.length) {
+    // ON CREATE VARIANT
+    if (variantTypesPrev.length < variantTypes.length) {
       variantTypes.forEach(async (type) => {
-        const typeByName = variantTypesPrev.map((typePrev) => typePrev.name);
+        const typePrevByName = variantTypesPrev.map((prev) => prev.name);
+        try {
+          if (!typePrevByName.includes(type.name)) {
+            const newVariant = await createVariant.mutateAsync({
+              data: {
+                productId: id,
+                name: type.name,
+                imageUrl: "",
+                variantColorProduct: type.variantColorProduct,
+              },
+            });
 
-        if (!typeByName.includes(type.name)) {
-          // await Promise.all(
-          //   variantTypes.map(async (type) => {
-          //     const path = `temp/product/product_variant/${
-          //       user?.uid
-          //     }/${Date.now()}.png`;
-          //     const storageRef = ref(FbStorage, path);
-          //     const uploadTask = uploadBytesResumable(storageRef, type.files!);
-          //     new Promise<string>(() => {
-          //       uploadTask.on("state_changed", null, (err) =>
-          //         console.error(err.message)
-          //       );
-          //     });
-          //     variantUrls.push({ name: type.name, imageUrl: path });
-          //   })
-          // );
-          // variantUrls.forEach((url) => {
-          //   const [typeByName] = variantTypes.filter(
-          //     (f) => f.name === url.name
-          //   );
-          //   typeByName.imageUrl = url.imageUrl;
-          // });
-          // await createVariant.mutateAsync({
-          //   data: {
-          //     name: type.name,
-          //     variantColorProduct: type.variantColorProduct,
-          //     imageUrl: type.imageUrl,
-          //     productId: id,
-          //   },
-          // });
+            if (!type.files) return;
+            await uploadFile({
+              file: type.files,
+              prefix: `product_variant/${newVariant.id}/${Date.now()}.png`,
+            });
+          }
+        } catch (err) {
+          const error = err as Error;
+          console.error(
+            `Something wrong to create a new variant : ${error.message}`
+          );
         }
       });
     }
@@ -218,6 +207,7 @@ const Detail = () => {
     });
 
     try {
+      const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
       const obj = {
@@ -233,7 +223,7 @@ const Detail = () => {
         },
       };
 
-      const result = await mutateAsync({ data: obj });
+      await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

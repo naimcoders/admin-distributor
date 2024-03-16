@@ -25,8 +25,8 @@ class Api {
     500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
   };
 
-  async create(r: VariantProduct): Promise<{}> {
-    return await req<{}>({
+  async create(r: VariantProduct): Promise<VariantProduct> {
+    return await req<VariantProduct>({
       method: "POST",
       body: r,
       isNoAuth: false,
@@ -68,7 +68,7 @@ interface ApiVariantInfo {
   update(variantId: string, r: UpdateVariant): Promise<VariantProduct>;
   remove(variantId: string): Promise<{}>;
   removeVariantColor(variantColorId: string): Promise<{}>;
-  create(r: VariantProduct): Promise<{}>;
+  create(r: VariantProduct): Promise<VariantProduct>;
 }
 
 function getVariantApiInfo(): ApiVariantInfo {
@@ -81,19 +81,21 @@ export const useVariant = () => {
   const queryClient = useQueryClient();
 
   const create = (productId: string) => {
-    const mutate = useMutation<{}, Error, { data: VariantProduct }>({
-      mutationKey: [key, productId],
-      mutationFn: async (r) => await getVariantApiInfo().create(r.data),
-      onSuccess: () => {
-        void queryClient.invalidateQueries({
-          queryKey: ["product", productId],
-        });
-        console.log("variant created successfully");
-      },
-      onError: (e) => {
-        toast.error(`Something wrong to create variant : ${e.message}`);
-      },
-    });
+    const mutate = useMutation<VariantProduct, Error, { data: VariantProduct }>(
+      {
+        mutationKey: [key, productId],
+        mutationFn: async (r) => await getVariantApiInfo().create(r.data),
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: ["product", productId],
+          });
+          console.log("variant created successfully");
+        },
+        onError: (e) => {
+          toast.error(`Something wrong to create variant : ${e.message}`);
+        },
+      }
+    );
 
     return mutate;
   };

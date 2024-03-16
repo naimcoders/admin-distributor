@@ -36,9 +36,6 @@ import { PostageModal } from "./Modals/Postage";
 import { ConditionModal } from "./Modals/Condition";
 import { ModalCategory, ModalSubCategory } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
-import { useAuth } from "src/firebase/auth";
-// import { ref, uploadBytesResumable } from "firebase/storage";
-// import { FbStorage } from "src/firebase";
 import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -137,13 +134,13 @@ const Create = () => {
         }
       }
 
-      // if (result.id) navigate(-1);
       setPhotos([]);
       setVariantType([]);
       setCategoryId("");
       setSubCategoryId("");
       clearDeliveryPrice();
       reset();
+      if (result.id) navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to create product : ${error.message}`);

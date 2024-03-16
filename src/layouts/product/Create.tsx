@@ -89,19 +89,21 @@ const Create = () => {
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
+      const variants = variantTypes.map((v) => ({
+        name: v.name,
+        imageUrl: "",
+        variantColorProduct: v.variantColorProduct.map((o) => ({
+          name: o.name,
+          price: o.price,
+        })),
+      }));
+
       const result = await create.mutateAsync({
         data: {
           name: e.productName,
           isDangerous,
           deliveryPrice,
-          variant: variantTypes.map((v) => ({
-            name: v.name,
-            imageUrl: "",
-            variantColorProduct: v.variantColorProduct.map((o) => ({
-              name: o.name,
-              price: o.price,
-            })),
-          })),
+          variant: variants,
           category: { categoryId },
           description: e.description,
           price: {
@@ -113,30 +115,6 @@ const Create = () => {
           },
         },
       });
-
-      // console.log({
-      //   name: e.productName,
-      //   isDangerous,
-      //   deliveryPrice,
-      //   variant: variantTypes.map((v) => ({
-      //     name: v.name,
-      //     imageUrl: "",
-      //     variantColorProduct: v.variantColorProduct.map((o) => ({
-      //       name: o.name,
-      //       price: o.price,
-      //     })),
-      //   })),
-      //   category: { categoryId },
-      //   description: e.description,
-      //   price: {
-      //     fee: 0,
-      //     startAt: 0,
-      //     expiredAt: 0,
-      //     price: newPrice,
-      //     priceDiscount: 0,
-      //   },
-      // });
-      // console.log(variantTypes);
 
       // ON UPLOAD IMAGE PRODUCTS
       for (let i = 0; i < photos.length; i++) {
@@ -306,7 +284,7 @@ const Create = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={create.isPending || isLoading ? "loading..." : "simpan"}
+            aria-label={isLoading ? "loading..." : "simpan"}
           />
 
           {/* modal */}

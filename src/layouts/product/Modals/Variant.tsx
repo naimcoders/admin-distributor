@@ -60,6 +60,7 @@ export const VariantModal: FC<VariantModalProps> = ({
     isVariantPhoto,
     setIsErrorVariant,
     setIsVariantPhoto,
+    onDisabled,
   } = useVariant({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = useState("");
@@ -83,7 +84,7 @@ export const VariantModal: FC<VariantModalProps> = ({
     });
     setVariantTypes([...setImageValues]);
 
-    if (error > 1) setIsErrorVariant(false);
+    if (error > 0) setIsErrorVariant(false);
   };
 
   const onClick = (label: string) => {
@@ -105,6 +106,15 @@ export const VariantModal: FC<VariantModalProps> = ({
 
     setVariantTypes(newVariant);
     setIsVariantPhoto((v) => !v);
+  };
+
+  const onSubmit = () => {
+    const disabled = onDisabled();
+    if (disabled.length) {
+      toast.error(`Masukkan ukuran tipe ${disabled[0]}`);
+      return;
+    }
+    handleSubmitVariant(fieldName, setValue);
   };
 
   useEffect(() => {
@@ -245,7 +255,7 @@ export const VariantModal: FC<VariantModalProps> = ({
         <Button
           aria-label="atur info variasi"
           className="mx-auto mt-4"
-          onClick={() => handleSubmitVariant(fieldName, setValue)}
+          onClick={onSubmit}
         />
       </main>
     </Modal>

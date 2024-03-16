@@ -290,7 +290,6 @@ export const useVariant = ({
   };
 
   const checkVariantSize = (value: string) => {
-    // const filter = variantTypes.filter(type)
     const [variantByColor] = variantTypes.map(
       (type) => type.variantColorProduct
     );
@@ -316,6 +315,15 @@ export const useVariant = ({
         setTimeout(actionIsPrice, 500);
       } else actionIsVariant();
     }
+  };
+
+  const onDisabled = (): string[] => {
+    let types: string[] = [];
+    variantTypes.forEach((e) => {
+      const variantProduct = e.variantColorProduct;
+      if (variantProduct.length < 1) types.push(e.name);
+    });
+    return types;
   };
 
   const handleSubmitType = formType.handleSubmit((e) => {
@@ -411,6 +419,7 @@ export const useVariant = ({
   };
 
   return {
+    onDisabled,
     isVariantPhoto,
     setIsVariantPhoto,
     isErrorVariant,

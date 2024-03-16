@@ -22,12 +22,21 @@ interface Button extends PickButton {
     | "faded"
     | "shadow"
     | "ghost";
+  disabled?: boolean;
 }
 
-export const Button = (props: Partial<Button>) => {
-  const { className, color, endContent, startContent, onClick, radius, size } =
-    props;
-
+export const Button = ({
+  className,
+  color,
+  endContent,
+  startContent,
+  onClick,
+  radius,
+  size,
+  "aria-label": label,
+  variant,
+  disabled,
+}: Partial<Button>) => {
   return (
     <Btn
       onClick={onClick}
@@ -36,10 +45,11 @@ export const Button = (props: Partial<Button>) => {
       color={!color ? "primary" : color}
       className={cx("capitalize w-36", className)}
       radius={!radius ? "sm" : radius}
-      variant={props.variant}
+      variant={variant}
       size={size ?? "md"}
+      disabled={disabled}
     >
-      {props["aria-label"]}
+      {label}
     </Btn>
   );
 };

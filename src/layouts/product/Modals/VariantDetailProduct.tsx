@@ -10,6 +10,7 @@ import { ItemVariant } from "src/components/VariantItem";
 import { useVariant } from "./Variant";
 import React from "react";
 import VariantImage from "src/components/ImageVariant";
+import { toast } from "react-toastify";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -50,6 +51,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     isVariantPhoto,
     setIsErrorVariant,
     setIsVariantPhoto,
+    onDisabled,
   } = useVariant({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = React.useState("");
@@ -94,6 +96,15 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     setIsVariantPhoto((v) => !v);
   };
 
+  const onSubmit = () => {
+    const disabled = onDisabled();
+    if (disabled.length) {
+      toast.error(`Masukkan ukuran tipe ${disabled[0]}`);
+      return;
+    }
+    handleSubmitVariant(fieldName, setValue);
+  };
+
   React.useEffect(() => {
     if (isAddType) formType.setFocus("type");
     if (isAddSize) formSize.setFocus("size");
@@ -129,6 +140,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                 <Btn
                   size="sm"
                   variant="light"
+                  title={v.name}
                   className={cx(
                     "w-[6rem] border border-gray-300 text-gray-500",
                     labelAndImage?.label === v.name && "border border-blue-800"
@@ -238,7 +250,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
         <Button
           aria-label="atur info variasi"
           className="mx-auto mt-4"
-          onClick={() => handleSubmitVariant(fieldName, setValue)}
+          onClick={onSubmit}
         />
       </main>
     </Modal>

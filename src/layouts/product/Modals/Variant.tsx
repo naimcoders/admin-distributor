@@ -329,6 +329,7 @@ export const useVariant = ({
         setValue("price", "");
         actionIsVariant();
       }
+      setLabelAndImage({ label: "" });
     }
   };
 

@@ -116,12 +116,32 @@ const Detail = () => {
       setImageUrl(data.imageUrl);
       setVariantTypesPrev(data.variantProduct);
 
+      let price = "";
+      if (data.variantProduct.length < 1) {
+        price = Currency(data.price.price ?? 0);
+      } else {
+        const prices: number[] = [];
+        const variantColor = data.variantProduct.map(
+          (e) => e.variantColorProduct
+        );
+
+        variantColor.forEach((e) => {
+          e.forEach((m) => {
+            prices.push(m.price ?? 0);
+          });
+        });
+
+        const min = Currency(Math.min(...prices));
+        const max = Currency(Math.max(...prices));
+        price = min === max ? max : `${min} - ${max}`;
+      }
+
       setValue("productName", data.name);
       setValue("category", data.categoryProduct.category.name);
       setValue("subCategory", data.subCategoryProduct?.name ?? "-");
       setValue("dangerous", data.isDangerous ? "Ya" : "Tidak");
       setValue("variant", data.variantProduct.map((e) => e.name).join(", "));
-      setValue("price", Currency(data.price.price ?? 0));
+      setValue("price", price);
       setValue("postage", Currency(data.deliveryPrice.price ?? 0));
       setValue("postage", Currency(data.deliveryPrice.price ?? 0));
       setValue("condition", "Baru");
@@ -250,6 +270,7 @@ const Detail = () => {
       };
 
       const result = await mutateAsync({ data: obj });
+      setVariantTypes([]);
       if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;

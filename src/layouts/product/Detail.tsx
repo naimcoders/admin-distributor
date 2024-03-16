@@ -92,12 +92,8 @@ const Detail = () => {
   };
 
   const { mutateAsync, isPending } = useProduct().update(id);
+  const { remove, update, removeVariantColor, create } = useVariant(id);
 
-  const { remove, update, removeVariantColor, create } = useVariant();
-  const updateVariant = update(id);
-  const removeVariant = remove(id);
-  const removeVarColor = removeVariantColor(id);
-  const createVariant = create(id);
   const variantId = useVariantIdStore((v) => v.variantId);
   const clearVariantId = useVariantIdStore((v) => v.clearVariantId);
   const variantColorId = useVariantIdStore((v) => v.variantColorId);
@@ -137,7 +133,7 @@ const Detail = () => {
         const typePrevByName = variantTypesPrev.map((prev) => prev.name);
         if (!typePrevByName.includes(type.name)) {
           try {
-            const newVariant = await createVariant.mutateAsync({
+            const newVariant = await create.mutateAsync({
               data: {
                 productId: id,
                 name: type.name,
@@ -149,7 +145,7 @@ const Detail = () => {
             if (!type.files) return;
             await uploadFile({
               file: type.files,
-              prefix: `product_variant/${newVariant.id}`,
+              prefix: `product_variant/${newVariant.id}/${Date.now()}.png`,
             });
           } catch (err) {
             const error = err as Error;
@@ -165,7 +161,7 @@ const Detail = () => {
     if (variantId.length) {
       variantId.forEach(async (id) => {
         try {
-          await removeVariant.mutateAsync({ variantId: id });
+          await remove.mutateAsync({ variantId: id });
         } catch (e) {
           const error = e as Error;
           console.error(
@@ -179,7 +175,7 @@ const Detail = () => {
     if (variantColorId.length) {
       variantColorId.forEach(async (id) => {
         try {
-          await removeVarColor.mutateAsync({ variantColorId: id });
+          await removeVariantColor.mutateAsync({ variantColorId: id });
         } catch (e) {
           const error = e as Error;
           console.error(
@@ -194,7 +190,7 @@ const Detail = () => {
       variantTypes.map(async (type) => {
         if (typePrev.name === type.name) {
           try {
-            await updateVariant.mutateAsync({
+            await update.mutateAsync({
               data: typePrev,
               variantId: typePrev.id ?? "",
             });
@@ -526,7 +522,12 @@ const Detail = () => {
       />
       <DangerousModal setValue={setValue} />
       <ConditionModal setValue={setValue} />
-      <VariantDetailProductModal fieldName="variant" setValue={setValue} />
+      <VariantDetailProductModal
+        fieldName="variant"
+        setValue={setValue}
+        variantTypes={variantTypes}
+        setVariantTypes={setVariantTypes}
+      />
       <PostageModal
         setValue={setValue}
         clearErrors={clearErrors}

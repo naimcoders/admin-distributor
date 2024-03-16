@@ -139,14 +139,15 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
         >
           {variantTypes.length > 0 &&
             variantTypes.map((v, idx) => (
-              <section className="relative" key={idx}>
+              <section className="relative flex-grow" key={idx}>
                 <Btn
                   size="sm"
                   variant="light"
                   title={v.name}
                   className={cx(
-                    "w-[6rem] border border-gray-300 text-gray-500",
-                    labelAndImage?.label === v.name && "border border-blue-800"
+                    "border border-gray-300 text-gray-500 bg-gray-100 w-full",
+                    labelAndImage?.label === v.name &&
+                      "border border-blue-700 bg-white"
                   )}
                   onClick={() => onClickType(v.name ?? "")}
                 >
@@ -227,11 +228,11 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                 .filter((f) => f.name === labelAndImage?.label)
                 .map((v) =>
                   v.variantColorProduct.map((s, idx) => (
-                    <section className="relative" key={idx}>
+                    <section className="relative flex-grow" key={idx}>
                       <Btn
                         size="sm"
                         variant="light"
-                        className="w-[6rem] border border-gray-400 text-gray-500"
+                        className="border border-gray-300 text-gray-500 w-full bg-gray-100"
                       >
                         {s.name}
                       </Btn>

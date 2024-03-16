@@ -36,7 +36,7 @@ export const ItemVariant: React.FC<ItemProps> = ({
 }) => {
   return (
     <section className="flexcol gap-2">
-      <section className="flex items-center justify-between">
+      <section className="flex items-center justify-between mb-2">
         <h2 className="font-semibold capitalize">{title}</h2>
         {variantTypes?.length > 0 && (
           <button

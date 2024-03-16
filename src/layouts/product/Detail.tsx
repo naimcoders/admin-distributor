@@ -133,22 +133,6 @@ const Detail = () => {
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    // if (imageUrl.length !== currentProductImage.length) {
-    //   await Promise.all(
-    //     currentProductImage.map(async (product) => {
-    //       const path = `product/${id}/${Date.now()}.png`;
-    //       const storageRef = ref(FbStorage, path);
-    //       const uploadTask = uploadBytesResumable(storageRef, product.file!);
-    //       new Promise<string>(() => {
-    //         uploadTask.on("state_changed", null, (err) => {
-    //           console.error(err.message);
-    //         });
-    //       });
-    //     })
-    //   );
-    // }
-
-    // create variant
     // const variantUrls: { name: string; imageUrl: string }[] = [];
     if (variantTypes.length > variantTypesPrev.length) {
       variantTypes.forEach(async (type) => {
@@ -167,26 +151,23 @@ const Detail = () => {
           //         console.error(err.message)
           //       );
           //     });
-
           //     variantUrls.push({ name: type.name, imageUrl: path });
           //   })
           // );
-
           // variantUrls.forEach((url) => {
           //   const [typeByName] = variantTypes.filter(
           //     (f) => f.name === url.name
           //   );
           //   typeByName.imageUrl = url.imageUrl;
           // });
-
-          await createVariant.mutateAsync({
-            data: {
-              name: type.name,
-              variantColorProduct: type.variantColorProduct,
-              imageUrl: type.imageUrl,
-              productId: id,
-            },
-          });
+          // await createVariant.mutateAsync({
+          //   data: {
+          //     name: type.name,
+          //     variantColorProduct: type.variantColorProduct,
+          //     imageUrl: type.imageUrl,
+          //     productId: id,
+          //   },
+          // });
         }
       });
     }
@@ -217,7 +198,8 @@ const Detail = () => {
       });
     }
 
-    variantTypesPrev.map((typePrev) => {
+    // ON UPDATE VARIANT CURRENT VARIANTS
+    variantTypesPrev.forEach((typePrev) => {
       variantTypes.map(async (type) => {
         if (typePrev.name === type.name) {
           try {
@@ -251,7 +233,7 @@ const Detail = () => {
         },
       };
 
-      await mutateAsync({ data: obj });
+      const result = await mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(error.message);

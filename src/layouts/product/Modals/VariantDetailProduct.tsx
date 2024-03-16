@@ -65,7 +65,6 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
 
     const setImageValues: VariantTypeProps[] = [];
     let error = 0;
-
     variantTypes.forEach((e) => {
       if (e.name === labelProduct) setImageValues.push(datas);
       if (e.name !== labelProduct) setImageValues.push(e);
@@ -113,6 +112,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           title="warna/jenis/tipe"
           control={formType.control}
           errors={formType.formState.errors}
+          variantTypes={variantTypes}
           add={{
             errorMessage: "masukkan warna/jenis/tipe",
             fieldName: "type",
@@ -190,6 +190,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           title="ukuran"
           control={formSize.control}
           errors={formSize.formState.errors}
+          variantTypes={variantTypes}
           add={{
             errorMessage: "masukkan ukuran",
             fieldName: "size",

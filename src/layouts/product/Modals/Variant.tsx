@@ -118,6 +118,7 @@ export const VariantModal: FC<VariantModalProps> = ({
         <ItemVariant
           title="warna/jenis/tipe"
           control={formType.control}
+          variantTypes={variantTypes}
           errors={formType.formState.errors}
           add={{
             errorMessage: "masukkan warna/jenis/tipe",
@@ -195,6 +196,7 @@ export const VariantModal: FC<VariantModalProps> = ({
         <ItemVariant
           title="ukuran"
           control={formSize.control}
+          variantTypes={variantTypes}
           errors={formSize.formState.errors}
           add={{
             errorMessage: "masukkan ukuran",

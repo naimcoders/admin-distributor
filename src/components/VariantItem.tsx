@@ -3,6 +3,7 @@ import { Button } from "./Button";
 import { Textfield } from "./Textfield";
 import { IconColor, UseForm } from "src/types";
 import { handleErrorMessage } from "src/helpers";
+import { VariantTypeProps } from "src/stores/generalStore";
 
 interface ItemProps extends Pick<UseForm, "control" | "errors"> {
   title: string;
@@ -18,6 +19,7 @@ interface ItemProps extends Pick<UseForm, "control" | "errors"> {
     onSubmit: () => void;
     onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   };
+  variantTypes: VariantTypeProps[];
   children?: React.ReactNode;
   isActiveItem?: boolean;
 }
@@ -30,18 +32,21 @@ export const ItemVariant: React.FC<ItemProps> = ({
   control,
   errors,
   isActiveItem,
+  variantTypes,
 }) => {
   return (
     <section className="flexcol gap-2">
       <section className="flex items-center justify-between">
         <h2 className="font-semibold capitalize">{title}</h2>
-        <button
-          title="edit"
-          onClick={update.onEdit}
-          className={`text-[${IconColor.red}] text-sm capitalize`}
-        >
-          {!update.isUpdate ? "edit" : "selesai"}
-        </button>
+        {variantTypes?.length > 0 && (
+          <button
+            title="hapus"
+            onClick={update.onEdit}
+            className={`text-[${IconColor.red}] text-sm capitalize`}
+          >
+            {!update.isUpdate ? "hapus" : "selesai"}
+          </button>
+        )}
       </section>
 
       <section className="flexcol gap-2">

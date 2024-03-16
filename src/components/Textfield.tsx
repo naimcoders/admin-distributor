@@ -10,6 +10,7 @@ import { ChildRef, FileProps } from "./File";
 import { IconColor, Radius } from "src/types";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { IconImage } from "./Image";
+import { NumericFormat } from "react-number-format";
 
 interface ReadOnlyProps {
   isValue: boolean;
@@ -104,6 +105,35 @@ export const Textfield = (props: TextfieldProps) => {
           )
         }
       />
+    </section>
+  );
+};
+
+export const TextfieldCurrency = (props: TextfieldProps) => {
+  const { field } = useController(props);
+
+  return (
+    <section className={cx("flexcol gap-4", props.classNameWrapper)}>
+      {props.label && <h2 className="text-sm capitalize">{props.label}</h2>}
+      <NumericFormat
+        {...field}
+        onKeyDown={props.onKeyDown}
+        onClick={props.onClick}
+        placeholder={props.placeholder}
+        readOnly={props.readOnly?.isValue}
+        className={cx(
+          "w-full rounded-md  p-[0.50rem] capitalize text-sm",
+          props.className
+        )}
+        color={props.errorMessage ? "danger" : "default"}
+        autoComplete={props.autoComplete ?? "off"}
+        prefix="Rp."
+        thousandSeparator={true}
+        title={props.defaultValue}
+      />
+      {props.errorMessage && (
+        <p className="text-red-500 text-xs my-3">{props.errorMessage}</p>
+      )}
     </section>
   );
 };

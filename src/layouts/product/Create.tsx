@@ -18,7 +18,6 @@ import {
 import {
   CurrencyIDInput,
   checkForDash,
-  generateRandomString,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -38,11 +37,12 @@ import { ConditionModal } from "./Modals/Condition";
 import { ModalCategory, ModalSubCategory } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
 import { useAuth } from "src/firebase/auth";
-import { ref, uploadBytesResumable } from "firebase/storage";
-import { FbStorage } from "src/firebase";
+// import { ref, uploadBytesResumable } from "firebase/storage";
+// import { FbStorage } from "src/firebase";
 import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { uploadFile } from "src/firebase/upload";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
@@ -72,8 +72,7 @@ const Create = () => {
 
   const navigate = useNavigate();
   const findCategories = useCategory().find();
-  const { mutateAsync, isPending } = useProduct().create();
-  const { user } = useAuth();
+  const { create } = useProduct();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
   const setVariantType = useGeneralStore((v) => v.setVariantType);
@@ -86,92 +85,57 @@ const Create = () => {
       toast.error("Tambah foto produk");
       return;
     }
-
-    const productUrls: string[] = [];
-    await Promise.all(
-      photos.map(async (product) => {
-        const path = `temp/product/${user?.uid}/${generateRandomString(
-          13
-        )}.png`;
-        const storageRef = ref(FbStorage, path);
-        const uploadTask = uploadBytesResumable(storageRef, product.file!);
-        new Promise<string>(() => {
-          uploadTask.on("state_changed", null, (err) =>
-            console.error(
-              `Something wrong to upload product image : ${err.message}`
-            )
-          );
-        });
-        productUrls.push(path);
-      })
-    );
-
-    const variantUrls: { name: string; imageUrl: string }[] = [];
-    const availableVariant = Boolean(variantTypes[0]?.imageUrl);
-    if (availableVariant) {
-      await Promise.all(
-        variantTypes.map(async (type) => {
-          const path = `temp/product/product_variant/${
-            user?.uid
-          }/${generateRandomString(13)}.png`;
-          const storageRef = ref(FbStorage, path);
-          const uploadTask = uploadBytesResumable(storageRef, type.files!);
-          new Promise<string>(() => {
-            uploadTask.on("state_changed", null, (err) =>
-              console.error(
-                `Something wrong to upload variant : ${err.message}`
-              )
-            );
-          });
-          variantUrls.push({ name: type.name, imageUrl: path });
-        })
-      );
-    }
-    const isDangerous = e.dangerous === "Tidak" ? false : true;
-
     try {
+      const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
-      variantUrls.forEach((url) => {
-        const filter = variantTypes.filter((f) => f.name === url.name);
-        filter.map((m) => (m.imageUrl = url.imageUrl));
-      });
-
-      // const result = await mutateAsync({
-      //   data: {
-      //     name: e.productName,
-      //     isDangerous,
-      //     deliveryPrice,
-      //     imageUrl: productUrls,
-      //     variant: variantTypes,
-      //     category: { categoryId },
-      //     description: e.description,
-      //     price: {
-      //       fee: 0,
-      //       startAt: 0,
-      //       expiredAt: 0,
-      //       price: newPrice,
-      //       priceDiscount: 0,
-      //     },
-      //   },
-      // });
-
-      console.log({
-        name: e.productName,
-        isDangerous,
-        deliveryPrice,
-        imageUrl: productUrls,
-        variant: variantTypes,
-        category: { categoryId },
-        description: e.description,
-        price: {
-          fee: 0,
-          startAt: 0,
-          expiredAt: 0,
-          price: newPrice,
-          priceDiscount: 0,
+      const result = await create.mutateAsync({
+        data: {
+          name: e.productName,
+          isDangerous,
+          deliveryPrice,
+          variant: variantTypes.map((v) => ({
+            name: v.name,
+            imageUrl: "",
+            variantColorProduct: v.variantColorProduct.map((o) => ({
+              name: o.name,
+              price: o.price,
+            })),
+          })),
+          category: { categoryId },
+          description: e.description,
+          price: {
+            fee: 0,
+            startAt: 0,
+            expiredAt: 0,
+            price: newPrice,
+            priceDiscount: 0,
+          },
         },
       });
+
+      // ON UPLOAD IMAGE PRODUCTS
+      for (let i = 0; i < photos.length; i++) {
+        const imageUri = photos[i];
+        if (!imageUri.file) return;
+        await uploadFile({
+          file: imageUri.file,
+          prefix: `product/${result.id}/${Date.now()}.png`,
+        });
+      }
+
+      // ON UPLOAD PRODUCTS VARIANT IMAGE
+      for (let v = 0; v < result.variantProduct.length; v++) {
+        const variantFiles = variantTypes[v];
+        const variantResult = result.variantProduct[v];
+        if (!variantFiles.files) return;
+        if (variantFiles.name === variantResult.name) {
+          await uploadFile({
+            file: variantFiles.files,
+            prefix: `product_variant/${variantResult.id}/${Date.now()}.png`,
+          });
+        }
+      }
 
       // if (result.id) navigate(-1);
       setPhotos([]);
@@ -314,7 +278,7 @@ const Create = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={isPending ? "loading..." : "simpan"}
+            aria-label={create.isPending ? "loading..." : "simpan"}
           />
 
           {/* modal */}

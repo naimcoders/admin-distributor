@@ -227,7 +227,7 @@ export interface CreateProduct {
   };
   deliveryPrice: DeliveryPrice;
   description: string;
-  imageUrl: string[];
+  imageUrl?: string[];
   isDangerous: boolean;
   name: string;
   price: {
@@ -336,7 +336,7 @@ export const useProduct = () => {
   const queryClient = useQueryClient();
 
   const update = (productId: string) => {
-    const mutate = useMutation<Product, Error, { data: UpdateProduct }>({
+    return useMutation<Product, Error, { data: UpdateProduct }>({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
         await getProductApiInfo().update(productId, r.data),
@@ -346,28 +346,23 @@ export const useProduct = () => {
       },
       onError: (e) => toast.error(e.message),
     });
-    return mutate;
   };
 
-  const create = () => {
-    const mutate = useMutation<Product, Error, { data: CreateProduct }>({
-      mutationKey: [key],
-      mutationFn: async (r) => await getProductApiInfo().create(r.data),
-      onSuccess: () => {
-        toast.success("Produk berhasil dibuat");
-        void queryClient.invalidateQueries({ queryKey: [key] });
-      },
-      onError: (e) => toast.error(e.message),
-    });
-    return mutate;
-  };
+  const create = useMutation<Product, Error, { data: CreateProduct }>({
+    mutationKey: [key],
+    mutationFn: async (r) => await getProductApiInfo().create(r.data),
+    onSuccess: () => {
+      toast.success("Produk berhasil dibuat");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const findById = (productId: string) => {
     const find = async () => getProductApiInfo().findById(productId);
     const { data, isLoading, error } = useQuery<Product, Error>({
       queryKey: [key, productId],
       queryFn: find,
-      // enabled: !!productId,
     });
 
     return { data, isLoading, error: error?.message };

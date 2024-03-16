@@ -44,12 +44,11 @@ import useGeneralStore, {
 } from "src/stores/generalStore";
 import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
-import { ref, uploadBytesResumable } from "firebase/storage";
-import { FbStorage } from "src/firebase";
 import { useVariant } from "src/api/variant.service";
-import { useAuth } from "src/firebase/auth";
+import { uploadFile } from "src/firebase/upload";
 
 const Detail = () => {
+  const [newImageFile, setNewImageFile] = React.useState<File>();
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
@@ -99,61 +98,86 @@ const Detail = () => {
   const removeVariant = remove(id);
   const removeVarColor = removeVariantColor(id);
   const createVariant = create(id);
-  const { user } = useAuth();
-
   const variantId = useVariantIdStore((v) => v.variantId);
   const clearVariantId = useVariantIdStore((v) => v.clearVariantId);
   const variantColorId = useVariantIdStore((v) => v.variantColorId);
   const clearVariantColorId = useVariantIdStore((v) => v.clearVariantColorId);
 
+  React.useEffect(() => {
+    if (newImageFile) {
+      onUploadImage();
+    }
+  }, [newImageFile]);
+
+  const onUploadImage = async () => {
+    try {
+      if (!newImageFile) return;
+      toast.loading("sedang upload foto produk", {
+        toastId: "upload-foto-produk",
+      });
+      await uploadFile({
+        file: newImageFile,
+        prefix: `product/${id}/${Date.now()}.png`,
+      });
+      toast.success(`Berhasil upload foto produk`);
+    } catch (e) {
+      const err = e as Error;
+      console.log(`Error upload product ` + `${err.message}`);
+      toast.error(`Gagal upload foto produk`);
+    } finally {
+      toast.dismiss("upload-foto-produk");
+      setNewImageFile(undefined);
+    }
+  };
+
   const onSubmit = handleSubmit(async (e) => {
     const isDangerous = e.dangerous === "Tidak" ? false : true;
 
-    if (imageUrl.length !== currentProductImage.length) {
-      await Promise.all(
-        currentProductImage.map(async (product) => {
-          const path = `product/${id}/${Date.now()}.png`;
-          const storageRef = ref(FbStorage, path);
-          const uploadTask = uploadBytesResumable(storageRef, product.file!);
-          new Promise<string>(() => {
-            uploadTask.on("state_changed", null, (err) => {
-              console.error(err.message);
-            });
-          });
-        })
-      );
-    }
+    // if (imageUrl.length !== currentProductImage.length) {
+    //   await Promise.all(
+    //     currentProductImage.map(async (product) => {
+    //       const path = `product/${id}/${Date.now()}.png`;
+    //       const storageRef = ref(FbStorage, path);
+    //       const uploadTask = uploadBytesResumable(storageRef, product.file!);
+    //       new Promise<string>(() => {
+    //         uploadTask.on("state_changed", null, (err) => {
+    //           console.error(err.message);
+    //         });
+    //       });
+    //     })
+    //   );
+    // }
 
     // create variant
-    const variantUrls: { name: string; imageUrl: string }[] = [];
+    // const variantUrls: { name: string; imageUrl: string }[] = [];
     if (variantTypes.length > variantTypesPrev.length) {
       variantTypes.forEach(async (type) => {
         const typeByName = variantTypesPrev.map((typePrev) => typePrev.name);
 
         if (!typeByName.includes(type.name)) {
-          await Promise.all(
-            variantTypes.map(async (type) => {
-              const path = `temp/product/product_variant/${
-                user?.uid
-              }/${Date.now()}.png`;
-              const storageRef = ref(FbStorage, path);
-              const uploadTask = uploadBytesResumable(storageRef, type.files!);
-              new Promise<string>(() => {
-                uploadTask.on("state_changed", null, (err) =>
-                  console.error(err.message)
-                );
-              });
+          // await Promise.all(
+          //   variantTypes.map(async (type) => {
+          //     const path = `temp/product/product_variant/${
+          //       user?.uid
+          //     }/${Date.now()}.png`;
+          //     const storageRef = ref(FbStorage, path);
+          //     const uploadTask = uploadBytesResumable(storageRef, type.files!);
+          //     new Promise<string>(() => {
+          //       uploadTask.on("state_changed", null, (err) =>
+          //         console.error(err.message)
+          //       );
+          //     });
 
-              variantUrls.push({ name: type.name, imageUrl: path });
-            })
-          );
+          //     variantUrls.push({ name: type.name, imageUrl: path });
+          //   })
+          // );
 
-          variantUrls.forEach((url) => {
-            const [typeByName] = variantTypes.filter(
-              (f) => f.name === url.name
-            );
-            typeByName.imageUrl = url.imageUrl;
-          });
+          // variantUrls.forEach((url) => {
+          //   const [typeByName] = variantTypes.filter(
+          //     (f) => f.name === url.name
+          //   );
+          //   typeByName.imageUrl = url.imageUrl;
+          // });
 
           await createVariant.mutateAsync({
             data: {
@@ -240,6 +264,7 @@ const Detail = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
+    setNewImageFile(files);
     const blob = URL.createObjectURL(files);
 
     if (currentProductImage?.length) {

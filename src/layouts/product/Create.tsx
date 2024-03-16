@@ -85,7 +85,7 @@ const Create = () => {
     try {
       const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price as string;
-      const newPrice = checkForDash(price) ? 1 : parseTextToNumber(price);
+      const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
       const result = await create.mutateAsync({
         data: {
           name: e.productName,

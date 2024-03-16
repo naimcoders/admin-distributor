@@ -135,8 +135,8 @@ const Detail = () => {
     if (variantTypesPrev.length < variantTypes.length) {
       variantTypes.forEach(async (type) => {
         const typePrevByName = variantTypesPrev.map((prev) => prev.name);
-        try {
-          if (!typePrevByName.includes(type.name)) {
+        if (!typePrevByName.includes(type.name)) {
+          try {
             const newVariant = await createVariant.mutateAsync({
               data: {
                 productId: id,
@@ -149,18 +149,19 @@ const Detail = () => {
             if (!type.files) return;
             await uploadFile({
               file: type.files,
-              prefix: `product_variant/${newVariant.id}/${Date.now()}.png`,
+              prefix: `product_variant/${newVariant.id}`,
             });
+          } catch (err) {
+            const error = err as Error;
+            console.error(
+              `Something wrong to create a new variant : ${error.message}`
+            );
           }
-        } catch (err) {
-          const error = err as Error;
-          console.error(
-            `Something wrong to create a new variant : ${error.message}`
-          );
         }
       });
     }
 
+    // ON REMOVE VARIANT
     if (variantId.length) {
       variantId.forEach(async (id) => {
         try {
@@ -174,6 +175,7 @@ const Detail = () => {
       });
     }
 
+    // ON REMOVE VARIANT COLOR
     if (variantColorId.length) {
       variantColorId.forEach(async (id) => {
         try {
@@ -224,9 +226,9 @@ const Detail = () => {
       };
 
       await mutateAsync({ data: obj });
-    } catch (e) {
-      const error = e as Error;
-      console.error(error.message);
+    } catch (err) {
+      const error = err as Error;
+      console.error(`Something wrong to update : ${error.message}`);
     } finally {
       clearVariantId();
       clearVariantColorId();

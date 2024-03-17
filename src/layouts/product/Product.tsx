@@ -14,26 +14,17 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 
 const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
+  const navigate = useNavigate();
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useHook();
-  const {
-    data,
-    isLoading,
-    isNext,
-    page: pageTable,
-    setSearch,
-    setPage,
-  } = useProduct().find(Number(pageQuery));
+  const { data, isLoading, isNext, page, setSearch, setPage } =
+    useProduct().find(Number(pageQuery));
+
   useSetSearch(watch("search"), setSearch);
-  const navigate = useNavigate();
 
   const onNext = () => setPage((v) => v + 1);
   const onPrev = () => setPage((v) => v - 1);
-
-  const qs = stringifyQuery({
-    page: pageTable,
-    tab,
-  });
+  const qs = stringifyQuery({ page, tab });
 
   React.useEffect(() => {
     navigate(`/produk?${qs}`);
@@ -48,8 +39,8 @@ const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
       isNext={isNext}
       next={onNext}
       prev={onPrev}
+      page={page}
       isPaginate
-      page={Number(pageQuery)}
       placeholder="cari nama produk/kategori/Sub-Kategori"
     />
   );

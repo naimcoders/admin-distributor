@@ -48,7 +48,8 @@ const Header = () => {
 export const removeDashString = (data: string) => data.split("-").join(" ");
 
 const AsideNav = () => {
-  const qsProduct = stringifyQuery({ tab: "", page: 1 });
+  const qsProduct = stringifyQuery({ tab: "produk", page: 1 });
+  const qsStore = stringifyQuery({ page: 1 });
 
   return (
     <aside className="md-max:hidden bg-secondary h-calcSideBar flex flex-col fixed w-56">
@@ -56,7 +57,7 @@ const AsideNav = () => {
         <Link name="Dashboard" path="dashboard" />
         <Link name="Banner" path="banner" />
         <Link name="Produk" path={`produk?${qsProduct}`} />
-        <Link name="Toko" path="toko" />
+        <Link name="Toko" path={`toko?${qsStore}`} />
         <Link name="Distributor" path="distributor" />
         <Link name="Sales" path="sales" />
         <Link name="Ekspedisi" path="ekspedisi" />

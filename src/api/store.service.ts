@@ -102,8 +102,8 @@ export function getStoreApiInfo(): ApiStoreInfo {
 const key = "store";
 
 export const useStore = () => {
-  const find = () => {
-    const [page, setPage] = useState(1);
+  const find = (pageTable: number) => {
+    const [page, setPage] = useState(pageTable);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 

@@ -5,22 +5,30 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { Store, useStore } from "src/api/store.service";
 import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
-import { detailNavigate, parsePhoneNumber } from "src/helpers";
+import {
+  detailNavigate,
+  parsePhoneNumber,
+  parseQueryString,
+  stringifyQuery,
+} from "src/helpers";
 import { Columns } from "src/types";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const { columns } = useHook();
-
+  const parsed = parseQueryString<{ page: string }>();
   const { data, isLoading, error, isNext, page, setSearch, setPage } =
-    useStore().find();
+    useStore().find(Number(parsed.page));
 
-  const onPrev = () => {
-    setPage((num) => num - 1);
-  };
+  const navigate = useNavigate();
+  const onPrev = () => setPage((num) => num - 1);
+  const onNext = () => setPage((num) => num + 1);
 
-  const onNext = () => {
-    setPage((num) => num + 1);
-  };
+  const qs = stringifyQuery({ page });
+  React.useEffect(() => {
+    navigate(`/toko?${qs}`);
+  }, [qs]);
 
   return (
     <>

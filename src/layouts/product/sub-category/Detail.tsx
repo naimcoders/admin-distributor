@@ -22,7 +22,7 @@ const Detail = () => {
     subCategory: string;
   }>();
 
-  const { create, findById } = useSubCategoryProduct(categoryProductId);
+  const { create, findById, remove } = useSubCategoryProduct(categoryProductId);
 
   const activeBtnCreate = () => setIsCreate((prev) => !prev);
   const onSubmit = handleSubmit(async (e) => {
@@ -65,6 +65,15 @@ const Detail = () => {
     }
   };
 
+  const onRemove = async (subCategoryId: string) => {
+    try {
+      await remove.mutateAsync({ subCategoryId });
+    } catch (err) {
+      const error = err as Error;
+      console.error(`Something wrong to remove : ${error.message}`);
+    }
+  };
+
   return (
     <>
       {findById.error ? (
@@ -82,7 +91,7 @@ const Detail = () => {
               key={v.id}
               label={v.name}
               update={() => console.log(`edit ${v.id}`)}
-              remove={() => console.log(`delete ${v.id}`)}
+              remove={() => onRemove(v.id)}
             />
           ))}
 

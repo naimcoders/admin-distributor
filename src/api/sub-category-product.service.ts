@@ -35,6 +35,15 @@ class Api {
     500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
   };
 
+  async remove(subCategoryId: string): Promise<{}> {
+    return await req<{}>({
+      method: "DELETE",
+      isNoAuth: false,
+      path: `${this.path}/${subCategoryId}`,
+      errors: this.errors,
+    });
+  }
+
   async findById(categoryProductId: string): Promise<SubCategoryProduct[]> {
     return await req<SubCategoryProduct[]>({
       method: "GET",
@@ -56,6 +65,7 @@ class Api {
 }
 
 interface ApiSubCategoryProductInfo {
+  remove(subCategoryId: string): Promise<{}>;
   findById(categoryProductId: string): Promise<SubCategoryProduct[]>;
   create(r: Create): Promise<SubCategoryProduct>;
 }
@@ -65,9 +75,24 @@ function getSubCategoryProductApiInfo(): ApiSubCategoryProductInfo {
 }
 
 const key = "sub-category-product";
+const createKey = `${key}-create`;
+const removeKey = `${key}-remove`;
 
 export const useSubCategoryProduct = (categoryProductId: string) => {
   const queryClient = useQueryClient();
+
+  const remove = useMutation<{}, Error, { subCategoryId: string }>({
+    mutationKey: [removeKey, categoryProductId],
+    mutationFn: async (r) =>
+      await getSubCategoryProductApiInfo().remove(r.subCategoryId),
+    onSuccess: () => {
+      toast.success("Sub-kategori berhasil dihapus");
+      void queryClient.invalidateQueries({
+        queryKey: [key, categoryProductId],
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const findById = useQuery<SubCategoryProduct[], Error>({
     queryKey: [key, categoryProductId],
@@ -76,7 +101,7 @@ export const useSubCategoryProduct = (categoryProductId: string) => {
   });
 
   const create = useMutation<SubCategoryProduct, Error, { data: Create }>({
-    mutationKey: [key, categoryProductId],
+    mutationKey: [createKey, categoryProductId],
     mutationFn: async (r) =>
       await getSubCategoryProductApiInfo().create(r.data),
     onSuccess: () => {
@@ -88,5 +113,5 @@ export const useSubCategoryProduct = (categoryProductId: string) => {
     onError: (e) => toast.error(e.message),
   });
 
-  return { findById, create };
+  return { remove, findById, create };
 };

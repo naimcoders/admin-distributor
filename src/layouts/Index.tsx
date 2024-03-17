@@ -7,6 +7,7 @@ import { HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
+import { stringifyQuery } from "src/helpers";
 
 const Layout = () => {
   return (
@@ -47,27 +48,41 @@ const Header = () => {
 export const removeDashString = (data: string) => data.split("-").join(" ");
 
 const AsideNav = () => {
+  const qsProduct = stringifyQuery({ tab: "", page: 1 });
+
   return (
     <aside className="md-max:hidden bg-secondary h-calcSideBar flex flex-col fixed w-56">
       <section className="overflow-y-auto flex flex-col">
-        {arrNavigationLabels.map((el) => (
-          <NavLink
-            key={el.label}
-            to={el.label}
-            className={({ isActive, isPending }) =>
-              cx(
-                "block px-6 lg:px-8 py-3 remove-highlight capitalize border-b border-gray-400 transition-colors",
-                isPending && "bg-secondary",
-                isActive && "bg-primary text-secondary border-t border-gray-500"
-              )
-            }
-          >
-            {removeDashString(el.label)}
-          </NavLink>
-        ))}
+        <Link name="Dashboard" path="dashboard" />
+        <Link name="Banner" path="banner" />
+        <Link name="Produk" path={`produk?${qsProduct}`} />
+        <Link name="Toko" path="toko" />
+        <Link name="Distributor" path="distributor" />
+        <Link name="Sales" path="sales" />
+        <Link name="Ekspedisi" path="ekspedisi" />
+        <Link name="Order" path="order" />
+        <Link name="Report" path="report" />
+        <Link name="Akun" path="akun" />
         <Logout />
       </section>
     </aside>
+  );
+};
+
+const Link = ({ name, path }: { name: string; path: string }) => {
+  return (
+    <NavLink
+      to={path}
+      className={({ isActive, isPending }) =>
+        cx(
+          "block px-6 lg:px-8 py-3 remove-highlight border-b border-gray-400 transition-colors",
+          isPending && "bg-secondary",
+          isActive && "bg-primary text-secondary border-t border-gray-500"
+        )
+      }
+    >
+      {name}
+    </NavLink>
   );
 };
 

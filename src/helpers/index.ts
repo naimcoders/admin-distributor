@@ -4,6 +4,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
+import queryString from "query-string";
+
+export const parseQueryString = <T extends object>(): T => {
+  const { search } = useLocation();
+  const parsed = queryString.parse(search) as T;
+  return parsed;
+};
+
+export const stringifyQuery = <T extends object>(prefix: T) => {
+  return queryString.stringify(prefix, {
+    skipEmptyString: true,
+    skipNull: true,
+  });
+};
 
 export const generateRandomString = (length: number): string => {
   const characters =
@@ -20,7 +34,6 @@ export const checkForDash = (value: string) => /-/.test(value);
 
 export const useSetSearch = (value: string, setSearch: (v: string) => void) => {
   const debounce = useDebounce(value, 500);
-
   useEffect(() => {
     setSearch(debounce);
   }, [debounce]);

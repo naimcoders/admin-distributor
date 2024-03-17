@@ -4,18 +4,40 @@ import { Product, useProduct } from "src/api/product.service";
 import { FieldValues, useForm } from "react-hook-form";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
-import { Currency, epochToDateConvert, useSetSearch } from "src/helpers";
+import {
+  Currency,
+  epochToDateConvert,
+  stringifyQuery,
+  useSetSearch,
+} from "src/helpers";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
-const SubProduct = () => {
+const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useHook();
-  const { data, isLoading, page, isNext, setSearch, setPage } =
-    useProduct().find();
+  const {
+    data,
+    isLoading,
+    isNext,
+    page: pageTable,
+    setSearch,
+    setPage,
+  } = useProduct().find(Number(pageQuery));
   useSetSearch(watch("search"), setSearch);
+  const navigate = useNavigate();
 
   const onNext = () => setPage((v) => v + 1);
   const onPrev = () => setPage((v) => v - 1);
+
+  const qs = stringifyQuery({
+    page: pageTable,
+    tab,
+  });
+
+  React.useEffect(() => {
+    navigate(`/produk?${qs}`);
+  }, [qs]);
 
   return (
     <TableWithSearchAndTabs
@@ -24,10 +46,10 @@ const SubProduct = () => {
       isLoading={isLoading}
       data={data?.items ?? []}
       isNext={isNext}
-      page={page}
       next={onNext}
       prev={onPrev}
       isPaginate
+      page={Number(pageQuery)}
       placeholder="cari nama produk/kategori/Sub-Kategori"
     />
   );

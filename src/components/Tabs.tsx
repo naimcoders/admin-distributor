@@ -6,7 +6,12 @@ export interface ITabs {
   content: React.ReactNode;
 }
 
-function Tabs(props: { items: ITabs[]; color: Color }) {
+function Tabs(props: {
+  items: ITabs[];
+  color: Color;
+  selectedKey: string;
+  onSelectionChange: (key: React.Key) => void;
+}) {
   return (
     <TabWrapper
       aria-label="Dynamic tabs"
@@ -18,6 +23,8 @@ function Tabs(props: { items: ITabs[]; color: Color }) {
       }}
       size="lg"
       radius="sm"
+      selectedKey={props.selectedKey}
+      onSelectionChange={props.onSelectionChange}
     >
       {(item) => (
         <Tab key={item.label} title={item.label} className="capitalize">

@@ -123,7 +123,6 @@ export function TableWithSearchAndTabs<S extends object>(
         isLoading={props.isLoading}
         next={props.next}
         prev={props.prev}
-        // setPage={() => console.log("d")}
       />
     </div>
   );

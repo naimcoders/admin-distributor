@@ -13,6 +13,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
   const { activePage, range, onNext, onPrevious } = usePagination({
     total: isNext ? page + 1 : page,
     showControls: true,
+    page,
   });
 
   const newRange = range.filter(
@@ -20,13 +21,13 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
   );
 
   const left = () => {
-    if (!prev) return null;
+    if (!prev) return;
     prev();
     onPrevious();
   };
 
   const right = () => {
-    if (!next) return null;
+    if (!next) return;
     next();
     onNext();
   };
@@ -56,7 +57,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 aria-label="active page"
                 className="text-[#27272A]"
               >
-                {activePage}
+                {page}
               </Button>
             )}
 

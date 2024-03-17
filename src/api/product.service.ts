@@ -366,8 +366,8 @@ export const useProduct = (productId?: string) => {
     return { data, isLoading, error: error?.message };
   };
 
-  const find = () => {
-    const [page, setPage] = useState(1);
+  const find = (pageTable: number) => {
+    const [page, setPage] = useState(pageTable);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 
@@ -393,6 +393,7 @@ export const useProduct = (productId?: string) => {
       setSearch,
       isNext: data?.canNext,
       setPage,
+      search,
     };
   };
 

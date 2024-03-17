@@ -3,6 +3,7 @@ import { req } from "./request";
 
 export interface ProductCategory {
   category: Category;
+  categoryId: string;
   createdAt: number;
   id: string;
   subCategory: Category[];

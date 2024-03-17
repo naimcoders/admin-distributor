@@ -4,16 +4,17 @@ import { FieldValues, useForm } from "react-hook-form";
 import { TableWithSearchAndTabs } from "src/components/Table";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
-import { detailNavigate } from "src/helpers";
 import {
   ProductCategory,
   useProductCategory,
 } from "src/api/product-category.service";
+import { useNavigate } from "react-router-dom";
 
 const CategorySub = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useCategorySub();
-  const { data, error, isLoading } = useProductCategory().find();
+  const { find } = useProductCategory();
+  const { data, error, isLoading } = find();
 
   return (
     <>
@@ -45,7 +46,7 @@ const CategorySub = () => {
 };
 
 const useCategorySub = () => {
-  const { onNav } = detailNavigate();
+  const navigate = useNavigate();
 
   const columns: Columns<ProductCategory>[] = [
     {
@@ -68,7 +69,7 @@ const useCategorySub = () => {
           id={v.id}
           action="detail"
           detail={{
-            onClick: () => onNav(`sub-kategori/${v.id}`),
+            onClick: () => navigate(`/produk/sub-kategori/${v.categoryId}`),
           }}
         />
       ),
@@ -78,4 +79,5 @@ const useCategorySub = () => {
 
   return { columns };
 };
+
 export default CategorySub;

@@ -1,16 +1,19 @@
+import React from "react";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { KeyboardEvent, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Textfield } from "src/components/Textfield";
 import { IconColor } from "src/types";
+import { useParams } from "react-router-dom";
 
 const Detail = () => {
-  const [isCreate, setIsCreate] = useState(false);
+  const { categoryProductId } = useParams() as { categoryProductId: string };
+  const name = "subCategory";
+
+  const [isCreate, setIsCreate] = React.useState(false);
   const { handleSubmit, control, resetField, getValues } =
     useForm<FieldValues>();
-  const name = "subCategory";
 
   const activeBtnCreate = () => setIsCreate((prev) => !prev);
   const onSubmit = handleSubmit(async (e) => {
@@ -26,7 +29,7 @@ const Detail = () => {
     }
   });
 
-  const onSubmitKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const onSubmitKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = getValues(name);
     if (e.key === "Escape") {
       setIsCreate((v) => !v);

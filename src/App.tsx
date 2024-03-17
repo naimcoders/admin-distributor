@@ -89,7 +89,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "produk/sub-kategori/:id",
+            path: "produk/sub-kategori/:categoryProductId",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <DetailSubCategory />

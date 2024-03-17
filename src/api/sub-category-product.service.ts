@@ -66,33 +66,27 @@ function getSubCategoryProductApiInfo(): ApiSubCategoryProductInfo {
 
 const key = "sub-category-product";
 
-export const useSubCategoryProduct = () => {
+export const useSubCategoryProduct = (categoryProductId: string) => {
   const queryClient = useQueryClient();
 
-  const findById = (categoryProductId: string) => {
-    const { data, isLoading, error } = useQuery<SubCategoryProduct[], Error>({
-      queryKey: [key, categoryProductId],
-      queryFn: async () =>
-        await getSubCategoryProductApiInfo().findById(categoryProductId),
-    });
-    return { data, isLoading, error: error?.message };
-  };
+  const findById = useQuery<SubCategoryProduct[], Error>({
+    queryKey: [key, categoryProductId],
+    queryFn: async () =>
+      await getSubCategoryProductApiInfo().findById(categoryProductId),
+  });
 
-  const create = (categoryProductId: string) => {
-    const mutate = useMutation<SubCategoryProduct, Error, { data: Create }>({
-      mutationKey: [key, categoryProductId],
-      mutationFn: async (r) =>
-        await getSubCategoryProductApiInfo().create(r.data),
-      onSuccess: () => {
-        toast.success("Sub-kategori berhasil dibuat");
-        void queryClient.invalidateQueries({
-          queryKey: [key, categoryProductId],
-        });
-      },
-      onError: (e) => toast.error(e.message),
-    });
-    return mutate;
-  };
+  const create = useMutation<SubCategoryProduct, Error, { data: Create }>({
+    mutationKey: [key, categoryProductId],
+    mutationFn: async (r) =>
+      await getSubCategoryProductApiInfo().create(r.data),
+    onSuccess: () => {
+      toast.success("Sub-kategori berhasil dibuat");
+      void queryClient.invalidateQueries({
+        queryKey: [key, categoryProductId],
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   return { findById, create };
 };

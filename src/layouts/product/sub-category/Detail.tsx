@@ -11,19 +11,18 @@ import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 
 const Detail = () => {
+  const name = "subCategory";
   const { categoryProductId, categoryName } = useParams() as {
     categoryProductId: string;
     categoryName: string;
   };
-  const name = "subCategory";
 
   const [isCreate, setIsCreate] = React.useState(false);
   const { handleSubmit, control, reset, getValues } = useForm<{
     subCategory: string;
   }>();
 
-  const { findById } = useSubCategoryProduct();
-  const subCategoryById = findById(categoryProductId);
+  const { create, findById } = useSubCategoryProduct(categoryProductId);
 
   const activeBtnCreate = () => setIsCreate((prev) => !prev);
   const onSubmit = handleSubmit(async (e) => {
@@ -32,8 +31,7 @@ const Detail = () => {
         toast.error("Masukkan sub-kategori");
         return;
       }
-
-      console.log(e);
+      console.log(e.subCategory);
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to submit : ${error.message}`);
@@ -43,20 +41,21 @@ const Detail = () => {
     }
   });
 
-  const onSubmitKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onSubmitKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = getValues(name);
-    if (e.key === "Escape") {
-      setIsCreate((v) => !v);
-    }
-
+    if (e.key === "Escape") setIsCreate((v) => !v);
     if (e.key === "Enter") {
       try {
         if (!value) {
           toast.error("Masukkan sub-kategori");
           return;
         }
+        const obj = {
+          name: value,
+          categoryProductId,
+        };
 
-        console.log(value);
+        await create.mutateAsync({ data: obj });
       } catch (e) {
         const error = e as Error;
         console.error(`Something wrong to submit : ${error.message}`);
@@ -68,9 +67,9 @@ const Detail = () => {
 
   return (
     <>
-      {subCategoryById.error ? (
-        <Error error={subCategoryById.error} />
-      ) : subCategoryById.isLoading ? (
+      {findById.error ? (
+        <Error error={findById.error.message} />
+      ) : findById.isLoading ? (
         <Skeleton />
       ) : (
         <main className="bg-white rounded-md">
@@ -78,7 +77,7 @@ const Detail = () => {
             <h2 className="font-interBold">{categoryName}</h2>
           </header>
 
-          {subCategoryById.data?.map((v) => (
+          {findById.data?.map((v) => (
             <Listing
               key={v.id}
               label={v.name}

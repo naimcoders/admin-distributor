@@ -71,12 +71,10 @@ const key = "product-category";
 export const useProductCategory = () => {
   const find = () => {
     const get = async () => await getProductCategoryApiInfo().find();
-
     const { data, isLoading, error } = useQuery<ProductCategory[], Error>({
       queryKey: [key],
       queryFn: get,
     });
-
     return { data, isLoading, error: error?.message };
   };
 

@@ -10,7 +10,7 @@ import {
   useProductCategory,
 } from "src/api/product-category.service";
 
-export default function CategorySub() {
+const CategorySub = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useCategorySub();
   const { data, error, isLoading } = useProductCategory().find();
@@ -42,7 +42,7 @@ export default function CategorySub() {
       )}
     </>
   );
-}
+};
 
 const useCategorySub = () => {
   const { onNav } = detailNavigate();
@@ -78,3 +78,4 @@ const useCategorySub = () => {
 
   return { columns };
 };
+export default CategorySub;

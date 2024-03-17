@@ -132,7 +132,7 @@ interface ListingProps {
 
 const Listing = ({ label, update, remove }: ListingProps) => {
   return (
-    <section className="p-4 flex justify-between border-t border-gray-300">
+    <section className="px-4 py-3 flex justify-between border-t border-gray-300">
       <h2>{label}</h2>
 
       <section className="flex gap-5">

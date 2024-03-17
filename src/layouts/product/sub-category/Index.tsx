@@ -61,7 +61,7 @@ const useCategorySub = () => {
         ) : (
           <Label
             label={v.subCategory.map((e) => e.name).join(", ")}
-            className="truncate"
+            className="truncate normal-case"
           />
         ),
     },

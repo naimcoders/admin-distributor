@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { req } from "./request";
 import { toast } from "react-toastify";
 
@@ -70,13 +70,12 @@ export const useSubCategoryProduct = () => {
   const queryClient = useQueryClient();
 
   const findById = (categoryProductId: string) => {
-    return useMutation<SubCategoryProduct[], Error>({
-      mutationKey: [key, categoryProductId],
-      mutationFn: async () =>
+    const { data, isLoading, error } = useQuery<SubCategoryProduct[], Error>({
+      queryKey: [key, categoryProductId],
+      queryFn: async () =>
         await getSubCategoryProductApiInfo().findById(categoryProductId),
-      onSuccess: () => toast.success("Sub-kategori berhasil dibuat"),
-      onError: (e) => toast.error(e.message),
     });
+    return { data, isLoading, error: error?.message };
   };
 
   const create = (categoryProductId: string) => {

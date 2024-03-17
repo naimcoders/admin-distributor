@@ -69,7 +69,10 @@ const useCategorySub = () => {
           id={v.id}
           action="detail"
           detail={{
-            onClick: () => navigate(`/produk/sub-kategori/${v.categoryId}`),
+            onClick: () =>
+              navigate(
+                `/produk/sub-kategori/${v.category.name}/${v.categoryId}`
+              ),
           }}
         />
       ),

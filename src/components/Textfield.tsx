@@ -1,11 +1,7 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
 import { HTMLAttributes, KeyboardEvent, ReactNode, Ref, useState } from "react";
-import {
-  FieldValues,
-  UseControllerProps,
-  useController,
-} from "react-hook-form";
+import { UseControllerProps, useController } from "react-hook-form";
 import { ChildRef, FileProps } from "./File";
 import { IconColor, Radius } from "src/types";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -27,7 +23,7 @@ interface UploadImageProps {
 }
 
 export interface TextfieldProps
-  extends UseControllerProps<FieldValues>,
+  extends UseControllerProps<any>,
     Pick<HTMLAttributes<HTMLInputElement>, "className"> {
   type?: string;
   label?: string;

@@ -1,30 +1,44 @@
 import React from "react";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Textfield } from "src/components/Textfield";
 import { IconColor } from "src/types";
 import { useParams } from "react-router-dom";
+import { useSubCategoryProduct } from "src/api/sub-category-product.service";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
 
 const Detail = () => {
-  const { categoryProductId } = useParams() as { categoryProductId: string };
+  const { categoryProductId, categoryName } = useParams() as {
+    categoryProductId: string;
+    categoryName: string;
+  };
   const name = "subCategory";
 
   const [isCreate, setIsCreate] = React.useState(false);
-  const { handleSubmit, control, resetField, getValues } =
-    useForm<FieldValues>();
+  const { handleSubmit, control, reset, getValues } = useForm<{
+    subCategory: string;
+  }>();
+
+  const { findById } = useSubCategoryProduct();
+  const subCategoryById = findById(categoryProductId);
 
   const activeBtnCreate = () => setIsCreate((prev) => !prev);
   const onSubmit = handleSubmit(async (e) => {
     try {
-      if (!e?.[name]) throw new Error("Masukkan sub kategori");
+      if (!e.subCategory) {
+        toast.error("Masukkan sub-kategori");
+        return;
+      }
+
       console.log(e);
     } catch (e) {
       const error = e as Error;
-      toast.error(error.message);
+      console.error(`Something wrong to submit : ${error.message}`);
     } finally {
-      resetField(name);
+      reset();
       setIsCreate((prev) => !prev);
     }
   });
@@ -37,55 +51,70 @@ const Detail = () => {
 
     if (e.key === "Enter") {
       try {
-        if (!value) throw new Error("Masukkan sub kategori");
+        if (!value) {
+          toast.error("Masukkan sub-kategori");
+          return;
+        }
+
         console.log(value);
       } catch (e) {
         const error = e as Error;
-        toast.error(error.message);
+        console.error(`Something wrong to submit : ${error.message}`);
+      } finally {
+        reset();
       }
     }
   };
 
   return (
-    <main className="bg-white rounded-md">
-      <header className="border-b-2 border-gray-300 p-4">
-        <h2 className="font-interBold">Elektronik</h2>
-      </header>
+    <>
+      {subCategoryById.error ? (
+        <Error error={subCategoryById.error} />
+      ) : subCategoryById.isLoading ? (
+        <Skeleton />
+      ) : (
+        <main className="bg-white rounded-md">
+          <header className="border-b-2 border-gray-300 p-4">
+            <h2 className="font-interBold">{categoryName}</h2>
+          </header>
 
-      <Listing
-        label="Pendingin Ruangan"
-        update={() => console.log("edit")}
-        remove={() => console.log("delete")}
-      />
-
-      <Textfield
-        name={name}
-        radius="none"
-        defaultValue=""
-        control={control}
-        onClick={activeBtnCreate}
-        placeholder="tambah sub-kategori"
-        readOnly={{ isValue: !isCreate, cursor: "cursor-pointer" }}
-        startContent={
-          !isCreate && <PlusIcon width={16} color={IconColor.zinc} />
-        }
-        endContent={
-          isCreate && (
-            <CheckIcon
-              width={16}
-              color={IconColor.green}
-              className="cursor-pointer"
-              onClick={onSubmit}
+          {subCategoryById.data?.map((v) => (
+            <Listing
+              key={v.id}
+              label={v.name}
+              update={() => console.log(`edit ${v.id}`)}
+              remove={() => console.log(`delete ${v.id}`)}
             />
-          )
-        }
-        onKeyDown={onSubmitKeyDown}
-      />
-    </main>
+          ))}
+
+          <Textfield
+            name={name}
+            radius="none"
+            defaultValue=""
+            control={control}
+            onClick={activeBtnCreate}
+            placeholder="tambah sub-kategori"
+            readOnly={{ isValue: !isCreate, cursor: "cursor-pointer" }}
+            startContent={
+              !isCreate && <PlusIcon width={16} color={IconColor.zinc} />
+            }
+            endContent={
+              isCreate && (
+                <CheckIcon
+                  width={16}
+                  color={IconColor.green}
+                  className="cursor-pointer"
+                  onClick={onSubmit}
+                />
+              )
+            }
+            onKeyDown={onSubmitKeyDown}
+          />
+        </main>
+      )}
+    </>
   );
 };
-
-export default Detail;
 
 interface ListingProps {
   label: string;
@@ -110,3 +139,5 @@ const Listing = ({ label, update, remove }: ListingProps) => {
     </section>
   );
 };
+
+export default Detail;

@@ -59,7 +59,10 @@ const useCategorySub = () => {
         v.subCategory.length < 1 ? (
           <p className="text-gray-400 cursor-default font-bold">-</p>
         ) : (
-          <Label label={v.subCategory.map((e) => e.name).join(", ")} />
+          <Label
+            label={v.subCategory.map((e) => e.name).join(", ")}
+            className="truncate"
+          />
         ),
     },
     {

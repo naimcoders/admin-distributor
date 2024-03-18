@@ -107,6 +107,31 @@ const Detail = () => {
     }
   });
 
+  const onUpdateKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = getValues("subCategoryUpdate");
+    if (e.key === "Escape") setIsUpdate((v) => !v);
+    if (e.key === "Enter") {
+      if (!value) {
+        toast.error("Masukkan sub-kategori");
+        return;
+      }
+
+      try {
+        const obj = {
+          name: value,
+          categoryProductId,
+        };
+
+        await update.mutateAsync({ data: obj, subCategoryId });
+      } catch (e) {
+        const error = e as Error;
+        console.error(`Something wrong to update : ${error.message}`);
+      } finally {
+        reset();
+      }
+    }
+  };
+
   return (
     <>
       {findById.error ? (
@@ -142,7 +167,7 @@ const Detail = () => {
                     />
                   )
                 }
-                // onKeyDown={onSubmitKeyDown}
+                onKeyDown={onUpdateKeyDown}
               />
             ) : (
               <Listing

@@ -79,28 +79,34 @@ export const ModalSubCategory: FC<ModalCategoryProps> = ({
       isOpen={isSubCategory}
       closeModal={actionIsSubCategory}
     >
-      <ul className="flex flex-col gap-2 my-4">
-        {filterByCategoryId?.map((v) =>
-          v.subCategory.length < 1 ? (
-            <h2 className="font-semibold text-lg text-center" key={v.id}>
-              Tidak ada sub-kategori
-            </h2>
-          ) : (
-            v.subCategory.map((e) => (
-              <li
-                key={e.id}
-                onClick={() => onClick(e.id, e.name)}
-                className={cx(
-                  "hover:font-bold cursor-pointer w-max",
-                  v.id === id && "font-bold"
-                )}
-              >
-                {e.name}
-              </li>
-            ))
-          )
-        )}
-      </ul>
+      {filterByCategoryId?.length! < 1 ? (
+        <h2 className="font-semibold text-lg text-center my-4">
+          Tidak ada sub-kategori
+        </h2>
+      ) : (
+        <ul className="flex flex-col gap-2 my-4">
+          {filterByCategoryId?.map((v) =>
+            v.subCategory.length < 1 ? (
+              <h2 className="font-semibold text-lg text-center" key={v.id}>
+                Tidak ada sub-kategori
+              </h2>
+            ) : (
+              v.subCategory.map((e) => (
+                <li
+                  key={e.id}
+                  onClick={() => onClick(e.id, e.name)}
+                  className={cx(
+                    "hover:font-bold cursor-pointer w-max",
+                    v.id === id && "font-bold"
+                  )}
+                >
+                  {e.name}
+                </li>
+              ))
+            )
+          )}
+        </ul>
+      )}
     </Modal>
   );
 };

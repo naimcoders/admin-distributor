@@ -336,13 +336,19 @@ export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
   const update = () => {
-    return useMutation<Product, Error, { data: UpdateProduct }>({
+    return useMutation<
+      Product,
+      Error,
+      { data: UpdateProduct; page: number; limit: number; search: string }
+    >({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
         await getProductApiInfo().update(productId ?? "", r.data),
-      onSuccess: () => {
+      onSuccess: (_, r) => {
         toast.success("Produk berhasil diperbarui");
-        void queryClient.invalidateQueries({ queryKey: [key, productId] });
+        void queryClient.invalidateQueries({
+          queryKey: [key, r.page, r.limit, r.search],
+        });
       },
       onError: (e) => toast.error(e.message),
     });

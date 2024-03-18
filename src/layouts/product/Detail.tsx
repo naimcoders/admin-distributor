@@ -25,6 +25,7 @@ import {
   CurrencyIDInput,
   checkForDash,
   handleErrorMessage,
+  parseQueryString,
   parseTextToNumber,
 } from "src/helpers";
 import { IconColor } from "src/types";
@@ -174,6 +175,8 @@ const Detail = () => {
     }
   };
 
+  const parsed = parseQueryString<{ page: string }>();
+
   const onSubmit = handleSubmit(async (e) => {
     // ON CREATE VARIANT
     if (variantTypesPrev.length < variantTypes.length) {
@@ -269,7 +272,12 @@ const Detail = () => {
         },
       };
 
-      const result = await mutateAsync({ data: obj });
+      const result = await mutateAsync({
+        data: obj,
+        limit: 10,
+        page: Number(parsed.page),
+        search: "",
+      });
       setVariantTypes([]);
       if (result.name) navigate(-1);
     } catch (err) {

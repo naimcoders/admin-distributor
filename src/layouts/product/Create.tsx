@@ -386,7 +386,6 @@ const useFields = () => {
     }
 
     actionIsSubCategory();
-    console.log(categoryId);
   };
 
   const fields: TextfieldProps[] = [

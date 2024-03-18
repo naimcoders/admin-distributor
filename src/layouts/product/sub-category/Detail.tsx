@@ -104,6 +104,9 @@ const Detail = () => {
     } catch (err) {
       const error = err as Error;
       console.error(`Something wrong to update : ${error.message}`);
+    } finally {
+      setIsUpdate((v) => !v);
+      setSubCategoryId("");
     }
   });
 
@@ -127,7 +130,8 @@ const Detail = () => {
         const error = e as Error;
         console.error(`Something wrong to update : ${error.message}`);
       } finally {
-        reset();
+        setIsUpdate((v) => !v);
+        setSubCategoryId("");
       }
     }
   };

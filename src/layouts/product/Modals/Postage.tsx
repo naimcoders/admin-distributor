@@ -1,6 +1,6 @@
 import { Switch } from "@nextui-org/react";
 import React from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { DeliveryPrice } from "src/api/product.service";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
@@ -16,14 +16,20 @@ import {
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
-import useGeneralStore, {
-  defaultValueDeliveryPrice,
-} from "src/stores/generalStore";
+import useGeneralStore from "src/stores/generalStore";
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 
 interface PostageProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   data?: DeliveryPrice;
+}
+
+interface PriceValues {
+  price: string;
+  wide: string;
+  height: string;
+  length: string;
+  weight: string;
 }
 
 export const PostageModal: React.FC<PostageProps> = ({
@@ -32,32 +38,55 @@ export const PostageModal: React.FC<PostageProps> = ({
   data,
 }) => {
   const [isOutOfTown, setIsOutOfTown] = React.useState(false);
-  const postageForm = useForm<FieldValues>();
   const { isPostage, actionIsPostage } = useActiveModal();
   const { packageSize, outOfTownDeliveryField } = usePostage(data);
+
+  const forms = useForm<PriceValues>();
 
   const handleSwitchOutOfTown = () => setIsOutOfTown((v) => !v);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
 
-  const onSubmit = postageForm.handleSubmit((e) => {
-    const isCourierInternal = !isOutOfTown ? true : false;
-
-    const fieldNames = ["weight", "height", "length", "wide", "price"];
-    let obj: DeliveryPrice = defaultValueDeliveryPrice;
-
-    for (const v in e) {
-      if (fieldNames.includes(v)) {
-        Object.assign(obj, { [v]: parseTextToNumber(e[v]) });
-      }
+  const onSubmit = forms.handleSubmit((e) => {
+    let error = 0;
+    if (e.weight === "0") {
+      forms.setError("weight", { message: "Masukkan berat" });
+      error++;
+    }
+    if (e.wide === "0") {
+      forms.setError("wide", { message: "Masukkan lebar" });
+      error++;
+    }
+    if (e.height === "0") {
+      forms.setError("height", { message: "Masukkan tinggi" });
+      error++;
+    }
+    if (e.length === "0") {
+      forms.setError("length", { message: "Masukkan panjang" });
+      error++;
+    }
+    if (e.price === "0") {
+      forms.setError("price", { message: "Masukkan ongkir" });
+      error++;
     }
 
-    obj.isCourierInternal = isCourierInternal;
-    setDeliveryPrice(obj);
+    if (!error) {
+      const isCourierInternal = !isOutOfTown ? true : false;
+      let obj: DeliveryPrice = {
+        id: "",
+        isCourierInternal,
+        height: parseTextToNumber(e.height),
+        length: parseTextToNumber(e.length),
+        price: parseTextToNumber(e.price),
+        weight: parseTextToNumber(e.weight),
+        wide: parseTextToNumber(e.wide),
+      };
 
-    setValue("postage", e.price);
-    clearErrors("postage");
-    postageForm.reset();
-    actionIsPostage();
+      setDeliveryPrice(obj);
+      setValue("postage", e.price);
+      clearErrors("postage");
+      actionIsPostage();
+      console.log(obj);
+    }
   });
 
   return (
@@ -67,12 +96,9 @@ export const PostageModal: React.FC<PostageProps> = ({
           name="weight"
           placeholder="atur berat produk"
           label="berat produk"
-          control={postageForm.control}
+          control={forms.control}
           defaultValue={!data ? "" : String(data?.weight)}
-          errorMessage={handleErrorMessage(
-            postageForm.formState.errors,
-            "weight"
-          )}
+          errorMessage={handleErrorMessage(forms.formState.errors, "weight")}
           endContent={<ContentTextfield label="g" />}
           rules={{
             required: { value: true, message: "masukkan berat produk" },
@@ -80,7 +106,7 @@ export const PostageModal: React.FC<PostageProps> = ({
               CurrencyIDInput({
                 type: "rp",
                 fieldName: "weight",
-                setValue: postageForm.setValue,
+                setValue: forms.setValue,
                 value: e.target.value,
               }),
           }}
@@ -96,10 +122,10 @@ export const PostageModal: React.FC<PostageProps> = ({
                 {...v}
                 key={v.label}
                 defaultValue={!data ? "" : String(v.defaultValue)}
-                control={postageForm.control}
+                control={forms.control}
                 endContent={<ContentTextfield label="cm" />}
                 errorMessage={handleErrorMessage(
-                  postageForm.formState.errors,
+                  forms.formState.errors,
                   v.name
                 )}
                 rules={{
@@ -107,7 +133,7 @@ export const PostageModal: React.FC<PostageProps> = ({
                   onBlur: (e) =>
                     CurrencyIDInput({
                       type: "rp",
-                      setValue: postageForm.setValue,
+                      setValue: forms.setValue,
                       fieldName: v.name,
                       value: e.target.value,
                     }),
@@ -127,20 +153,17 @@ export const PostageModal: React.FC<PostageProps> = ({
             name="price"
             label="kurir distributor"
             placeholder="atur ongkir"
-            control={postageForm.control}
+            control={forms.control}
             defaultValue={!data ? "" : String(Currency(data?.price ?? 0))}
             startContent={<ContentTextfield label="Rp" />}
-            errorMessage={handleErrorMessage(
-              postageForm.formState.errors,
-              "price"
-            )}
+            errorMessage={handleErrorMessage(forms.formState.errors, "price")}
             rules={{
               required: { value: true, message: "masukkan ongkir" },
               onBlur: (e) =>
                 CurrencyIDInput({
                   type: "rp",
                   fieldName: "price",
-                  setValue: postageForm.setValue,
+                  setValue: forms.setValue,
                   value: e.target.value,
                 }),
             }}
@@ -167,7 +190,7 @@ export const PostageModal: React.FC<PostageProps> = ({
                   key={v.label}
                   name={v.name}
                   label={v.label}
-                  control={postageForm.control}
+                  control={forms.control}
                   readOnly={v.readOnly}
                   description={v.description}
                   defaultValue={v.defaultValue}

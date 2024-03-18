@@ -1,15 +1,10 @@
-import Label from "src/components/Label";
+import Label, { LabelPrice } from "src/components/Label";
 import { TableWithSearchAndTabs } from "src/components/Table";
 import { Product, useProduct } from "src/api/product.service";
 import { FieldValues, useForm } from "react-hook-form";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
-import {
-  Currency,
-  epochToDateConvert,
-  stringifyQuery,
-  useSetSearch,
-} from "src/helpers";
+import { epochToDateConvert, stringifyQuery, useSetSearch } from "src/helpers";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 
@@ -60,7 +55,7 @@ const useHook = () => {
     {
       header: <p className="text-right">harga (Rp)</p>,
       render: (v) => (
-        <Label label={Currency(v.price.price)} className="justify-end" />
+        <LabelPrice product={v} label="" className="justify-end" />
       ),
     },
     {

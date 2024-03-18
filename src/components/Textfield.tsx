@@ -145,9 +145,9 @@ export const objectFields = ({
     placeholder: placeholder
       ? placeholder
       : `Masukkan ${props.label?.replace("*", "")}`,
-    // errorMessage: errorMessage
-    //   ? errorMessage
-    //   : `Masukkan ${props.label?.replace("*", "")}`,
+    errorMessage: errorMessage
+      ? errorMessage
+      : `Masukkan ${props.label?.replace("*", "")}`,
     ...props,
   } satisfies TextfieldProps;
 

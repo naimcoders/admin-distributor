@@ -250,6 +250,9 @@ export interface CreateProduct {
 }
 
 interface UpdateProduct extends Omit<CreateProduct, "imageUrl" | "variant"> {}
+interface RemoveImage {
+  imageUrl: string;
+}
 
 class Api {
   private static instance: Api;
@@ -317,6 +320,16 @@ class Api {
       path: `${this.path}/${productId}`,
     });
   }
+
+  async removeImageUrl(productId: string, r: RemoveImage): Promise<{}> {
+    return await req<{}>({
+      method: "PATCH",
+      body: r,
+      isNoAuth: false,
+      errors: this.errors,
+      path: `${this.path}/${productId}`,
+    });
+  }
 }
 
 interface ApiProductInfo {
@@ -324,6 +337,7 @@ interface ApiProductInfo {
   findById(productId: string): Promise<Product>;
   create(r: CreateProduct): Promise<Product>;
   update(productId: string, r: UpdateProduct): Promise<Product>;
+  removeImageUrl(productId: string, r: RemoveImage): Promise<{}>;
 }
 
 export function getProductApiInfo(): ApiProductInfo {
@@ -335,19 +349,30 @@ const key = "product";
 export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
+  const removeImageUrl = () => {
+    return useMutation<{}, Error, { data: RemoveImage }>({
+      mutationKey: [key, productId],
+      mutationFn: async (r) =>
+        await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
+      onSuccess: () => {
+        toast.success("Produk berhasil diperbarui");
+        void queryClient.invalidateQueries({
+          queryKey: [key, productId],
+        });
+      },
+      onError: (e) => toast.error(e.message),
+    });
+  };
+
   const update = () => {
-    return useMutation<
-      Product,
-      Error,
-      { data: UpdateProduct; page: number; limit: number; search: string }
-    >({
+    return useMutation<Product, Error, { data: UpdateProduct }>({
       mutationKey: [key, productId],
       mutationFn: async (r) =>
         await getProductApiInfo().update(productId ?? "", r.data),
-      onSuccess: (_, r) => {
+      onSuccess: () => {
         toast.success("Produk berhasil diperbarui");
         void queryClient.invalidateQueries({
-          queryKey: [key, r.page, r.limit, r.search],
+          queryKey: [key, productId],
         });
       },
       onError: (e) => toast.error(e.message),
@@ -403,5 +428,5 @@ export const useProduct = (productId?: string) => {
     };
   };
 
-  return { find, findById, create, update };
+  return { find, findById, create, update, removeImageUrl };
 };

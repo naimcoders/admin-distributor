@@ -350,11 +350,10 @@ export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
   const removeImageUrl = useMutation<{}, Error, { data: RemoveImage }>({
-    mutationKey: [key, productId],
+    mutationKey: [key, "remove-image", productId],
     mutationFn: async (r) =>
       await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
     onSuccess: () => {
-      toast.success("Produk berhasil diperbarui");
       void queryClient.invalidateQueries({
         queryKey: [key, productId],
       });
@@ -363,7 +362,7 @@ export const useProduct = (productId?: string) => {
   });
 
   const update = useMutation<Product, Error, { data: UpdateProduct }>({
-    mutationKey: [key, productId],
+    mutationKey: [key, "update", productId],
     mutationFn: async (r) =>
       await getProductApiInfo().update(productId ?? "", r.data),
     onSuccess: () => {
@@ -376,7 +375,7 @@ export const useProduct = (productId?: string) => {
   });
 
   const create = useMutation<Product, Error, { data: CreateProduct }>({
-    mutationKey: [key],
+    mutationKey: [key, productId],
     mutationFn: async (r) => await getProductApiInfo().create(r.data),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
     onError: (e) => toast.error(e.message),

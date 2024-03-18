@@ -35,6 +35,16 @@ class Api {
     500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
   };
 
+  async update(subCategoryId: string, r: Create): Promise<SubCategoryProduct> {
+    return await req<SubCategoryProduct>({
+      method: "PUT",
+      isNoAuth: false,
+      body: r,
+      path: `${this.path}/${subCategoryId}`,
+      errors: this.errors,
+    });
+  }
+
   async remove(subCategoryId: string): Promise<{}> {
     return await req<{}>({
       method: "DELETE",
@@ -65,6 +75,7 @@ class Api {
 }
 
 interface ApiSubCategoryProductInfo {
+  update(subCategoryId: string, r: Create): Promise<SubCategoryProduct>;
   remove(subCategoryId: string): Promise<{}>;
   findById(categoryProductId: string): Promise<SubCategoryProduct[]>;
   create(r: Create): Promise<SubCategoryProduct>;
@@ -77,9 +88,27 @@ function getSubCategoryProductApiInfo(): ApiSubCategoryProductInfo {
 const key = "sub-category-product";
 const createKey = `${key}-create`;
 const removeKey = `${key}-remove`;
+const updateKey = `${key}-update`;
 
 export const useSubCategoryProduct = (categoryProductId: string) => {
   const queryClient = useQueryClient();
+
+  const update = useMutation<
+    SubCategoryProduct,
+    Error,
+    { subCategoryId: string; data: Create }
+  >({
+    mutationKey: [updateKey, categoryProductId],
+    mutationFn: async (r) =>
+      await getSubCategoryProductApiInfo().update(r.subCategoryId, r.data),
+    onSuccess: () => {
+      toast.success("Sub-kategori berhasil diperbarui");
+      void queryClient.invalidateQueries({
+        queryKey: [key, categoryProductId],
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const remove = useMutation<{}, Error, { subCategoryId: string }>({
     mutationKey: [removeKey, categoryProductId],
@@ -113,5 +142,5 @@ export const useSubCategoryProduct = (categoryProductId: string) => {
     onError: (e) => toast.error(e.message),
   });
 
-  return { remove, findById, create };
+  return { update, remove, findById, create };
 };

@@ -86,7 +86,7 @@ export const useVariant = (productId: string) => {
     onSuccess: () =>
       void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
     onError: (e) => {
-      toast.error(`Something wrong to create variant : ${e.message}`);
+      toast.error(`Failed to create variant : ${e.message}`);
     },
   });
 
@@ -95,19 +95,15 @@ export const useVariant = (productId: string) => {
       mutationKey: [key, "remove-variant-color", productId],
       mutationFn: async (r) =>
         await getVariantApiInfo().removeVariantColor(r.variantColorId),
-      onError: (e) => {
-        toast.error(
-          `Something wrong to remove variant color id : ${e.message}`
-        );
-      },
+      onError: (e) =>
+        toast.error(`Failed to remove variant color id : ${e.message}`),
     }
   );
 
   const remove = useMutation<{}, Error, { variantId: string }>({
     mutationKey: [key, "remove", productId],
     mutationFn: async (r) => await getVariantApiInfo().remove(r.variantId),
-    onError: (e) =>
-      toast.error(`Something wrong to remove variant : ${e.message}`),
+    onError: (e) => toast.error(`Failed to remove variant : ${e.message}`),
   });
 
   const update = useMutation<
@@ -120,8 +116,7 @@ export const useVariant = (productId: string) => {
       await getVariantApiInfo().update(r.variantId, r.data),
     onSuccess: () =>
       void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
-    onError: (e) =>
-      toast.error(`Something wrong to update the variant : ${e.message}`),
+    onError: (e) => toast.error(`Failed to update the variant : ${e.message}`),
   });
 
   return { update, remove, removeVariantColor, create };

@@ -244,9 +244,7 @@ const Detail = () => {
             });
           } catch (e) {
             const error = e as Error;
-            console.error(
-              `Something wrong to update variant : ${error.message}`
-            );
+            console.error(`Failed to update variant : ${error.message}`);
           }
         }
       });
@@ -274,7 +272,7 @@ const Detail = () => {
       if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
-      console.error(`Something wrong to update : ${error.message}`);
+      console.error(`Failed to update : ${error.message}`);
     } finally {
       clearVariantId();
       clearVariantColorId();

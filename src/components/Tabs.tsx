@@ -9,8 +9,8 @@ export interface ITabs {
 function Tabs(props: {
   items: ITabs[];
   color: Color;
-  selectedKey: string;
-  onSelectionChange: (key: React.Key) => void;
+  selectedKey?: string;
+  onSelectionChange?: (key: React.Key) => void;
 }) {
   return (
     <TabWrapper

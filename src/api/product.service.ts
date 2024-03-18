@@ -349,35 +349,31 @@ const key = "product";
 export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
-  const removeImageUrl = () => {
-    return useMutation<{}, Error, { data: RemoveImage }>({
-      mutationKey: [key, productId],
-      mutationFn: async (r) =>
-        await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
-      onSuccess: () => {
-        toast.success("Produk berhasil diperbarui");
-        void queryClient.invalidateQueries({
-          queryKey: [key, productId],
-        });
-      },
-      onError: (e) => toast.error(e.message),
-    });
-  };
+  const removeImageUrl = useMutation<{}, Error, { data: RemoveImage }>({
+    mutationKey: [key, productId],
+    mutationFn: async (r) =>
+      await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
+    onSuccess: () => {
+      toast.success("Produk berhasil diperbarui");
+      void queryClient.invalidateQueries({
+        queryKey: [key, productId],
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
-  const update = () => {
-    return useMutation<Product, Error, { data: UpdateProduct }>({
-      mutationKey: [key, productId],
-      mutationFn: async (r) =>
-        await getProductApiInfo().update(productId ?? "", r.data),
-      onSuccess: () => {
-        toast.success("Produk berhasil diperbarui");
-        void queryClient.invalidateQueries({
-          queryKey: [key, productId],
-        });
-      },
-      onError: (e) => toast.error(e.message),
-    });
-  };
+  const update = useMutation<Product, Error, { data: UpdateProduct }>({
+    mutationKey: [key, productId],
+    mutationFn: async (r) =>
+      await getProductApiInfo().update(productId ?? "", r.data),
+    onSuccess: () => {
+      toast.success("Produk berhasil diperbarui");
+      void queryClient.invalidateQueries({
+        queryKey: [key, productId],
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const create = useMutation<Product, Error, { data: CreateProduct }>({
     mutationKey: [key],
@@ -386,16 +382,11 @@ export const useProduct = (productId?: string) => {
     onError: (e) => toast.error(e.message),
   });
 
-  const findById = () => {
-    const find = async () => getProductApiInfo().findById(productId ?? "");
-    const { data, isLoading, error } = useQuery<Product, Error>({
-      queryKey: [key, productId],
-      queryFn: find,
-      enabled: !!productId,
-    });
-
-    return { data, isLoading, error: error?.message };
-  };
+  const findById = useQuery<Product, Error>({
+    queryKey: [key, productId],
+    queryFn: async () => getProductApiInfo().findById(productId ?? ""),
+    enabled: !!productId,
+  });
 
   const find = (pageTable: number) => {
     const [page, setPage] = useState(pageTable);

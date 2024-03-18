@@ -48,6 +48,8 @@ import { useVariant } from "src/api/variant.service";
 import { uploadFile } from "src/firebase/upload";
 
 const Detail = () => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [imageUrlDel, setImageUrlDel] = React.useState<string[]>([]);
   const [newImageFile, setNewImageFile] = React.useState<File>();
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
@@ -60,13 +62,14 @@ const Detail = () => {
   );
 
   const { id } = useParams() as { id: string };
-  const { isLoading, error, data } = useProduct(id).findById();
 
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
   const priceStore = useGeneralStore((v) => v.price);
   const setPriceStore = useGeneralStore((v) => v.setPrice);
   const navigate = useNavigate();
+
+  const { update, findById, removeImageUrl } = useProduct(id);
 
   const {
     control,
@@ -92,8 +95,12 @@ const Detail = () => {
     }
   };
 
-  const { mutateAsync, isPending } = useProduct(id).update();
-  const { remove, update, removeVariantColor, create } = useVariant(id);
+  const {
+    remove,
+    update: updateVariant,
+    removeVariantColor,
+    create,
+  } = useVariant(id);
 
   const variantId = useVariantIdStore((v) => v.variantId);
   const clearVariantId = useVariantIdStore((v) => v.clearVariantId);
@@ -101,27 +108,27 @@ const Detail = () => {
   const clearVariantColorId = useVariantIdStore((v) => v.clearVariantColorId);
 
   React.useEffect(() => {
-    if (data) {
+    if (findById.data) {
       setCurrentProductImage(
-        data.imageUrl?.map((imageUrl) => ({
+        findById.data.imageUrl?.map((imageUrl) => ({
           name: imageUrl,
           size: "1:1",
           src: imageUrl,
         }))
       );
-      setVariantTypes(data.variantProduct);
-      setCategoryId(data.categoryProduct.category.id);
-      setDeliveryPrice(data.deliveryPrice);
-      setPriceStore(data.price);
-      setImageUrl(data.imageUrl);
-      setVariantTypesPrev(data.variantProduct);
+      setVariantTypes(findById.data.variantProduct);
+      setCategoryId(findById.data.categoryProduct.category.id);
+      setDeliveryPrice(findById.data.deliveryPrice);
+      setPriceStore(findById.data.price);
+      setImageUrl(findById.data.imageUrl);
+      setVariantTypesPrev(findById.data.variantProduct);
 
       let price = "";
-      if (data.variantProduct.length < 1) {
-        price = Currency(data.price.price ?? 0);
+      if (findById.data.variantProduct.length < 1) {
+        price = Currency(findById.data.price.price ?? 0);
       } else {
         const prices: number[] = [];
-        const variantColor = data.variantProduct.map(
+        const variantColor = findById.data.variantProduct.map(
           (e) => e.variantColorProduct
         );
 
@@ -136,18 +143,21 @@ const Detail = () => {
         price = min === max ? max : `${min} - ${max}`;
       }
 
-      setValue("productName", data.name);
-      setValue("category", data.categoryProduct.category.name);
-      setValue("subCategory", data.subCategoryProduct?.name ?? "-");
-      setValue("dangerous", data.isDangerous ? "Ya" : "Tidak");
-      setValue("variant", data.variantProduct.map((e) => e.name).join(", "));
+      setValue("productName", findById.data.name);
+      setValue("category", findById.data.categoryProduct.category.name);
+      setValue("subCategory", findById.data.subCategoryProduct?.name ?? "-");
+      setValue("dangerous", findById.data.isDangerous ? "Ya" : "Tidak");
+      setValue(
+        "variant",
+        findById.data.variantProduct.map((e) => e.name).join(", ")
+      );
       setValue("price", price);
-      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
-      setValue("postage", Currency(data.deliveryPrice.price ?? 0));
+      setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
+      setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
       setValue("condition", "Baru");
-      setValue("description", data.description);
+      setValue("description", findById.data.description);
     }
-  }, [data, imageUrl]);
+  }, [findById.data, imageUrl]);
 
   React.useEffect(() => {
     if (newImageFile) onUploadImage();
@@ -175,6 +185,20 @@ const Detail = () => {
   };
 
   const onSubmit = handleSubmit(async (e) => {
+    setIsLoading(true);
+    // ON DELETE IMAGE
+    if (imageUrlDel.length > 0) {
+      imageUrlDel.forEach(async (e) => {
+        try {
+          const obj = { imageUrl: e };
+          await removeImageUrl.mutateAsync({ data: obj });
+        } catch (err) {
+          const error = err as Error;
+          console.error(`Failed to remove image url : ${error.message}`);
+        }
+      });
+    }
+
     // ON CREATE VARIANT
     if (variantTypesPrev.length < variantTypes.length) {
       variantTypes.forEach(async (type) => {
@@ -238,7 +262,7 @@ const Detail = () => {
       variantTypes.map(async (type) => {
         if (typePrev.name === type.name) {
           try {
-            await update.mutateAsync({
+            await updateVariant.mutateAsync({
               data: typePrev,
               variantId: typePrev.id ?? "",
             });
@@ -267,15 +291,17 @@ const Detail = () => {
         },
       };
 
-      const result = await mutateAsync({ data: obj });
+      const result = await update.mutateAsync({ data: obj });
       setVariantTypes([]);
-      if (result.name) navigate(-1);
+      // if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
       console.error(`Failed to update : ${error.message}`);
     } finally {
       clearVariantId();
       clearVariantColorId();
+      setImageUrlDel([]);
+      setIsLoading(false);
     }
   });
 
@@ -310,12 +336,12 @@ const Detail = () => {
   } = useActiveModal();
 
   const onClickSubCategory = () => {
-    if (!data?.categoryProduct.category.name) {
+    if (!findById.data?.categoryProduct.category.name) {
       toast.error("Pilih kategori");
       return;
     }
     actionIsSubCategory();
-    console.log(data?.categoryProduct.category.name);
+    console.log(findById.data?.categoryProduct.category.name);
   };
 
   const fields: TextfieldProps[] = [
@@ -364,7 +390,7 @@ const Detail = () => {
       label: "ongkos kirim (berat/ukuran) *",
       name: "postage",
       type: "modal",
-      defaultValue: Currency(data?.deliveryPrice?.price ?? 0),
+      defaultValue: Currency(findById.data?.deliveryPrice?.price ?? 0),
       placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
       rules: { required: { value: true, message: "atur ongkos kirim" } },
@@ -389,11 +415,16 @@ const Detail = () => {
     }),
   ];
 
+  const onRemoveImageUrl = (data: CurrentProductImageProps) => {
+    setCurrentProductImage(currentProductImage.filter((e) => e !== data));
+    setImageUrlDel([...imageUrlDel, data.src]);
+  };
+
   return (
     <>
-      {error ? (
-        <Error error={error} />
-      ) : isLoading ? (
+      {findById.error ? (
+        <Error error={findById.error.message} />
+      ) : findById.isLoading ? (
         <Skeleton />
       ) : (
         <main className="flexcol gap-5 lg:gap-8">
@@ -411,10 +442,7 @@ const Detail = () => {
                   actions={[
                     {
                       src: <TrashIcon width={16} />,
-                      onClick: () =>
-                        setCurrentProductImage(
-                          currentProductImage.filter((e) => e !== v)
-                        ),
+                      onClick: () => onRemoveImageUrl(v),
                     },
                   ]}
                 />
@@ -528,7 +556,7 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={isPending ? "loading..." : "simpan"}
+            aria-label={isLoading ? "loading..." : "simpan"}
           />
         </main>
       )}

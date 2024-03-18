@@ -150,7 +150,6 @@ const Create = () => {
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to create product : ${error.message}`);
-      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }

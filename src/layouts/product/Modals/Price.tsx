@@ -76,6 +76,7 @@ const PriceModal: React.FC<PriceProps> = (props) => {
 
     props.clearErrors(props.fieldName);
     actionIsPrice();
+    setTimeout(() => props.setIsMassal(false), 550);
   });
 
   const handleBack = () => {

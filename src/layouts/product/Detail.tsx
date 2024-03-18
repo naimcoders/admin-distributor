@@ -293,7 +293,7 @@ const Detail = () => {
 
       const result = await update.mutateAsync({ data: obj });
       setVariantTypes([]);
-      // if (result.name) navigate(-1);
+      if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
       console.error(`Failed to update : ${error.message}`);

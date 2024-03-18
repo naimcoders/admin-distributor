@@ -40,7 +40,7 @@ export interface UseForm {
 
 export enum IconColor {
   red = "#F31260",
-  green = "#12A150",
+  green = "#0E793C",
   zinc = "#71717A",
 }
 

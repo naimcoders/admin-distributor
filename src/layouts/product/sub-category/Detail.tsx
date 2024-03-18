@@ -24,14 +24,20 @@ const Detail = () => {
 
   const { create, findById, remove } = useSubCategoryProduct(categoryProductId);
 
-  const activeBtnCreate = () => setIsCreate((prev) => !prev);
+  const activeBtnCreate = () => setIsCreate(true);
+
   const onSubmit = handleSubmit(async (e) => {
     try {
       if (!e.subCategory) {
         toast.error("Masukkan sub-kategori");
         return;
       }
-      console.log(e.subCategory);
+      const obj = {
+        name: e.subCategory,
+        categoryProductId,
+      };
+
+      await create.mutateAsync({ data: obj });
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to submit : ${error.message}`);
@@ -102,7 +108,10 @@ const Detail = () => {
             control={control}
             onClick={activeBtnCreate}
             placeholder="tambah sub-kategori"
-            readOnly={{ isValue: !isCreate, cursor: "cursor-pointer" }}
+            readOnly={{
+              isValue: !isCreate,
+              cursor: !isCreate ? "cursor-pointer" : "cursor-text",
+            }}
             startContent={
               !isCreate && <PlusIcon width={16} color={IconColor.zinc} />
             }
@@ -132,7 +141,7 @@ interface ListingProps {
 
 const Listing = ({ label, update, remove }: ListingProps) => {
   return (
-    <section className="px-4 py-3 flex justify-between border-t border-gray-300">
+    <section className="px-4 py-2 flex justify-between border-t border-gray-300">
       <h2>{label}</h2>
 
       <section className="flex gap-5">

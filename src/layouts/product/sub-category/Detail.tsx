@@ -10,21 +10,28 @@ import { useSubCategoryProduct } from "src/api/sub-category-product.service";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 
+interface DefaultValue {
+  subCategory: string;
+  subCategoryUpdate: string;
+}
+
 const Detail = () => {
   const name = "subCategory";
+  const [subCategoryId, setSubCategoryId] = React.useState("");
   const { categoryProductId, categoryName } = useParams() as {
     categoryProductId: string;
     categoryName: string;
   };
 
   const [isCreate, setIsCreate] = React.useState(false);
-  const { handleSubmit, control, reset, getValues } = useForm<{
-    subCategory: string;
-  }>();
+  const [isUpdate, setIsUpdate] = React.useState(false);
+  const { handleSubmit, control, reset, getValues } = useForm<DefaultValue>();
 
-  const { create, findById, remove } = useSubCategoryProduct(categoryProductId);
+  const { create, findById, remove, update } =
+    useSubCategoryProduct(categoryProductId);
 
   const activeBtnCreate = () => setIsCreate(true);
+  const activeBtnUpdate = () => setIsUpdate(true);
 
   const onSubmit = handleSubmit(async (e) => {
     try {
@@ -80,6 +87,26 @@ const Detail = () => {
     }
   };
 
+  const onClickEdit = (subCategoryId: string) => {
+    setSubCategoryId(subCategoryId);
+  };
+
+  const onUpdate = handleSubmit(async (e) => {
+    try {
+      const obj = {
+        name: e.subCategoryUpdate,
+        categoryProductId,
+      };
+      await update.mutateAsync({
+        subCategoryId,
+        data: obj,
+      });
+    } catch (err) {
+      const error = err as Error;
+      console.error(`Something wrong to update : ${error.message}`);
+    }
+  });
+
   return (
     <>
       {findById.error ? (
@@ -92,14 +119,40 @@ const Detail = () => {
             <h2 className="font-interBold">{categoryName}</h2>
           </header>
 
-          {findById.data?.map((v) => (
-            <Listing
-              key={v.id}
-              label={v.name}
-              update={() => console.log(`edit ${v.id}`)}
-              remove={() => onRemove(v.id)}
-            />
-          ))}
+          {findById.data?.map((v) =>
+            v.id === subCategoryId ? (
+              <Textfield
+                key={v.id}
+                name="subCategoryUpdate"
+                radius="none"
+                defaultValue={v.name}
+                control={control}
+                onClick={activeBtnUpdate}
+                placeholder="tambah sub-kategori"
+                startContent={
+                  !isUpdate && <PlusIcon width={16} color={IconColor.zinc} />
+                }
+                endContent={
+                  isUpdate && (
+                    <CheckIcon
+                      width={16}
+                      color={IconColor.green}
+                      className="cursor-pointer"
+                      onClick={onUpdate}
+                    />
+                  )
+                }
+                // onKeyDown={onSubmitKeyDown}
+              />
+            ) : (
+              <Listing
+                key={v.id}
+                label={v.name}
+                update={() => onClickEdit(v.id)}
+                remove={() => onRemove(v.id)}
+              />
+            )
+          )}
 
           <Textfield
             name={name}

@@ -1,10 +1,9 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
-import { HTMLAttributes, KeyboardEvent, ReactNode, Ref, useState } from "react";
+import { HTMLAttributes, KeyboardEvent, ReactNode, Ref } from "react";
 import { UseControllerProps, useController } from "react-hook-form";
 import { ChildRef, FileProps } from "./File";
-import { IconColor, Radius } from "src/types";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { Radius } from "src/types";
 import { IconImage } from "./Image";
 import { NumericFormat } from "react-number-format";
 
@@ -43,21 +42,13 @@ export interface TextfieldProps
 
 export const Textfield = (props: TextfieldProps) => {
   const { field } = useController(props);
-  const [isPass, setIsPass] = useState(false);
-  const handlePass = () => setIsPass((prev) => !prev);
 
   return (
     <section className={cx("flexcol gap-4", props.classNameWrapper)}>
       {props.label && <h2 className="text-sm capitalize">{props.label}</h2>}
       <Input
         {...field}
-        type={
-          props.type === "password"
-            ? !isPass
-              ? "password"
-              : "text"
-            : props.type
-        }
+        type={props.type}
         onKeyDown={props.onKeyDown}
         labelPlacement="outside"
         onClick={props.onClick}
@@ -77,29 +68,7 @@ export const Textfield = (props: TextfieldProps) => {
           input: cx("placeholder:capitalize", props.readOnly?.cursor),
         }}
         title={props.defaultValue}
-        endContent={
-          props.type === "password" ? (
-            !isPass ? (
-              <EyeSlashIcon
-                width={18}
-                className="cursor-pointer"
-                onClick={handlePass}
-                color={IconColor.zinc}
-                title="Show"
-              />
-            ) : (
-              <EyeIcon
-                width={18}
-                color={IconColor.zinc}
-                className="cursor-pointer"
-                onClick={handlePass}
-                title="Hide"
-              />
-            )
-          ) : (
-            props.endContent
-          )
-        }
+        endContent={props.endContent}
       />
     </section>
   );

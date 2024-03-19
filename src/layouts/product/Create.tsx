@@ -222,6 +222,7 @@ const Create = () => {
                             src={v === "1:1" ? square : rectangle}
                             alt="square icon"
                             className="w-4 cursor-pointer"
+                            onClick={onClick}
                           />
                         }
                       />

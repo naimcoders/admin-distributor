@@ -11,8 +11,10 @@ import {
 import { handleErrorMessage } from "src/helpers";
 import { KeyboardEvent, useEffect, useState } from "react";
 import { requestForToken } from "src/firebase";
-import { Role, useLogin } from "src/api/login.service";
+import { Role, useLogin as useLoginApi } from "src/api/login.service";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { IconColor } from "src/types";
 
 const LoginPage = () => {
   return (
@@ -35,19 +37,43 @@ const LoginPage = () => {
   );
 };
 
-export const logins: TextfieldProps[] = [
-  objectFields({
-    label: "email",
-    name: "email",
-    type: "email",
-    autoComplete: "on",
-  }),
-  objectFields({
-    label: "password",
-    name: "password",
-    type: "password",
-  }),
-];
+export const useLogin = () => {
+  const [isPassword, setIsPassword] = useState(false);
+  const onShowPassword = () => setIsPassword((prev) => !prev);
+
+  const logins: TextfieldProps[] = [
+    objectFields({
+      label: "email",
+      name: "email",
+      type: "email",
+      autoComplete: "on",
+    }),
+    objectFields({
+      label: "password",
+      name: "password",
+      type: !isPassword ? "password" : "text",
+      endContent: !isPassword ? (
+        <EyeSlashIcon
+          width={18}
+          className="cursor-pointer"
+          onClick={onShowPassword}
+          color={IconColor.zinc}
+          title="Show"
+        />
+      ) : (
+        <EyeIcon
+          width={18}
+          color={IconColor.zinc}
+          className="cursor-pointer"
+          onClick={onShowPassword}
+          title="Hide"
+        />
+      ),
+    }),
+  ];
+
+  return { logins };
+};
 
 interface LoginFieldProps {
   email: string;
@@ -55,7 +81,8 @@ interface LoginFieldProps {
 }
 
 const Form = () => {
-  const { control, errors, onKeyDown, onSubmit, posted } = useHook();
+  const { control, errors, onKeyDown, onSubmit, isPending } = useHook();
+  const { logins } = useLogin();
 
   return (
     <section className="flexcol gap-8">
@@ -73,7 +100,7 @@ const Form = () => {
       ))}
 
       <Button
-        aria-label={posted.isPending ? "Loading..." : "Login"}
+        aria-label={isPending ? "Loading..." : "Login"}
         onClick={onSubmit}
         className="mt-4 mx-auto text-base bg-accentYellow text-black"
       />
@@ -97,7 +124,7 @@ const useHook = () => {
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
 
-  const posted = useLogin();
+  const { mutateAsync, isPending } = useLoginApi();
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (e) => {
@@ -109,7 +136,7 @@ const useHook = () => {
         fcmToken: token,
       };
 
-      await posted.mutateAsync(result);
+      await mutateAsync(result);
       navigate("/dashboard");
     } catch (e) {
       const error = e as Error;
@@ -129,7 +156,7 @@ const useHook = () => {
           fcmToken: token,
         };
 
-        await posted.mutateAsync(result);
+        await mutateAsync(result);
         navigate("/dashboard");
       }
     } catch (e) {
@@ -138,7 +165,7 @@ const useHook = () => {
     }
   };
 
-  return { onSubmit, onKeyDown, control, errors, posted };
+  return { onSubmit, onKeyDown, control, errors, isPending };
 };
 
 export default LoginPage;

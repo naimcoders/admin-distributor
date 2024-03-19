@@ -2,7 +2,7 @@ import Template from "./Template";
 import { FieldValues, useForm } from "react-hook-form";
 import { Textfield } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
-import { logins } from "src/pages/Index";
+import { useLogin } from "src/pages/Index";
 
 const Password = () => {
   const {
@@ -15,6 +15,8 @@ const Password = () => {
     console.log(e);
   });
 
+  const { logins } = useLogin();
+
   return (
     <Template
       title="perbarui password"
@@ -23,11 +25,9 @@ const Password = () => {
     >
       {logins.map((el, idx) => (
         <Textfield
+          {...el}
           key={idx}
-          type={el.type}
-          name={el.name!}
           defaultValue=""
-          label={el.label}
           control={control}
           className="w-full"
           placeholder={el.placeholder}

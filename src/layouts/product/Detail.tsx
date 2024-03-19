@@ -34,7 +34,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { CurrentProductImageProps } from "./Create";
 import { toast } from "react-toastify";
 import { useActiveModal } from "src/stores/modalStore";
-import { ModalCategory } from "./Modals/Category";
+import { ModalCategory, ModalSubCategory } from "./Modals/Category";
 import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
@@ -54,7 +54,7 @@ const Detail = () => {
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
-  // const [subCategoryId, setSubCategoryId] = React.useState("");
+  const [subCategoryId, setSubCategoryId] = React.useState("");
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
@@ -143,6 +143,7 @@ const Detail = () => {
         price = min === max ? max : `${min} - ${max}`;
       }
 
+      setSubCategoryId(findById.data.subCategoryProductId);
       setValue("productName", findById.data.name);
       setValue("category", findById.data.categoryProduct.category.name);
       setValue("subCategory", findById.data.subCategoryProduct?.name ?? "-");
@@ -284,6 +285,7 @@ const Detail = () => {
         deliveryPrice,
         category: { categoryId },
         description: e.description,
+        subCategoryId: "",
         imageUrl,
         price: {
           ...priceStore,
@@ -341,7 +343,6 @@ const Detail = () => {
       return;
     }
     actionIsSubCategory();
-    console.log(findById.data?.categoryProduct.category.name);
   };
 
   const fields: TextfieldProps[] = [
@@ -566,6 +567,13 @@ const Detail = () => {
         setValue={setValue}
         setId={setCategoryId}
         clearErrors={clearErrors}
+      />
+      <ModalSubCategory
+        id={subCategoryId}
+        setValue={setValue}
+        setId={setSubCategoryId}
+        clearErrors={clearErrors}
+        categoryId={categoryId}
       />
       <DangerousModal setValue={setValue} />
       <ConditionModal setValue={setValue} />

@@ -97,7 +97,7 @@ export const ModalSubCategory: FC<ModalCategoryProps> = ({
                   onClick={() => onClick(e.id, e.name)}
                   className={cx(
                     "hover:font-bold cursor-pointer w-max",
-                    v.id === id && "font-bold"
+                    e.id === id && "font-bold"
                   )}
                 >
                   {e.name}

@@ -168,6 +168,11 @@ const Create = () => {
     }
   });
 
+  const onProductSize = (size: string) => {
+    handleProductSize(size);
+    onClick();
+  };
+
   return (
     <>
       {findCategories.error ? (
@@ -206,10 +211,7 @@ const Create = () => {
                       <FileComp
                         key={v}
                         control={control}
-                        onClick={() => {
-                          handleProductSize(v);
-                          onClick();
-                        }}
+                        onClick={() => onProductSize(v)}
                         onChange={onChange}
                         name="productPhoto"
                         ref={productPhotoRef}
@@ -221,7 +223,7 @@ const Create = () => {
                             src={v === "1:1" ? square : rectangle}
                             alt="square icon"
                             className="w-4 cursor-pointer"
-                            onClick={onClick}
+                            onClick={() => onProductSize(v)}
                           />
                         }
                       />

@@ -51,6 +51,7 @@ const Create = () => {
     setValue,
     clearErrors,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<FieldValues>();
 
@@ -83,6 +84,12 @@ const Create = () => {
       toast.error("Tambah foto produk");
       return;
     }
+
+    if (e.price === "0") {
+      setError("price", { message: "Masukkan harga" });
+      return;
+    }
+
     try {
       setIsLoading(true);
       const isDangerous = e.dangerous === "Tidak" ? false : true;

@@ -372,6 +372,11 @@ export const useVariant = ({
   const handleOnKeyDownSize = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const val = formSize.getValues().size;
+      if (!val) {
+        formSize.setError("size", { message: "masukkan ukuran" });
+        return;
+      }
+
       if (checkVariantSize(val)) {
         toast.error(`Ukuran ${val} sudah ada`);
         formSize.reset();
@@ -391,6 +396,13 @@ export const useVariant = ({
   const handleOnKeyDownType = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const type = formType.getValues().type;
+      if (!type) {
+        formType.setError("type", {
+          message: "masukkan warna/jenis/tipe",
+        });
+        return;
+      }
+
       if (checkVariantName(type)) {
         toast.error(`Tipe ${type} sudah ada`);
         formType.reset();

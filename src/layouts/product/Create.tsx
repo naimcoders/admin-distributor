@@ -40,7 +40,7 @@ import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { uploadFile } from "src/firebase/upload";
-import { base64ToBlob, cropImage } from "src/helpers/crop-image";
+import { onPickImage } from "src/helpers/crop-image";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
@@ -361,14 +361,14 @@ export const useUploadProduct = () => {
     if (!e.target.files) return null;
 
     const files = e.target.files[0];
-    let blob = URL.createObjectURL(files);
-    const toCrop = await cropImage(blob, productSize === "1:1" ? 1 / 1 : 3 / 4);
-    const toBlob = base64ToBlob(toCrop.toDataURL());
-    blob = URL.createObjectURL(toBlob);
+    const nFile = await onPickImage({
+      file: files,
+      ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
+    });
 
     setPhotos([
       ...photos,
-      { src: blob, size: productSize, name: files.name, file: files },
+      { src: nFile.url, size: productSize, name: files.name, file: nFile.file },
     ]);
     setIsPopOver((v) => !v);
   };

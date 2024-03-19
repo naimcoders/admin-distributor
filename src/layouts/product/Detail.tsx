@@ -46,10 +46,12 @@ import PriceModal from "./Modals/Price";
 import { VariantDetailProductModal } from "./Modals/VariantDetailProduct";
 import { useVariant } from "src/api/variant.service";
 import { uploadFile } from "src/firebase/upload";
+import { onPickImage } from "src/helpers/crop-image";
+import { Modal } from "src/components/Modal";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [imageUrlDel, setImageUrlDel] = React.useState<string[]>([]);
+  const [imageUrlDel, setImageUrlDel] = React.useState("");
   const [newImageFile, setNewImageFile] = React.useState<File>();
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
@@ -87,6 +89,8 @@ const Detail = () => {
   const [variantTypesPrev, setVariantTypesPrev] = React.useState<
     VariantTypeProps[]
   >([]);
+
+  const { actionIsDeleteImageProduct, isDeleteImageProduct } = useActiveModal();
 
   const productImageRef = React.useRef<ChildRef>(null);
   const onOpenExplorer = () => {
@@ -172,7 +176,7 @@ const Detail = () => {
       });
       await uploadFile({
         file: newImageFile,
-        prefix: `product/${id}/${Date.now()}.png`,
+        prefix: `product/${id}/${productSize}_${Date.now()}.png`,
       });
       toast.success(`Berhasil upload foto produk`);
     } catch (e) {
@@ -187,19 +191,6 @@ const Detail = () => {
 
   const onSubmit = handleSubmit(async (e) => {
     setIsLoading(true);
-    // ON DELETE IMAGE
-    if (imageUrlDel.length > 0) {
-      imageUrlDel.forEach(async (e) => {
-        try {
-          const obj = { imageUrl: e };
-          await removeImageUrl.mutateAsync({ data: obj });
-        } catch (err) {
-          const error = err as Error;
-          console.error(`Failed to remove image url : ${error.message}`);
-        }
-      });
-    }
-
     // ON CREATE VARIANT
     if (variantTypesPrev.length < variantTypes.length) {
       variantTypes.forEach(async (type) => {
@@ -302,25 +293,28 @@ const Detail = () => {
     } finally {
       clearVariantId();
       clearVariantColorId();
-      setImageUrlDel([]);
       setIsLoading(false);
     }
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
-    setNewImageFile(files);
-    const blob = URL.createObjectURL(files);
 
+    const nFile = await onPickImage({
+      file: files,
+      ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
+    });
+
+    setNewImageFile(nFile.file);
     if (currentProductImage?.length) {
       setCurrentProductImage([
         ...currentProductImage,
-        { src: blob, size: productSize, name: files.name },
+        { src: nFile.url, size: productSize, name: files.name },
       ]);
     } else {
       setCurrentProductImage([
-        { src: blob, size: productSize, name: files.name },
+        { src: nFile.url, size: productSize, name: files.name },
       ]);
     }
     setIsPopOver((v) => !v);
@@ -416,9 +410,25 @@ const Detail = () => {
     }),
   ];
 
-  const onRemoveImageUrl = (data: CurrentProductImageProps) => {
-    setCurrentProductImage(currentProductImage.filter((e) => e !== data));
-    setImageUrlDel([...imageUrlDel, data.src]);
+  const onIsDeleteModal = (path: string) => {
+    setImageUrlDel(path);
+    actionIsDeleteImageProduct();
+  };
+
+  const onRemoveImage = async (path: string) => {
+    try {
+      await removeImageUrl.mutateAsync({
+        data: {
+          imageUrl: path,
+        },
+      });
+    } catch (err) {
+      const error = err as Error;
+      console.error(`Failed to remove image : ${error.message}`);
+    } finally {
+      actionIsDeleteImageProduct();
+      setImageUrlDel("");
+    }
   };
 
   return (
@@ -436,14 +446,11 @@ const Detail = () => {
                   key={k}
                   src={v.src}
                   alt="Product"
-                  className={cx(
-                    "w-[10rem] object-cover rounded-md",
-                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
-                  )}
+                  className={cx("w-[10rem] object-cover rounded-md")}
                   actions={[
                     {
                       src: <TrashIcon width={16} />,
-                      onClick: () => onRemoveImageUrl(v),
+                      onClick: () => onIsDeleteModal(v.src),
                     },
                   ]}
                 />
@@ -561,6 +568,23 @@ const Detail = () => {
           />
         </main>
       )}
+
+      <Modal
+        isOpen={isDeleteImageProduct}
+        closeModal={actionIsDeleteImageProduct}
+      >
+        <h2 className="font-semibold text-center">
+          Yakin ingin menghapus gambar?
+        </h2>
+        <section className="flex gap-4 lg:mt-8 mt-5">
+          <Button aria-label="Batal" variant="flat" className="w-full" />
+          <Button
+            aria-label="Hapus"
+            className="bg-[#c41414] w-full"
+            onClick={() => onRemoveImage(imageUrlDel!)}
+          />
+        </section>
+      </Modal>
 
       <ModalCategory
         id={categoryId}

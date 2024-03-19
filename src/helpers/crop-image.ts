@@ -67,3 +67,49 @@ export function base64ToBlob(base64String: string): Blob {
   // Create a Blob from the Uint8Array
   return new Blob([byteArray], { type: contentType });
 }
+
+export type TUsePickImage = {
+  file: File;
+  ratio?: number;
+};
+
+function base64ToFile(
+  base64String: string,
+  fileName: string,
+  mimeType: string
+) {
+  // Convert base64 to Uint8Array
+  const base64Data = base64String.split(",")[1];
+
+  const byteCharacters = atob(base64Data);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Create Blob from Uint8Array
+  const blob = new Blob([byteArray], { type: mimeType });
+  // Create File from Blob
+  const file = new File([blob], fileName, { type: mimeType });
+  return file;
+}
+
+export const onPickImage = async (
+  r: TUsePickImage
+): Promise<{
+  file: File;
+  url: string;
+}> => {
+  const files = r.file;
+  const ratio = r.ratio || 5 / 5;
+
+  const toCrop = await cropImage(URL.createObjectURL(files), ratio);
+  const f = base64ToFile(toCrop.toDataURL(), files.name, files.type);
+  const blob = URL.createObjectURL(f);
+
+  return {
+    file: f,
+    url: blob,
+  };
+};

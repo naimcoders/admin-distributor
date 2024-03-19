@@ -9,6 +9,8 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-modern-drawer/dist/index.css";
+import "react-image-crop/dist/ReactCrop.css";
+
 
 const queryClient = new QueryClient();
 

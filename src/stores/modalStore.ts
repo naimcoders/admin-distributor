@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 interface Modal {
+  isDeleteImageProduct: boolean;
+  setIsDeleteImageProduct: (v: boolean) => void;
   isPrice: boolean;
   setIsPrice: (v: boolean) => void;
   isBankName: boolean;
@@ -42,6 +44,8 @@ interface Modal {
 }
 
 const useModalStore = create<Modal>((set) => ({
+  isDeleteImageProduct: false,
+  setIsDeleteImageProduct: (v) => set({ isDeleteImageProduct: v }),
   isPinVerification: false,
   setIsPinVerification: (v) => set({ isPinVerification: v }),
   isPrice: false,
@@ -124,6 +128,8 @@ export const useActiveModal = () => {
     setIsPinVerification,
     isConfirmTopup,
     setIsConfirmTopup,
+    isDeleteImageProduct,
+    setIsDeleteImageProduct,
   } = useModalStore();
 
   const actionIsBankName = () => setIsBankName(!isBankName);
@@ -147,8 +153,12 @@ export const useActiveModal = () => {
   const actionIsConfirmTopUp = () => setIsConfirmTopup(!isConfirmTopup);
   const actionIsPinVerification = () =>
     setIsPinVerification(!isPinVerification);
+  const actionIsDeleteImageProduct = () =>
+    setIsDeleteImageProduct(!isDeleteImageProduct);
 
   return {
+    isDeleteImageProduct,
+    actionIsDeleteImageProduct,
     isConfirmTopup,
     actionIsConfirmTopUp,
     isConfirmTransfer,

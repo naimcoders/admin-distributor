@@ -95,7 +95,6 @@ const Create = () => {
       const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
-
       const variants = variantTypes.map((v) => ({
         name: v.name,
         imageUrl: "",
@@ -105,24 +104,24 @@ const Create = () => {
         })),
       }));
 
-      const result = await create.mutateAsync({
-        data: {
-          name: e.productName,
-          isDangerous,
-          deliveryPrice,
-          variant: variants,
-          category: { categoryId },
-          description: e.description,
-          subCategoryId,
-          price: {
-            fee: 0,
-            startAt: 0,
-            expiredAt: 0,
-            price: newPrice,
-            priceDiscount: 0,
-          },
+      const obj = {
+        name: e.productName,
+        isDangerous,
+        deliveryPrice,
+        variant: variants,
+        category: { categoryId },
+        description: e.description,
+        subCategoryId,
+        price: {
+          fee: 0,
+          startAt: 0,
+          expiredAt: 0,
+          price: newPrice,
+          priceDiscount: 0,
         },
-      });
+      };
+
+      const result = await create.mutateAsync({ data: obj });
 
       // ON UPLOAD IMAGE PRODUCTS
       if (photos.length > 0) {

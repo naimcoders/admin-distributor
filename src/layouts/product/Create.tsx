@@ -106,6 +106,7 @@ const Create = () => {
           variant: variants,
           category: { categoryId },
           description: e.description,
+          subCategoryId,
           price: {
             fee: 0,
             startAt: 0,
@@ -117,25 +118,31 @@ const Create = () => {
       });
 
       // ON UPLOAD IMAGE PRODUCTS
-      for (let i = 0; i < photos.length; i++) {
-        const imageUri = photos[i];
-        if (!imageUri.file) return;
-        await uploadFile({
-          file: imageUri.file,
-          prefix: `product/${result.id}/${Date.now()}.png`,
-        });
+      if (photos.length > 0) {
+        for (let i = 0; i < photos.length; i++) {
+          const imageUri = photos[i];
+          if (!imageUri.file) return;
+          await uploadFile({
+            file: imageUri.file,
+            prefix: `product/${result.id}/${Date.now()}.png`,
+          });
+        }
       }
 
+      const variantLength = result.variantProduct.length;
+
       // ON UPLOAD PRODUCTS VARIANT IMAGE
-      for (let v = 0; v < result.variantProduct.length; v++) {
-        const variantFiles = variantTypes[v];
-        const variantResult = result.variantProduct[v];
-        if (!variantFiles.files) return;
-        if (variantFiles.name === variantResult.name) {
-          await uploadFile({
-            file: variantFiles.files,
-            prefix: `product_variant/${variantResult.id}/${Date.now()}.png`,
-          });
+      if (variantLength > 0) {
+        for (let v = 0; v < variantLength; v++) {
+          const variantFiles = variantTypes[v];
+          const variantResult = result.variantProduct[v];
+          if (!variantFiles.files) return;
+          if (variantFiles.name === variantResult.name) {
+            await uploadFile({
+              file: variantFiles.files,
+              prefix: `product_variant/${variantResult.id}/${Date.now()}.png`,
+            });
+          }
         }
       }
 

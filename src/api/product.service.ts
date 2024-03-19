@@ -230,6 +230,7 @@ export interface CreateProduct {
   imageUrl?: string[];
   isDangerous: boolean;
   name: string;
+  subCategoryId: string;
   price: {
     price: number;
     priceDiscount: number;
@@ -375,7 +376,7 @@ export const useProduct = (productId?: string) => {
   });
 
   const create = useMutation<Product, Error, { data: CreateProduct }>({
-    mutationKey: [key, productId],
+    mutationKey: [key],
     mutationFn: async (r) => await getProductApiInfo().create(r.data),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
     onError: (e) => toast.error(e.message),

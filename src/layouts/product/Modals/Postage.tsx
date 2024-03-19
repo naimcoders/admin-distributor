@@ -85,7 +85,6 @@ export const PostageModal: React.FC<PostageProps> = ({
       setValue("postage", e.price);
       clearErrors("postage");
       actionIsPostage();
-      console.log(obj);
     }
   });
 

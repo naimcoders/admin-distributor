@@ -40,6 +40,7 @@ import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { uploadFile } from "src/firebase/upload";
+import { base64ToBlob, cropImage } from "src/helpers/crop-image";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
@@ -128,9 +129,10 @@ const Create = () => {
         for (let i = 0; i < photos.length; i++) {
           const imageUri = photos[i];
           if (!imageUri.file) return;
+          const filename = `${imageUri.size}_${Date.now()}.png`;
           await uploadFile({
             file: imageUri.file,
-            prefix: `product/${result.id}/${Date.now()}.png`,
+            prefix: `product/${result.id}/${filename}`,
           });
         }
       }
@@ -212,7 +214,7 @@ const Create = () => {
                         key={v}
                         control={control}
                         onClick={() => onProductSize(v)}
-                        onChange={onChange}
+                        onChange={(e) => onChange(e)}
                         name="productPhoto"
                         ref={productPhotoRef}
                         placeholder={v}
@@ -355,11 +357,15 @@ export const useUploadProduct = () => {
     }
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
 
     const files = e.target.files[0];
-    const blob = URL.createObjectURL(files);
+    let blob = URL.createObjectURL(files);
+    const toCrop = await cropImage(blob, productSize === "1:1" ? 1 / 1 : 3 / 4);
+    const toBlob = base64ToBlob(toCrop.toDataURL());
+    blob = URL.createObjectURL(toBlob);
+
     setPhotos([
       ...photos,
       { src: blob, size: productSize, name: files.name, file: files },

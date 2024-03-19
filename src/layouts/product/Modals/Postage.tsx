@@ -64,10 +64,6 @@ export const PostageModal: React.FC<PostageProps> = ({
       forms.setError("length", { message: "Masukkan panjang" });
       error++;
     }
-    if (e.price === "0") {
-      forms.setError("price", { message: "Masukkan ongkir" });
-      error++;
-    }
 
     if (!error) {
       const isCourierInternal = !isOutOfTown ? true : false;

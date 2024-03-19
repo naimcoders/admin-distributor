@@ -71,7 +71,7 @@ interface General {
 export const defaultValueDeliveryPrice = {
   id: "",
   height: 0,
-  isCourierInternal: true,
+  isCourierInternal: false,
   length: 0,
   price: 0,
   weight: 0,

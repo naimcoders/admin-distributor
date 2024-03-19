@@ -58,13 +58,12 @@ const Create = () => {
 
   const {
     productPhotoRef,
-    onClick,
     onChange,
     photos,
     setPhotos,
-    handleProductSize,
     isPopOver,
     setIsPopOver,
+    onProductSize,
   } = useUploadProduct();
 
   const { fields, categoryId, subCategoryId, setCategoryId, setSubCategoryId } =
@@ -154,6 +153,8 @@ const Create = () => {
         }
       }
 
+      console.log(result);
+
       setPhotos([]);
       setVariantType([]);
       setCategoryId("");
@@ -170,11 +171,6 @@ const Create = () => {
     }
   });
 
-  const onProductSize = (size: string) => {
-    handleProductSize(size);
-    onClick();
-  };
-
   return (
     <>
       {findCategories.error ? (
@@ -182,7 +178,7 @@ const Create = () => {
       ) : (
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
-            <section className="flex gap-6 items-center flex-wrap">
+            <section className="flex gap-6 items-start flex-wrap">
               {photos.map((v) => (
                 <Image
                   src={v.src}
@@ -373,7 +369,13 @@ export const useUploadProduct = () => {
     setIsPopOver((v) => !v);
   };
 
+  const onProductSize = (size: string) => {
+    handleProductSize(size);
+    onClick();
+  };
+
   return {
+    onProductSize,
     productPhotoRef,
     onClick,
     onChange,

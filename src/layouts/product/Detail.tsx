@@ -415,6 +415,11 @@ const Detail = () => {
     actionIsDeleteImageProduct();
   };
 
+  const onProductSize = (size: string) => {
+    setProductSize(size);
+    onOpenExplorer();
+  };
+
   const onRemoveImage = async (path: string) => {
     try {
       await removeImageUrl.mutateAsync({
@@ -440,7 +445,7 @@ const Detail = () => {
       ) : (
         <main className="flexcol gap-5 lg:gap-8">
           <header className="flexcol gap-4">
-            <section className="flex gap-6 items-center flex-wrap">
+            <section className="flex gap-6 items-start flex-wrap">
               {currentProductImage?.map((v, k) => (
                 <Image
                   key={k}
@@ -468,10 +473,7 @@ const Detail = () => {
                       <FileComp
                         key={v}
                         control={control}
-                        onClick={() => {
-                          setProductSize(v);
-                          onOpenExplorer();
-                        }}
+                        onClick={() => onProductSize(v)}
                         onChange={onChange}
                         name="productPhoto"
                         ref={productImageRef}
@@ -483,6 +485,7 @@ const Detail = () => {
                             src={v === "1:1" ? square : rectangle}
                             alt="square icon"
                             className="w-4 cursor-pointer"
+                            onClick={() => onProductSize(v)}
                           />
                         }
                       />
@@ -574,10 +577,15 @@ const Detail = () => {
         closeModal={actionIsDeleteImageProduct}
       >
         <h2 className="font-semibold text-center">
-          Yakin ingin menghapus gambar?
+          Yakin ingin menghapus gambar ini?
         </h2>
         <section className="flex gap-4 lg:mt-8 mt-5">
-          <Button aria-label="Batal" variant="flat" className="w-full" />
+          <Button
+            aria-label="Batal"
+            variant="flat"
+            className="w-full"
+            onClick={actionIsDeleteImageProduct}
+          />
           <Button
             aria-label="Hapus"
             className="bg-[#c41414] w-full"

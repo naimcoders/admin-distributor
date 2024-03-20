@@ -64,12 +64,15 @@ export const PostageModal: React.FC<PostageProps> = ({
       forms.setError("length", { message: "Masukkan panjang" });
       error++;
     }
+    if (isOutOfTown && e.price === "0") {
+      forms.setError("price", { message: "Mauskkan ongkir" });
+      return;
+    }
 
     if (!error) {
-      const isCourierInternal = !isOutOfTown ? true : false;
-      let obj: DeliveryPrice = {
+      const obj: DeliveryPrice = {
         id: "",
-        isCourierInternal,
+        isCourierInternal: isOutOfTown,
         height: parseTextToNumber(e.height),
         length: parseTextToNumber(e.length),
         price: parseTextToNumber(e.price),
@@ -172,8 +175,8 @@ export const PostageModal: React.FC<PostageProps> = ({
             <h2 className="font-semibold capitalize">pengiriman luar kota</h2>
             <Switch
               size="sm"
-              isSelected={isOutOfTown}
               color="success"
+              isSelected={isOutOfTown}
               onClick={handleSwitchOutOfTown}
             />
           </header>

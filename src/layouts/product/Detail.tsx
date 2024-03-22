@@ -626,7 +626,12 @@ const Detail = () => {
         setIsMassal={setIsMassal}
         variantTypes={variantTypes}
       />
-      <Promotion setValue={setValue} />
+      <Promotion
+        setValue={setValue}
+        images={findById.data?.imageUrl ?? []}
+        productName={findById.data?.name ?? "-"}
+        description={findById.data?.description ?? "-"}
+      />
     </>
   );
 };

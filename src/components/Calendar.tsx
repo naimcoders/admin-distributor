@@ -20,7 +20,7 @@ export const Calendar = (
   const { dateRange, handleSelect } = useHook();
   const date = useGeneralStore((v) => v.date);
 
-  const handlePeriod = () => {
+  const onSubmit = () => {
     const startAt = dateToEpochConvert(new Date(date.startAt));
     const endAt = dateToEpochConvert(new Date(date.endAt));
     const start = epochToDateConvert(startAt);
@@ -49,7 +49,7 @@ export const Calendar = (
             <LabelPeriod label="dimulai" date={date.startAt} />
             <LabelPeriod label="berakhir" date={date.endAt} />
           </div>
-          <Button aria-label="pilih periode" onClick={handlePeriod} />
+          <Button aria-label="pilih periode" onClick={onSubmit} />
         </section>
       )}
     </section>
@@ -61,7 +61,7 @@ const LabelPeriod = (props: {
   date: string;
 }) => {
   return (
-    <div className="flex flex-col gap-1">
+    <section className="flex flex-col gap-1">
       <h2
         className={cx(
           "text-xs font-interMedium capitalize",
@@ -77,7 +77,7 @@ const LabelPeriod = (props: {
       >
         {props.date}
       </Chip>
-    </div>
+    </section>
   );
 };
 

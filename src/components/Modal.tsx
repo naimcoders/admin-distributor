@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { Fragment } from "react";
 import { modalDOM } from "src/helpers";
+import { useActiveModal } from "src/stores/modalStore";
+import { Button } from "./Button";
 
 interface Modal {
   isOpen: boolean;
@@ -83,5 +85,28 @@ export const Modal = ({
             modalDOM
           )}
     </>
+  );
+};
+
+interface ConfirmModalProps {
+  label: string;
+  onSubmit: {
+    label: string;
+    action: () => void;
+  };
+}
+
+export const ConfirmModal: React.FC<ConfirmModalProps> = ({
+  onSubmit,
+  label,
+}) => {
+  const { isConfirm, actionIsConfirm } = useActiveModal();
+  return (
+    <Modal isOpen={isConfirm} closeModal={actionIsConfirm}>
+      <section className="my-2 flexcol lg:gap-6 gap-4 items-center">
+        <p>{label}</p>
+        <Button aria-label={onSubmit.label} onClick={onSubmit.action} />
+      </section>
+    </Modal>
   );
 };

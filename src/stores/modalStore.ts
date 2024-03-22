@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 interface Modal {
+  isPromotion: boolean;
+  setIsPromotion: (v: boolean) => void;
   isDeleteImageProduct: boolean;
   setIsDeleteImageProduct: (v: boolean) => void;
   isPrice: boolean;
@@ -44,6 +46,8 @@ interface Modal {
 }
 
 const useModalStore = create<Modal>((set) => ({
+  isPromotion: false,
+  setIsPromotion: (v) => set({ isPromotion: v }),
   isDeleteImageProduct: false,
   setIsDeleteImageProduct: (v) => set({ isDeleteImageProduct: v }),
   isPinVerification: false,
@@ -89,113 +93,78 @@ const useModalStore = create<Modal>((set) => ({
 export default useModalStore;
 
 export const useActiveModal = () => {
-  const {
-    isPrice,
-    setIsPrice,
-    isBankName,
-    setIsBankName,
-    isCategory,
-    setIsCategory,
-    isHistory,
-    setIsHistory,
-    isPeriod,
-    setIsPeriod,
-    isSubCategory,
-    setIsSubCategory,
-    isDangerous,
-    setIsDangerous,
-    isCondition,
-    setIsCondition,
-    isCoordinate,
-    setIsCoordinate,
-    isConfirm,
-    setIsConfirm,
-    isPostage,
-    setIsPostage,
-    isVariant,
-    setIsVariant,
-    isSubDistributor,
-    setIsSubDistributor,
-    isTransfer,
-    setIsTransfer,
-    isTopUp,
-    setIsTopUp,
-    isWithdraw,
-    setIsWithdraw,
-    isConfirmTransfer,
-    setIsConfirmTransfer,
-    isPinVerification,
-    setIsPinVerification,
-    isConfirmTopup,
-    setIsConfirmTopup,
-    isDeleteImageProduct,
-    setIsDeleteImageProduct,
-  } = useModalStore();
+  const modals = useModalStore();
 
-  const actionIsBankName = () => setIsBankName(!isBankName);
-  const actionIsCategory = () => setIsCategory(!isCategory);
-  const actionIsSubCategory = () => setIsSubCategory(!isSubCategory);
-  const actionIsHistory = () => setIsHistory(!isHistory);
-  const actionIsPeriod = () => setIsPeriod(!isPeriod);
-  const actionIsDangerous = () => setIsDangerous(!isDangerous);
-  const actionIsCondition = () => setIsCondition(!isCondition);
-  const actionIsCoordinate = () => setIsCoordinate(!isCoordinate);
-  const actionIsConfirm = () => setIsConfirm(!isConfirm);
-  const actionIsPostage = () => setIsPostage(!isPostage);
-  const actionIsVariant = () => setIsVariant(!isVariant);
-  const actionIsSubDistributor = () => setIsSubDistributor(!isSubDistributor);
-  const actionIsTransfer = () => setIsTransfer(!isTransfer);
-  const actionIsTopUp = () => setIsTopUp(!isTopUp);
-  const actionIsWithdraw = () => setIsWithdraw(!isWithdraw);
-  const actionIsPrice = () => setIsPrice(!isPrice);
+  const actionIsPromotion = () => modals.setIsPromotion(!modals.isPromotion);
+  const actionIsBankName = () => modals.setIsBankName(!modals.isBankName);
+  const actionIsCategory = () => modals.setIsCategory(!modals.isCategory);
+  const actionIsSubCategory = () =>
+    modals.setIsSubCategory(!modals.isSubCategory);
+  const actionIsHistory = () => modals.setIsHistory(!modals.isHistory);
+  const actionIsPeriod = () => modals.setIsPeriod(!modals.isPeriod);
+  const actionIsDangerous = () => modals.setIsDangerous(!modals.isDangerous);
+  const actionIsCondition = () => modals.setIsCondition(!modals.isCondition);
+  const actionIsCoordinate = () => modals.setIsCoordinate(!modals.isCoordinate);
+  const actionIsConfirm = () => modals.setIsConfirm(!modals.isConfirm);
+  const actionIsPostage = () => modals.setIsPostage(!modals.isPostage);
+  const actionIsVariant = () => modals.setIsVariant(!modals.isVariant);
+  const actionIsSubDistributor = () =>
+    modals.setIsSubDistributor(!modals.isSubDistributor);
+  const actionIsTransfer = () => modals.setIsTransfer(!modals.isTransfer);
+  const actionIsTopUp = () => modals.setIsTopUp(!modals.isTopUp);
+  const actionIsWithdraw = () => modals.setIsWithdraw(!modals.isWithdraw);
+  const actionIsPrice = () => modals.setIsPrice(!modals.isPrice);
   const actionIsConfirmTransfer = () =>
-    setIsConfirmTransfer(!isConfirmTransfer);
-  const actionIsConfirmTopUp = () => setIsConfirmTopup(!isConfirmTopup);
+    modals.setIsConfirmTransfer(!modals.isConfirmTransfer);
+  const actionIsConfirmTopUp = () =>
+    modals.setIsConfirmTopup(!modals.isConfirmTopup);
   const actionIsPinVerification = () =>
-    setIsPinVerification(!isPinVerification);
+    modals.setIsPinVerification(!modals.isPinVerification);
   const actionIsDeleteImageProduct = () =>
-    setIsDeleteImageProduct(!isDeleteImageProduct);
+    modals.setIsDeleteImageProduct(!modals.isDeleteImageProduct);
 
   return {
-    isDeleteImageProduct,
+    actionIsPromotion,
+    isPromotion: modals.isPromotion,
+    isDeleteImageProduct: modals.isDeleteImageProduct,
     actionIsDeleteImageProduct,
-    isConfirmTopup,
+    isConfirmTopup: modals.isConfirmTopup,
     actionIsConfirmTopUp,
-    isConfirmTransfer,
+    isConfirmTransfer: modals.isConfirmTransfer,
     actionIsConfirmTransfer,
-    isBankName,
+    isBankName: modals.isBankName,
     actionIsBankName,
-    isCategory,
+    isCategory: modals.isCategory,
     actionIsCategory,
-    isHistory,
+    isHistory: modals.isHistory,
     actionIsHistory,
-    isPeriod,
+    isPeriod: modals.isPeriod,
     actionIsPeriod,
-    isSubCategory,
+    isSubCategory: modals.isSubCategory,
     actionIsSubCategory,
-    isDangerous,
+    isDangerous: modals.isDangerous,
     actionIsDangerous,
-    isCondition,
+    isCondition: modals.isCondition,
     actionIsCondition,
-    isCoordinate,
+    isCoordinate: modals.isCoordinate,
     actionIsCoordinate,
-    isConfirm,
+    isConfirm: modals.isConfirm,
     actionIsConfirm,
-    isPostage,
+    isPostage: modals.isPostage,
     actionIsPostage,
-    isVariant,
+    isVariant: modals.isVariant,
     actionIsVariant,
-    isSubDistributor,
+    isSubDistributor: modals.isSubDistributor,
     actionIsSubDistributor,
-    isTransfer,
+    isTransfer: modals.isTransfer,
     actionIsTransfer,
-    isTopUp,
+    isTopUp: modals.isTopUp,
     actionIsTopUp,
-    isWithdraw,
+    isWithdraw: modals.isWithdraw,
     actionIsWithdraw,
-    isPrice,
+    isPrice: modals.isPrice,
     actionIsPrice,
     actionIsPinVerification,
-    isPinVerification,
+    isPinVerification: modals.isPinVerification,
   };
 };

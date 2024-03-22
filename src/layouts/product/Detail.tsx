@@ -48,6 +48,7 @@ import { useVariant } from "src/api/variant.service";
 import { uploadFile } from "src/firebase/upload";
 import { onPickImage } from "src/helpers/crop-image";
 import { Modal } from "src/components/Modal";
+import Promotion from "./Modals/Promotion";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -329,6 +330,7 @@ const Detail = () => {
     actionIsVariant,
     actionIsSubDistributor,
     actionIsPrice,
+    actionIsPromotion,
   } = useActiveModal();
 
   const onClickSubCategory = () => {
@@ -407,6 +409,12 @@ const Detail = () => {
       label: "deskripsi *",
       name: "description",
       type: "textarea",
+    }),
+    objectFields({
+      label: "atur promosi",
+      name: "promotion",
+      type: "modal",
+      onClick: actionIsPromotion,
     }),
   ];
 
@@ -541,14 +549,8 @@ const Detail = () => {
                     }
                   />
                 )}
-              </React.Fragment>
-            ))}
-          </main>
 
-          <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
-            {fields.map(
-              (v) =>
-                ["textarea"].includes(v.type!) && (
+                {["textarea"].includes(v.type!) && (
                   <Textarea
                     {...v}
                     key={v.label}
@@ -560,8 +562,9 @@ const Detail = () => {
                       required: { value: true, message: v.errorMessage! },
                     }}
                   />
-                )
-            )}
+                )}
+              </React.Fragment>
+            ))}
           </main>
 
           <Button
@@ -623,6 +626,7 @@ const Detail = () => {
         setIsMassal={setIsMassal}
         variantTypes={variantTypes}
       />
+      <Promotion setValue={setValue} />
     </>
   );
 };

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import queryString from "query-string";
 import { toast } from "react-toastify";
+import { useAuth } from "src/firebase/auth";
 
 export interface Distributor {
   banner: string;
@@ -166,9 +167,17 @@ class Api {
   }
 
   private path = "distributor";
-  async find(r: ReqPaging): Promise<ResPaging<Distributor>> {
+  async find(
+    distributorId: string,
+    r: ReqPaging
+  ): Promise<ResPaging<Distributor>> {
     const query = queryString.stringify(
-      { page: r.page, limit: r.limit, search: r.search },
+      {
+        page: r.page,
+        limit: r.limit,
+        search: r.search,
+        createdById: distributorId,
+      },
       { skipEmptyString: true, skipNull: true }
     );
 
@@ -201,7 +210,7 @@ class Api {
 }
 
 interface ApiDistributorInfo {
-  find(r: ReqPaging): Promise<ResPaging<Distributor>>;
+  find(distributorId: string, r: ReqPaging): Promise<ResPaging<Distributor>>;
   findById(id: string): Promise<Distributor>;
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
 }
@@ -216,15 +225,20 @@ export const useDistributor = () => {
   const queryClient = useQueryClient();
 
   const find = () => {
+    const { user } = useAuth();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 
     const byPaging = async () =>
-      await getDistributorApiInfo().find({ page, limit, search });
+      await getDistributorApiInfo().find(user?.uid ?? "", {
+        page,
+        limit,
+        search,
+      });
 
     const { data, isLoading, error } = useQuery({
-      queryKey: [key, page, limit, search],
+      queryKey: [key, page, limit, search, user?.uid],
       queryFn: byPaging,
     });
 

@@ -13,41 +13,52 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor } from "src/types";
 import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 
+interface DefaultValues {
+  ownerName: string;
+  phoneNumber: string;
+  email: string;
+  businessName: string;
+  businessAddress: string;
+  streetName: string;
+  detailAddress: string;
+  ktpImage: string;
+  cooridnate: {
+    lat: number;
+    lng: number;
+  };
+}
+
 const Create = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>({ mode: "onChange" });
+  } = useForm<DefaultValues>();
   const { fields } = useHook();
+
+  const coordinate = useGeneralStore((v) => v.coordinate);
+  const { actionIsCoordinate } = useActiveModal();
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
 
-  const coordinate = useGeneralStore((v) => v.coordinate);
-  const { actionIsCoordinate } = useActiveModal();
-
   return (
     <main className="flexcol gap-5 lg:gap-8">
-      <GridInput>
+      <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["text", "number", "email"].includes(v.type!) && (
               <Textfield
-                type={v.type}
-                label={v.label}
+                {...v}
+                defaultValue=""
                 control={control}
-                name={v.name ?? ""}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{ required: { value: true, message: v.errorMessage! } }}
@@ -56,11 +67,9 @@ const Create = () => {
 
             {["modal"].includes(v.type!) && (
               <Textfield
-                name={v.name!}
-                label={v.label}
+                {...v}
+                defaultValue=""
                 control={control}
-                defaultValue={v.defaultValue}
-                placeholder={v.placeholder}
                 autoComplete={v.autoComplete}
                 endContent={
                   <ChevronRightIcon width={16} color={IconColor.zinc} />
@@ -72,9 +81,9 @@ const Create = () => {
             )}
           </Fragment>
         ))}
-      </GridInput>
+      </section>
 
-      <GridInput className="grid grid-cols-3">
+      <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 lg:gap-8 gap-4">
         {fields.map((v, idx) => (
           <Fragment key={idx}>
             {["coordinate"].includes(v.type!) &&
@@ -87,13 +96,10 @@ const Create = () => {
                 />
               ) : (
                 <Textfield
-                  name={v.name}
-                  label={v.label}
+                  {...v}
+                  defaultValue=""
                   control={control}
                   onClick={v.onClick}
-                  defaultValue={v.defaultValue}
-                  placeholder={v.placeholder}
-                  autoComplete={v.autoComplete}
                   startContent={
                     <MapPinIcon width={16} color={IconColor.zinc} />
                   }
@@ -132,11 +138,13 @@ const Create = () => {
               ))}
           </Fragment>
         ))}
-      </GridInput>
+      </section>
 
-      <div className="flex justify-center mt-16">
-        <Button aria-label="simpan" onClick={onSubmit} />
-      </div>
+      <Button
+        aria-label="simpan"
+        onClick={onSubmit}
+        className="mx-auto lg:mt-16 mt-8"
+      />
 
       <CoordinateModal />
     </main>
@@ -170,53 +178,45 @@ const useHook = () => {
       label: "nama pemilik",
       name: "ownerName",
       type: "text",
-      defaultValue: "",
       autoComplete: "on",
     }),
     objectFields({
       label: "nomor HP",
       name: "phoneNumber",
       type: "number",
-      defaultValue: "",
       autoComplete: "on",
     }),
     objectFields({
       label: "email",
       name: "email",
       type: "email",
-      defaultValue: "",
       autoComplete: "on",
     }),
     objectFields({
       label: "nama usaha",
       name: "businessName",
       type: "text",
-      defaultValue: "",
     }),
     objectFields({
       label: "alamat usaha",
       name: "businessAddress",
       type: "modal",
-      defaultValue: "",
       readOnly: { isValue: true, cursor: "cursor-pointer" },
     }),
     objectFields({
       label: "nama jalan, gedung, no. rumah",
       name: "streetName",
       type: "text",
-      defaultValue: "",
     }),
     objectFields({
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
-      defaultValue: "",
     }),
     objectFields({
       label: "koordinat usaha",
       name: "coordinate",
       type: "coordinate",
-      defaultValue: "",
       placeholder: "tentukan koordinat",
       onClick: actionIsCoordinate,
     }),

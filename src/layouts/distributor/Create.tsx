@@ -21,6 +21,8 @@ import useGeneralStore from "src/stores/generalStore";
 import { useLocation } from "src/api/location.service";
 import { Chip, CircularProgress } from "@nextui-org/react";
 import { toast } from "react-toastify";
+import { useDistributor } from "src/api/distributor.service";
+import { useAuth } from "src/firebase/auth";
 
 interface DefaultValues {
   ownerName: string;
@@ -182,6 +184,9 @@ const useApi = () => {
   const geoLocation = findGeoLocation(coordinate?.lat!, coordinate?.lng!);
   const zipCode = geoLocation.data?.zipCode ? geoLocation.data?.zipCode : "-";
 
+  const { create } = useDistributor();
+  const { user } = useAuth();
+
   const onSubmit = forms.handleSubmit(async (e) => {
     if (!geoLocation.data) {
       toast.error("Tentukan koordinat usaha");
@@ -193,9 +198,9 @@ const useApi = () => {
       ownerName: e.ownerName,
       phoneNumber: e.phoneNumber,
       name: e.businessName,
-      documents: {
-        ktpImage: "",
-      },
+      imageUrl: "",
+      isSuspend: true,
+      isVerify: true,
       location: {
         type: "BUSINESS",
         addressName: geoLocation.data.addressName,
@@ -206,10 +211,14 @@ const useApi = () => {
         lng: geoLocation.data.lng,
         province: geoLocation.data.province,
         zipCode: geoLocation.data.zipCode,
+        userId: user?.uid ?? "",
+        isPrimary: true,
       },
     };
 
-    console.log(obj);
+    const result = await create.mutateAsync({
+      data: obj,
+    });
   });
 
   return { zipCode, geoLocation, forms, onSubmit };

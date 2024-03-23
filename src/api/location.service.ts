@@ -41,6 +41,7 @@ class Api {
     return await req<Location>({
       method: "GET",
       path: `${this.path}?${query}`,
+      isNoAuth: false,
       errors: "",
     });
   }

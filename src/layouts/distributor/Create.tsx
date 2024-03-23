@@ -20,16 +20,14 @@ import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 import { useLocation } from "src/api/location.service";
 import { Chip, CircularProgress } from "@nextui-org/react";
+import { toast } from "react-toastify";
 
 interface DefaultValues {
   ownerName: string;
   phoneNumber: string;
   email: string;
   businessName: string;
-  businessAddress: string;
-  streetName: string;
   detailAddress: string;
-  ktpImage: string;
   cooridnate: {
     lat: number;
     lng: number;
@@ -185,7 +183,33 @@ const useApi = () => {
   const zipCode = geoLocation.data?.zipCode ? geoLocation.data?.zipCode : "-";
 
   const onSubmit = forms.handleSubmit(async (e) => {
-    console.log(e);
+    if (!geoLocation.data) {
+      toast.error("Tentukan koordinat usaha");
+      return;
+    }
+
+    const obj = {
+      email: e.email,
+      ownerName: e.ownerName,
+      phoneNumber: e.phoneNumber,
+      name: e.businessName,
+      documents: {
+        ktpImage: "",
+      },
+      location: {
+        type: "BUSINESS",
+        addressName: geoLocation.data.addressName,
+        city: geoLocation.data.city,
+        detailAddress: e.detailAddress,
+        district: geoLocation.data.district,
+        lat: geoLocation.data.lat,
+        lng: geoLocation.data.lng,
+        province: geoLocation.data.province,
+        zipCode: geoLocation.data.zipCode,
+      },
+    };
+
+    console.log(obj);
   });
 
   return { zipCode, geoLocation, forms, onSubmit };

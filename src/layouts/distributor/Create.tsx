@@ -4,7 +4,7 @@ import {
   MapPinIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { ChildRef, File, LabelAndImage } from "src/components/File";
@@ -43,6 +43,7 @@ const Create = () => {
   const { fields } = useHook();
 
   const coordinate = useGeneralStore((v) => v.coordinate);
+  // const setCoordinate = useGeneralStore((v) => v.setCoordinate);
   const { actionIsCoordinate } = useActiveModal();
 
   const onSubmit = handleSubmit(async (e) => {
@@ -51,100 +52,103 @@ const Create = () => {
 
   return (
     <main className="flexcol gap-5 lg:gap-8">
-      <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
-        {fields.map((v, idx) => (
-          <Fragment key={idx}>
-            {["text", "number", "email"].includes(v.type!) && (
-              <Textfield
-                {...v}
-                defaultValue=""
-                control={control}
-                autoComplete={v.autoComplete}
-                errorMessage={handleErrorMessage(errors, v.name)}
-                rules={{ required: { value: true, message: v.errorMessage! } }}
-              />
-            )}
+      {!coordinate ? (
+        <Textfield
+          name="coodinate"
+          defaultValue=""
+          label="koordinat usaha"
+          placeholder="tentukan koordinat"
+          control={control}
+          onClick={actionIsCoordinate}
+          startContent={<MapPinIcon width={16} color={IconColor.zinc} />}
+          errorMessage={handleErrorMessage(errors, "coordinate")}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          rules={{
+            required: { value: true, message: "pilih koordinat" },
+          }}
+        />
+      ) : (
+        <section className="aspect-video lg:w-[20rem] w-[10rem]">
+          <UserCoordinate
+            label="koordinat usaha"
+            lat={coordinate.lat}
+            lng={coordinate.lng}
+            onClick={actionIsCoordinate}
+          />
+        </section>
+      )}
 
-            {["modal"].includes(v.type!) && (
-              <Textfield
-                {...v}
-                defaultValue=""
-                control={control}
-                autoComplete={v.autoComplete}
-                endContent={
-                  <ChevronRightIcon width={16} color={IconColor.zinc} />
-                }
-                errorMessage={handleErrorMessage(errors, v.name)}
-                readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                rules={{ required: { value: true, message: v.errorMessage! } }}
-              />
-            )}
-          </Fragment>
-        ))}
-      </section>
+      {coordinate && (
+        <>
+          <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
+            {fields.map((v, idx) => (
+              <React.Fragment key={idx}>
+                {["text", "number", "email"].includes(v.type!) && (
+                  <Textfield
+                    {...v}
+                    defaultValue=""
+                    control={control}
+                    autoComplete={v.autoComplete}
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    rules={{
+                      required: { value: true, message: v.errorMessage! },
+                    }}
+                  />
+                )}
 
-      <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 lg:gap-8 gap-4">
-        {fields.map((v, idx) => (
-          <Fragment key={idx}>
-            {["coordinate"].includes(v.type!) &&
-              (coordinate ? (
-                <UserCoordinate
-                  label={v.label!}
-                  lat={coordinate.lat}
-                  lng={coordinate.lng}
-                  onClick={actionIsCoordinate}
-                />
-              ) : (
-                <Textfield
-                  {...v}
-                  defaultValue=""
-                  control={control}
-                  onClick={v.onClick}
-                  startContent={
-                    <MapPinIcon width={16} color={IconColor.zinc} />
-                  }
-                  errorMessage={handleErrorMessage(errors, v.name)}
-                  readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                  rules={{
-                    required: { value: true, message: v.errorMessage! },
-                  }}
-                />
-              ))}
+                {["modal"].includes(v.type!) && (
+                  <Textfield
+                    {...v}
+                    defaultValue=""
+                    control={control}
+                    autoComplete={v.autoComplete}
+                    endContent={
+                      <ChevronRightIcon width={16} color={IconColor.zinc} />
+                    }
+                    errorMessage={handleErrorMessage(errors, v.name)}
+                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                    rules={{
+                      required: { value: true, message: v.errorMessage! },
+                    }}
+                  />
+                )}
 
-            {["file"].includes(v.type!) &&
-              (!v.defaultValue ? (
-                <File
-                  name={v.name}
-                  label={v.label}
-                  control={control}
-                  placeholder={v.placeholder}
-                  ref={v.uploadImage?.file.ref}
-                  onClick={v.uploadImage?.file.onClick}
-                  onChange={v.uploadImage?.file.onChange}
-                  errorMessage={handleErrorMessage(errors, v.name)}
-                  startContent={
-                    <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
-                  }
-                  rules={{
-                    required: { value: true, message: v.errorMessage! },
-                  }}
-                />
-              ) : (
-                <LabelAndImage
-                  src={v.defaultValue}
-                  label={v.label}
-                  actions={v.uploadImage?.image.actions}
-                />
-              ))}
-          </Fragment>
-        ))}
-      </section>
+                {["file"].includes(v.type!) &&
+                  (!v.defaultValue ? (
+                    <File
+                      name={v.name}
+                      label={v.label}
+                      control={control}
+                      placeholder={v.placeholder}
+                      ref={v.uploadImage?.file.ref}
+                      onClick={v.uploadImage?.file.onClick}
+                      onChange={v.uploadImage?.file.onChange}
+                      errorMessage={handleErrorMessage(errors, v.name)}
+                      startContent={
+                        <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
+                      }
+                      rules={{
+                        required: { value: true, message: v.errorMessage! },
+                      }}
+                    />
+                  ) : (
+                    <LabelAndImage
+                      src={v.defaultValue}
+                      label={v.label}
+                      actions={v.uploadImage?.image.actions}
+                    />
+                  ))}
+              </React.Fragment>
+            ))}
+          </section>
 
-      <Button
-        aria-label="simpan"
-        onClick={onSubmit}
-        className="mx-auto lg:mt-16 mt-8"
-      />
+          <Button
+            aria-label="simpan"
+            onClick={onSubmit}
+            className="mx-auto lg:mt-12 mt-6"
+          />
+        </>
+      )}
 
       <CoordinateModal />
     </main>
@@ -152,14 +156,14 @@ const Create = () => {
 };
 
 export const useKtp = () => {
-  const [ktpBlob, setKtpBlob] = useState("");
-  const ktpRef = useRef<ChildRef>(null);
+  const [ktpBlob, setKtpBlob] = React.useState("");
+  const ktpRef = React.useRef<ChildRef>(null);
 
   const onClick = () => {
     if (ktpRef.current) ktpRef.current.click();
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return null;
     const blob = URL.createObjectURL(files[0]);

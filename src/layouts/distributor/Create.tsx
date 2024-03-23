@@ -50,6 +50,7 @@ const Create = () => {
           defaultValue=""
           label="koordinat usaha"
           placeholder="tentukan koordinat"
+          className="max-w-sm"
           control={forms.control}
           onClick={actionIsCoordinate}
           startContent={<MapPinIcon width={16} color={IconColor.zinc} />}

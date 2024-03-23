@@ -99,8 +99,6 @@ export interface Store {
   updatedAt: number;
 }
 
-export interface Documents {}
-
 export interface Customer {
   createdAt: number;
   dateBirth: string;
@@ -115,20 +113,6 @@ export interface Customer {
   name: string;
   phoneNumber: string;
   updatedAt: number;
-}
-
-export interface Location {
-  addressName: string;
-  city: string;
-  detailAddress: string;
-  district: string;
-  isPrimary: boolean;
-  lat: number;
-  lng: number;
-  province: string;
-  type: string;
-  userId: string;
-  zipCode: string;
 }
 
 export interface Wallet {
@@ -150,6 +134,40 @@ export interface History {
   status: string;
   transactionId: string;
   walletId: string;
+}
+
+interface Create {
+  banner: string;
+  documents: Documents;
+  email: string;
+  imageUrl: string;
+  isSuspend: boolean;
+  isVerify: boolean;
+  location: Location;
+  name: string;
+  ownerName: string;
+  password: string;
+  phoneNumber: string;
+}
+
+export interface Documents {
+  ktpImage: string;
+  logoImage: string;
+}
+
+export interface Location {
+  addressName: string;
+  city: string;
+  detailAddress: string;
+  district: string;
+  id: string;
+  isPrimary: boolean;
+  lat: number;
+  lng: number;
+  province: string;
+  type: string;
+  userId: string;
+  zipCode: string;
 }
 
 interface Suspend {
@@ -207,12 +225,23 @@ class Api {
       body: r,
     });
   }
+
+  async create(r: Create): Promise<Distributor> {
+    return await req<Distributor>({
+      method: "POST",
+      isNoAuth: false,
+      body: r,
+      path: this.path,
+      errors: "",
+    });
+  }
 }
 
 interface ApiDistributorInfo {
   find(distributorId: string, r: ReqPaging): Promise<ResPaging<Distributor>>;
   findById(id: string): Promise<Distributor>;
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
+  create(r: Create): Promise<Distributor>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -292,5 +321,15 @@ export const useDistributor = () => {
     });
   };
 
-  return { find, findById, suspend };
+  const create = useMutation<Distributor, Error, { data: Create }>({
+    mutationKey: [key],
+    mutationFn: async (r) => await getDistributorApiInfo().create(r.data),
+    onSuccess: () => {
+      toast.success("Distributor berhasil dibuat");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  return { find, findById, suspend, create };
 };

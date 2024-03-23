@@ -140,12 +140,13 @@ interface Create {
   // banner: string;
   // documents: Documents;
   email: string;
-  imageUrl: string;
+  // imageUrl: string;
   isSuspend: boolean;
   isVerify: boolean;
   location: Omit<Location, "id">;
   name: string;
   ownerName: string;
+  password: string;
   phoneNumber: string;
 }
 

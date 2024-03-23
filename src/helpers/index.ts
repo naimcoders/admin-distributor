@@ -69,9 +69,13 @@ export const useDebounce = (value: string, delay: number) => {
 export const parsePhoneNumber = (phone?: string): string => {
   if (!phone) return "-";
 
-  const pattern = /^\+62/;
-  const cutValue = phone.replace(pattern, "");
-  return pattern.test(phone) ? `0${cutValue}` : phone;
+  const patternCountryCode = /^\+62/;
+  const patternZero = /^0/;
+  if (patternCountryCode.test(phone)) {
+    return `0${phone.replace(patternCountryCode, "")}`;
+  } else {
+    return `+62${phone.replace(patternZero, "")}`;
+  }
 };
 
 export const detailNavigate = () => {

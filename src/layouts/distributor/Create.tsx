@@ -13,7 +13,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { handleErrorMessage } from "src/helpers";
+import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor } from "src/types";
 import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
@@ -23,6 +23,7 @@ import { Chip, CircularProgress } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
+import { uploadFile } from "src/firebase/upload";
 
 interface DefaultValues {
   ownerName: string;
@@ -37,10 +38,12 @@ interface DefaultValues {
 }
 
 const Create = () => {
+  const [ktpFile, setKtpFile] = React.useState<File>();
+
   const coordinate = useGeneralStore((v) => v.coordinate);
-  const { fields } = useField();
+  const { fields } = useField(setKtpFile);
   const { actionIsCoordinate } = useActiveModal();
-  const { forms, geoLocation, zipCode, onSubmit } = useApi();
+  const { forms, geoLocation, zipCode, onSubmit } = useApi(ktpFile);
 
   return (
     <main className="flexcol gap-5 lg:gap-8">
@@ -176,7 +179,7 @@ const Create = () => {
   );
 };
 
-const useApi = () => {
+const useApi = (ktpFile?: File) => {
   const forms = useForm<DefaultValues>();
   const coordinate = useGeneralStore((v) => v.coordinate);
 
@@ -192,15 +195,21 @@ const useApi = () => {
       toast.error("Tentukan koordinat usaha");
       return;
     }
+    if (!ktpFile) {
+      toast.error("Upload KTP");
+      return;
+    }
+
+    const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
 
     const obj = {
       email: e.email,
       ownerName: e.ownerName,
-      phoneNumber: e.phoneNumber,
+      phoneNumber: newPhoneNumber,
       name: e.businessName,
-      imageUrl: "",
       isSuspend: true,
       isVerify: true,
+      password: "", // what's this value?
       location: {
         type: "BUSINESS",
         addressName: geoLocation.data.addressName,
@@ -219,12 +228,19 @@ const useApi = () => {
     const result = await create.mutateAsync({
       data: obj,
     });
+
+    if (result) {
+      await uploadFile({
+        file: ktpFile,
+        prefix: `distributor_document/${result.id}/${Date.now()}.png`,
+      });
+    }
   });
 
   return { zipCode, geoLocation, forms, onSubmit };
 };
 
-export const useKtp = () => {
+export const useKtp = (setKtpFile: (file: File) => void) => {
   const [ktpBlob, setKtpBlob] = React.useState("");
   const ktpRef = React.useRef<ChildRef>(null);
 
@@ -234,9 +250,10 @@ export const useKtp = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return null;
+    if (!files) return;
     const blob = URL.createObjectURL(files[0]);
     setKtpBlob(blob);
+    setKtpFile(files[0]);
   };
 
   return { ktpBlob, ktpRef, onClick, onChange, setKtpBlob };
@@ -244,8 +261,8 @@ export const useKtp = () => {
 
 export default Create;
 
-const useField = () => {
-  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+const useField = (setKtpFile: (file: File) => void) => {
+  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
 
   const fields: TextfieldProps[] = [
     objectFields({

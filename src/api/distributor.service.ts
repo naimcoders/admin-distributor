@@ -307,12 +307,9 @@ export const useDistributor = () => {
       { id: string; isSuspend: boolean; closeModal: () => void }
     >({
       mutationKey: [key],
-      mutationFn: async (e) =>
-        await getDistributorApiInfo().suspend(e.id, { isSuspend: e.isSuspend }),
-      onError: (e) => {
-        const error = e as Error;
-        toast.error(error.message);
-      },
+      mutationFn: async (r) =>
+        await getDistributorApiInfo().suspend(r.id, { isSuspend: r.isSuspend }),
+      onError: (e) => toast.error(e.message),
       onSuccess: (_, r) => {
         toast.success("Status akun berhasil diperbarui");
         void queryClient.invalidateQueries({ queryKey: [key] });

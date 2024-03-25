@@ -320,20 +320,22 @@ export const useVariant = ({
       if (isVariantPhoto && !e.imageUrl) error++;
     });
 
-    if (!isVariantPhoto && prefix === "detail") {
-      variantTypes.forEach(async (v) => {
-        try {
-          const obj = { imageUrl: v.imageUrl ?? "" };
-          await removeImage.mutateAsync({
-            variantId: v.id ?? "",
-            data: obj,
-          });
-        } catch (e) {
-          const error = e as Error;
-          console.error(error.message);
-        }
-      });
-    } else if (!isVariantPhoto && prefix === "create") {
+    if (prefix === "detail") {
+      if (variantTypes.length < 1) {
+        variantTypes.forEach(async (v) => {
+          try {
+            const obj = { imageUrl: v.imageUrl ?? "" };
+            await removeImage.mutateAsync({
+              variantId: v.id ?? "",
+              data: obj,
+            });
+          } catch (e) {
+            const error = e as Error;
+            console.error(error.message);
+          }
+        });
+      }
+    } else if (prefix === "create") {
       setVariantTypes(
         variantTypes.map((v) => ({
           name: v.name,

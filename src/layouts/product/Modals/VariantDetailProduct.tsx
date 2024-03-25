@@ -114,6 +114,12 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     handleSubmitVariant("detail", fieldName, setValue);
   };
 
+  React.useEffect(() => {
+    if (!isVariantPhoto) {
+      setIsErrorVariant(false);
+    }
+  }, [isVariantPhoto]);
+
   const onDeleteImageVariant = async (name: string, path?: string) => {
     const [variantByName] = variantTypes.filter((v) => v.name === name);
     try {

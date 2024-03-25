@@ -153,8 +153,6 @@ const Create = () => {
         }
       }
 
-      console.log(result);
-
       setPhotos([]);
       setVariantType([]);
       setCategoryId("");

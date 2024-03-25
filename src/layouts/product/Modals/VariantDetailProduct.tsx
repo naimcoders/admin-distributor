@@ -56,7 +56,6 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   } = useVariant({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = React.useState("");
-  const [variantId, setVariantId] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +66,12 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     datas.files = files;
     datas.imageUrl = blob;
 
+    const [variant] = variantTypes.filter((f) => f.name === labelProduct);
+
     try {
       await uploadFile({
         file: files,
-        prefix: `product_variant/${variantId}/${Date.now()}.png`,
+        prefix: `product_variant/${variant.id}/${Date.now()}.png`,
       });
       toast.success("Foto berhasil diperbarui");
 
@@ -109,7 +110,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     handleSubmitVariant(fieldName, setValue);
   };
 
-  const onDeleteImageVariant = (name: string, variantId?: string) => {
+  const onDeleteImageVariant = (name: string) => {
     const mapping = variantTypes.map((type) => ({
       ...type,
       name: type.name,
@@ -117,7 +118,6 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       imageUrl: name === type.name ? "" : type.imageUrl,
     }));
     setVariantTypes(mapping);
-    setVariantId(variantId ?? "");
   };
 
   React.useEffect(() => {
@@ -131,6 +131,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     if (variantTypes.length < 1) setLabelAndImage({ label: "" });
     const variantImages = variantTypes.map((e) => e.imageUrl);
     if (variantImages.includes("")) setIsVariantPhoto(false);
+    else setIsVariantPhoto(true);
   }, [isAddType, isAddSize, variantTypes]);
 
   return (

@@ -109,7 +109,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     handleSubmitVariant(fieldName, setValue);
   };
 
-  const onDeleteImageVariant = (variantId?: string, name?: string) => {
+  const onDeleteImageVariant = (name: string, variantId?: string) => {
     const mapping = variantTypes.map((type) => ({
       ...type,
       name: type.name,
@@ -197,19 +197,18 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           <>
             <section className="grid grid-cols-3 gap-2">
               {variantTypes.map((v, k) => (
-                <React.Fragment key={k}>
-                  <VariantImage
-                    variantId={v.id}
-                    label={v.name ?? ""}
-                    image={v.imageUrl ?? ""}
-                    onChange={onChange}
-                    ref={productPhotoRef}
-                    onClick={() => onClick(v.name ?? "")}
-                    variantTypes={variantTypes}
-                    setVariantTypes={setVariantTypes}
-                    onDeleteImage={onDeleteImageVariant}
-                  />
-                </React.Fragment>
+                <VariantImage
+                  variantId={v.id}
+                  label={v.name ?? ""}
+                  image={v.imageUrl ?? ""}
+                  onChange={onChange}
+                  ref={productPhotoRef}
+                  onClick={() => onClick(v.name ?? "")}
+                  variantTypes={variantTypes}
+                  setVariantTypes={setVariantTypes}
+                  onDeleteImage={onDeleteImageVariant}
+                  key={k}
+                />
               ))}
             </section>
           </>

@@ -1,13 +1,6 @@
 import cx from "classnames";
 import { Button as Btn, Switch } from "@nextui-org/react";
-import {
-  ChangeEvent,
-  FC,
-  Fragment,
-  KeyboardEvent,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import { Modal } from "src/components/Modal";
 import useGeneralStore, {
@@ -106,6 +99,16 @@ export const VariantModal: FC<VariantModalProps> = ({
     handleSubmitVariant(fieldName, setValue);
   };
 
+  const onDeleteImageVariant = (name: string) => {
+    const mapping = variantTypes.map((type) => ({
+      ...type,
+      name: type.name,
+      variantColorProduct: type.variantColorProduct,
+      imageUrl: name === type.name ? "" : type.imageUrl,
+    }));
+    setVariantTypes(mapping);
+  };
+
   useEffect(() => {
     if (isAddType) formType.setFocus("type");
     if (isAddSize) formSize.setFocus("size");
@@ -181,18 +184,17 @@ export const VariantModal: FC<VariantModalProps> = ({
           <>
             <section className="grid grid-cols-3 gap-2">
               {variantTypes.map((v, k) => (
-                <Fragment key={k}>
-                  <VariantImage
-                    // onDeleteImage={}
-                    label={v.name ?? ""}
-                    image={v.imageUrl ?? ""}
-                    onClick={() => onClick(v.name ?? "")}
-                    onChange={onChange}
-                    ref={productPhotoRef}
-                    variantTypes={variantTypes}
-                    setVariantTypes={setVariantTypes}
-                  />
-                </Fragment>
+                <VariantImage
+                  onDeleteImage={onDeleteImageVariant}
+                  label={v.name ?? ""}
+                  image={v.imageUrl ?? ""}
+                  onClick={() => onClick(v.name ?? "")}
+                  onChange={onChange}
+                  ref={productPhotoRef}
+                  variantTypes={variantTypes}
+                  setVariantTypes={setVariantTypes}
+                  key={k}
+                />
               ))}
             </section>
           </>

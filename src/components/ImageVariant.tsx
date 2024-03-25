@@ -11,7 +11,7 @@ const VariantImage = React.forwardRef(
     props: Partial<FileProps> & {
       label: string;
       image: string;
-      onDeleteImage: (variantId?: string, name?: string) => void;
+      onDeleteImage: (name: string, variantId?: string) => void;
       variantId?: string;
     } & UseVariantProps,
     ref: React.Ref<ChildRef>
@@ -55,7 +55,7 @@ const VariantImage = React.forwardRef(
                 {
                   src: <TrashIcon width={16} color={IconColor.red} />,
                   onClick: () =>
-                    props.onDeleteImage(props.variantId ?? "", props.label),
+                    props.onDeleteImage(props.label, props.variantId),
                 },
               ]}
             />

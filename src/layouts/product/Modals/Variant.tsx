@@ -15,6 +15,7 @@ import { useUploadProduct } from "../Create";
 import { ItemVariant } from "src/components/VariantItem";
 import VariantImage from "src/components/ImageVariant";
 import { toast } from "react-toastify";
+import { useVariant as useVariantApi } from "src/api/variant.service";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -97,7 +98,7 @@ export const VariantModal: FC<VariantModalProps> = ({
       return;
     }
 
-    handleSubmitVariant(fieldName, setValue);
+    handleSubmitVariant("create", fieldName, setValue);
   };
 
   const onDeleteImageVariant = (name: string) => {
@@ -270,11 +271,13 @@ interface LabelAndImageProps {
 export interface UseVariantProps {
   variantTypes: VariantTypeProps[];
   setVariantTypes: (v: VariantTypeProps[]) => void;
+  productId?: string;
 }
 
 export const useVariant = ({
   variantTypes,
   setVariantTypes,
+  productId,
 }: UseVariantProps) => {
   const formType = useForm<FieldValues>();
   const formSize = useForm<FieldValues>();
@@ -306,7 +309,9 @@ export const useVariant = ({
     return sizeByName.includes(value);
   };
 
+  const { removeImage } = useVariantApi(productId ?? "");
   const handleSubmitVariant = (
+    prefix: "detail" | "create",
     fieldName: string,
     setValue: Pick<UseForm, "setValue">["setValue"]
   ) => {
@@ -315,7 +320,20 @@ export const useVariant = ({
       if (isVariantPhoto && !e.imageUrl) error++;
     });
 
-    if (!isVariantPhoto) {
+    if (!isVariantPhoto && prefix === "detail") {
+      variantTypes.forEach(async (v) => {
+        try {
+          const obj = { imageUrl: v.imageUrl ?? "" };
+          await removeImage.mutateAsync({
+            variantId: v.id ?? "",
+            data: obj,
+          });
+        } catch (e) {
+          const error = e as Error;
+          console.error(error.message);
+        }
+      });
+    } else if (!isVariantPhoto && prefix === "create") {
       setVariantTypes(
         variantTypes.map((v) => ({
           name: v.name,
@@ -339,6 +357,40 @@ export const useVariant = ({
       }
     }
   };
+
+  // const handleSubmitVariant = (
+  //   fieldName: string,
+  //   setValue: Pick<UseForm, "setValue">["setValue"]
+  // ) => {
+  //   let error = 0;
+  //   variantTypes.forEach((e) => {
+  //     if (isVariantPhoto && !e.imageUrl) error++;
+  //   });
+
+  //   // if (!isVariantPhoto) {
+  //   //   setVariantTypes(
+  //   //     variantTypes.map((v) => ({
+  //   //       name: v.name,
+  //   //       imageUrl: "",
+  //   //       variantColorProduct: v.variantColorProduct,
+  //   //     }))
+  //   //   );
+  //   // }
+
+  //   if (error > 0) setIsErrorVariant(true);
+  //   else {
+  //     if (variantTypes.length > 0) {
+  //       const value = variantTypes.map((m) => m.name).join(", ");
+  //       setValue(fieldName, value);
+  //       actionIsVariant();
+  //       setTimeout(actionIsPrice, 500);
+  //     } else {
+  //       setValue(fieldName, "");
+  //       setValue("price", "");
+  //       actionIsVariant();
+  //     }
+  //   }
+  // };
 
   const onDisabled = (): string[] => {
     let types: string[] = [];

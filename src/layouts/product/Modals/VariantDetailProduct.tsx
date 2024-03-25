@@ -56,11 +56,10 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     setIsErrorVariant,
     setIsVariantPhoto,
     onDisabled,
-  } = useVariantHook({ variantTypes, setVariantTypes });
+  } = useVariantHook({ variantTypes, setVariantTypes, productId });
 
   const [labelProduct, setLabelProduct] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
-  // const [countVariantImage, setCountVariantImage] = React.useState(0);
   const { removeImage } = useVariant(productId);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +111,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       toast.error(`Masukkan ukuran tipe ${disabled[0]}`);
       return;
     }
-    handleSubmitVariant(fieldName, setValue);
+    handleSubmitVariant("detail", fieldName, setValue);
   };
 
   const onDeleteImageVariant = async (name: string, path?: string) => {

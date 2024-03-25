@@ -109,7 +109,12 @@ export const VariantModal: FC<VariantModalProps> = ({
   useEffect(() => {
     if (isAddType) formType.setFocus("type");
     if (isAddSize) formSize.setFocus("size");
-  }, [isAddType, isAddSize]);
+    if (!labelAndImage?.label) {
+      setLabelAndImage({
+        label: variantTypes[0]?.name,
+      });
+    }
+  }, [isAddType, isAddSize, variantTypes]);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
@@ -318,7 +323,6 @@ export const useVariant = ({
         setValue("price", "");
         actionIsVariant();
       }
-      setLabelAndImage({ label: "" });
     }
   };
 

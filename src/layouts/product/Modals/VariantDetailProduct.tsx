@@ -84,17 +84,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   };
 
   const onClickType = (label: string) => setLabelAndImage({ label });
-
-  const onShowVariantImage = () => {
-    const newVariant = variantTypes.map((item) => {
-      const newItem = { ...item };
-      delete newItem.imageUrl;
-      delete newItem.files;
-      return newItem;
-    });
-    setVariantTypes(newVariant);
-    setIsVariantPhoto((v) => !v);
-  };
+  const onShowVariantImage = () => setIsVariantPhoto((v) => !v);
 
   const onSubmit = () => {
     const disabled = onDisabled();

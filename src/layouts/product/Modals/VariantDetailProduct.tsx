@@ -129,6 +129,8 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       });
     }
     if (variantTypes.length < 1) setLabelAndImage({ label: "" });
+    const variantImages = variantTypes.map((e) => e.imageUrl);
+    if (variantImages.includes("")) setIsVariantPhoto(false);
   }, [isAddType, isAddSize, variantTypes]);
 
   return (

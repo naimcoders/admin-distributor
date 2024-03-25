@@ -96,6 +96,7 @@ export const VariantModal: FC<VariantModalProps> = ({
       toast.error(`Masukkan ukuran tipe ${disabled[0]}`);
       return;
     }
+
     handleSubmitVariant(fieldName, setValue);
   };
 
@@ -182,7 +183,7 @@ export const VariantModal: FC<VariantModalProps> = ({
 
         {isVariantPhoto && variantTypes.length > 0 && (
           <>
-            <section className="grid grid-cols-3 gap-2">
+            <section className="grid lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 gap-2">
               {variantTypes.map((v, k) => (
                 <VariantImage
                   onDeleteImage={onDeleteImageVariant}
@@ -313,6 +314,16 @@ export const useVariant = ({
     variantTypes.forEach((e) => {
       if (isVariantPhoto && !e.imageUrl) error++;
     });
+
+    if (!isVariantPhoto) {
+      setVariantTypes(
+        variantTypes.map((v) => ({
+          name: v.name,
+          imageUrl: "",
+          variantColorProduct: v.variantColorProduct,
+        }))
+      );
+    }
 
     if (error > 0) setIsErrorVariant(true);
     else {

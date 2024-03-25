@@ -4,6 +4,9 @@ import { req } from "./request";
 import { toast } from "react-toastify";
 
 interface UpdateVariant extends VariantProduct {}
+interface RemoveImage {
+  imageUrl: string;
+}
 
 class Api {
   private static instance: Api;
@@ -32,6 +35,16 @@ class Api {
       isNoAuth: false,
       errors: this.errors,
       path: this.path,
+    });
+  }
+
+  async removeImage(variantId: string, r: RemoveImage): Promise<{}> {
+    return await req<{}>({
+      method: "PATCH",
+      body: r,
+      isNoAuth: false,
+      errors: this.errors,
+      path: `${this.path}/${variantId}`,
     });
   }
 
@@ -69,6 +82,7 @@ interface ApiVariantInfo {
   remove(variantId: string): Promise<{}>;
   removeVariantColor(variantColorId: string): Promise<{}>;
   create(r: VariantProduct): Promise<VariantProduct>;
+  removeImage(variantId: string, r: RemoveImage): Promise<{}>;
 }
 
 function getVariantApiInfo(): ApiVariantInfo {
@@ -88,6 +102,21 @@ export const useVariant = (productId: string) => {
     onError: (e) => {
       toast.error(`Failed to create variant : ${e.message}`);
     },
+  });
+
+  const removeImage = useMutation<
+    {},
+    Error,
+    { data: RemoveImage; variantId: string }
+  >({
+    mutationKey: [key, "remove-image", productId],
+    mutationFn: async (r) =>
+      await getVariantApiInfo().removeImage(r.variantId, r.data),
+    onSuccess: () => {
+      toast.success("Foto berhasil dihapus");
+      void queryClient.invalidateQueries({ queryKey: ["product", productId] });
+    },
+    onError: (e) => toast.error(`Failed to remove image : ${e.message}`),
   });
 
   const removeVariantColor = useMutation<{}, Error, { variantColorId: string }>(
@@ -119,5 +148,5 @@ export const useVariant = (productId: string) => {
     onError: (e) => toast.error(`Failed to update the variant : ${e.message}`),
   });
 
-  return { update, remove, removeVariantColor, create };
+  return { update, remove, removeVariantColor, create, removeImage };
 };

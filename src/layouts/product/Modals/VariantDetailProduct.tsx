@@ -57,6 +57,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
 
   const [labelProduct, setLabelProduct] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
+  // const [countVariantImage, setCountVariantImage] = React.useState(0);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;

@@ -114,22 +114,27 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     handleSubmitVariant("detail", fieldName, setValue);
   };
 
-  React.useEffect(() => {
-    if (!isVariantPhoto) {
-      setIsErrorVariant(false);
-    }
-  }, [isVariantPhoto]);
-
   const onDeleteImageVariant = async (name: string, path?: string) => {
     const [variantByName] = variantTypes.filter((v) => v.name === name);
-    try {
-      await removeImage.mutateAsync({
-        variantId: variantByName.id ?? "",
-        data: { imageUrl: path ?? "" },
-      });
-    } catch (e) {
-      const error = e as Error;
-      console.error(error.message);
+    const checkBlob = path?.split(":")[0];
+    if (checkBlob === "blob") {
+      const mapping = variantTypes.map((type) => ({
+        ...type,
+        name: type.name,
+        variantColorProduct: type.variantColorProduct,
+        imageUrl: name === type.name ? "" : type.imageUrl,
+      }));
+      setVariantTypes(mapping);
+    } else {
+      try {
+        await removeImage.mutateAsync({
+          variantId: variantByName.id ?? "",
+          data: { imageUrl: path ?? "" },
+        });
+      } catch (e) {
+        const error = e as Error;
+        console.error(error.message);
+      }
     }
   };
 

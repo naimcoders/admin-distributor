@@ -321,8 +321,9 @@ export const useVariant = ({
     });
 
     if (prefix === "detail") {
-      if (variantTypes.length < 1) {
+      if (variantTypes.length > 0 && !isVariantPhoto) {
         variantTypes.forEach(async (v) => {
+          if (!v.imageUrl) return;
           try {
             const obj = { imageUrl: v.imageUrl ?? "" };
             await removeImage.mutateAsync({

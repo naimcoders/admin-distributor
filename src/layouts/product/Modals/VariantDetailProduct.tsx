@@ -11,6 +11,7 @@ import { useVariant } from "./Variant";
 import React from "react";
 import VariantImage from "src/components/ImageVariant";
 import { toast } from "react-toastify";
+import { uploadFile } from "src/firebase/upload";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
@@ -55,9 +56,10 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   } = useVariant({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = React.useState("");
+  const [variantId, setVariantId] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
@@ -65,15 +67,27 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     datas.files = files;
     datas.imageUrl = blob;
 
-    const setImageValues: VariantTypeProps[] = [];
-    let error = 0;
-    variantTypes.forEach((e) => {
-      if (e.name === labelProduct) setImageValues.push(datas);
-      if (e.name !== labelProduct) setImageValues.push(e);
-      if (isVariantPhoto && e.imageUrl) error++;
-    });
-    setVariantTypes([...setImageValues]);
-    if (error > 1) setIsErrorVariant(false);
+    try {
+      await uploadFile({
+        file: files,
+        prefix: `product_variant/${variantId}/${Date.now()}.png`,
+      });
+      toast.success("Foto berhasil diperbarui");
+
+      const setImageValues: VariantTypeProps[] = [];
+      let error = 0;
+      variantTypes.forEach((e) => {
+        if (e.name === labelProduct) setImageValues.push(datas);
+        if (e.name !== labelProduct) setImageValues.push(e);
+        if (isVariantPhoto && e.imageUrl) error++;
+      });
+      setVariantTypes([...setImageValues]);
+      if (error > 1) setIsErrorVariant(false);
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+      toast.error("Foto gagal diperbarui");
+    }
   };
 
   const onClick = (label: string) => {
@@ -93,6 +107,17 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
       return;
     }
     handleSubmitVariant(fieldName, setValue);
+  };
+
+  const onDeleteImageVariant = (variantId?: string, name?: string) => {
+    const mapping = variantTypes.map((type) => ({
+      ...type,
+      name: type.name,
+      variantColorProduct: type.variantColorProduct,
+      imageUrl: name === type.name ? "" : type.imageUrl,
+    }));
+    setVariantTypes(mapping);
+    setVariantId(variantId ?? "");
   };
 
   React.useEffect(() => {
@@ -174,6 +199,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
               {variantTypes.map((v, k) => (
                 <React.Fragment key={k}>
                   <VariantImage
+                    variantId={v.id}
                     label={v.name ?? ""}
                     image={v.imageUrl ?? ""}
                     onChange={onChange}
@@ -181,6 +207,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
                     onClick={() => onClick(v.name ?? "")}
                     variantTypes={variantTypes}
                     setVariantTypes={setVariantTypes}
+                    onDeleteImage={onDeleteImageVariant}
                   />
                 </React.Fragment>
               ))}

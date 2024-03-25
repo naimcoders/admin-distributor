@@ -11,6 +11,8 @@ const VariantImage = React.forwardRef(
     props: Partial<FileProps> & {
       label: string;
       image: string;
+      onDeleteImage: (variantId?: string, name?: string) => void;
+      variantId?: string;
     } & UseVariantProps,
     ref: React.Ref<ChildRef>
   ) => {
@@ -23,16 +25,6 @@ const VariantImage = React.forwardRef(
         }
       },
     }));
-
-    const handleDeleteProductImage = () => {
-      const mapping = props.variantTypes.map((type) => ({
-        ...type,
-        name: type.name,
-        variantColorProduct: type.variantColorProduct,
-        imageUrl: props.label === type.name ? "" : type.imageUrl,
-      }));
-      props.setVariantTypes(mapping);
-    };
 
     return (
       <>
@@ -62,7 +54,8 @@ const VariantImage = React.forwardRef(
               actions={[
                 {
                   src: <TrashIcon width={16} color={IconColor.red} />,
-                  onClick: handleDeleteProductImage,
+                  onClick: () =>
+                    props.onDeleteImage(props.variantId ?? "", props.label),
                 },
               ]}
             />

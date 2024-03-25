@@ -183,6 +183,7 @@ export const VariantModal: FC<VariantModalProps> = ({
               {variantTypes.map((v, k) => (
                 <Fragment key={k}>
                   <VariantImage
+                    // onDeleteImage={}
                     label={v.name ?? ""}
                     image={v.imageUrl ?? ""}
                     onClick={() => onClick(v.name ?? "")}

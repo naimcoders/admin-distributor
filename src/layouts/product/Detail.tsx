@@ -612,7 +612,11 @@ const Detail = () => {
       />
       <DangerousModal setValue={setValue} />
       <ConditionModal setValue={setValue} />
-      <VariantDetailProductModal fieldName="variant" setValue={setValue} />
+      <VariantDetailProductModal
+        fieldName="variant"
+        setValue={setValue}
+        productId={id}
+      />
       <PostageModal
         setValue={setValue}
         clearErrors={clearErrors}

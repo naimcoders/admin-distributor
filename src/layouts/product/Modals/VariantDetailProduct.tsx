@@ -7,19 +7,22 @@ import { IconColor, UseForm } from "src/types";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { useUploadProduct } from "../Create";
 import { ItemVariant } from "src/components/VariantItem";
-import { useVariant } from "./Variant";
+import { useVariant as useVariantHook } from "./Variant";
 import React from "react";
 import VariantImage from "src/components/ImageVariant";
 import { toast } from "react-toastify";
 import { uploadFile } from "src/firebase/upload";
+import { useVariant } from "src/api/variant.service";
 
 interface VariantModalProps extends Pick<UseForm, "setValue"> {
   fieldName: string;
+  productId: string;
 }
 
 export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   fieldName,
   setValue,
+  productId,
 }) => {
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
@@ -53,11 +56,12 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     setIsErrorVariant,
     setIsVariantPhoto,
     onDisabled,
-  } = useVariant({ variantTypes, setVariantTypes });
+  } = useVariantHook({ variantTypes, setVariantTypes });
 
   const [labelProduct, setLabelProduct] = React.useState("");
   const { productPhotoRef } = useUploadProduct();
   // const [countVariantImage, setCountVariantImage] = React.useState(0);
+  const { removeImage } = useVariant(productId);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return null;
@@ -111,14 +115,17 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     handleSubmitVariant(fieldName, setValue);
   };
 
-  const onDeleteImageVariant = (name: string) => {
-    const mapping = variantTypes.map((type) => ({
-      ...type,
-      name: type.name,
-      variantColorProduct: type.variantColorProduct,
-      imageUrl: name === type.name ? "" : type.imageUrl,
-    }));
-    setVariantTypes(mapping);
+  const onDeleteImageVariant = async (name: string, path?: string) => {
+    const [variantByName] = variantTypes.filter((v) => v.name === name);
+    try {
+      await removeImage.mutateAsync({
+        variantId: variantByName.id ?? "",
+        data: { imageUrl: path ?? "" },
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+    }
   };
 
   React.useEffect(() => {

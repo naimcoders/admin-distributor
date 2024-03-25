@@ -29,7 +29,7 @@ interface DefaultValueProps {
 }
 
 const Promotion = ({
-  setValue,
+  // setValue,
   images,
   productName,
   description,

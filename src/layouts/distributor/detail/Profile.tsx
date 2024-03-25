@@ -4,10 +4,9 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { useKtp } from "../Create";
 import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Button } from "src/components/Button";
 import { GridInput } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
@@ -17,6 +16,7 @@ import { useParams } from "react-router-dom";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { IconColor } from "src/types";
+import { useKtp } from "../Create";
 
 const Profile = () => {
   const {
@@ -24,7 +24,8 @@ const Profile = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
-  const { fields, isLoading, error } = useHook();
+  const [_, setKtpFile] = useState<File>();
+  const { fields, isLoading, error } = useHook(setKtpFile);
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
@@ -104,8 +105,8 @@ const Profile = () => {
   );
 };
 
-const useHook = () => {
-  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
+const useHook = (setKtpFile: (file: File) => void) => {
+  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
   const { id } = useParams() as { id: string };
   const { data, isLoading, error } = useDistributor().findById(id);
   const bank = data?.details.bank;

@@ -336,14 +336,6 @@ export const useVariant = ({
           }
         });
       }
-    } else if (prefix === "create") {
-      setVariantTypes(
-        variantTypes.map((v) => ({
-          name: v.name,
-          imageUrl: "",
-          variantColorProduct: v.variantColorProduct,
-        }))
-      );
     }
 
     if (error > 0) setIsErrorVariant(true);

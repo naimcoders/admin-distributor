@@ -112,8 +112,10 @@ export const useVariant = (productId: string) => {
     mutationKey: [key, "remove-image", productId],
     mutationFn: async (r) =>
       await getVariantApiInfo().removeImage(r.variantId, r.data),
-    onSuccess: () =>
-      void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
+    onSuccess: () => {
+      toast.success("Foto berhasil dihapus");
+      void queryClient.invalidateQueries({ queryKey: ["product", productId] });
+    },
     onError: (e) => toast.error(`Failed to remove image : ${e.message}`),
   });
 

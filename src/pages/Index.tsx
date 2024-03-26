@@ -39,7 +39,6 @@ const LoginPage = () => {
 
 export const useLogin = () => {
   const [isPassword, setIsPassword] = useState(false);
-  const onShowPassword = () => setIsPassword((prev) => !prev);
 
   const logins: TextfieldProps[] = [
     objectFields({
@@ -52,27 +51,35 @@ export const useLogin = () => {
       label: "password",
       name: "password",
       type: !isPassword ? "password" : "text",
-      endContent: !isPassword ? (
-        <EyeSlashIcon
-          width={18}
-          className="cursor-pointer"
-          onClick={onShowPassword}
-          color={IconColor.zinc}
-          title="Show"
-        />
-      ) : (
-        <EyeIcon
-          width={18}
-          color={IconColor.zinc}
-          className="cursor-pointer"
-          onClick={onShowPassword}
-          title="Hide"
-        />
-      ),
+      endContent: checkPassword(isPassword, setIsPassword),
     }),
   ];
 
   return { logins };
+};
+
+export const checkPassword = (
+  isPassword: boolean,
+  setIsPassword: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  const onPassword = () => setIsPassword((v) => !v);
+  return !isPassword ? (
+    <EyeSlashIcon
+      width={18}
+      className="cursor-pointer"
+      onClick={onPassword}
+      color={IconColor.zinc}
+      title="Show"
+    />
+  ) : (
+    <EyeIcon
+      width={18}
+      color={IconColor.zinc}
+      className="cursor-pointer"
+      onClick={onPassword}
+      title="Hide"
+    />
+  );
 };
 
 interface LoginFieldProps {

@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { useDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
 import { uploadFile } from "src/firebase/upload";
+import { checkPassword } from "src/pages/Index";
 
 interface DefaultValues {
   ownerName: string;
@@ -98,7 +99,7 @@ const Create = () => {
           <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
             {fields.map((v, idx) => (
               <React.Fragment key={idx}>
-                {["text", "number", "email"].includes(v.type!) && (
+                {["text", "number", "email", "password"].includes(v.type!) && (
                   <Textfield
                     {...v}
                     control={forms.control}
@@ -262,6 +263,7 @@ export const useKtp = (setKtpFile: (file: File) => void) => {
 export default Create;
 
 const useField = (setKtpFile: (file: File) => void) => {
+  const [isPassword, setIsPassword] = React.useState(false);
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
 
   const fields: TextfieldProps[] = [
@@ -292,6 +294,12 @@ const useField = (setKtpFile: (file: File) => void) => {
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
+    }),
+    objectFields({
+      label: "password",
+      name: "password",
+      type: !isPassword ? "password" : "text",
+      endContent: checkPassword(isPassword, setIsPassword),
     }),
     objectFields({
       label: "KTP pemilik",

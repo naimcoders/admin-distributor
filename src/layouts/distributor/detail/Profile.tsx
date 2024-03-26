@@ -109,7 +109,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
   const { id } = useParams() as { id: string };
   const { data, isLoading, error } = useDistributor().findById(id);
-  const bank = data?.details.bank;
+  const bank = data?.details?.bank;
 
   const fields: TextfieldProps[] = [
     objectFields({

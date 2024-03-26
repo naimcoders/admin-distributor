@@ -4,7 +4,12 @@ import Label from "src/components/Label";
 import { Distributor, useDistributor } from "src/api/distributor.service";
 import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
-import { epochToDateConvert, parsePhoneNumber } from "src/helpers";
+import {
+  epochToDateConvert,
+  parsePhoneNumber,
+  parseQueryString,
+  stringifyQuery,
+} from "src/helpers";
 import { Columns } from "src/types";
 import { ConfirmModal } from "src/components/Modal";
 import { useNavigate } from "react-router-dom";
@@ -13,12 +18,20 @@ import { useActiveModal } from "src/stores/modalStore";
 const Distributor = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
   const [distributorId, setIsDistributorId] = React.useState("");
-
   const navigate = useNavigate();
-  const { data, isLoading, error, page, setPage, setSearch, isNext } =
-    useDistributor().find();
-
   const { actionIsConfirm } = useActiveModal();
+
+  const { page: pageQuery } = parseQueryString<{ page: string }>();
+  const { data, isLoading, error, page, setPage, setSearch, isNext } =
+    useDistributor().find(Number(pageQuery));
+
+  const qs = stringifyQuery({ page });
+  const qsToDetail = stringifyQuery({ tab: "profil" });
+
+  React.useEffect(() => {
+    navigate(`/distributor?${qs}`);
+  }, [qs]);
+
   const prev = () => setPage((num) => num - 1);
   const next = () => setPage((num) => num + 1);
 
@@ -61,7 +74,7 @@ const Distributor = () => {
             onClick: () => onSwitch(v.id, v.isSuspend),
           }}
           detail={{
-            onClick: () => navigate(`/distributor/${v.id}`),
+            onClick: () => navigate(`/distributor/${v.id}?${qsToDetail}`),
           }}
         />
       ),

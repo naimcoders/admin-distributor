@@ -12,97 +12,82 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { GridInput } from "src/layouts/Index";
 import { LabelAndImage } from "src/components/File";
 import { UserCoordinate } from "src/components/Coordinate";
-import { Location, useDistributor } from "src/api/distributor.service";
-import { useParams } from "react-router-dom";
-import Error from "src/components/Error";
-import Skeleton from "src/components/Skeleton";
 
 const Business = () => {
   const {
     control,
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
-  const { fields, error, isLoading } = useHook();
+  const { fields } = useHook();
 
   return (
     <>
-      {error ? (
-        <Error error={error} />
-      ) : isLoading ? (
-        <Skeleton />
-      ) : (
-        <main className="mt-5 flexcol gap-8">
-          <GridInput>
-            {fields.map((v, idx) => (
-              <Fragment key={idx}>
-                {["text", "number", "email"].includes(v.type!) && (
-                  <Textfield
-                    type={v.type}
-                    name={v.name}
-                    label={v.label}
-                    control={control}
-                    placeholder={v.placeholder}
-                    defaultValue={v.defaultValue}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    rules={{
-                      required: { value: true, message: v.errorMessage ?? "" },
-                    }}
-                  />
-                )}
+      <main className="mt-5 flexcol gap-8">
+        <GridInput>
+          {fields.map((v, idx) => (
+            <Fragment key={idx}>
+              {["text", "number", "email"].includes(v.type!) && (
+                <Textfield
+                  type={v.type}
+                  name={v.name}
+                  label={v.label}
+                  control={control}
+                  placeholder={v.placeholder}
+                  defaultValue={v.defaultValue}
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  rules={{
+                    required: { value: true, message: v.errorMessage ?? "" },
+                  }}
+                />
+              )}
 
-                {["modal"].includes(v.type!) && (
-                  <Textfield
-                    name={v.name!}
-                    label={v.label}
-                    control={control}
-                    readOnly={v.readOnly}
-                    placeholder={v.placeholder}
-                    defaultValue={v.defaultValue}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    rules={{
-                      required: { value: true, message: v.errorMessage ?? "" },
-                    }}
-                    endContent={<ChevronRightIcon width={16} />}
-                  />
-                )}
-              </Fragment>
-            ))}
-          </GridInput>
+              {["modal"].includes(v.type!) && (
+                <Textfield
+                  name={v.name!}
+                  label={v.label}
+                  control={control}
+                  readOnly={v.readOnly}
+                  placeholder={v.placeholder}
+                  defaultValue={v.defaultValue}
+                  errorMessage={handleErrorMessage(errors, v.name)}
+                  rules={{
+                    required: { value: true, message: v.errorMessage ?? "" },
+                  }}
+                  endContent={<ChevronRightIcon width={16} />}
+                />
+              )}
+            </Fragment>
+          ))}
+        </GridInput>
 
-          <GridInput className="grid-cols-3">
-            {fields.map((v, idx) => (
-              <Fragment key={idx}>
-                {["coordinate"].includes(v.type!) && (
-                  <UserCoordinate
-                    label={v.label}
-                    lat={v.defaultValue.lat}
-                    lng={v.defaultValue.lng}
-                    onClick={v.onClick}
-                  />
-                )}
+        <GridInput className="grid-cols-3">
+          {fields.map((v, idx) => (
+            <Fragment key={idx}>
+              {/* {["coordinate"].includes(v.type!) && (
+                <UserCoordinate
+                  label={v.label}
+                  lat={v.defaultValue.lat}
+                  lng={v.defaultValue.lng}
+                  onClick={v.onClick}
+                />
+              )} */}
 
-                {["image"].includes(v.type!) && (
-                  <LabelAndImage label={v.label} src={String(v.defaultValue)} />
-                )}
-              </Fragment>
-            ))}
-          </GridInput>
+              {["image"].includes(v.type!) && (
+                <LabelAndImage label={v.label} src={String(v.defaultValue)} />
+              )}
+            </Fragment>
+          ))}
+        </GridInput>
 
-          <div className="flex justify-center mt-10">
-            <Button aria-label="simpan" />
-          </div>
-        </main>
-      )}
+        <div className="flex justify-center mt-10">
+          <Button aria-label="simpan" />
+        </div>
+      </main>
     </>
   );
 };
 
 const useHook = () => {
-  const { id } = useParams() as { id: string };
-  const { data, error, isLoading } = useDistributor().findById(id);
-  const { province, detailAddress, city, zipCode, district, lat, lng } = data
-    ?.details.location[0] as Location;
-
   const fields: TextfieldProps[] = [
     objectFields({
       label: "nama usaha",
@@ -114,7 +99,7 @@ const useHook = () => {
       label: "alamat usaha",
       name: "businessAddress",
       type: "modal",
-      defaultValue: `${province}, ${city}, ${district}, ${zipCode}`,
+      defaultValue: "",
       readOnly: { isValue: true, cursor: "cursor-pointer" },
     }),
     objectFields({
@@ -127,13 +112,13 @@ const useHook = () => {
       label: "detail alamat",
       name: "detailAddress",
       type: "text",
-      defaultValue: detailAddress,
+      defaultValue: "",
     }),
     objectFields({
       label: "koordinat usaha",
       name: "coordinate",
       type: "coordinate",
-      defaultValue: { lat, lng },
+      defaultValue: "",
       onClick: () => console.log("koordinate usaha"),
     }),
     objectFields({
@@ -146,11 +131,11 @@ const useHook = () => {
       label: "banner etalase",
       name: "banner",
       type: "image",
-      defaultValue: data?.banner,
+      defaultValue: "",
     }),
   ];
 
-  return { fields, error, isLoading };
+  return { fields };
 };
 
 export default Business;

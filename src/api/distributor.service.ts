@@ -252,9 +252,9 @@ const key = "distributor";
 export const useDistributor = () => {
   const queryClient = useQueryClient();
 
-  const find = () => {
+  const find = (pageTable: number) => {
     const { user } = useAuth();
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(pageTable);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
 

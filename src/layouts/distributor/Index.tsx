@@ -15,25 +15,11 @@ import { ConfirmModal } from "src/components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useActiveModal } from "src/stores/modalStore";
 
-const Distributor = () => {
+export const useSuspend = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
   const [distributorId, setIsDistributorId] = React.useState("");
-  const navigate = useNavigate();
+
   const { actionIsConfirm } = useActiveModal();
-
-  const { page: pageQuery } = parseQueryString<{ page: string }>();
-  const { data, isLoading, error, page, setPage, setSearch, isNext } =
-    useDistributor().find(Number(pageQuery));
-
-  const qs = stringifyQuery({ page });
-  const qsToDetail = stringifyQuery({ tab: "profil" });
-
-  React.useEffect(() => {
-    navigate(`/distributor?${qs}`);
-  }, [qs]);
-
-  const prev = () => setPage((num) => num - 1);
-  const next = () => setPage((num) => num + 1);
 
   const onSwitch = (distributorId: string, isSuspend: boolean) => {
     setIsSuspend(isSuspend);
@@ -41,9 +27,40 @@ const Distributor = () => {
     actionIsConfirm();
   };
 
-  const onConfirm = () => {
-    // update api suspend
-    console.log(distributorId, isSuspend);
+  return { distributorId, isSuspend, onSwitch, closeConfirm: actionIsConfirm };
+};
+
+const Distributor = () => {
+  const navigate = useNavigate();
+  const { page: pageQuery } = parseQueryString<{ page: string }>();
+
+  const { find, suspend } = useDistributor();
+  const { data, isLoading, error, page, setPage, isNext, setSearch } = find(
+    Number(pageQuery)
+  );
+  const { mutateAsync } = suspend;
+
+  const qs = stringifyQuery({ page });
+  const qsToDetail = stringifyQuery({ tab: "profil" });
+  React.useEffect(() => {
+    navigate(`/distributor?${qs}`);
+  }, [qs]);
+
+  const prev = () => setPage((num) => num - 1);
+  const next = () => setPage((num) => num + 1);
+
+  const { onSwitch, isSuspend, closeConfirm, distributorId } = useSuspend();
+  const onSuspend = async () => {
+    try {
+      await mutateAsync({
+        closeModal: closeConfirm,
+        id: distributorId,
+        isSuspend: !isSuspend,
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.log(error.message);
+    }
   };
 
   const columns: Columns<Distributor>[] = [
@@ -119,7 +136,7 @@ const Distributor = () => {
             }
             onSubmit={{
               label: !isSuspend ? "non-aktifkan" : "aktifkan",
-              action: onConfirm,
+              action: onSuspend,
             }}
           />
         </>

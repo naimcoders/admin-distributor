@@ -9,7 +9,6 @@ import { useAuth } from "src/firebase/auth";
 export interface Distributor {
   banner: string;
   createdAt: number;
-  // details: Details;
   documents: Documents;
   email: string;
   emailVerify: boolean;
@@ -219,10 +218,10 @@ class Api {
   async suspend(distributorId: string, r: Suspend): Promise<Distributor> {
     return await req<Distributor>({
       method: "PUT",
-      path: `${this.path}/${distributorId}/suspend`,
-      errors: "",
       isNoAuth: false,
       body: r,
+      path: `${this.path}/${distributorId}/suspend`,
+      errors: "",
     });
   }
 
@@ -300,26 +299,24 @@ export const useDistributor = () => {
     };
   };
 
-  const suspend = () => {
-    useMutation<
-      Distributor,
-      Error,
-      { id: string; isSuspend: boolean; closeModal: () => void }
-    >({
-      mutationKey: [key],
-      mutationFn: async (r) =>
-        await getDistributorApiInfo().suspend(r.id, { isSuspend: r.isSuspend }),
-      onError: (e) => toast.error(e.message),
-      onSuccess: (_, r) => {
-        toast.success("Status akun berhasil diperbarui");
-        void queryClient.invalidateQueries({ queryKey: [key] });
-        r.closeModal();
-      },
-    });
-  };
+  const suspend = useMutation<
+    Distributor,
+    Error,
+    { id: string; isSuspend: boolean; closeModal: () => void }
+  >({
+    mutationKey: [key, "suspend"],
+    mutationFn: async (r) =>
+      await getDistributorApiInfo().suspend(r.id, { isSuspend: r.isSuspend }),
+    onError: (e) => toast.error(e.message),
+    onSuccess: (_, r) => {
+      toast.success("Status akun berhasil diperbarui");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+      r.closeModal();
+    },
+  });
 
   const create = useMutation<Distributor, Error, { data: Create }>({
-    mutationKey: [key],
+    mutationKey: [key, "create"],
     mutationFn: async (r) => await getDistributorApiInfo().create(r.data),
     onSuccess: () => {
       toast.success("Distributor berhasil dibuat");

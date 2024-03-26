@@ -7,7 +7,6 @@ import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { Button } from "src/components/Button";
-import { GridInput } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { Distributor } from "src/api/distributor.service";
@@ -42,21 +41,14 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
       ) : isLoading ? (
         <Skeleton />
       ) : (
-        <main className="mt-5 flexcol gap-8">
-          <GridInput className="grid grid-cols-3">
+        <main className="mt-5 flexcol lg:gap-8 gap-4">
+          <section className="grid grid-cols-3 lg:gap-8 gap-4">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
                 {["text", "number", "email"].includes(v.type!) && (
                   <Textfield
-                    type={v.type}
-                    name={v.name}
-                    label={v.label}
+                    {...v}
                     control={control}
-                    readOnly={v.readOnly}
-                    placeholder={v.placeholder}
-                    defaultValue={v.defaultValue}
-                    description={v.description}
-                    autoComplete={v.autoComplete}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     rules={{
                       required: { value: true, message: v.errorMessage ?? "" },
@@ -65,9 +57,9 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
                 )}
               </Fragment>
             ))}
-          </GridInput>
+          </section>
 
-          <GridInput className="grid-cols-3">
+          <section className="grid-cols-3 grid gap-4 lg:gap-8">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
                 {["file"].includes(v.type!) &&
@@ -98,7 +90,7 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
                   ))}
               </Fragment>
             ))}
-          </GridInput>
+          </section>
 
           <div className="flex justify-center mt-10">
             <Button aria-label="simpan" onClick={onSubmit} />

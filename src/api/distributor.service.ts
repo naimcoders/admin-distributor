@@ -9,7 +9,7 @@ import { useAuth } from "src/firebase/auth";
 export interface Distributor {
   banner: string;
   createdAt: number;
-  details: Details;
+  // details: Details;
   documents: Documents;
   email: string;
   emailVerify: boolean;
@@ -17,6 +17,7 @@ export interface Distributor {
   id: string;
   imageUrl: string;
   isSuspend: boolean;
+  locations: Location[];
   isVerify: boolean;
   name: string;
   ownerName: string;

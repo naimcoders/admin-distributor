@@ -47,7 +47,13 @@ const useHook = () => {
     },
     {
       label: "usaha",
-      content: <Business />,
+      content: (
+        <Business
+          distributor={distributors?.data}
+          error={distributors.error}
+          isLoading={distributors.isLoading}
+        />
+      ),
     },
     {
       label: "produk",

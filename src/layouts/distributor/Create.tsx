@@ -25,6 +25,7 @@ import { useDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
 import { uploadFile } from "src/firebase/upload";
 import { checkPassword } from "src/pages/Index";
+import { useNavigate } from "react-router-dom";
 
 interface DefaultValues {
   ownerName: string;
@@ -32,6 +33,7 @@ interface DefaultValues {
   email: string;
   businessName: string;
   detailAddress: string;
+  password: string;
   cooridnate: {
     lat: number;
     lng: number;
@@ -44,7 +46,7 @@ const Create = () => {
   const coordinate = useGeneralStore((v) => v.coordinate);
   const { fields } = useField(setKtpFile);
   const { actionIsCoordinate } = useActiveModal();
-  const { forms, geoLocation, zipCode, onSubmit } = useApi(ktpFile);
+  const { forms, geoLocation, zipCode, onSubmit, isLoading } = useApi(ktpFile);
 
   return (
     <main className="flexcol gap-5 lg:gap-8">
@@ -168,7 +170,7 @@ const Create = () => {
           </section>
 
           <Button
-            aria-label="simpan"
+            aria-label={isLoading ? "loading..." : "simpan"}
             onClick={onSubmit}
             className="mx-auto lg:mt-12 mt-6"
           />
@@ -183,6 +185,8 @@ const Create = () => {
 const useApi = (ktpFile?: File) => {
   const forms = useForm<DefaultValues>();
   const coordinate = useGeneralStore((v) => v.coordinate);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const navigate = useNavigate();
 
   const { findGeoLocation } = useLocation();
   const geoLocation = findGeoLocation(coordinate?.lat!, coordinate?.lng!);
@@ -201,44 +205,57 @@ const useApi = (ktpFile?: File) => {
       return;
     }
 
-    const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
+    try {
+      setIsLoading(true);
+      const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
 
-    const obj = {
-      email: e.email,
-      ownerName: e.ownerName,
-      phoneNumber: newPhoneNumber,
-      name: e.businessName,
-      isSuspend: true,
-      isVerify: true,
-      password: "", // what's this value?
-      location: {
-        type: "BUSINESS",
-        addressName: geoLocation.data.addressName,
-        city: geoLocation.data.city,
-        detailAddress: e.detailAddress,
-        district: geoLocation.data.district,
-        lat: geoLocation.data.lat,
-        lng: geoLocation.data.lng,
-        province: geoLocation.data.province,
-        zipCode: geoLocation.data.zipCode,
-        userId: user?.uid ?? "",
-        isPrimary: true,
-      },
-    };
+      const obj = {
+        email: e.email,
+        ownerName: e.ownerName,
+        phoneNumber: newPhoneNumber,
+        name: e.businessName,
+        isSuspend: true,
+        isVerify: true,
+        password: e.password,
+        location: {
+          type: "BUSINESS",
+          addressName: geoLocation.data.addressName,
+          city: geoLocation.data.city,
+          detailAddress: e.detailAddress,
+          district: geoLocation.data.district,
+          lat: geoLocation.data.lat,
+          lng: geoLocation.data.lng,
+          province: geoLocation.data.province,
+          zipCode: geoLocation.data.zipCode,
+          userId: user?.uid ?? "",
+          isPrimary: true,
+        },
+        documents: {
+          ktpImage: "distributor_document/dis",
+        },
+      };
 
-    const result = await create.mutateAsync({
-      data: obj,
-    });
-
-    if (result) {
-      await uploadFile({
-        file: ktpFile,
-        prefix: `distributor_document/${result.id}/${Date.now()}.png`,
+      const result = await create.mutateAsync({
+        data: obj,
       });
+
+      if (result) {
+        await uploadFile({
+          file: ktpFile,
+          prefix: `distributor_document/dis.png`,
+        });
+      }
+
+      if (result.id) navigate(-1);
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   });
 
-  return { zipCode, geoLocation, forms, onSubmit };
+  return { zipCode, geoLocation, forms, onSubmit, isLoading };
 };
 
 export const useKtp = (setKtpFile: (file: File) => void) => {

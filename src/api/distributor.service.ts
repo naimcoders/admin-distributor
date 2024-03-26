@@ -138,7 +138,7 @@ export interface History {
 
 interface Create {
   // banner: string;
-  // documents: Documents;
+  documents: Documents;
   email: string;
   // imageUrl: string;
   isSuspend: boolean;
@@ -152,7 +152,6 @@ interface Create {
 
 export interface Documents {
   ktpImage: string;
-  logoImage: string;
 }
 
 export interface Location {

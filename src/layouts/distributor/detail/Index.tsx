@@ -4,6 +4,7 @@ import Business from "./Business";
 import Product from "./Product";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDistributor } from "src/api/distributor.service";
 
 const Detail = () => {
   const { tabs } = useHook();
@@ -29,10 +30,20 @@ const Detail = () => {
 };
 
 const useHook = () => {
+  const { id } = useParams() as { id: string };
+  const { findById } = useDistributor();
+  const distributors = findById(id);
+
   const tabs: ITabs[] = [
     {
       label: "profil",
-      content: <Profile />,
+      content: (
+        <Profile
+          distributor={distributors?.data}
+          error={distributors.error}
+          isLoading={distributors.isLoading}
+        />
+      ),
     },
     {
       label: "usaha",

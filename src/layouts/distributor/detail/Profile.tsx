@@ -1,4 +1,3 @@
-import ktp from "src/assets/images/ktp.png";
 import {
   Textfield,
   TextfieldProps,
@@ -11,21 +10,26 @@ import { Button } from "src/components/Button";
 import { GridInput } from "src/layouts/Index";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
-import { useDistributor } from "src/api/distributor.service";
-import { useParams } from "react-router-dom";
-import Error from "src/components/Error";
-import Skeleton from "src/components/Skeleton";
+import { Distributor } from "src/api/distributor.service";
 import { IconColor } from "src/types";
 import { useKtp } from "../Create";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
 
-const Profile = () => {
+interface Profile {
+  distributor?: Distributor;
+  isLoading?: boolean;
+  error?: string;
+}
+const Profile = ({ distributor, error, isLoading }: Profile) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
   const [_, setKtpFile] = useState<File>();
-  const { fields, isLoading, error } = useHook(setKtpFile);
+
+  const { fields } = useHook(setKtpFile, distributor);
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
@@ -105,11 +109,8 @@ const Profile = () => {
   );
 };
 
-const useHook = (setKtpFile: (file: File) => void) => {
+const useHook = (setKtpFile: (file: File) => void, data?: Distributor) => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
-  const { id } = useParams() as { id: string };
-  const { data, isLoading, error } = useDistributor().findById(id);
-  const bank = data?.details?.bank;
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -137,7 +138,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
       label: "nama sesuai rekening",
       name: "accountName",
       type: "text",
-      defaultValue: bank?.accountName ?? "-",
+      defaultValue: data?.details?.bank?.accountName ?? "-",
       description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
@@ -145,7 +146,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
       label: "nama bank",
       name: "bankName",
       type: "text",
-      defaultValue: bank?.bankName ?? "-",
+      defaultValue: data?.details?.bank?.bankName ?? "-",
       description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
@@ -153,7 +154,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
       label: "nomor rekening",
       name: "accountNumber",
       type: "text",
-      defaultValue: bank?.accountNumber ?? "-",
+      defaultValue: data?.details?.bank?.accountNumber ?? "-",
       description: "* tidak dapat diedit",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
@@ -162,7 +163,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      defaultValue: ktp,
+      defaultValue: data?.documents?.ktpImage,
       uploadImage: {
         file: {
           ref: ktpRef,
@@ -181,7 +182,7 @@ const useHook = (setKtpFile: (file: File) => void) => {
     }),
   ];
 
-  return { fields, isLoading, error };
+  return { fields };
 };
 
 export default Profile;

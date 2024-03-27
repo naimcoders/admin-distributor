@@ -12,40 +12,33 @@ import {
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
-import PinVerification from "./dashboard/modals/PinVerification";
+import { CreateNewPin } from "src/components/Pin";
 
 const Layout = () => {
   return (
-    <>
-      <main>
-        <Header />
-        <section className="bg-background">
-          <AsideNav />
-          <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
-            <Outlet />
-          </main>
-        </section>
-      </main>
-
-      <PinVerification header={{ label: "buat PIN" }} />
-    </>
+    <main>
+      <Header />
+      <section className="bg-background">
+        <AsideNav />
+        <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
+          <Outlet />
+        </main>
+      </section>
+      <CreateNewPin header={{ label: "buat PIN" }} />
+    </main>
   );
 };
 
 const Header = () => {
   const { pathname } = useLocation();
   const [path, setPath] = React.useState("");
-  const { actionIsPinVerification } = useActiveModal();
+  const { actionIsCreatePin } = useActiveModal();
 
   React.useEffect(() => {
     setPath(pathname?.split("/")[1]);
   }, [pathname]);
 
   const currentPath = path.split("-").join(" ");
-
-  const onPower = () => {
-    actionIsPinVerification();
-  };
 
   return (
     <header className="px-6 py-3 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
@@ -61,7 +54,7 @@ const Header = () => {
             className="cursor-pointer"
             color="#FFFFFF"
             title="Aktifkan akun"
-            onClick={onPower}
+            onClick={actionIsCreatePin}
           />
         )}
         <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-2xl capitalize">

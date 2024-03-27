@@ -1,9 +1,9 @@
+import React from "react";
 import cx from "classnames";
 import Image from "src/components/Image";
 import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
 import {
   ArrowRightStartOnRectangleIcon,
@@ -28,9 +28,9 @@ const Layout = () => {
 
 const Header = () => {
   const { pathname } = useLocation();
-  const [path, setPath] = useState("");
+  const [path, setPath] = React.useState("");
 
-  useEffect(() => {
+  React.useEffect(() => {
     setPath(pathname?.split("/")[1]);
   }, [pathname]);
 
@@ -139,7 +139,7 @@ export const Logout = () => {
 };
 
 export const GridInput: React.FC<
-  { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>
+  { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>
 > = ({ children, className }) => {
   return (
     <section className={cx("grid-min-300 gap-x-8 gap-y-10", className)}>

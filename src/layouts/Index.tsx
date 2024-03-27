@@ -51,9 +51,9 @@ const Header = () => {
         {currentPath === "dashboard" && (
           <PowerIcon
             width={20}
-            className="cursor-pointer"
             color="#FFFFFF"
             title="Aktifkan akun"
+            className="cursor-pointer"
             onClick={actionIsCreatePin}
           />
         )}
@@ -79,7 +79,10 @@ const AsideNav = () => {
         <Link name="Banner" path="banner" />
         <Link name="Produk" path={`produk?${qsProduct}`} />
         <Link name="Toko" path={`toko?${qsStore}`} />
-        <Link name="Distributor" path={`distributor?${qsDIstributor}`} />
+        <Link
+          name="Sub Distributor"
+          path={`sub-distributor?${qsDIstributor}`}
+        />
         <Link name="Sales" path="sales" />
         <Link name="Ekspedisi" path="ekspedisi" />
         <Link name="Order" path="order" />

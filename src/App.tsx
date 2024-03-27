@@ -169,7 +169,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "distributor",
+            path: "sub-distributor",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <Distributor />
@@ -177,7 +177,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "distributor/tambah",
+            path: "sub-distributor/tambah",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <CreateDistributor />
@@ -185,7 +185,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "distributor/:id",
+            path: "sub-distributor/:id",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <DetailDistributor />

@@ -14,7 +14,7 @@ const Detail = () => {
   const { tab } = parseQueryString<{ tab: string }>();
   const onSelectionChange = (e: React.Key) => {
     const qs = stringifyQuery({ tab: e });
-    navigate(`/distributor/${id}?${qs}`);
+    navigate(`/sub-distributor/${id}?${qs}`);
   };
 
   return (

@@ -43,7 +43,7 @@ const Distributor = () => {
   const qs = stringifyQuery({ page });
   const qsToDetail = stringifyQuery({ tab: "profil" });
   React.useEffect(() => {
-    navigate(`/distributor?${qs}`);
+    navigate(`/sub-distributor?${qs}`);
   }, [qs]);
 
   const prev = () => setPage((num) => num - 1);
@@ -91,7 +91,7 @@ const Distributor = () => {
             onClick: () => onSwitch(v.id, v.isSuspend),
           }}
           detail={{
-            onClick: () => navigate(`/distributor/${v.id}?${qsToDetail}`),
+            onClick: () => navigate(`/sub-distributor/${v.id}?${qsToDetail}`),
           }}
         />
       ),

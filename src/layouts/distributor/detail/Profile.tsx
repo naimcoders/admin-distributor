@@ -5,7 +5,7 @@ import {
 } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -14,14 +14,14 @@ import { IconColor } from "src/types";
 import { useKtp } from "../Create";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import { getFile } from "src/firebase/upload";
 
 interface Profile {
-  distributor?: Distributor;
+  ktpFile: string;
+  distributor: Distributor;
   isLoading?: boolean;
   error?: string;
 }
-const Profile = ({ distributor, error, isLoading }: Profile) => {
+const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
   const {
     control,
     handleSubmit,
@@ -29,11 +29,81 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
   } = useForm<FieldValues>();
   const [_, setKtpFile] = useState<File>();
 
-  const { fields } = useHook(setKtpFile, distributor);
-
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
+
+  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
+
+  const fields: TextfieldProps[] = [
+    objectFields({
+      label: "nama pemilik",
+      name: "ownerName",
+      type: "text",
+      autoComplete: "on",
+      defaultValue: distributor.ownerName,
+    }),
+    objectFields({
+      label: "nomor HP",
+      name: "phoneNumber",
+      type: "number",
+      autoComplete: "on",
+      defaultValue: parsePhoneNumber(distributor.phoneNumber),
+    }),
+    objectFields({
+      label: "email",
+      name: "email",
+      type: "email",
+      autoComplete: "on",
+      defaultValue: distributor.email,
+    }),
+    objectFields({
+      label: "nama sesuai rekening",
+      name: "accountName",
+      type: "text",
+      defaultValue: "-",
+      description: "* tidak dapat diedit",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+    }),
+    objectFields({
+      label: "nama bank",
+      name: "bankName",
+      type: "text",
+      defaultValue: "-",
+      description: "* tidak dapat diedit",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+    }),
+    objectFields({
+      label: "nomor rekening",
+      name: "accountNumber",
+      type: "text",
+      defaultValue: "-",
+      description: "* tidak dapat diedit",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+    }),
+    objectFields({
+      label: "KTP pemilik",
+      name: "ktp",
+      type: "file",
+      placeholder: "unggah KTP",
+      defaultValue: ktpFile,
+      uploadImage: {
+        file: {
+          ref: ktpRef,
+          onClick,
+          onChange,
+        },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon color={IconColor.red} width={16} />,
+              onClick: () => setKtpBlob(""),
+            },
+          ],
+        },
+      },
+    }),
+  ];
 
   return (
     <>
@@ -100,84 +170,6 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
       )}
     </>
   );
-};
-
-const useHook = (setKtpFile: (file: File) => void, data?: Distributor) => {
-  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
-  const [file, setFile] = React.useState("");
-  getFile("distributor_document/dis.png", setFile);
-
-  const fields: TextfieldProps[] = [
-    objectFields({
-      label: "nama pemilik",
-      name: "ownerName",
-      type: "text",
-      autoComplete: "on",
-      defaultValue: data?.ownerName,
-    }),
-    objectFields({
-      label: "nomor HP",
-      name: "phoneNumber",
-      type: "number",
-      autoComplete: "on",
-      defaultValue: parsePhoneNumber(data?.phoneNumber),
-    }),
-    objectFields({
-      label: "email",
-      name: "email",
-      type: "email",
-      autoComplete: "on",
-      defaultValue: data?.email,
-    }),
-    objectFields({
-      label: "nama sesuai rekening",
-      name: "accountName",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nama bank",
-      name: "bankName",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nomor rekening",
-      name: "accountNumber",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "KTP pemilik",
-      name: "ktp",
-      type: "file",
-      placeholder: "unggah KTP",
-      defaultValue: file,
-      uploadImage: {
-        file: {
-          ref: ktpRef,
-          onClick,
-          onChange,
-        },
-        image: {
-          actions: [
-            {
-              src: <TrashIcon color={IconColor.red} width={16} />,
-              onClick: () => setKtpBlob(""),
-            },
-          ],
-        },
-      },
-    }),
-  ];
-
-  return { fields };
 };
 
 export default Profile;

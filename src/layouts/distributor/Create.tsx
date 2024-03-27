@@ -205,8 +205,14 @@ const useApi = (ktpFile?: File) => {
       return;
     }
 
+    const ktpImage = `distributor_document/${Date.now()}.png`;
+
     try {
-      setIsLoading(true);
+      await uploadFile({
+        file: ktpFile,
+        prefix: ktpImage,
+      });
+
       const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
 
       const obj = {
@@ -230,21 +236,12 @@ const useApi = (ktpFile?: File) => {
           userId: user?.uid ?? "",
           isPrimary: true,
         },
-        documents: {
-          ktpImage: "distributor_document/dis",
-        },
+        documents: { ktpImage },
       };
 
       const result = await create.mutateAsync({
         data: obj,
       });
-
-      if (result) {
-        await uploadFile({
-          file: ktpFile,
-          prefix: `distributor_document/dis.png`,
-        });
-      }
 
       if (result.id) navigate(-1);
     } catch (e) {

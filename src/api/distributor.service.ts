@@ -137,10 +137,8 @@ export interface History {
 }
 
 interface Create {
-  // banner: string;
   documents: Documents;
   email: string;
-  // imageUrl: string;
   isSuspend: boolean;
   isVerify: boolean;
   location: Omit<Location, "id">;

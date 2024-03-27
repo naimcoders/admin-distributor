@@ -70,6 +70,7 @@ export const LabelAndImage: FC<LabelAndImageProps> = ({
       <Image
         src={src}
         alt="image"
+        loading="lazy"
         actions={actions}
         className={cx("aspect-video object-cover", className)}
       />

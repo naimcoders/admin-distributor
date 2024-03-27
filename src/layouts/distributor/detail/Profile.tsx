@@ -5,7 +5,7 @@ import {
 } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -14,6 +14,7 @@ import { IconColor } from "src/types";
 import { useKtp } from "../Create";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
+import { getFile } from "src/firebase/upload";
 
 interface Profile {
   distributor?: Distributor;
@@ -103,6 +104,8 @@ const Profile = ({ distributor, error, isLoading }: Profile) => {
 
 const useHook = (setKtpFile: (file: File) => void, data?: Distributor) => {
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
+  const [file, setFile] = React.useState("");
+  getFile("distributor_document/dis.png", setFile);
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -155,7 +158,7 @@ const useHook = (setKtpFile: (file: File) => void, data?: Distributor) => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      defaultValue: data?.documents?.ktpImage,
+      defaultValue: file,
       uploadImage: {
         file: {
           ref: ktpRef,

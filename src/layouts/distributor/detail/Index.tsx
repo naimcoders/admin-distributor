@@ -5,6 +5,7 @@ import Product from "./Product";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDistributor } from "src/api/distributor.service";
+import React from "react";
 
 const Detail = () => {
   const { tabs } = useHook();

@@ -53,7 +53,7 @@ const Business = ({ distributor, error, isLoading }: Business) => {
             ))}
           </section>
 
-          <section className="grid-cols-4 grid">
+          <section className="grid-cols-4 grid lg:gap-8 gap-4">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
                 {["coordinate"].includes(v.type!) && (

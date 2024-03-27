@@ -8,7 +8,6 @@ import { Textfield } from "src/components/Textfield";
 import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
-import PinVerification from "./PinVerification";
 import Confirm from "./Confirm";
 import cx from "classnames";
 
@@ -55,11 +54,6 @@ const Transfer = () => {
   const onBack = () => {
     actionIsConfirmTransfer();
     setTimeout(actionIsTransfer, 500);
-  };
-
-  const onBackPinVerification = () => {
-    actionIsPinVerification();
-    setTimeout(actionIsConfirmTransfer, 500);
   };
 
   const onSubmit = handleSubmit((e) => {
@@ -186,8 +180,6 @@ const Transfer = () => {
 
         <Button aria-label="konfirmasi" className="w-full" onClick={onSubmit} />
       </Confirm>
-
-      <PinVerification onBack={onBackPinVerification} />
     </>
   );
 };

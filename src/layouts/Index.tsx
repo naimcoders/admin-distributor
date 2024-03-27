@@ -11,24 +11,31 @@ import {
 } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
+import { useActiveModal } from "src/stores/modalStore";
+import PinVerification from "./dashboard/modals/PinVerification";
 
 const Layout = () => {
   return (
-    <main>
-      <Header />
-      <section className="bg-background">
-        <AsideNav />
-        <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
-          <Outlet />
-        </main>
-      </section>
-    </main>
+    <>
+      <main>
+        <Header />
+        <section className="bg-background">
+          <AsideNav />
+          <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
+            <Outlet />
+          </main>
+        </section>
+      </main>
+
+      <PinVerification header={{ label: "buat PIN" }} />
+    </>
   );
 };
 
 const Header = () => {
   const { pathname } = useLocation();
   const [path, setPath] = React.useState("");
+  const { actionIsPinVerification } = useActiveModal();
 
   React.useEffect(() => {
     setPath(pathname?.split("/")[1]);
@@ -37,7 +44,7 @@ const Header = () => {
   const currentPath = path.split("-").join(" ");
 
   const onPower = () => {
-    console.log("power");
+    actionIsPinVerification();
   };
 
   return (

@@ -37,6 +37,9 @@ export interface TextfieldProps
   readOnly?: ReadOnlyProps;
   autoComplete?: "on" | "off";
   uploadImage?: UploadImageProps;
+  classNames?: {
+    input: string;
+  };
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -65,7 +68,11 @@ export const Textfield = (props: TextfieldProps) => {
           base: "z-0",
           errorMessage: "capitalize font-interMedium",
           description: "text-[#71717A] first-letter:capitalize",
-          input: cx("placeholder:capitalize", props.readOnly?.cursor),
+          input: cx(
+            "placeholder:capitalize",
+            props.classNames?.input,
+            props.readOnly?.cursor
+          ),
         }}
         title={props.defaultValue}
         endContent={props.endContent}

@@ -18,11 +18,14 @@ import Topup from "./modals/Topup";
 
 const Dashboard = () => {
   return (
-    <main className="flex flex-col gap-8">
-      <TopLine />
-      <MiddleLine />
-      <BottomLine />
-    </main>
+    <>
+      <main className="flex flex-col gap-8">
+        <TopLine />
+        <MiddleLine />
+        <BottomLine />
+      </main>
+      {/* <PinVerification onBack={actionIsPinVerification} /> */}
+    </>
   );
 };
 
@@ -151,8 +154,6 @@ const PilipayBalance = () => {
         </span>
         <h2 className="font-interMedium">Rp13.450.000</h2>
       </section>
-
-      {/* <Button aria-label="aktifkan" className="" /> */}
 
       <section className="flex gap-3">
         {payments.map((v) => (

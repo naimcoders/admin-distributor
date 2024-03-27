@@ -44,9 +44,12 @@ const Create = () => {
   const [ktpFile, setKtpFile] = React.useState<File>();
 
   const coordinate = useGeneralStore((v) => v.coordinate);
-  const { fields } = useField(setKtpFile);
+  const { fields, bannerFile } = useField(setKtpFile);
   const { actionIsCoordinate } = useActiveModal();
-  const { forms, geoLocation, zipCode, onSubmit, isLoading } = useApi(ktpFile);
+  const { forms, geoLocation, zipCode, onSubmit, isLoading } = useApi(
+    ktpFile,
+    bannerFile
+  );
 
   return (
     <main className="flexcol gap-5 lg:gap-8">
@@ -152,7 +155,11 @@ const Create = () => {
                         v.name
                       )}
                       startContent={
-                        <ArrowUpTrayIcon width={16} color={IconColor.zinc} />
+                        <ArrowUpTrayIcon
+                          width={16}
+                          color={IconColor.zinc}
+                          className="cursor-pointer"
+                        />
                       }
                       rules={{
                         required: { value: true, message: v.errorMessage! },
@@ -182,7 +189,7 @@ const Create = () => {
   );
 };
 
-const useApi = (ktpFile?: File) => {
+const useApi = (ktpFile?: File, bannerFile?: File) => {
   const forms = useForm<DefaultValues>();
   const coordinate = useGeneralStore((v) => v.coordinate);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -201,6 +208,10 @@ const useApi = (ktpFile?: File) => {
       return;
     }
     if (!ktpFile) {
+      toast.error("Upload KTP");
+      return;
+    }
+    if (!bannerFile) {
       toast.error("Upload KTP");
       return;
     }
@@ -243,7 +254,13 @@ const useApi = (ktpFile?: File) => {
         data: obj,
       });
 
-      if (result.id) navigate(-1);
+      if (result.id) {
+        await uploadFile({
+          file: bannerFile,
+          prefix: `distributor_banner/${result.id}/${Date.now()}.png`,
+        });
+        navigate(-1);
+      }
     } catch (e) {
       const error = e as Error;
       console.error(error.message);
@@ -274,11 +291,25 @@ export const useKtp = (setKtpFile: (file: File) => void) => {
   return { ktpBlob, ktpRef, onClick, onChange, setKtpBlob };
 };
 
-export default Create;
-
 const useField = (setKtpFile: (file: File) => void) => {
   const [isPassword, setIsPassword] = React.useState(false);
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
+  const [bannerFile, setBannerFile] = React.useState<File>();
+  const [bannerBlob, setBannerBlob] = React.useState("");
+
+  const bannerRef = React.useRef<ChildRef>(null);
+
+  const onClickBanner = () => {
+    if (bannerRef.current) bannerRef.current.click();
+  };
+
+  const onChangeBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const blob = URL.createObjectURL(files[0]);
+    setBannerBlob(blob);
+    setBannerFile(files[0]);
+  };
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -337,7 +368,31 @@ const useField = (setKtpFile: (file: File) => void) => {
         },
       },
     }),
+    objectFields({
+      label: "banner",
+      name: "banner",
+      type: "file",
+      placeholder: "unggah banner",
+      defaultValue: bannerBlob,
+      uploadImage: {
+        file: {
+          ref: bannerRef,
+          onClick: onClickBanner,
+          onChange: onChangeBanner,
+        },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon width={16} color={IconColor.red} />,
+              onClick: () => setBannerBlob(""),
+            },
+          ],
+        },
+      },
+    }),
   ];
 
-  return { fields };
+  return { fields, bannerFile };
 };
+
+export default Create;

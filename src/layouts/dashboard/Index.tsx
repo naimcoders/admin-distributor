@@ -152,6 +152,8 @@ const PilipayBalance = () => {
         <h2 className="font-interMedium">Rp13.450.000</h2>
       </section>
 
+      {/* <Button aria-label="aktifkan" className="" /> */}
+
       <section className="flex gap-3">
         {payments.map((v) => (
           <BtnPiliPayActions

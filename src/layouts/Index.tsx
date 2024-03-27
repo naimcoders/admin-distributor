@@ -5,7 +5,10 @@ import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { HTMLAttributes, useEffect, useState } from "react";
 import { Button } from "src/components/Button";
-import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowRightStartOnRectangleIcon,
+  PowerIcon,
+} from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
 
@@ -31,6 +34,12 @@ const Header = () => {
     setPath(pathname?.split("/")[1]);
   }, [pathname]);
 
+  const currentPath = path.split("-").join(" ");
+
+  const onPower = () => {
+    console.log("power");
+  };
+
   return (
     <header className="px-6 py-3 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
       <section className="flex gap-6 items-center">
@@ -38,9 +47,20 @@ const Header = () => {
         <Image src={mokes} alt="Mokes" width={65} />
       </section>
 
-      <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-2xl capitalize">
-        {path.split("-").join(" ")}
-      </h1>
+      <section className="flex gap-4">
+        {currentPath === "dashboard" && (
+          <PowerIcon
+            width={20}
+            className="cursor-pointer"
+            color="#FFFFFF"
+            title="Aktifkan akun"
+            onClick={onPower}
+          />
+        )}
+        <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-2xl capitalize">
+          {currentPath}
+        </h1>
+      </section>
     </header>
   );
 };

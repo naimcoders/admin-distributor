@@ -171,6 +171,12 @@ interface Suspend {
   isSuspend: boolean;
 }
 
+interface UpdateDocument {
+  distributorId: "string";
+  oldKtpImage: "string";
+  ktpImage: "string";
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -182,6 +188,7 @@ class Api {
   }
 
   private path = "distributor";
+
   async find(
     distributorId: string,
     r: ReqPaging
@@ -232,6 +239,16 @@ class Api {
       errors: "",
     });
   }
+
+  async updateDocument(r: UpdateDocument): Promise<null> {
+    return await req<null>({
+      method: "PUT",
+      isNoAuth: false,
+      body: r,
+      path: `${this.path}/update-document`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiDistributorInfo {
@@ -239,6 +256,7 @@ interface ApiDistributorInfo {
   findById(id: string): Promise<Distributor>;
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
   create(r: Create): Promise<Distributor>;
+  updateDocument(r: UpdateDocument): Promise<null>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -323,5 +341,16 @@ export const useDistributor = () => {
     onError: (e) => toast.error(e.message),
   });
 
-  return { find, findById, suspend, create };
+  const updateDocument = useMutation<null, Error, { data: UpdateDocument }>({
+    mutationKey: [key, "update-document"],
+    mutationFn: async (r) =>
+      await getDistributorApiInfo().updateDocument(r.data),
+    onSuccess: () => {
+      toast.success("KTP berhasil diperbarui");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  return { find, findById, suspend, create, updateDocument };
 };

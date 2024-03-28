@@ -65,7 +65,7 @@ export const LabelAndImage: FC<LabelAndImageProps> = ({
   className,
 }) => {
   return (
-    <section className="flexcol gap-4">
+    <section className="flex flex-col gap-4">
       {label && <h2 className="text-sm capitalize">{label}</h2>}
       <Image
         src={src}

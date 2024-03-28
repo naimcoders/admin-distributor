@@ -272,6 +272,8 @@ const useApi = (ktpFile?: File, bannerFile?: File) => {
   return { zipCode, geoLocation, forms, onSubmit, isLoading };
 };
 
+// TODO: REUSABILITY THIS HOOK
+
 export const useKtp = (setKtpFile: (file: File) => void) => {
   const [ktpBlob, setKtpBlob] = React.useState("");
   const ktpRef = React.useRef<ChildRef>(null);

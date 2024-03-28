@@ -119,7 +119,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
       ) : isLoading ? (
         <Skeleton />
       ) : (
-        <main className="mt-5 flexcol lg:gap-8 gap-4">
+        <main className="mt-5 flex flex-col lg:gap-8 gap-4">
           <section className="grid grid-cols-3 lg:gap-8 gap-4">
             {fields.map((v, idx) => (
               <React.Fragment key={idx}>

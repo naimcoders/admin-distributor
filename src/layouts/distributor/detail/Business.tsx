@@ -112,12 +112,12 @@ const useHook = (data?: Distributor) => {
         lng: data?.locations[0]?.lng,
       },
     }),
-    // objectFields({
-    //   label: "logo usaha",
-    //   name: "businessLogo",
-    //   type: "image",
-    //   defaultValue: "",
-    // }),
+    objectFields({
+      label: "logo usaha",
+      name: "businessLogo",
+      type: "image",
+      defaultValue: data?.imageUrl,
+    }),
     objectFields({
       label: "banner etalase",
       name: "banner",

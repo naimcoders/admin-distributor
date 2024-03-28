@@ -7,7 +7,7 @@ import {
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
-import { ChildRef, File, LabelAndImage } from "src/components/File";
+import { File, LabelAndImage } from "src/components/File";
 import {
   Textfield,
   TextfieldProps,
@@ -26,6 +26,7 @@ import { useAuth } from "src/firebase/auth";
 import { uploadFile } from "src/firebase/upload";
 import { checkPassword } from "src/pages/Index";
 import { useNavigate } from "react-router-dom";
+import { useBanner, useKtp } from "src/hooks/document";
 
 interface DefaultValues {
   ownerName: string;
@@ -41,10 +42,8 @@ interface DefaultValues {
 }
 
 const Create = () => {
-  const [ktpFile, setKtpFile] = React.useState<File>();
-
   const coordinate = useGeneralStore((v) => v.coordinate);
-  const { fields, bannerFile } = useField(setKtpFile);
+  const { fields, bannerFile, ktpFile } = useField();
   const { actionIsCoordinate } = useActiveModal();
   const { forms, geoLocation, zipCode, onSubmit, isLoading } = useApi(
     ktpFile,
@@ -272,46 +271,18 @@ const useApi = (ktpFile?: File, bannerFile?: File) => {
   return { zipCode, geoLocation, forms, onSubmit, isLoading };
 };
 
-// TODO: REUSABILITY THIS HOOK
-
-export const useKtp = (setKtpFile: (file: File) => void) => {
-  const [ktpBlob, setKtpBlob] = React.useState("");
-  const ktpRef = React.useRef<ChildRef>(null);
-
-  const onClick = () => {
-    if (ktpRef.current) ktpRef.current.click();
-  };
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const blob = URL.createObjectURL(files[0]);
-    setKtpBlob(blob);
-    setKtpFile(files[0]);
-  };
-
-  return { ktpBlob, ktpRef, onClick, onChange, setKtpBlob };
-};
-
-const useField = (setKtpFile: (file: File) => void) => {
+const useField = () => {
   const [isPassword, setIsPassword] = React.useState(false);
-  const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
-  const [bannerFile, setBannerFile] = React.useState<File>();
-  const [bannerBlob, setBannerBlob] = React.useState("");
-
-  const bannerRef = React.useRef<ChildRef>(null);
-
-  const onClickBanner = () => {
-    if (bannerRef.current) bannerRef.current.click();
-  };
-
-  const onChangeBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const blob = URL.createObjectURL(files[0]);
-    setBannerBlob(blob);
-    setBannerFile(files[0]);
-  };
+  const { ktpBlob, ktpRef, onClickKtp, onChangeKtp, setKtpBlob, ktpFile } =
+    useKtp();
+  const {
+    bannerBlob,
+    bannerRef,
+    onChangeBanner,
+    bannerFile,
+    onClickBanner,
+    setBannerBlob,
+  } = useBanner();
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -357,8 +328,8 @@ const useField = (setKtpFile: (file: File) => void) => {
       uploadImage: {
         file: {
           ref: ktpRef,
-          onClick,
-          onChange,
+          onClick: onClickKtp,
+          onChange: onChangeKtp,
         },
         image: {
           actions: [
@@ -394,7 +365,7 @@ const useField = (setKtpFile: (file: File) => void) => {
     }),
   ];
 
-  return { fields, bannerFile };
+  return { fields, bannerFile, ktpFile };
 };
 
 export default Create;

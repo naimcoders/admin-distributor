@@ -34,7 +34,7 @@ const Detail = () => {
           distributor={distributors?.data}
           error={distributors.error}
           isLoading={distributors.isLoading}
-          ktpFile={{
+          ktp={{
             file: ktpFile,
             setFile: setKtpFile,
           }}

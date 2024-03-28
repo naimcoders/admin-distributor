@@ -11,9 +11,9 @@ import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { Distributor } from "src/api/distributor.service";
 import { IconColor } from "src/types";
-import { useKtp } from "../Create";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
+import { useKtp } from "src/hooks/document";
 
 interface KtpFile {
   file: string;
@@ -21,15 +21,13 @@ interface KtpFile {
 }
 
 interface Profile {
-  ktpFile: KtpFile;
+  ktp: KtpFile;
   distributor: Distributor;
   isLoading?: boolean;
   error?: string;
 }
 
-const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
-  const [_, setKtpFile] = React.useState<File>();
-
+const Profile = ({ distributor, error, isLoading, ktp }: Profile) => {
   const {
     control,
     handleSubmit,
@@ -40,7 +38,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
     console.log(e);
   });
 
-  const { ktpRef, onClick, onChange, setKtpBlob, ktpBlob } = useKtp(setKtpFile);
+  const { ktpRef, onClickKtp, onChangeKtp, setKtpBlob, ktpBlob } = useKtp();
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -93,18 +91,18 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      defaultValue: !ktpBlob ? ktpFile.file : ktpBlob,
+      defaultValue: !ktpBlob ? ktp.file : ktpBlob,
       uploadImage: {
         file: {
           ref: ktpRef,
-          onClick,
-          onChange,
+          onClick: onClickKtp,
+          onChange: onChangeKtp,
         },
         image: {
           actions: [
             {
               src: <TrashIcon color={IconColor.red} width={16} />,
-              onClick: () => (!ktpBlob ? ktpFile.setFile("") : setKtpBlob("")),
+              onClick: () => (!ktpBlob ? ktp.setFile("") : setKtpBlob("")),
             },
           ],
         },

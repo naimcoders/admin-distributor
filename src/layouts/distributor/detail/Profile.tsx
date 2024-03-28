@@ -5,7 +5,7 @@ import {
 } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Fragment, useState } from "react";
+import React from "react";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -15,25 +15,32 @@ import { useKtp } from "../Create";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 
+interface KtpFile {
+  file: string;
+  setFile: (v: string) => void;
+}
+
 interface Profile {
-  ktpFile: string;
+  ktpFile: KtpFile;
   distributor: Distributor;
   isLoading?: boolean;
   error?: string;
 }
+
 const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
+  const [_, setKtpFile] = React.useState<File>();
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
-  const [_, setKtpFile] = useState<File>();
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
 
-  const { ktpRef, onClick, onChange, setKtpBlob } = useKtp(setKtpFile);
+  const { ktpRef, onClick, onChange, setKtpBlob, ktpBlob } = useKtp(setKtpFile);
 
   const fields: TextfieldProps[] = [
     objectFields({
@@ -86,7 +93,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
       name: "ktp",
       type: "file",
       placeholder: "unggah KTP",
-      defaultValue: ktpFile,
+      defaultValue: !ktpBlob ? ktpFile.file : ktpBlob,
       uploadImage: {
         file: {
           ref: ktpRef,
@@ -97,7 +104,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
           actions: [
             {
               src: <TrashIcon color={IconColor.red} width={16} />,
-              onClick: () => setKtpBlob(""),
+              onClick: () => (!ktpBlob ? ktpFile.setFile("") : setKtpBlob("")),
             },
           ],
         },
@@ -115,7 +122,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
         <main className="mt-5 flexcol lg:gap-8 gap-4">
           <section className="grid grid-cols-3 lg:gap-8 gap-4">
             {fields.map((v, idx) => (
-              <Fragment key={idx}>
+              <React.Fragment key={idx}>
                 {["text", "number", "email"].includes(v.type!) && (
                   <Textfield
                     {...v}
@@ -126,13 +133,13 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
                     }}
                   />
                 )}
-              </Fragment>
+              </React.Fragment>
             ))}
           </section>
 
           <section className="grid-cols-3 grid gap-4 lg:gap-8">
             {fields.map((v, idx) => (
-              <Fragment key={idx}>
+              <React.Fragment key={idx}>
                 {["file"].includes(v.type!) &&
                   (!v.defaultValue ? (
                     <File
@@ -159,7 +166,7 @@ const Profile = ({ distributor, error, isLoading, ktpFile }: Profile) => {
                       actions={v.uploadImage?.image.actions}
                     />
                   ))}
-              </Fragment>
+              </React.Fragment>
             ))}
           </section>
 

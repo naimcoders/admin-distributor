@@ -10,21 +10,21 @@ import { getFile } from "src/firebase/upload";
 import Skeleton from "src/components/Skeleton";
 
 const Detail = () => {
+  const [ktpFile, setKtpFile] = React.useState("");
   const navigate = useNavigate();
-
   const { tab } = parseQueryString<{ tab: string }>();
+
   const onSelectionChange = (e: React.Key) => {
     const qs = stringifyQuery({ tab: e });
     navigate(`/sub-distributor/${id}?${qs}`);
   };
-  const [file, setFile] = React.useState("");
 
   const { id } = useParams() as { id: string };
   const { findById } = useDistributor();
   const distributors = findById(id);
 
+  getFile(distributors?.data?.documents.ktpImage ?? "", setKtpFile);
   if (!distributors.data) return <Skeleton />;
-  getFile(distributors.data.documents.ktpImage, setFile);
 
   const tabs: ITabs[] = [
     {
@@ -34,7 +34,10 @@ const Detail = () => {
           distributor={distributors?.data}
           error={distributors.error}
           isLoading={distributors.isLoading}
-          ktpFile={file}
+          ktpFile={{
+            file: ktpFile,
+            setFile: setKtpFile,
+          }}
         />
       ),
     },

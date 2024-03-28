@@ -18,7 +18,15 @@ export const useKtp = () => {
     setKtpFile(files[0]);
   };
 
-  return { ktpBlob, ktpRef, onClickKtp, onChangeKtp, setKtpBlob, ktpFile };
+  return {
+    ktpBlob,
+    ktpRef,
+    onClickKtp,
+    onChangeKtp,
+    setKtpBlob,
+    ktpFile,
+    setKtpFile,
+  };
 };
 
 export const useBanner = () => {

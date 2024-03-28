@@ -9,11 +9,13 @@ import React from "react";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
-import { Distributor } from "src/api/distributor.service";
+import { Distributor, useDistributor } from "src/api/distributor.service";
 import { IconColor } from "src/types";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { useKtp } from "src/hooks/document";
+import { uploadFile } from "src/firebase/upload";
+import { toast } from "react-toastify";
 
 interface KtpFile {
   file: string;
@@ -23,22 +25,72 @@ interface KtpFile {
 interface Profile {
   ktp: KtpFile;
   distributor: Distributor;
+  distributorId: string;
   isLoading?: boolean;
   error?: string;
 }
 
-const Profile = ({ distributor, error, isLoading, ktp }: Profile) => {
+const Profile = ({
+  distributor,
+  error,
+  isLoading,
+  ktp,
+  distributorId,
+}: Profile) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
 
+  const { updateDocument } = useDistributor();
+
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
   });
 
-  const { ktpRef, onClickKtp, onChangeKtp, setKtpBlob, ktpBlob } = useKtp();
+  const {
+    ktpRef,
+    onClickKtp,
+    onChangeKtp,
+    setKtpBlob,
+    ktpBlob,
+    ktpFile,
+    setKtpFile,
+  } = useKtp();
+
+  React.useEffect(() => {
+    if (ktpFile) onUpdateKtp();
+  }, [ktpFile]);
+
+  const onUpdateKtp = async () => {
+    try {
+      if (!ktpFile) return;
+      const ktpPath = `distributor_document/${Date.now()}.png`;
+      toast.loading("Sedang upload foto KTP", {
+        toastId: "upload-foto-ktp",
+      });
+
+      await uploadFile({
+        file: ktpFile,
+        prefix: ktpPath,
+      });
+
+      await updateDocument.mutateAsync({
+        data: {
+          distributorId,
+          ktpImage: ktpPath,
+          oldKtpImage: distributor.documents.ktpImage,
+        },
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Failed to update ktp : ${error.message}`);
+    } finally {
+      toast.dismiss("upload-foto-ktp");
+      setKtpFile(undefined);
+    }
+  };
 
   const fields: TextfieldProps[] = [
     objectFields({

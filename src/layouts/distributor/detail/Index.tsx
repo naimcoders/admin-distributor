@@ -31,6 +31,7 @@ const Detail = () => {
       label: "profil",
       content: (
         <Profile
+          distributorId={id}
           distributor={distributors?.data}
           error={distributors.error}
           isLoading={distributors.isLoading}

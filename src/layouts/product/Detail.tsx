@@ -182,7 +182,7 @@ const Detail = () => {
       toast.success(`Berhasil upload foto produk`);
     } catch (e) {
       const err = e as Error;
-      console.log(`Error upload product ` + `${err.message}`);
+      console.error(`Error upload product ` + `${err.message}`);
       toast.error(`Gagal upload foto produk`);
     } finally {
       toast.dismiss("upload-foto-produk");

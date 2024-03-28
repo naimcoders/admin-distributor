@@ -172,9 +172,9 @@ interface Suspend {
 }
 
 interface UpdateDocument {
-  distributorId: "string";
-  oldKtpImage: "string";
-  ktpImage: "string";
+  distributorId: string;
+  oldKtpImage: string;
+  ktpImage: string;
 }
 
 class Api {

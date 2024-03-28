@@ -3,7 +3,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { Button } from "src/components/Button";
@@ -37,17 +37,8 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
+  const { forms, onSubmit } = useApi();
   const { updateDocument } = useDistributor();
-
-  const onSubmit = handleSubmit(async (e) => {
-    console.log(e);
-  });
 
   const {
     ktpRef,
@@ -176,8 +167,11 @@ const Profile = ({
                 {["text", "number", "email"].includes(v.type!) && (
                   <Textfield
                     {...v}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
+                    control={forms.control}
+                    errorMessage={handleErrorMessage(
+                      forms.formState.errors,
+                      v.name
+                    )}
                     rules={{
                       required: { value: true, message: v.errorMessage ?? "" },
                     }}
@@ -195,13 +189,16 @@ const Profile = ({
                     <File
                       name={v.name}
                       label={v.label}
-                      control={control}
+                      control={forms.control}
                       placeholder={v.placeholder}
                       ref={v.uploadImage?.file.ref}
                       onClick={v.uploadImage?.file.onClick}
                       onChange={v.uploadImage?.file.onChange}
                       startContent={<ArrowUpTrayIcon width={16} />}
-                      errorMessage={handleErrorMessage(errors, v.name)}
+                      errorMessage={handleErrorMessage(
+                        forms.formState.errors,
+                        v.name
+                      )}
                       rules={{
                         required: {
                           value: true,
@@ -227,6 +224,22 @@ const Profile = ({
       )}
     </>
   );
+};
+
+interface DefaultValues {
+  ownerName: string;
+  phone: string;
+  email: string;
+}
+
+const useApi = () => {
+  const forms = useForm<DefaultValues>();
+
+  const onSubmit = forms.handleSubmit(async (e) => {
+    console.log(e);
+  });
+
+  return { forms, onSubmit };
 };
 
 export default Profile;

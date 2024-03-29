@@ -1,9 +1,19 @@
 import { useAuth } from "src/firebase/auth";
 import Skeleton from "./Skeleton";
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { setUser } from "src/stores/auth";
+import LoginPage from "../pages/Index";
 
 export const PrivateRoute = () => {
   const { error, loading, user } = useAuth();
+  const setUsers = setUser((v) => v.setUser);
+
+  useEffect(() => {
+    if (user) {
+      setUsers();
+    }
+  }, [user]);
 
   if (error) return <div>{error.message}</div>;
   if (loading)
@@ -13,6 +23,5 @@ export const PrivateRoute = () => {
       </div>
     );
 
-  // user?.getIdToken().then((e) => console.log(e));
-  return <>{user ? <Outlet /> : <Navigate to="/" />}</>;
+  return <>{user ? <Outlet /> : <LoginPage />}</>;
 };

@@ -1,7 +1,11 @@
 import React from "react";
 import Error from "src/components/Error";
 import Label from "src/components/Label";
-import { Distributor, useDistributor } from "src/api/distributor.service";
+import {
+  Distributor,
+  RoleDistributor,
+  useDistributor,
+} from "src/api/distributor.service";
 import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
 import {
@@ -14,6 +18,7 @@ import { Columns } from "src/types";
 import { ConfirmModal } from "src/components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useActiveModal } from "src/stores/modalStore";
+import { setUser } from "src/stores/auth";
 
 export const useSuspend = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
@@ -31,6 +36,8 @@ export const useSuspend = () => {
 };
 
 const Distributor = () => {
+  const user = setUser((v) => v.user);
+  const authLoading = setUser((v) => v.isLoading);
   const navigate = useNavigate();
   const { page: pageQuery } = parseQueryString<{ page: string }>();
 
@@ -100,48 +107,60 @@ const Distributor = () => {
   ];
 
   return (
-    <>
-      {error ? (
-        <Error error={error} />
+    <React.Fragment>
+      {authLoading ? (
+        <p>Loading...</p>
       ) : (
         <>
-          <TableWithoutTabs
-            header={{
-              search: {
-                placeholder: "cari nama sub-distributor/pemilik/no HP",
-                setSearch,
-              },
-              createData: {
-                isValue: true,
-                label: "distributor",
-                onClick: () => navigate("/sub-distributor/tambah"),
-              },
-            }}
-            table={{
-              columns,
-              data: data?.items ?? [],
-              isLoading,
-              isNext,
-              page,
-              next,
-              prev,
-            }}
-          />
+          {user?.role === RoleDistributor.DISTRIBUTOR ? (
+            <section>
+              {error ? (
+                <Error error={error} />
+              ) : (
+                <>
+                  <TableWithoutTabs
+                    header={{
+                      search: {
+                        placeholder: "cari nama sub-distributor/pemilik/no HP",
+                        setSearch,
+                      },
+                      createData: {
+                        isValue: true,
+                        label: "distributor",
+                        onClick: () => navigate("/sub-distributor/tambah"),
+                      },
+                    }}
+                    table={{
+                      columns,
+                      data: data?.items ?? [],
+                      isLoading,
+                      isNext,
+                      page,
+                      next,
+                      prev,
+                    }}
+                  />
 
-          <ConfirmModal
-            label={
-              !isSuspend
-                ? "Yakin ingin menonaktifkan akun ini?"
-                : "Yakin ingin mengaktifkan akun ini?"
-            }
-            onSubmit={{
-              label: !isSuspend ? "non-aktifkan" : "aktifkan",
-              action: onSuspend,
-            }}
-          />
+                  <ConfirmModal
+                    label={
+                      !isSuspend
+                        ? "Yakin ingin menonaktifkan akun ini?"
+                        : "Yakin ingin mengaktifkan akun ini?"
+                    }
+                    onSubmit={{
+                      label: !isSuspend ? "non-aktifkan" : "aktifkan",
+                      action: onSuspend,
+                    }}
+                  />
+                </>
+              )}
+            </section>
+          ) : (
+            <p>Not Have Access</p>
+          )}
         </>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

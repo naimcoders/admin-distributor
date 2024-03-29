@@ -41,6 +41,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { uploadFile } from "src/firebase/upload";
 import { onPickImage } from "src/helpers/crop-image";
+import { setUser } from "src/stores/auth";
+import { RoleDistributor } from "src/api/distributor.service";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
@@ -231,8 +233,8 @@ const Create = () => {
           </header>
 
           <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
-            {fields.map((v) => (
-              <Fragment key={v.label}>
+            {fields.map((v, k) => (
+              <Fragment key={k}>
                 {["text", "rp"].includes(v.type!) && (
                   <Textfield
                     {...v}
@@ -386,6 +388,8 @@ export const useUploadProduct = () => {
 };
 
 const useFields = () => {
+  const user = setUser((v) => v.user);
+
   const {
     actionIsCategory,
     actionIsSubCategory,
@@ -474,13 +478,15 @@ const useFields = () => {
       onClick: actionIsCondition,
       rules: { required: { value: true, message: "pilih kondisi" } },
     }),
-    objectFields({
-      label: "sub-distributor",
-      name: "subDistributor",
-      type: "modal",
-      defaultValue: "",
-      onClick: actionIsSubDistributor,
-    }),
+    user?.role === RoleDistributor.DISTRIBUTOR
+      ? objectFields({
+          label: "sub-distributor",
+          name: "subDistributor",
+          type: "modal",
+          defaultValue: "",
+          onClick: actionIsSubDistributor,
+        })
+      : { name: "" },
   ];
 
   return {

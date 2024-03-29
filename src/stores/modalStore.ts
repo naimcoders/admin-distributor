@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 interface Modal {
+  isChangePassword: boolean;
+  setIsChangePassword: (v: boolean) => void;
   isPromotion: boolean;
   setIsPromotion: (v: boolean) => void;
   isDeleteImageProduct: boolean;
@@ -46,6 +48,8 @@ interface Modal {
 }
 
 const useModalStore = create<Modal>((set) => ({
+  isChangePassword: false,
+  setIsChangePassword: (v) => set({ isChangePassword: v }),
   isPromotion: false,
   setIsPromotion: (v) => set({ isPromotion: v }),
   isDeleteImageProduct: false,
@@ -95,6 +99,8 @@ export default useModalStore;
 export const useActiveModal = () => {
   const modals = useModalStore();
 
+  const actionIsChangePassword = () =>
+    modals.setIsChangePassword(!modals.isChangePassword);
   const actionIsPromotion = () => modals.setIsPromotion(!modals.isPromotion);
   const actionIsBankName = () => modals.setIsBankName(!modals.isBankName);
   const actionIsCategory = () => modals.setIsCategory(!modals.isCategory);
@@ -123,6 +129,8 @@ export const useActiveModal = () => {
     modals.setIsDeleteImageProduct(!modals.isDeleteImageProduct);
 
   return {
+    actionIsChangePassword,
+    isChangePassword: modals.isChangePassword,
     actionIsPromotion,
     isPromotion: modals.isPromotion,
     isDeleteImageProduct: modals.isDeleteImageProduct,

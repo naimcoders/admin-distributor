@@ -15,14 +15,17 @@ import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { Distributor, useDistributor } from "src/api/distributor.service";
 import { IconColor } from "src/types";
-import Error from "src/components/Error";
-import Skeleton from "src/components/Skeleton";
 import { useKtp } from "src/hooks/document";
 import { uploadFile } from "src/firebase/upload";
 import { toast } from "react-toastify";
-import { checkPassword } from "src/pages/Index";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
+import ChangePasswordModal, {
+  ChangePasswordValues,
+} from "src/components/ChangePassword";
+import { useActiveModal } from "src/stores/modalStore";
 
-interface KtpFile {
+export interface KtpFile {
   file: string;
   setFile: (v: string) => void;
 }
@@ -42,130 +45,9 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const [isPassword, setIsPassword] = React.useState(false);
-  const { forms, onSubmit } = useApi(distributorId);
-  const { updateDocument } = useDistributor();
-
-  const {
-    ktpRef,
-    onClickKtp,
-    onChangeKtp,
-    setKtpBlob,
-    ktpBlob,
-    ktpFile,
-    setKtpFile,
-  } = useKtp();
-
-  React.useEffect(() => {
-    if (ktpFile) onUpdateKtp();
-  }, [ktpFile]);
-
-  const onUpdateKtp = async () => {
-    try {
-      if (!ktpFile) return;
-      const ktpPath = `distributor_document/${Date.now()}.png`;
-      toast.loading("Sedang upload foto KTP", {
-        toastId: "upload-foto-ktp",
-      });
-
-      await uploadFile({
-        file: ktpFile,
-        prefix: ktpPath,
-      });
-
-      await updateDocument.mutateAsync({
-        data: {
-          distributorId,
-          ktpImage: ktpPath,
-          oldKtpImage: distributor.documents.ktpImage,
-        },
-      });
-    } catch (e) {
-      const error = e as Error;
-      console.error(`Failed to update ktp : ${error.message}`);
-    } finally {
-      toast.dismiss("upload-foto-ktp");
-      setKtpFile(undefined);
-    }
-  };
-
-  const fields: TextfieldProps[] = [
-    objectFields({
-      label: "nama pemilik",
-      name: "ownerName",
-      type: "text",
-      autoComplete: "on",
-      defaultValue: distributor.ownerName,
-    }),
-    objectFields({
-      label: "nomor HP",
-      name: "phoneNumber",
-      type: "number",
-      autoComplete: "on",
-      defaultValue: parsePhoneNumber(distributor.phoneNumber),
-    }),
-    objectFields({
-      label: "email",
-      name: "email",
-      type: "email",
-      autoComplete: "on",
-      defaultValue: distributor.email,
-    }),
-    objectFields({
-      label: "password",
-      name: "password",
-      type: "modal",
-      defaultValue: "",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      endContent: <ChevronRightIcon width={18} color={IconColor.zinc} />,
-    }),
-    objectFields({
-      label: "nama sesuai rekening",
-      name: "accountName",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nama bank",
-      name: "bankName",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nomor rekening",
-      name: "accountNumber",
-      type: "text",
-      defaultValue: "-",
-      description: "* tidak dapat diedit",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "KTP pemilik",
-      name: "ktp",
-      type: "file",
-      placeholder: "unggah KTP",
-      defaultValue: !ktpBlob ? ktp.file : ktpBlob,
-      uploadImage: {
-        file: {
-          ref: ktpRef,
-          onClick: onClickKtp,
-          onChange: onChangeKtp,
-        },
-        image: {
-          actions: [
-            {
-              src: <TrashIcon color={IconColor.red} width={16} />,
-              onClick: () => (!ktpBlob ? ktp.setFile("") : setKtpBlob("")),
-            },
-          ],
-        },
-      },
-    }),
-  ];
+  const { forms, onSubmit, onSubmitPassword, formsChangePwd } =
+    useApi(distributor);
+  const { fields } = useField(distributor, distributorId, ktp);
 
   return (
     <>
@@ -191,13 +73,7 @@ const Profile = ({
                     }}
                   />
                 )}
-              </React.Fragment>
-            ))}
-          </section>
 
-          <section className="grid-cols-3 grid gap-4 lg:gap-8">
-            {fields.map((v, idx) => (
-              <React.Fragment key={idx}>
                 {["file"].includes(v.type!) &&
                   (!v.defaultValue ? (
                     <File
@@ -238,6 +114,8 @@ const Profile = ({
           />
         </main>
       )}
+
+      <ChangePasswordModal onSubmit={onSubmitPassword} forms={formsChangePwd} />
     </>
   );
 };
@@ -248,10 +126,15 @@ interface DefaultValues {
   email: string;
 }
 
-const useApi = (distributorId: string) => {
+const useApi = (data: Distributor) => {
+  const [oldPassword, setOldPassword] = React.useState("");
+  const [newPassword, setNewPassword] = React.useState("");
+
   const forms = useForm<DefaultValues>();
+  const formsChangePwd = useForm<ChangePasswordValues>();
 
   const { update } = useDistributor();
+
   const onSubmit = forms.handleSubmit(async (e) => {
     try {
       await update.mutateAsync({
@@ -259,18 +142,129 @@ const useApi = (distributorId: string) => {
           email: e.email,
           ownerName: e.ownerName,
           phoneNumber: parsePhoneNumber(e.phoneNumber),
-          name: "ndakdal",
-          // oldPassword: "12345",
-          // password: "54321",
+          name: data.name,
+          oldPassword,
+          password: newPassword,
         },
       });
+
+      formsChangePwd.reset();
     } catch (e) {
       const error = e as Error;
       console.error(`Failed to update data : ${error.message}`);
     }
   });
 
-  return { forms, onSubmit };
+  const onSubmitPassword = formsChangePwd.handleSubmit((e) => {
+    setOldPassword(e.oldPassword);
+    setNewPassword(e.newPassword);
+  });
+
+  return { forms, onSubmit, onSubmitPassword, formsChangePwd };
+};
+
+const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
+  const { updateDocument } = useDistributor();
+  const { actionIsChangePassword } = useActiveModal();
+  const {
+    ktpRef,
+    onClickKtp,
+    onChangeKtp,
+    setKtpBlob,
+    ktpBlob,
+    ktpFile,
+    setKtpFile,
+  } = useKtp();
+
+  React.useEffect(() => {
+    if (ktpFile) onUpdateKtp();
+  }, [ktpFile]);
+
+  const onUpdateKtp = async () => {
+    try {
+      if (!ktpFile) return;
+      const ktpPath = `distributor_document/${Date.now()}.png`;
+      toast.loading("Sedang upload foto KTP", {
+        toastId: "upload-foto-ktp",
+      });
+
+      await uploadFile({
+        file: ktpFile,
+        prefix: ktpPath,
+      });
+
+      await updateDocument.mutateAsync({
+        data: {
+          distributorId,
+          ktpImage: ktpPath,
+          oldKtpImage: data.documents.ktpImage,
+        },
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Failed to update ktp : ${error.message}`);
+    } finally {
+      toast.dismiss("upload-foto-ktp");
+      setKtpFile(undefined);
+    }
+  };
+
+  const fields: TextfieldProps[] = [
+    objectFields({
+      label: "nama pemilik",
+      name: "ownerName",
+      type: "text",
+      autoComplete: "on",
+      defaultValue: data.ownerName,
+    }),
+    objectFields({
+      label: "nomor HP",
+      name: "phoneNumber",
+      type: "number",
+      autoComplete: "on",
+      defaultValue: parsePhoneNumber(data.phoneNumber),
+    }),
+    objectFields({
+      label: "email",
+      name: "email",
+      type: "email",
+      autoComplete: "on",
+      defaultValue: data.email,
+    }),
+    objectFields({
+      label: "password",
+      name: "password",
+      type: "modal",
+      defaultValue: "",
+      onClick: actionIsChangePassword,
+      readOnly: { isValue: true, cursor: "cursor-pointer" },
+      endContent: <ChevronRightIcon width={18} color={IconColor.zinc} />,
+    }),
+    objectFields({
+      label: "KTP pemilik",
+      name: "ktp",
+      type: "file",
+      placeholder: "unggah KTP",
+      defaultValue: !ktpBlob ? ktp.file : ktpBlob,
+      uploadImage: {
+        file: {
+          ref: ktpRef,
+          onClick: onClickKtp,
+          onChange: onChangeKtp,
+        },
+        image: {
+          actions: [
+            {
+              src: <TrashIcon color={IconColor.red} width={16} />,
+              onClick: () => (!ktpBlob ? ktp.setFile("") : setKtpBlob("")),
+            },
+          ],
+        },
+      },
+    }),
+  ];
+
+  return { fields };
 };
 
 export default Profile;

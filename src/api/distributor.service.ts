@@ -6,6 +6,10 @@ import queryString from "query-string";
 import { toast } from "react-toastify";
 import { useAuth } from "src/firebase/auth";
 
+export enum RoleDistributor {
+  DISTRIBUTOR = "DISTRIBUTOR",
+  SUB_DISTRIBUTOR = "SUB_DISTRIBUTOR",
+}
 export interface Distributor {
   banner: string;
   createdAt: number;
@@ -23,6 +27,7 @@ export interface Distributor {
   phoneNumber: string;
   rate: number;
   updatedAt: number;
+  role: RoleDistributor;
 }
 
 export interface Details {

@@ -11,7 +11,7 @@ import {
 import { handleErrorMessage } from "src/helpers";
 import { KeyboardEvent, useEffect, useState } from "react";
 import { requestForToken } from "src/firebase";
-import { Role, useLogin as useLoginApi } from "src/api/login.service";
+import { useLogin as useLoginApi } from "src/api/login.service";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { IconColor } from "src/types";
@@ -139,7 +139,6 @@ const useHook = () => {
       const result = {
         email: e.email,
         password: e.password,
-        role: Role.DISTRIBUTOR,
         fcmToken: token,
       };
 
@@ -147,7 +146,11 @@ const useHook = () => {
       navigate("/dashboard");
     } catch (e) {
       const error = e as Error;
-      toast.error(error.message);
+      if (error.message?.includes("fcmtoken")) {
+        toast.error("Mohon aktifkan notifikasi");
+      } else {
+        toast.error(error.message);
+      }
     }
   });
 
@@ -159,7 +162,6 @@ const useHook = () => {
         const result = {
           email,
           password,
-          role: Role.DISTRIBUTOR,
           fcmToken: token,
         };
 

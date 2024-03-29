@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LoginPage from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Layout from "./layouts/Index";
 import { lazy, Suspense } from "react";
@@ -36,10 +35,6 @@ const Report = lazy(() => import("./layouts/report/Index"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LoginPage />,
-  },
   {
     path: "/",
     element: <PrivateRoute />,

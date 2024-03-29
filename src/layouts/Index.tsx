@@ -13,6 +13,8 @@ import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { CreateNewPin } from "src/components/Pin";
+import { setUser } from "src/stores/auth";
+import { RoleDistributor } from "src/api/distributor.service";
 
 const Layout = () => {
   return (
@@ -68,6 +70,7 @@ const Header = () => {
 export const removeDashString = (data: string) => data.split("-").join(" ");
 
 const AsideNav = () => {
+  const user = setUser((v) => v.user);
   const qsProduct = stringifyQuery({ tab: "produk", page: 1 });
   const qsStore = stringifyQuery({ page: 1 });
   const qsDIstributor = stringifyQuery({ page: 1 });
@@ -79,10 +82,12 @@ const AsideNav = () => {
         <Link name="Banner" path="banner" />
         <Link name="Produk" path={`produk?${qsProduct}`} />
         <Link name="Toko" path={`toko?${qsStore}`} />
-        <Link
-          name="Sub Distributor"
-          path={`sub-distributor?${qsDIstributor}`}
-        />
+        {user?.role === RoleDistributor.DISTRIBUTOR && (
+          <Link
+            name="Sub Distributor"
+            path={`sub-distributor?${qsDIstributor}`}
+          />
+        )}
         <Link name="Sales" path="sales" />
         <Link name="Ekspedisi" path="ekspedisi" />
         <Link name="Order" path="order" />

@@ -21,12 +21,13 @@ import useGeneralStore from "src/stores/generalStore";
 import { useLocation } from "src/api/location.service";
 import { Chip, CircularProgress } from "@nextui-org/react";
 import { toast } from "react-toastify";
-import { useDistributor } from "src/api/distributor.service";
+import { RoleDistributor, useDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
 import { uploadFile } from "src/firebase/upload";
 import { checkPassword } from "src/pages/Index";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useBanner, useKtp } from "src/hooks/document";
+import { setUser } from "src/stores/auth";
 
 interface DefaultValues {
   ownerName: string;
@@ -42,6 +43,7 @@ interface DefaultValues {
 }
 
 const Create = () => {
+  const user = setUser((v) => v.user);
   const coordinate = useGeneralStore((v) => v.coordinate);
   const { fields, bannerFile, ktpFile } = useField();
   const { actionIsCoordinate } = useActiveModal();
@@ -50,6 +52,9 @@ const Create = () => {
     bannerFile
   );
 
+  // if (!user?.role === "") {
+  // return <Navigate to={"/"} />;
+  // }
   return (
     <main className="flexcol gap-5 lg:gap-8">
       {!coordinate ? (

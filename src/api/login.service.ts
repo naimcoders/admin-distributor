@@ -2,15 +2,9 @@ import { FbAuth } from "src/firebase";
 import { req } from "./request";
 import { useMutation } from "@tanstack/react-query";
 
-export enum Role {
-  ADMIN = "ADMIN",
-  DISTRIBUTOR = "DISTRIBUTOR",
-}
-
 interface ReqLogin {
   email: string;
   password: string;
-  role: Role;
   fcmToken: string;
 }
 
@@ -24,7 +18,7 @@ class Api {
     return Api.instance;
   }
 
-  private path = "auth/login-admin";
+  private path = "auth/login-distributor";
 
   async login(r: ReqLogin): Promise<void> {
     const token = await req<string>({

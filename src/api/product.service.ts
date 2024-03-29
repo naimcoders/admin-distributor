@@ -4,6 +4,7 @@ import { req } from "./request";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { setUser } from "src/stores/auth";
 
 export interface Product {
   categoryProduct: CategoryProduct;
@@ -248,6 +249,7 @@ export interface CreateProduct {
       price?: number;
     }[];
   }[];
+  createForDistrbutorId: string;
 }
 
 interface UpdateProduct extends Omit<CreateProduct, "imageUrl" | "variant"> {}
@@ -275,12 +277,13 @@ class Api {
     500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
   };
 
-  async find(r: ReqPaging): Promise<ResPaging<Product>> {
+  async find(userId: string, r: ReqPaging): Promise<ResPaging<Product>> {
     const query = queryString.stringify(
       {
         page: r.page,
         limit: r.limit,
         search: r.search,
+        userId: userId,
       },
       { skipEmptyString: true, skipNull: true }
     );
@@ -289,7 +292,7 @@ class Api {
       method: "GET",
       isNoAuth: false,
       errors: this.errors,
-      path: `${this.path}/me?${query}`,
+      path: `${this.path}?${query}`,
     });
   }
 
@@ -334,7 +337,7 @@ class Api {
 }
 
 interface ApiProductInfo {
-  find(r: ReqPaging): Promise<ResPaging<Product>>;
+  find(userId: string, r: ReqPaging): Promise<ResPaging<Product>>;
   findById(productId: string): Promise<Product>;
   create(r: CreateProduct): Promise<Product>;
   update(productId: string, r: UpdateProduct): Promise<Product>;
@@ -392,17 +395,19 @@ export const useProduct = (productId?: string) => {
     const [page, setPage] = useState(pageTable);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
+    const user = setUser((v) => v.user);
 
     const byPaging = async () =>
-      await getProductApiInfo().find({
+      await getProductApiInfo().find(user?.id ?? "", {
         page,
         limit,
         search,
       });
 
     const { data, isLoading, error } = useQuery<ResPaging<Product>, Error>({
-      queryKey: [key, page, limit, search],
+      queryKey: [key, page, limit, search, user?.id],
       queryFn: byPaging,
+      enabled: !!user?.id,
     });
 
     return {

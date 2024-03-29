@@ -43,10 +43,12 @@ import { uploadFile } from "src/firebase/upload";
 import { onPickImage } from "src/helpers/crop-image";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
+import { SubDistributorModal } from "./Modals/SubDistributor";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [subDistributorId, setSubDistributorId] = useState("");
 
   const {
     reset,
@@ -121,6 +123,7 @@ const Create = () => {
           price: newPrice,
           priceDiscount: 0,
         },
+        createForDistrbutorId: subDistributorId,
       };
 
       const result = await create.mutateAsync({ data: obj });
@@ -325,6 +328,12 @@ const Create = () => {
             isMassal={isMassal}
             setIsMassal={setIsMassal}
             variantTypes={variantTypes}
+          />
+          <SubDistributorModal
+            setValue={setValue}
+            clearErrors={clearErrors}
+            setDistributorId={setSubDistributorId}
+            subDistributorId={subDistributorId}
           />
         </main>
       )}

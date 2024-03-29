@@ -7,13 +7,15 @@ import { Actions } from "src/components/Actions";
 import { epochToDateConvert, stringifyQuery, useSetSearch } from "src/helpers";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import { setUser } from "src/stores/auth";
 
 const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
   const navigate = useNavigate();
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
   const { columns } = useHook();
+  const user = setUser((v) => v.user);
   const { data, isLoading, isNext, page, setSearch, setPage } =
-    useProduct().find(Number(pageQuery));
+    useProduct().find(user?.id ?? "", Number(pageQuery));
 
   useSetSearch(watch("search"), setSearch);
 

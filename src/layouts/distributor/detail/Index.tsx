@@ -54,7 +54,7 @@ const Detail = () => {
     },
     {
       label: "produk",
-      content: <Product />,
+      content: <Product distributorId={id} />,
     },
   ];
 

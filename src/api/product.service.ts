@@ -4,7 +4,6 @@ import { req } from "./request";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { setUser } from "src/stores/auth";
 
 export interface Product {
   categoryProduct: CategoryProduct;
@@ -391,23 +390,22 @@ export const useProduct = (productId?: string) => {
     enabled: !!productId,
   });
 
-  const find = (pageTable: number) => {
+  const find = (userId: string, pageTable: number) => {
     const [page, setPage] = useState(pageTable);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
-    const user = setUser((v) => v.user);
 
     const byPaging = async () =>
-      await getProductApiInfo().find(user?.id ?? "", {
+      await getProductApiInfo().find(userId, {
         page,
         limit,
         search,
       });
 
     const { data, isLoading, error } = useQuery<ResPaging<Product>, Error>({
-      queryKey: [key, page, limit, search, user?.id],
+      queryKey: [key, page, limit, search, userId],
       queryFn: byPaging,
-      enabled: !!user?.id,
+      enabled: !!userId,
     });
 
     return {

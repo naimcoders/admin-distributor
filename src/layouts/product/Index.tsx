@@ -7,11 +7,14 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { useProduct } from "src/api/product.service";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "src/stores/auth";
 
 const Product = () => {
   const navigate = useNavigate();
   const { tab, page } = parseQueryString<{ tab: string; page: string }>();
-  const { error } = useProduct().find(Number(page));
+  const user = setUser((v) => v.user);
+  const { find } = useProduct();
+  const { error } = find(user?.id ?? "", Number(page));
 
   const tabs: ITabs[] = [
     { label: "produk", content: <SubProduct pageQuery={page} tab={tab} /> },

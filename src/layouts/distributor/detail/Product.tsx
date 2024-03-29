@@ -1,100 +1,81 @@
 import { FieldValues, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { Product, useProduct } from "src/api/product.service";
 import { Actions } from "src/components/Actions";
-import Label from "src/components/Label";
+import Label, { LabelPrice } from "src/components/Label";
 import { TableWithSearchAndTabs } from "src/components/Table";
+import { epochToDateConvert, useSetSearch } from "src/helpers";
 import { Columns } from "src/types";
 
-const Product = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
+interface ProductProps {
+  distributorId: string;
+}
+
+const Product = ({ distributorId }: ProductProps) => {
+  const { columns } = useHook();
+  const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
+  const { find } = useProduct();
+  const { data, isLoading, isNext, page, setSearch, setPage } = find(
+    distributorId,
+    1
+  );
+
+  useSetSearch(watch("search"), setSearch);
+  const onNext = () => setPage((v) => v + 1);
+  const onPrev = () => setPage((v) => v - 1);
 
   return (
     <TableWithSearchAndTabs
       isPaginate
       columns={columns}
-      data={products}
+      data={data?.items ?? []}
       control={control}
-      isLoading={false}
-      isNext={false}
+      isLoading={isLoading}
+      isNext={isNext}
       placeholder="cari nama produk, kategori, sub-kategori"
+      next={onNext}
+      prev={onPrev}
+      page={page}
     />
   );
 };
 
-interface Product {
-  id: number;
-  productName: string;
-  category: string;
-  categorySub: string;
-  price: number;
-  commission: number;
-  discount: string;
-  period: string;
-}
+const useHook = () => {
+  const navigate = useNavigate();
 
-const products: Product[] = [
-  {
-    id: 1,
-    productName: "Beras Kepala Lahap 5kg",
-    category: "Bumbu & Bahan Makanan",
-    categorySub: "Sembako",
-    price: 75000,
-    commission: 5,
-    discount: "-",
-    period: "-",
-  },
-  {
-    id: 2,
-    productName: "Kertas A4 Sidu",
-    category: "Kantor & Alat Tulis",
-    categorySub: "Kertas A4 Sidu",
-    price: 35000,
-    commission: 2,
-    discount: "(5%) 1.750",
-    period: "2 Des - 30 Des",
-  },
-];
+  const columns: Columns<Product>[] = [
+    {
+      header: <p className="text-center">nama produk</p>,
+      render: (v) => <Label label={v.name} />,
+    },
+    {
+      header: <p className="text-center">kategori</p>,
+      render: (v) => <Label label={v.categoryProduct.category.name} />,
+    },
+    {
+      header: <p className="text-right">harga (Rp)</p>,
+      render: (v) => (
+        <LabelPrice product={v} label="" className="justify-end" />
+      ),
+    },
+    {
+      header: <p className="text-center">tanggal dibuat</p>,
+      render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
+    },
+    {
+      header: <p className="text-center">aksi</p>,
+      render: (v, idx) => (
+        <Actions
+          action="both"
+          id={idx}
+          detail={{ onClick: () => navigate(`/produk/${v.id}`) }}
+        />
+      ),
+      width: "w-40",
+    },
+  ];
 
-const columns: Columns<Product>[] = [
-  {
-    header: <p className="text-center">nama produk</p>,
-    render: (v) => <Label label={v.productName} />,
-  },
-  {
-    header: <p className="text-center">kategori</p>,
-    render: (v) => <Label label={v.category} />,
-  },
-  {
-    header: <p className="text-center">sub-kategori</p>,
-    render: (v) => <Label label={v.categorySub} />,
-  },
-  {
-    header: <p className="text-right">harga (Rp)</p>,
-    render: (v) => <Label label={v.price} className="justify-end" />,
-  },
-  {
-    header: <p className="text-center">komisi</p>,
-    render: (v) => <Label label={`${v.commission}%`} className="justify-end" />,
-  },
-  {
-    header: <p className="text-center">diskon</p>,
-    render: () => <Label label="(50%) 1.750" className="justify-end" />,
-  },
-  {
-    header: <p className="text-center">periode</p>,
-    render: (v) => <Label label={v.period} />,
-  },
-  {
-    header: <p className="text-center">aksi</p>,
-    render: (v) => (
-      <Actions
-        id={v.id}
-        action="detail"
-        detail={{
-          onClick: () => console.log(v.id),
-        }}
-      />
-    ),
-  },
-];
+  return { columns };
+};
 
 export default Product;

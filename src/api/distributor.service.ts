@@ -187,8 +187,6 @@ interface Update {
   email: string;
   phoneNumber: string;
   name: string;
-  password?: string;
-  oldPassword?: string;
 }
 
 class Api {

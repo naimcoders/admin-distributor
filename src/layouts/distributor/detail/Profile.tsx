@@ -4,12 +4,7 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useForm } from "react-hook-form";
-import {
-  ArrowUpTrayIcon,
-  ChevronRightIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import React from "react";
+import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -18,12 +13,10 @@ import { IconColor } from "src/types";
 import { useKtp } from "src/hooks/document";
 import { uploadFile } from "src/firebase/upload";
 import { toast } from "react-toastify";
+import { ChangePasswordValues } from "src/components/ChangePassword";
+import React from "react";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import ChangePasswordModal, {
-  ChangePasswordValues,
-} from "src/components/ChangePassword";
-import { useActiveModal } from "src/stores/modalStore";
 
 export interface KtpFile {
   file: string;
@@ -45,8 +38,7 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const { forms, onSubmit, onSubmitPassword, formsChangePwd } =
-    useApi(distributor);
+  const { forms, onSubmit, isPending } = useApi(distributor);
   const { fields } = useField(distributor, distributorId, ktp);
 
   return (
@@ -108,14 +100,12 @@ const Profile = ({
           </section>
 
           <Button
-            aria-label="simpan"
+            aria-label={isPending ? "loading..." : "simpan"}
             onClick={onSubmit}
             className="mx-auto lg:mt-10 mt-6 sm:mt-8"
           />
         </main>
       )}
-
-      <ChangePasswordModal onSubmit={onSubmitPassword} forms={formsChangePwd} />
     </>
   );
 };
@@ -124,12 +114,10 @@ interface DefaultValues {
   ownerName: string;
   phoneNumber: string;
   email: string;
+  password: string;
 }
 
 const useApi = (data: Distributor) => {
-  const [oldPassword, setOldPassword] = React.useState("");
-  const [newPassword, setNewPassword] = React.useState("");
-
   const forms = useForm<DefaultValues>();
   const formsChangePwd = useForm<ChangePasswordValues>();
 
@@ -143,8 +131,6 @@ const useApi = (data: Distributor) => {
           ownerName: e.ownerName,
           phoneNumber: parsePhoneNumber(e.phoneNumber),
           name: data.name,
-          oldPassword,
-          password: newPassword,
         },
       });
 
@@ -155,17 +141,16 @@ const useApi = (data: Distributor) => {
     }
   });
 
-  const onSubmitPassword = formsChangePwd.handleSubmit((e) => {
-    setOldPassword(e.oldPassword);
-    setNewPassword(e.newPassword);
-  });
-
-  return { forms, onSubmit, onSubmitPassword, formsChangePwd };
+  return {
+    forms,
+    onSubmit,
+    formsChangePwd,
+    isPending: update.isPending,
+  };
 };
 
 const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
   const { updateDocument } = useDistributor();
-  const { actionIsChangePassword } = useActiveModal();
   const {
     ktpRef,
     onClickKtp,
@@ -230,15 +215,6 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
       type: "email",
       autoComplete: "on",
       defaultValue: data.email,
-    }),
-    objectFields({
-      label: "password",
-      name: "password",
-      type: "modal",
-      defaultValue: "",
-      onClick: actionIsChangePassword,
-      readOnly: { isValue: true, cursor: "cursor-pointer" },
-      endContent: <ChevronRightIcon width={18} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "KTP pemilik",

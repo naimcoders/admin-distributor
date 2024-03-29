@@ -9,7 +9,7 @@ import { useActiveModal } from "src/stores/modalStore";
 
 interface ChangePasswordModalProps<T extends object> {
   forms: UseFormReturn<T, any, undefined>;
-  onSubmit: () => Promise<void>;
+  onSubmit: () => void;
 }
 
 export interface ChangePasswordValues {

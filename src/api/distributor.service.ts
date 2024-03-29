@@ -177,6 +177,15 @@ interface UpdateDocument {
   ktpImage: string;
 }
 
+interface Update {
+  ownerName: string;
+  email: string;
+  phoneNumber: string;
+  name: string;
+  password?: string;
+  oldPassword?: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -220,6 +229,16 @@ class Api {
     });
   }
 
+  async update(r: Update): Promise<Distributor> {
+    return await req<Distributor>({
+      method: "PUT",
+      isNoAuth: false,
+      body: r,
+      path: `${this.path}/update`,
+      errors: "",
+    });
+  }
+
   async suspend(distributorId: string, r: Suspend): Promise<Distributor> {
     return await req<Distributor>({
       method: "PUT",
@@ -257,6 +276,7 @@ interface ApiDistributorInfo {
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
   create(r: Create): Promise<Distributor>;
   updateDocument(r: UpdateDocument): Promise<null>;
+  update(r: Update): Promise<Distributor>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -331,6 +351,16 @@ export const useDistributor = () => {
     },
   });
 
+  const update = useMutation<Distributor, Error, { data: Update }>({
+    mutationKey: [key, "update"],
+    mutationFn: async (r) => await getDistributorApiInfo().update(r.data),
+    onSuccess: () => {
+      toast.success("Data berhasil diperbarui");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
   const create = useMutation<Distributor, Error, { data: Create }>({
     mutationKey: [key, "create"],
     mutationFn: async (r) => await getDistributorApiInfo().create(r.data),
@@ -352,5 +382,5 @@ export const useDistributor = () => {
     onError: (e) => toast.error(e.message),
   });
 
-  return { find, findById, suspend, create, updateDocument };
+  return { find, findById, suspend, create, updateDocument, update };
 };

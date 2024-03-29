@@ -4,7 +4,11 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useForm } from "react-hook-form";
-import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import React from "react";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
@@ -16,6 +20,7 @@ import Skeleton from "src/components/Skeleton";
 import { useKtp } from "src/hooks/document";
 import { uploadFile } from "src/firebase/upload";
 import { toast } from "react-toastify";
+import { checkPassword } from "src/pages/Index";
 
 interface KtpFile {
   file: string;
@@ -37,7 +42,8 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const { forms, onSubmit } = useApi();
+  const [isPassword, setIsPassword] = React.useState(false);
+  const { forms, onSubmit } = useApi(distributorId);
   const { updateDocument } = useDistributor();
 
   const {
@@ -106,6 +112,14 @@ const Profile = ({
       defaultValue: distributor.email,
     }),
     objectFields({
+      label: "password",
+      name: "password",
+      type: "modal",
+      defaultValue: "",
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      endContent: <ChevronRightIcon width={18} color={IconColor.zinc} />,
+    }),
+    objectFields({
       label: "nama sesuai rekening",
       name: "accountName",
       type: "text",
@@ -164,7 +178,7 @@ const Profile = ({
           <section className="grid grid-cols-3 lg:gap-8 gap-4">
             {fields.map((v, idx) => (
               <React.Fragment key={idx}>
-                {["text", "number", "email"].includes(v.type!) && (
+                {["text", "number", "email", "modal"].includes(v.type!) && (
                   <Textfield
                     {...v}
                     control={forms.control}
@@ -217,9 +231,11 @@ const Profile = ({
             ))}
           </section>
 
-          <div className="flex justify-center mt-10">
-            <Button aria-label="simpan" onClick={onSubmit} />
-          </div>
+          <Button
+            aria-label="simpan"
+            onClick={onSubmit}
+            className="mx-auto lg:mt-10 mt-6 sm:mt-8"
+          />
         </main>
       )}
     </>
@@ -228,15 +244,30 @@ const Profile = ({
 
 interface DefaultValues {
   ownerName: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
 }
 
-const useApi = () => {
+const useApi = (distributorId: string) => {
   const forms = useForm<DefaultValues>();
 
+  const { update } = useDistributor();
   const onSubmit = forms.handleSubmit(async (e) => {
-    console.log(e);
+    try {
+      await update.mutateAsync({
+        data: {
+          email: e.email,
+          ownerName: e.ownerName,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
+          name: "ndakdal",
+          // oldPassword: "12345",
+          // password: "54321",
+        },
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Failed to update data : ${error.message}`);
+    }
   });
 
   return { forms, onSubmit };

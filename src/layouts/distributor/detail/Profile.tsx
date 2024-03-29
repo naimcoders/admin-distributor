@@ -134,6 +134,7 @@ const useApi = (data: Distributor) => {
       //   },
       // });
       // formsChangePwd.reset();
+      console.log(e, data);
     } catch (e) {
       const error = e as Error;
       console.error(`Failed to update data : ${error.message}`);

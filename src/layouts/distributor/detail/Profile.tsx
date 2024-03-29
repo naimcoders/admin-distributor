@@ -125,16 +125,15 @@ const useApi = (data: Distributor) => {
 
   const onSubmit = forms.handleSubmit(async (e) => {
     try {
-      await update.mutateAsync({
-        data: {
-          email: e.email,
-          ownerName: e.ownerName,
-          phoneNumber: parsePhoneNumber(e.phoneNumber),
-          name: data.name,
-        },
-      });
-
-      formsChangePwd.reset();
+      // await update.mutateAsync({
+      //   data: {
+      //     email: e.email,
+      //     ownerName: e.ownerName,
+      //     phoneNumber: parsePhoneNumber(e.phoneNumber),
+      //     name: data.name,
+      //   },
+      // });
+      // formsChangePwd.reset();
     } catch (e) {
       const error = e as Error;
       console.error(`Failed to update data : ${error.message}`);

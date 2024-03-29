@@ -16,7 +16,10 @@ const Detail = () => {
 
   const onSelectionChange = (e: React.Key) => {
     const qs = stringifyQuery({ tab: e });
-    navigate(`/sub-distributor/${id}?${qs}`);
+    const qsWithProduct = stringifyQuery({ tab: e, page: 1 });
+
+    if (e === "produk") navigate(`/sub-distributor/${id}?${qsWithProduct}`);
+    else navigate(`/sub-distributor/${id}?${qs}`);
   };
 
   const { id } = useParams() as { id: string };

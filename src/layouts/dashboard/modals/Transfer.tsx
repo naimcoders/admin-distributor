@@ -18,7 +18,6 @@ const Transfer = () => {
     isTransfer,
     actionIsTransfer,
     actionIsConfirmTransfer,
-    actionIsPinVerification,
     isConfirmTransfer,
   } = useActiveModal();
 
@@ -59,7 +58,7 @@ const Transfer = () => {
   const onSubmit = handleSubmit((e) => {
     console.log(e);
     actionIsConfirmTransfer();
-    setTimeout(actionIsPinVerification, 500);
+    // setTimeout(actionIsPinVerification, 500);
   });
 
   return (

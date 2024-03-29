@@ -49,6 +49,7 @@ import { uploadFile } from "src/firebase/upload";
 import { onPickImage } from "src/helpers/crop-image";
 import { Modal } from "src/components/Modal";
 import Promotion from "./Modals/Promotion";
+import { SubDistributorModal } from "./Modals/SubDistributor";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -58,6 +59,7 @@ const Detail = () => {
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   const [subCategoryId, setSubCategoryId] = React.useState("");
+  const [subDistributorId, setSubDistributorId] = React.useState("");
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
@@ -283,6 +285,7 @@ const Detail = () => {
           ...priceStore,
           price: newPrice,
         },
+        createForDistrbutorId: subDistributorId,
       };
 
       const result = await update.mutateAsync({ data: obj });
@@ -635,6 +638,12 @@ const Detail = () => {
         images={findById.data?.imageUrl ?? []}
         productName={findById.data?.name ?? "-"}
         description={findById.data?.description ?? "-"}
+      />
+      <SubDistributorModal
+        clearErrors={clearErrors}
+        setValue={setValue}
+        setDistributorId={setSubDistributorId}
+        subDistributorId={subDistributorId}
       />
     </>
   );

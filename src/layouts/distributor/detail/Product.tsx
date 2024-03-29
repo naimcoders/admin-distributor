@@ -4,7 +4,11 @@ import { Product, useProduct } from "src/api/product.service";
 import { Actions } from "src/components/Actions";
 import Label, { LabelPrice } from "src/components/Label";
 import { TableWithSearchAndTabs } from "src/components/Table";
-import { epochToDateConvert, useSetSearch } from "src/helpers";
+import {
+  epochToDateConvert,
+  parseQueryString,
+  useSetSearch,
+} from "src/helpers";
 import { Columns } from "src/types";
 
 interface ProductProps {
@@ -14,10 +18,11 @@ interface ProductProps {
 const Product = ({ distributorId }: ProductProps) => {
   const { columns } = useHook();
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
+  const { page: pageQuery } = parseQueryString<{ page: string }>();
   const { find } = useProduct();
   const { data, isLoading, isNext, page, setSearch, setPage } = find(
     distributorId,
-    1
+    Number(pageQuery)
   );
 
   useSetSearch(watch("search"), setSearch);

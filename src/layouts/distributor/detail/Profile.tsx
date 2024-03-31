@@ -202,7 +202,9 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
       name: "phoneNumber",
       type: "number",
       autoComplete: "on",
+      description: "*Tidak dapat diedit",
       defaultValue: parsePhoneNumber(data.phoneNumber),
+      readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       label: "email",
@@ -210,6 +212,8 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
       type: "email",
       autoComplete: "on",
       defaultValue: data.email,
+      description: "*Tidak dapat diedit",
+      readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       label: "KTP pemilik",

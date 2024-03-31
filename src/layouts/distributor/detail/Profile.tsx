@@ -126,6 +126,8 @@ const useApi = (distributorId: string, data: Distributor) => {
         data: {
           ownerName: e.ownerName,
           name: data.name,
+          email: e.email,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
         },
         distributorId,
       });

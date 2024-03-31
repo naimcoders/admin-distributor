@@ -37,7 +37,7 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const { forms, onSubmit, isPending } = useApi(distributor);
+  const { forms, onSubmit, isPending } = useApi(distributorId, distributor);
   const { fields } = useField(distributor, distributorId, ktp);
 
   return (
@@ -116,19 +116,18 @@ interface DefaultValues {
   password: string;
 }
 
-const useApi = (data: Distributor) => {
+const useApi = (distributorId: string, data: Distributor) => {
   const forms = useForm<DefaultValues>();
-  const { update } = useDistributor();
+  const { updateSubDistributor } = useDistributor();
 
   const onSubmit = forms.handleSubmit(async (e) => {
     try {
-      await update.mutateAsync({
+      await updateSubDistributor.mutateAsync({
         data: {
-          email: e.email,
           ownerName: e.ownerName,
-          phoneNumber: parsePhoneNumber(e.phoneNumber),
           name: data.name,
         },
+        distributorId,
       });
     } catch (e) {
       const error = e as Error;
@@ -139,7 +138,7 @@ const useApi = (data: Distributor) => {
   return {
     forms,
     onSubmit,
-    isPending: update.isPending,
+    isPending: updateSubDistributor.isPending,
   };
 };
 

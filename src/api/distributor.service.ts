@@ -182,10 +182,8 @@ interface UpdateDocument {
   ktpImage: string;
 }
 
-interface Update {
+interface UpdateSubDistributor {
   ownerName: string;
-  email: string;
-  phoneNumber: string;
   name: string;
 }
 
@@ -232,12 +230,15 @@ class Api {
     });
   }
 
-  async update(r: Update): Promise<Distributor> {
-    return await req<Distributor>({
+  async updateSubDistributor(
+    distributorId: string,
+    r: UpdateSubDistributor
+  ): Promise<null> {
+    return await req<null>({
       method: "PUT",
       isNoAuth: false,
       body: r,
-      path: `${this.path}/update`,
+      path: `${this.path}/${distributorId}`,
       errors: "",
     });
   }
@@ -279,7 +280,10 @@ interface ApiDistributorInfo {
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
   create(r: Create): Promise<Distributor>;
   updateDocument(r: UpdateDocument): Promise<null>;
-  update(r: Update): Promise<Distributor>;
+  updateSubDistributor(
+    distributorId: string,
+    r: UpdateSubDistributor
+  ): Promise<null>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -354,9 +358,17 @@ export const useDistributor = () => {
     },
   });
 
-  const update = useMutation<Distributor, Error, { data: Update }>({
-    mutationKey: [key, "update"],
-    mutationFn: async (r) => await getDistributorApiInfo().update(r.data),
+  const updateSubDistributor = useMutation<
+    null,
+    Error,
+    { data: UpdateSubDistributor; distributorId: string }
+  >({
+    mutationKey: [key, "update-sub-distributor"],
+    mutationFn: async (r) =>
+      await getDistributorApiInfo().updateSubDistributor(
+        r.distributorId,
+        r.data
+      ),
     onSuccess: () => {
       toast.success("Data berhasil diperbarui");
       void queryClient.invalidateQueries({ queryKey: [key] });
@@ -385,5 +397,12 @@ export const useDistributor = () => {
     onError: (e) => toast.error(e.message),
   });
 
-  return { find, findById, suspend, create, updateDocument, update };
+  return {
+    find,
+    findById,
+    suspend,
+    create,
+    updateDocument,
+    updateSubDistributor,
+  };
 };

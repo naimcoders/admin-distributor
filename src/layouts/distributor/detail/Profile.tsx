@@ -13,7 +13,6 @@ import { IconColor } from "src/types";
 import { useKtp } from "src/hooks/document";
 import { uploadFile } from "src/firebase/upload";
 import { toast } from "react-toastify";
-import { ChangePasswordValues } from "src/components/ChangePassword";
 import React from "react";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
@@ -119,22 +118,18 @@ interface DefaultValues {
 
 const useApi = (data: Distributor) => {
   const forms = useForm<DefaultValues>();
-  const formsChangePwd = useForm<ChangePasswordValues>();
-
   const { update } = useDistributor();
 
   const onSubmit = forms.handleSubmit(async (e) => {
     try {
-      // await update.mutateAsync({
-      //   data: {
-      //     email: e.email,
-      //     ownerName: e.ownerName,
-      //     phoneNumber: parsePhoneNumber(e.phoneNumber),
-      //     name: data.name,
-      //   },
-      // });
-      // formsChangePwd.reset();
-      console.log(e, data);
+      await update.mutateAsync({
+        data: {
+          email: e.email,
+          ownerName: e.ownerName,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
+          name: data.name,
+        },
+      });
     } catch (e) {
       const error = e as Error;
       console.error(`Failed to update data : ${error.message}`);
@@ -144,7 +139,6 @@ const useApi = (data: Distributor) => {
   return {
     forms,
     onSubmit,
-    formsChangePwd,
     isPending: update.isPending,
   };
 };

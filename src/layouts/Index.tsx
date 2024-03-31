@@ -5,16 +5,14 @@ import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Button } from "src/components/Button";
-import {
-  ArrowRightStartOnRectangleIcon,
-  PowerIcon,
-} from "@heroicons/react/24/solid";
+import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { CreateNewPin } from "src/components/Pin";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
+import { KeyIcon } from "@heroicons/react/24/outline";
 
 const Layout = () => {
   return (
@@ -51,7 +49,7 @@ const Header = () => {
 
       <section className="flex gap-4">
         {currentPath === "dashboard" && (
-          <PowerIcon
+          <KeyIcon
             width={20}
             color="#FFFFFF"
             title="Aktifkan akun"

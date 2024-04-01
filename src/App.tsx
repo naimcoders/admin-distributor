@@ -4,6 +4,7 @@ import Layout from "./layouts/Index";
 import { lazy, Suspense } from "react";
 import Skeleton from "./components/Skeleton";
 import { PrivateRoute } from "./components/PrivateRoute";
+import LoginPage from "./pages/Index";
 
 const Dashboard = lazy(() => import("./layouts/dashboard/Index"));
 const Banner = lazy(() => import("./layouts/banner/Index"));
@@ -35,6 +36,10 @@ const Report = lazy(() => import("./layouts/report/Index"));
 const Account = lazy(() => import("./layouts/account/Index"));
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LoginPage />,
+  },
   {
     path: "/",
     element: <PrivateRoute />,

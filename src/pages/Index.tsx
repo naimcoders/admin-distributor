@@ -139,7 +139,7 @@ const useHook = () => {
       const result = {
         email: e.email,
         password: e.password,
-        fcmToken: token,
+        fcmToken: token ? token : "-",
       };
 
       await mutateAsync(result);

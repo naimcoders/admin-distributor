@@ -126,7 +126,7 @@ const Distributor = () => {
                       },
                       createData: {
                         isValue: true,
-                        label: "distributor",
+                        label: "sub distributor",
                         onClick: () => navigate("/sub-distributor/tambah"),
                       },
                     }}

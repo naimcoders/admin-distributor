@@ -4,29 +4,35 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { FieldValues, useForm } from "react-hook-form";
 import { Fragment } from "react";
 import { Button } from "src/components/Button";
 import { handleErrorMessage } from "src/helpers";
 import { LabelAndImage } from "src/components/File";
 import { Distributor } from "src/api/distributor.service";
-import Error from "src/components/Error";
-import Skeleton from "src/components/Skeleton";
 import { UserCoordinate } from "src/components/Coordinate";
 import { Chip } from "@nextui-org/react";
+import { useDetailDistributorApi } from "./Profile";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
 
 interface Business {
-  distributor?: Distributor;
+  distributorId: string;
+  distributor: Distributor;
   isLoading?: boolean;
   error?: string;
 }
 
-const Business = ({ distributor, error, isLoading }: Business) => {
-  const {
-    control,
-    formState: { errors },
-  } = useForm<FieldValues>({ mode: "onChange" });
+const Business = ({
+  distributor,
+  error,
+  isLoading,
+  distributorId,
+}: Business) => {
   const { fields } = useHook(distributor);
+  const { forms, isPending, onSubmit } = useDetailDistributorApi(
+    distributorId,
+    distributor
+  );
 
   return (
     <>
@@ -42,8 +48,11 @@ const Business = ({ distributor, error, isLoading }: Business) => {
                 {["text", "number"].includes(v.type!) && (
                   <Textfield
                     {...v}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
+                    control={forms.control}
+                    errorMessage={handleErrorMessage(
+                      forms.formState.errors,
+                      v.name
+                    )}
                     rules={{
                       required: { value: true, message: v.errorMessage ?? "" },
                     }}
@@ -79,9 +88,11 @@ const Business = ({ distributor, error, isLoading }: Business) => {
             </Chip>
           </section>
 
-          <div className="flex justify-center mt-10">
-            <Button aria-label="simpan" />
-          </div>
+          <Button
+            aria-label={isPending ? "loading..." : "simpan"}
+            className="mx-auto"
+            onClick={onSubmit}
+          />
         </main>
       )}
     </>
@@ -92,7 +103,7 @@ const useHook = (data?: Distributor) => {
   const fields: TextfieldProps[] = [
     objectFields({
       label: "nama usaha",
-      name: "businessName",
+      name: "name",
       type: "text",
       defaultValue: data?.name,
     }),

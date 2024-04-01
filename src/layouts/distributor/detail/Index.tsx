@@ -49,6 +49,7 @@ const Detail = () => {
       label: "usaha",
       content: (
         <Business
+          distributorId={id}
           distributor={distributors?.data}
           error={distributors.error}
           isLoading={distributors.isLoading}

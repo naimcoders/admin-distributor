@@ -37,7 +37,10 @@ const Profile = ({
   ktp,
   distributorId,
 }: Profile) => {
-  const { forms, onSubmit, isPending } = useApi(distributorId, distributor);
+  const { forms, onSubmit, isPending } = useDetailDistributorApi(
+    distributorId,
+    distributor
+  );
   const { fields } = useField(distributor, distributorId, ktp);
 
   return (
@@ -111,12 +114,15 @@ const Profile = ({
 
 interface DefaultValues {
   ownerName: string;
-  phoneNumber: string;
-  email: string;
   password: string;
+  detailAddress: string;
+  name: string;
 }
 
-const useApi = (distributorId: string, data: Distributor) => {
+export const useDetailDistributorApi = (
+  distributorId: string,
+  data: Distributor
+) => {
   const forms = useForm<DefaultValues>();
   const { updateSubDistributor } = useDistributor();
 
@@ -124,10 +130,10 @@ const useApi = (distributorId: string, data: Distributor) => {
     try {
       await updateSubDistributor.mutateAsync({
         data: {
-          ownerName: e.ownerName,
-          name: data.name,
-          email: e.email,
-          phoneNumber: parsePhoneNumber(e.phoneNumber),
+          ownerName: e.ownerName ?? data.ownerName,
+          name: e.name ?? data.name,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
         },
         distributorId,
       });

@@ -184,9 +184,10 @@ interface UpdateDocument {
 
 interface UpdateSubDistributor {
   ownerName: string;
-  name: string;
   email: string;
   phoneNumber: string;
+  name: string;
+  detailAddress?: string;
 }
 
 class Api {

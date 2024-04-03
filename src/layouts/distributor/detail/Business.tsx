@@ -1,4 +1,3 @@
-// import tokoroti from "src/assets/images/toko_roti.jpg";
 import {
   Textfield,
   TextfieldProps,
@@ -10,7 +9,6 @@ import { handleErrorMessage } from "src/helpers";
 import { LabelAndImage } from "src/components/File";
 import { Distributor } from "src/api/distributor.service";
 import { UserCoordinate } from "src/components/Coordinate";
-import { Chip } from "@nextui-org/react";
 import { useDetailDistributorApi } from "./Profile";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
@@ -42,10 +40,10 @@ const Business = ({
         <Skeleton />
       ) : (
         <main className="mt-5 flexcol gap-8">
-          <section className="grid lg:grid-cols-2 gap-4 lg:gap-8 grid-cols-1">
+          <section className="grid lg:grid-cols-3 gap-4 lg:gap-8 grid-cols-1">
             {fields.map((v, idx) => (
               <Fragment key={idx}>
-                {["text", "number"].includes(v.type!) && (
+                {["text"].includes(v.type!) && (
                   <Textfield
                     {...v}
                     control={forms.control}
@@ -81,16 +79,9 @@ const Business = ({
             ))}
           </section>
 
-          <section className="flex flex-col gap-3">
-            <Chip color="default">{distributor?.locations[0].addressName}</Chip>
-            <Chip color="default">
-              Alamat detail : {distributor?.locations[0].detailAddress}
-            </Chip>
-          </section>
-
           <Button
             aria-label={isPending ? "loading..." : "simpan"}
-            className="mx-auto"
+            className="mx-auto mt-5"
             onClick={onSubmit}
           />
         </main>
@@ -108,16 +99,25 @@ const useHook = (data?: Distributor) => {
       defaultValue: data?.name,
     }),
     objectFields({
-      label: "detail alamat",
+      label: "alamat usaha",
+      name: "businessAddress",
+      type: "text",
+      defaultValue: data?.locations[0]?.addressName,
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      description: "*tidak dapat diedit",
+    }),
+    objectFields({
+      label: "alamat detail",
       name: "detailAddress",
       type: "text",
       defaultValue: data?.locations[0]?.detailAddress,
+      readOnly: { isValue: true, cursor: "cursor-default" },
+      description: "*tidak dapat diedit",
     }),
     objectFields({
       label: "koordinat usaha",
       name: "coordinate",
       type: "coordinate",
-      onClick: () => console.log("koordinate usaha"),
       defaultValue: {
         lat: data?.locations[0]?.lat,
         lng: data?.locations[0]?.lng,

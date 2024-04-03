@@ -13,17 +13,27 @@ import { CreateNewPin } from "src/components/Pin";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import { KeyIcon } from "@heroicons/react/24/outline";
+import Skeleton from "src/components/Skeleton";
 
 const Layout = () => {
+  const user = setUser((v) => v.user);
+
   return (
     <main>
       <Header />
-      <section className="bg-background">
-        <AsideNav />
-        <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
-          <Outlet />
-        </main>
-      </section>
+      {!user ? (
+        <div className="p-5">
+          <Skeleton />
+        </div>
+      ) : (
+        <section className="bg-background">
+          <AsideNav />
+          <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
+            <Outlet />
+          </main>
+        </section>
+      )}
+
       <CreateNewPin header={{ label: "buat PIN" }} />
     </main>
   );

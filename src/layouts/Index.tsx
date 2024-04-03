@@ -68,36 +68,53 @@ const Header = () => {
 export const removeDashString = (data: string) => data.split("-").join(" ");
 
 const AsideNav = () => {
+  return (
+    <aside className="md-max:hidden bg-white h-full flex flex-col fixed w-56">
+      <section className="overflow-y-auto flex flex-col">
+        <SideBarFeature />
+      </section>
+    </aside>
+  );
+};
+
+export const SideBarFeature = () => {
+  const { logout } = useAuth();
   const user = setUser((v) => v.user);
   const qsProduct = stringifyQuery({ tab: "produk", page: 1 });
   const qsStore = stringifyQuery({ page: 1 });
   const qsDIstributor = stringifyQuery({ page: 1 });
 
   return (
-    <aside className="md-max:hidden bg-secondary h-calcSideBar flex flex-col fixed w-56">
-      <section className="overflow-y-auto flex flex-col">
-        <Link name="Dashboard" path="dashboard" />
-        <Link name="Banner" path="banner" />
-        <Link name="Produk" path={`produk?${qsProduct}`} />
-        <Link name="Toko" path={`toko?${qsStore}`} />
-        {user?.role === RoleDistributor.DISTRIBUTOR && (
-          <Link
-            name="Sub Distributor"
-            path={`sub-distributor?${qsDIstributor}`}
-          />
-        )}
-        <Link name="Sales" path="sales" />
-        <Link name="Ekspedisi" path="ekspedisi" />
-        <Link name="Order" path="order" />
-        <Link name="Report" path="report" />
-        <Link name="Akun" path="akun" />
-        <Logout />
-      </section>
-    </aside>
+    <>
+      <LinkSideBar name="Dashboard" path="dashboard" />
+      <LinkSideBar name="Banner" path="banner" />
+      <LinkSideBar name="Produk" path={`produk?${qsProduct}`} />
+      <LinkSideBar name="Toko" path={`toko?${qsStore}`} />
+      {user?.role === RoleDistributor.DISTRIBUTOR && (
+        <LinkSideBar
+          name="Sub Distributor"
+          path={`sub-distributor?${qsDIstributor}`}
+        />
+      )}
+      <LinkSideBar name="Sales" path="sales" />
+      <LinkSideBar name="Ekspedisi" path="ekspedisi" />
+      <LinkSideBar name="Order" path="order" />
+      <LinkSideBar name="Report" path="report" />
+      <LinkSideBar name="Akun" path="akun" />
+
+      <Button
+        aria-label="Logout"
+        className="bg-[#c41414] mx-auto mt-4"
+        endContent={
+          <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />
+        }
+        onClick={logout}
+      />
+    </>
   );
 };
 
-const Link = ({ name, path }: { name: string; path: string }) => {
+export const LinkSideBar = ({ name, path }: { name: string; path: string }) => {
   return (
     <NavLink
       to={path}
@@ -111,36 +128,6 @@ const Link = ({ name, path }: { name: string; path: string }) => {
     >
       {name}
     </NavLink>
-  );
-};
-
-export const arrNavigationLabels: { label: string }[] = [
-  { label: "dashboard" },
-  { label: "banner" },
-  { label: "produk" },
-  { label: "toko" },
-  { label: "distributor" },
-  { label: "sales" },
-  { label: "ekspedisi" },
-  { label: "order" },
-  { label: "report" },
-  { label: "akun" },
-];
-
-export const Logout = () => {
-  const { logout } = useAuth();
-
-  return (
-    <div className="my-8 flex justify-center">
-      <Button
-        aria-label="Logout"
-        className="bg-[#c41414]"
-        endContent={
-          <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />
-        }
-        onClick={logout}
-      />
-    </div>
   );
 };
 

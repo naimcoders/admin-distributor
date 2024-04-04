@@ -9,6 +9,7 @@ import {
 import { handleErrorMessage } from "src/helpers";
 import { checkPassword } from "src/pages/Index";
 import { setUser } from "src/stores/auth";
+import { useDistributor } from "src/api/distributor.service";
 
 interface DefaultValues {
   email: string;
@@ -17,32 +18,14 @@ interface DefaultValues {
 }
 
 const Password = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<DefaultValues>();
-
+  const { control, errors, isPending, onSubmit } = useApi();
   const { fields } = useFields();
-  const user = setUser((v) => v.user);
-
-  const onSubmit = handleSubmit(async (e) => {
-    const obj = {
-      name: user?.name,
-      ownerName: user?.ownerName,
-      email: e.email,
-      password: e.password,
-      oldPassword: e.oldPassword,
-      phoneNumber: user?.phoneNumber,
-    };
-    console.log(obj);
-  });
 
   return (
     <Template
       title="perbarui password"
       onClick={onSubmit}
-      btnLabelForm="buat baru"
+      btnLabelForm={isPending ? "loading..." : "buat baru"}
     >
       {fields.map((el, idx) => (
         <Textfield
@@ -56,6 +39,38 @@ const Password = () => {
       ))}
     </Template>
   );
+};
+
+const useApi = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DefaultValues>();
+  const user = setUser((v) => v.user);
+
+  const { updateDistributor } = useDistributor();
+
+  const onSubmit = handleSubmit(async (e) => {
+    if (!user) return;
+
+    try {
+      const obj = {
+        name: user.name,
+        ownerName: user.ownerName,
+        email: e.email,
+        password: e.password,
+        oldPassword: e.oldPassword,
+        phoneNumber: user.phoneNumber,
+      };
+      await updateDistributor.mutateAsync({ data: obj });
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Failed to update account : ${error.message}`);
+    }
+  });
+
+  return { onSubmit, control, errors, isPending: updateDistributor.isPending };
 };
 
 const useFields = () => {

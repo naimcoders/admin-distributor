@@ -182,12 +182,14 @@ interface UpdateDocument {
   ktpImage: string;
 }
 
-interface UpdateSubDistributor {
+interface UpdateDistributor {
   ownerName: string;
   email: string;
   phoneNumber: string;
   name: string;
   detailAddress?: string;
+  password?: string;
+  oldPassword?: string;
 }
 
 class Api {
@@ -235,7 +237,7 @@ class Api {
 
   async updateSubDistributor(
     distributorId: string,
-    r: UpdateSubDistributor
+    r: UpdateDistributor
   ): Promise<null> {
     return await req<null>({
       method: "PUT",
@@ -275,6 +277,16 @@ class Api {
       errors: "",
     });
   }
+
+  async updateDistributor(r: UpdateDistributor): Promise<null> {
+    return await req<null>({
+      method: "PUT",
+      isNoAuth: false,
+      body: r,
+      path: `${this.path}/update`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiDistributorInfo {
@@ -285,8 +297,9 @@ interface ApiDistributorInfo {
   updateDocument(r: UpdateDocument): Promise<null>;
   updateSubDistributor(
     distributorId: string,
-    r: UpdateSubDistributor
+    r: UpdateDistributor
   ): Promise<null>;
+  updateDistributor(r: UpdateDistributor): Promise<null>;
 }
 
 export function getDistributorApiInfo(): ApiDistributorInfo {
@@ -297,6 +310,21 @@ const key = "distributor";
 
 export const useDistributor = () => {
   const queryClient = useQueryClient();
+
+  const updateDistributor = useMutation<
+    null,
+    Error,
+    { data: UpdateDistributor }
+  >({
+    mutationKey: [key, "update-distributor"],
+    mutationFn: async (r) =>
+      await getDistributorApiInfo().updateDistributor(r.data),
+    onSuccess: () => {
+      toast.success("Akun berhasil diperbarui");
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const find = (pageTable: number) => {
     const { user } = useAuth();
@@ -364,7 +392,7 @@ export const useDistributor = () => {
   const updateSubDistributor = useMutation<
     null,
     Error,
-    { data: UpdateSubDistributor; distributorId: string }
+    { data: UpdateDistributor; distributorId: string }
   >({
     mutationKey: [key, "update-sub-distributor"],
     mutationFn: async (r) =>
@@ -407,5 +435,6 @@ export const useDistributor = () => {
     create,
     updateDocument,
     updateSubDistributor,
+    updateDistributor,
   };
 };

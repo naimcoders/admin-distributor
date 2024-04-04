@@ -1,21 +1,42 @@
+import React from "react";
 import Template from "./Template";
-import { FieldValues, useForm } from "react-hook-form";
-import { Textfield } from "src/components/Textfield";
+import { useForm } from "react-hook-form";
+import {
+  Textfield,
+  TextfieldProps,
+  objectFields,
+} from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
-import { useLogin } from "src/pages/Index";
+import { checkPassword } from "src/pages/Index";
+import { setUser } from "src/stores/auth";
+
+interface DefaultValues {
+  email: string;
+  password: string;
+  oldPassword: string;
+}
 
 const Password = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>({ mode: "onChange" });
+  } = useForm<DefaultValues>();
+
+  const { fields } = useFields();
+  const user = setUser((v) => v.user);
 
   const onSubmit = handleSubmit(async (e) => {
-    console.log(e);
+    const obj = {
+      name: user?.name,
+      ownerName: user?.ownerName,
+      email: e.email,
+      password: e.password,
+      oldPassword: e.oldPassword,
+      phoneNumber: user?.phoneNumber,
+    };
+    console.log(obj);
   });
-
-  const { logins } = useLogin();
 
   return (
     <Template
@@ -23,21 +44,46 @@ const Password = () => {
       onClick={onSubmit}
       btnLabelForm="buat baru"
     >
-      {logins.map((el, idx) => (
+      {fields.map((el, idx) => (
         <Textfield
           {...el}
           key={idx}
           defaultValue=""
           control={control}
-          className="w-full"
-          placeholder={el.placeholder}
-          autoComplete={el.autoComplete}
           errorMessage={handleErrorMessage(errors, el.name ?? "")}
           rules={{ required: { value: true, message: el.errorMessage ?? "" } }}
         />
       ))}
     </Template>
   );
+};
+
+const useFields = () => {
+  const [isPassword, setIsPassword] = React.useState(false);
+  const [isOldPassword, setIsOldPassword] = React.useState(false);
+
+  const fields: TextfieldProps[] = [
+    objectFields({
+      label: "email",
+      name: "email",
+      type: "email",
+      autoComplete: "on",
+    }),
+    objectFields({
+      label: "password lama",
+      name: "oldPassword",
+      type: !isOldPassword ? "password" : "text",
+      endContent: checkPassword(isOldPassword, setIsOldPassword),
+    }),
+    objectFields({
+      label: "password baru",
+      name: "password",
+      type: !isPassword ? "password" : "text",
+      endContent: checkPassword(isPassword, setIsPassword),
+    }),
+  ];
+
+  return { fields };
 };
 
 export default Password;

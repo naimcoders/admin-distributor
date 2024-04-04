@@ -37,7 +37,7 @@ const LoginPage = () => {
   );
 };
 
-export const useLogin = () => {
+export const useLoginFields = () => {
   const [isPassword, setIsPassword] = useState(false);
 
   const logins: TextfieldProps[] = [
@@ -89,7 +89,7 @@ interface LoginFieldProps {
 
 const Form = () => {
   const { control, errors, onKeyDown, onSubmit, isPending } = useHook();
-  const { logins } = useLogin();
+  const { logins } = useLoginFields();
 
   return (
     <section className="flexcol gap-8">

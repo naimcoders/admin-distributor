@@ -46,6 +46,7 @@ const useApi = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<DefaultValues>();
   const user = setUser((v) => v.user);
 
@@ -64,6 +65,7 @@ const useApi = () => {
         phoneNumber: user.phoneNumber,
       };
       await updateDistributor.mutateAsync({ data: obj });
+      reset();
     } catch (e) {
       const error = e as Error;
       console.error(`Failed to update account : ${error.message}`);

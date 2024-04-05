@@ -1,3 +1,9 @@
+import { Button } from "src/components/Button";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Columns } from "src/types";
+import { useActiveModal } from "src/stores/modalStore";
+import { Currency } from "src/helpers";
+import { usePilipay } from "src/api/pilipay.service";
 import withdrawLogo from "src/assets/images/withdraw.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
 import transferImg from "src/assets/images/transfer.png";
@@ -7,15 +13,10 @@ import cx from "classnames";
 import Label from "src/components/Label";
 import Table from "src/components/Table";
 import Image from "src/components/Image";
-import { Button } from "src/components/Button";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { Columns } from "src/types";
-import { useActiveModal } from "src/stores/modalStore";
-import { Currency } from "src/helpers";
 import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
-import { usePilipay } from "src/api/pilipay.service";
+import React from "react";
 
 const Dashboard = () => {
   return (
@@ -135,7 +136,17 @@ const PilipayTransaction = () => {
   );
 };
 
+interface Coordinate {
+  lat: number;
+  lng: number;
+}
+
 const PilipayBalance = () => {
+  const [coordinate, setCoordinate] = React.useState<Coordinate>({
+    lat: 0,
+    lng: 0,
+  });
+
   const { actionIsHistory, actionIsTransfer, actionIsTopUp } = useActiveModal();
 
   const payments: { label: string; src: string; onClick?: () => void }[] = [
@@ -148,7 +159,19 @@ const PilipayBalance = () => {
   const { findMeWallet } = usePilipay();
   const { data } = findMeWallet(true);
 
-  const onActive = () => {};
+  const onGeoLocation = () => {
+    return navigator.geolocation.getCurrentPosition((position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setCoordinate({ lat: latitude, lng: longitude });
+    });
+  };
+
+  React.useEffect(() => {
+    if (coordinate.lat) {
+      console.log("show pin");
+    }
+  }, [coordinate]);
 
   return (
     <section className="flex gap-4 items-center">
@@ -164,7 +187,7 @@ const PilipayBalance = () => {
         <Button
           aria-label="aktifkan"
           className="w-full text-black text-sm bg-blue-300 font-semibold"
-          onClick={onActive}
+          onClick={onGeoLocation}
         />
       ) : (
         <section className="flex gap-3">

@@ -49,12 +49,12 @@ class Api {
   }
 }
 
-interface ApiLoginInfo {
+interface ApiAuthInfo {
   login(r: ReqLogin): Promise<void>;
   sendOtp(r: SendOtp): Promise<string>;
 }
 
-export function getLoginApiInfo(): ApiLoginInfo {
+export function getAuthApiInfo(): ApiAuthInfo {
   return Api.getInstance();
 }
 
@@ -63,12 +63,12 @@ const key = "auth";
 export const useLogin = () => {
   const login = useMutation({
     mutationKey: [key],
-    mutationFn: async (r: ReqLogin) => await getLoginApiInfo().login(r),
+    mutationFn: async (r: ReqLogin) => await getAuthApiInfo().login(r),
   });
 
   const sendOtp = useMutation<string, Error, { data: SendOtp }>({
     mutationKey: [key, "send-otp"],
-    mutationFn: async (r) => await getLoginApiInfo().sendOtp(r.data),
+    mutationFn: async (r) => await getAuthApiInfo().sendOtp(r.data),
     onSuccess: () => toast.success("OTP berhasil dikirim"),
     onError: (e) => toast.error(e.message),
   });

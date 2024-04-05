@@ -69,6 +69,7 @@ export const usePilipay = () => {
     return useQuery<Pilipay, Error>({
       queryKey: [key],
       queryFn: async () => await getPilipayApiInfo().findMeWallet(showHistory),
+      enabled: !!showHistory,
     });
   };
 

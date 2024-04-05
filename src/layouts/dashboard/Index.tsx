@@ -15,6 +15,8 @@ import { Currency } from "src/helpers";
 import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
+import { usePilipay } from "src/api/pilipay.service";
+import Error from "src/components/Error";
 
 const Dashboard = () => {
   return (
@@ -24,7 +26,6 @@ const Dashboard = () => {
         <MiddleLine />
         <BottomLine />
       </main>
-      {/* <PinVerification onBack={actionIsPinVerification} /> */}
     </>
   );
 };
@@ -129,7 +130,7 @@ const PilipayTransaction = () => {
       <Button
         aria-label="Update"
         radius="sm"
-        className="w-full text-black text-sm bg-blue-300 font-interMedium"
+        className="w-full text-black text-sm bg-blue-300 font-semibold"
       />
     </section>
   );
@@ -145,6 +146,11 @@ const PilipayBalance = () => {
     { label: "withdraw", src: withdrawLogo },
   ];
 
+  const { findMeWallet } = usePilipay();
+  const { data } = findMeWallet(true);
+
+  const onActive = () => {};
+
   return (
     <section className="flex gap-4 items-center">
       <section className="text-white flex flex-col gap-2">
@@ -155,17 +161,25 @@ const PilipayBalance = () => {
         <h2 className="font-interMedium">Rp13.450.000</h2>
       </section>
 
-      <section className="flex gap-3">
-        {payments.map((v) => (
-          <BtnPiliPayActions
-            label={v.label}
-            alt={v.label}
-            src={v.src}
-            onClick={v.onClick}
-            key={v.label}
-          />
-        ))}
-      </section>
+      {!data ? (
+        <Button
+          aria-label="aktifkan"
+          className="w-full text-black text-sm bg-blue-300 font-semibold"
+          onClick={onActive}
+        />
+      ) : (
+        <section className="flex gap-3">
+          {payments.map((v) => (
+            <BtnPiliPayActions
+              label={v.label}
+              alt={v.label}
+              src={v.src}
+              onClick={v.onClick}
+              key={v.label}
+            />
+          ))}
+        </section>
+      )}
 
       <History />
       <Transfer />

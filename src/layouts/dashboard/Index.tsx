@@ -16,7 +16,6 @@ import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
 import { usePilipay } from "src/api/pilipay.service";
-import Error from "src/components/Error";
 
 const Dashboard = () => {
   return (

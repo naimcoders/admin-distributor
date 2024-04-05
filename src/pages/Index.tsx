@@ -12,7 +12,7 @@ import {
 import { handleErrorMessage } from "src/helpers";
 import React from "react";
 import { requestForToken } from "src/firebase";
-import { useLogin as useLoginApi } from "src/api/login.service";
+import { useLogin as useLoginApi } from "src/api/auth.service";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { IconColor } from "src/types";
@@ -147,7 +147,7 @@ const useHook = () => {
     formState: { errors },
   } = useForm<FieldValues>();
 
-  const { mutateAsync, isPending } = useLoginApi();
+  const { login } = useLoginApi();
   const navigate = useNavigate();
 
   const requestToken = async () => {
@@ -187,7 +187,7 @@ const useHook = () => {
           fcmToken: token,
         };
 
-        await mutateAsync(result);
+        await login.mutateAsync(result);
         navigate("/dashboard");
       }
     } catch (e) {
@@ -216,7 +216,7 @@ const useHook = () => {
             fcmToken: token,
           };
 
-          await mutateAsync(result);
+          await login.mutateAsync(result);
           navigate("/dashboard");
         }
       }
@@ -231,7 +231,7 @@ const useHook = () => {
     onKeyDown,
     control,
     errors,
-    isPending,
+    isPending: login.isPending,
     notificationPermission,
     token,
   };

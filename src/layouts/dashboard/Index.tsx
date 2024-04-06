@@ -141,6 +141,7 @@ interface Coordinate {
   lng: number;
 }
 
+// PILIPAY
 const PilipayBalance = () => {
   const [coordinate, setCoordinate] = React.useState<Coordinate>({
     lat: 0,

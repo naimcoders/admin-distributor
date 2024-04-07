@@ -3,7 +3,6 @@ import queryString from "query-string";
 import { req } from "./request";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { getApiTransactionInfo, ITransaction } from "./transaction.service";
 
 export interface Pilipay {
   id: string;
@@ -104,20 +103,14 @@ class Api {
     });
   }
 
-  async topup(r: ITopup): Promise<ITransaction> {
-    const reqTopup = await req<{ data: string; code: number; errors: string }>({
+  async topup(r: ITopup): Promise<string> {
+    return await req<string>({
       method: "POST",
       isNoAuth: false,
       path: `${this.path}/topup`,
       errors: "",
       body: r,
     });
-
-    const findTransactionTopup = await getApiTransactionInfo().findTransaction({
-      topupId: reqTopup.data,
-    });
-
-    return findTransactionTopup;
   }
 }
 
@@ -125,7 +118,7 @@ interface ApiPilipayInfo {
   findMeWallet(showHistory: boolean): Promise<Pilipay>;
   activated(r: Activated): Promise<Pilipay>;
   findPaymentChannel(): Promise<PayoutChannels[]>;
-  topup(r: ITopup): Promise<ITransaction>;
+  topup(r: ITopup): Promise<string>;
 }
 
 function getPilipayApiInfo(): ApiPilipayInfo {
@@ -174,7 +167,7 @@ export const usePilipay = () => {
     },
   });
 
-  const topup = useMutation<ITransaction, Error, ITopup>({
+  const topup = useMutation<string, Error, ITopup>({
     mutationKey: [key],
     mutationFn: async (r) => await getPilipayApiInfo().topup(r),
     onSuccess: async () => {

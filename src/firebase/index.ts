@@ -1,7 +1,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/messaging";
-import { getMessaging, getToken } from "firebase/messaging";
+import { getToken, MessagePayload, onMessage } from "firebase/messaging";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -25,22 +25,26 @@ const FbStorage = getStorage(firebase.app());
 
 export { FbApp, FbAuth, FbMessage, FbStorage };
 
-const messaging = getMessaging(FbApp);
-
 export const requestForToken = (): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
-    getToken(messaging, {
+    getToken(FbMessage, {
       vapidKey: import.meta.env.VITE_KEY_WEB_PUSH,
     })
       .then((currentToken) => {
         if (currentToken) {
           resolve(currentToken);
-        } else {
-          reject(new Error("Error"));
         }
       })
       .catch((err) => {
-        reject(new Error(`Error : ${err}`));
+        reject(err);
       });
   });
 };
+
+export const onMessageListener = () =>
+  new Promise<MessagePayload>((resolve) => {
+    onMessage(FbMessage, (payload) => {
+      console.log("payload", payload.data);
+      resolve(payload);
+    });
+  });

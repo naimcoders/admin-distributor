@@ -76,7 +76,7 @@ const Transfer = () => {
               {nominals.map((v) => (
                 <section
                   key={v.label}
-                  onClick={() => v.onClick(v.label)}
+                  onClick={() => console.log(v.label)} // TOOD: SHOULD BE HANDLE IN FUTURE
                   className={cx(
                     "border border-gray-400 text-center py-2 rounded-xl cursor-pointer",
                     selectedNominal === v.label && "bg-gray-200"
@@ -184,22 +184,18 @@ const Transfer = () => {
 };
 
 interface NominalProps {
+  value: string;
   label: string;
-  onClick: (nominal: string) => void;
 }
 
 export const useNominal = () => {
   const [selectedNominal, setSelectedNominal] = useState("");
-  const handleNominal = (nominal: string) => {
-    if (nominal === selectedNominal) setSelectedNominal("");
-    else setSelectedNominal(nominal);
-  };
 
   const nominals: NominalProps[] = [
-    { label: "50k", onClick: handleNominal },
-    { label: "100k", onClick: handleNominal },
-    { label: "200k", onClick: handleNominal },
-    { label: "500k", onClick: handleNominal },
+    { value: "50000", label: "50k" },
+    { value: "100000", label: "100k" },
+    { value: "200000", label: "200k" },
+    { value: "500000", label: "500k" },
   ];
 
   const parseSelectedNominal = (): string => {

@@ -3,6 +3,7 @@ import Skeleton from "./Skeleton";
 import { Outlet, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { setUser } from "src/stores/auth";
+import Notification from "./Notification";
 
 export const PrivateRoute = () => {
   const { error, loading, user } = useAuth();
@@ -23,6 +24,16 @@ export const PrivateRoute = () => {
       </div>
     );
 
-  // user?.getIdToken().then((e) => console.log(e));
-  return <>{user ? <Outlet /> : <Navigate to="/" />}</>;
+  return (
+    <>
+      {user ? (
+        <main>
+          <Notification />
+          <Outlet />
+        </main>
+      ) : (
+        <Navigate to="/" />
+      )}
+    </>
+  );
 };

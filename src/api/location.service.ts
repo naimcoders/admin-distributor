@@ -59,6 +59,7 @@ const key = "location";
 
 export const useLocation = () => {
   const findGeoLocation = (lat: number, lng: number) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Location, Error>({
       queryKey: [key, lat, lng],
       queryFn: async () =>

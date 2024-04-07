@@ -1,7 +1,7 @@
 import cx from "classnames";
 import mokes from "src/assets/images/mokes.png";
 import Image from "src/components/Image";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "src/components/Button";
 import {
@@ -126,43 +126,26 @@ const Form = () => {
     </section>
   );
 };
-
 const useHook = () => {
-  const [token, setToken] = React.useState("");
-  const [notificationPermission, setNotificationPermission] =
-    React.useState("default");
-
-  const notificationStatus: string[] = ["default", "denied"];
-
-  React.useEffect(() => {
-    if (notificationStatus.includes(notificationPermission)) {
-      onNotificationPermission();
-    } else requestToken();
-  }, [notificationPermission]);
-
+  // kalau buat seperti ini useForm<LoginFieldProps>() <-- masukkan types nya di useForm x Jangan useForm<FieldValues>() ini useless jadinya
   const {
     control,
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm<LoginFieldProps>();
+  const [token, setToken] = React.useState("");
+  const [notificationPermission, setNotificationPermission] =
+    React.useState<NotificationPermission>("default");
+
+  React.useEffect(() => {
+    if (notificationPermission !== "granted") {
+      onNotificationPermission();
+    }
+  }, [notificationPermission]);
 
   const { login } = useLoginApi();
   const navigate = useNavigate();
-
-  const requestToken = async () => {
-    try {
-      toast.loading("Memuat token...", {
-        toastId: "token",
-      });
-      const getToken = await requestForToken();
-      setToken(getToken);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      toast.dismiss("token");
-    }
-  };
 
   const onNotificationPermission = async () => {
     if (!("Notification" in window)) {
@@ -170,15 +153,22 @@ const useHook = () => {
       return;
     }
 
-    const permission = await Notification.requestPermission();
+    let permission = await Notification.requestPermission();
+
+    while (permission !== "granted") {
+      permission = await Notification.requestPermission();
+    }
+
+    const getToken = await requestForToken();
+    setToken(getToken);
     setNotificationPermission(permission);
   };
 
   const onSubmit = handleSubmit(async (e) => {
     try {
-      alert("a");
-      if (notificationStatus.includes(notificationPermission)) {
+      if (notificationPermission !== "granted") {
         toast.error("Silakan izinkan notifikasi untuk login");
+        return;
       }
 
       if (token) {
@@ -206,8 +196,9 @@ const useHook = () => {
 
     try {
       if (e.key === "Enter") {
-        if (notificationStatus.includes(notificationPermission)) {
+        if (notificationPermission !== "granted") {
           toast.error("Silakan izinkan notifikasi untuk login");
+          return;
         }
 
         if (token) {

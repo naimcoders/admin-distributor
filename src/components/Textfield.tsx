@@ -1,7 +1,11 @@
 import cx from "classnames";
 import { Input } from "@nextui-org/react";
 import { HTMLAttributes, KeyboardEvent, ReactNode, Ref } from "react";
-import { UseControllerProps, useController } from "react-hook-form";
+import {
+  FieldValues,
+  UseControllerProps,
+  useController,
+} from "react-hook-form";
 import { ChildRef, FileProps } from "./File";
 import { Radius } from "src/types";
 import { IconImage } from "./Image";
@@ -21,8 +25,8 @@ interface UploadImageProps {
   };
 }
 
-export interface TextfieldProps
-  extends UseControllerProps<any>,
+export interface TextfieldProps<S extends FieldValues>
+  extends UseControllerProps<S>,
     Pick<HTMLAttributes<HTMLInputElement>, "className"> {
   type?: string;
   label?: string;
@@ -42,8 +46,7 @@ export interface TextfieldProps
   };
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
-
-export const Textfield = (props: TextfieldProps) => {
+export const Textfield = <T extends object>(props: TextfieldProps<T>) => {
   const { field } = useController(props);
 
   return (
@@ -81,7 +84,9 @@ export const Textfield = (props: TextfieldProps) => {
   );
 };
 
-export const TextfieldCurrency = (props: TextfieldProps) => {
+export const TextfieldCurrency = <T extends object>(
+  props: TextfieldProps<T>
+) => {
   const { field } = useController(props);
 
   return (
@@ -110,12 +115,12 @@ export const TextfieldCurrency = (props: TextfieldProps) => {
   );
 };
 
-export const objectFields = ({
+export const objectFields = <T extends object>({
+  autoComplete,
   placeholder,
   errorMessage,
-  autoComplete,
   ...props
-}: TextfieldProps): TextfieldProps => {
+}: TextfieldProps<T>): TextfieldProps<T> => {
   const obj = {
     autoComplete: autoComplete ? autoComplete : "off",
     placeholder: placeholder
@@ -125,7 +130,7 @@ export const objectFields = ({
       ? errorMessage
       : `Masukkan ${props.label?.replace("*", "")}`,
     ...props,
-  } satisfies TextfieldProps;
+  } satisfies TextfieldProps<T>;
 
   return obj;
 };

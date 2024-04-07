@@ -9,7 +9,7 @@ import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
-import { CreateNewPin } from "src/components/Pin";
+// import { CreateNewPin } from "src/components/Pin";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import { KeyIcon } from "@heroicons/react/24/outline";
@@ -34,7 +34,7 @@ const Layout = () => {
         </section>
       )}
 
-      <CreateNewPin header={{ label: "buat PIN" }} />
+      {/* <CreateNewPin header={{ label: "buat PIN" }} /> */}
     </main>
   );
 };

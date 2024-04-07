@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { Columns } from "src/types";
 import { useActiveModal } from "src/stores/modalStore";
 import { Currency } from "src/helpers";
-import { usePilipay } from "src/api/pilipay.service";
+import { findMeWallet } from "src/api/pilipay.service";
 import withdrawLogo from "src/assets/images/withdraw.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
 import transferImg from "src/assets/images/transfer.png";
@@ -17,6 +17,8 @@ import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
 import React from "react";
+import ActivatedPilipay from "./modals/Activated";
+import { formatRupiah } from "src/helpers/idr";
 
 const Dashboard = () => {
   return (
@@ -136,18 +138,9 @@ const PilipayTransaction = () => {
   );
 };
 
-interface Coordinate {
-  lat: number;
-  lng: number;
-}
-
 // PILIPAY
 const PilipayBalance = () => {
-  const [coordinate, setCoordinate] = React.useState<Coordinate>({
-    lat: 0,
-    lng: 0,
-  });
-
+  const [isActivated, setIsActivated] = React.useState(false);
   const { actionIsHistory, actionIsTransfer, actionIsTopUp } = useActiveModal();
 
   const payments: { label: string; src: string; onClick?: () => void }[] = [
@@ -157,57 +150,49 @@ const PilipayBalance = () => {
     { label: "withdraw", src: withdrawLogo },
   ];
 
-  const { findMeWallet } = usePilipay();
   const { data } = findMeWallet(true);
 
-  const onGeoLocation = () => {
-    return navigator.geolocation.getCurrentPosition((position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      setCoordinate({ lat: latitude, lng: longitude });
-    });
-  };
-
-  React.useEffect(() => {
-    if (coordinate.lat) {
-      console.log("show pin");
-    }
-  }, [coordinate]);
-
   return (
-    <section className="flex gap-4 items-center">
-      <section className="text-white flex flex-col gap-2">
-        <span className="text-[.75rem] tracking-wider inline-flex gap-1">
-          <img src={walletSVG} alt="wallet" className="w-4" />
-          Saldo PiliPay
-        </span>
-        <h2 className="font-interMedium">Rp13.450.000</h2>
-      </section>
-
-      {!data ? (
-        <Button
-          aria-label="aktifkan"
-          className="w-full text-black text-sm bg-blue-300 font-semibold"
-          onClick={onGeoLocation}
-        />
-      ) : (
-        <section className="flex gap-3">
-          {payments.map((v) => (
-            <BtnPiliPayActions
-              label={v.label}
-              alt={v.label}
-              src={v.src}
-              onClick={v.onClick}
-              key={v.label}
-            />
-          ))}
-        </section>
+    <>
+      {isActivated && (
+        <ActivatedPilipay isOpen={isActivated} setOpen={setIsActivated} />
       )}
+      <section className="flex gap-10 items-center">
+        <section className="text-white flex flex-col gap-2">
+          <span className="text-[.75rem] tracking-wider inline-flex gap-1">
+            <img src={walletSVG} alt="wallet" className="w-4" />
+            Saldo PiliPay
+          </span>
+          <h2 className="font-interMedium text-sm">
+            {formatRupiah(data?.balance ?? 0)}
+          </h2>
+        </section>
 
-      <History />
-      <Transfer />
-      <Topup />
-    </section>
+        {!data?.id ? (
+          <Button
+            aria-label="aktifkan"
+            className="w-full text-black text-sm bg-blue-300 font-semibold"
+            onClick={() => setIsActivated(true)}
+          />
+        ) : (
+          <section className="flex gap-3">
+            {payments.map((v) => (
+              <BtnPiliPayActions
+                label={v.label}
+                alt={v.label}
+                src={v.src}
+                onClick={v.onClick}
+                key={v.label}
+              />
+            ))}
+          </section>
+        )}
+
+        <History />
+        <Transfer />
+        <Topup />
+      </section>
+    </>
   );
 };
 

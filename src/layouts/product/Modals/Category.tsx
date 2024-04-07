@@ -79,7 +79,7 @@ export const ModalSubCategory: FC<ModalCategoryProps> = ({
       isOpen={isSubCategory}
       closeModal={actionIsSubCategory}
     >
-      {filterByCategoryId?.length! < 1 ? (
+      {Number(filterByCategoryId?.length) < 1 ? (
         <h2 className="font-semibold text-lg text-center my-4">
           Tidak ada sub-kategori
         </h2>

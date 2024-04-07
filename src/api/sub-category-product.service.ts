@@ -45,8 +45,8 @@ class Api {
     });
   }
 
-  async remove(subCategoryId: string): Promise<{}> {
-    return await req<{}>({
+  async remove(subCategoryId: string): Promise<void> {
+    return await req<void>({
       method: "DELETE",
       isNoAuth: false,
       path: `${this.path}/${subCategoryId}`,
@@ -76,7 +76,7 @@ class Api {
 
 interface ApiSubCategoryProductInfo {
   update(subCategoryId: string, r: Create): Promise<SubCategoryProduct>;
-  remove(subCategoryId: string): Promise<{}>;
+  remove(subCategoryId: string): Promise<void>;
   findById(categoryProductId: string): Promise<SubCategoryProduct[]>;
   create(r: Create): Promise<SubCategoryProduct>;
 }
@@ -110,7 +110,7 @@ export const useSubCategoryProduct = (categoryProductId: string) => {
     onError: (e) => toast.error(e.message),
   });
 
-  const remove = useMutation<{}, Error, { subCategoryId: string }>({
+  const remove = useMutation<void, Error, { subCategoryId: string }>({
     mutationKey: [removeKey, categoryProductId],
     mutationFn: async (r) =>
       await getSubCategoryProductApiInfo().remove(r.subCategoryId),

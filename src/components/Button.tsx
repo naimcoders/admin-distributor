@@ -12,6 +12,7 @@ interface Button extends PickButton {
   color: Color;
   radius: Radius;
   size: Size;
+  isLoading?: boolean;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   variant:
@@ -36,6 +37,7 @@ export const Button = ({
   "aria-label": label,
   variant,
   disabled,
+  isLoading,
 }: Partial<Button>) => {
   return (
     <Btn
@@ -48,6 +50,7 @@ export const Button = ({
       variant={variant}
       size={size ?? "md"}
       disabled={disabled}
+      isLoading={isLoading}
     >
       {label}
     </Btn>

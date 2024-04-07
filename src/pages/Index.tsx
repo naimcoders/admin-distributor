@@ -52,7 +52,7 @@ const LoginPage = () => {
 export const useLoginFields = () => {
   const [isPassword, setIsPassword] = React.useState(false);
 
-  const logins: TextfieldProps[] = [
+  const logins: TextfieldProps<LoginFieldProps>[] = [
     objectFields({
       label: "email",
       name: "email",
@@ -176,6 +176,7 @@ const useHook = () => {
 
   const onSubmit = handleSubmit(async (e) => {
     try {
+      alert("a");
       if (notificationStatus.includes(notificationPermission)) {
         toast.error("Silakan izinkan notifikasi untuk login");
       }

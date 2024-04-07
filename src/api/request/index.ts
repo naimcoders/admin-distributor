@@ -5,7 +5,7 @@ interface Treq {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   path: string;
   errors: { [key: number]: string };
-  body?: any;
+  body?: unknown;
   isNoAuth?: boolean;
 }
 

@@ -9,10 +9,17 @@ interface ReqLogin {
   fcmToken: string;
 }
 
+export enum SendOtpType {
+  ACTIVATED = "ACTIVATED",
+  UPDATE_PIN = "UPDATE_PIN",
+  TOPUP = "TOPUP",
+  WITHDRAW = "WITHDRAW",
+}
+
 interface SendOtp {
   phoneNumber: string;
   role: string;
-  type: string;
+  type: SendOtpType;
 }
 
 class Api {
@@ -66,9 +73,9 @@ export const useLogin = () => {
     mutationFn: async (r: ReqLogin) => await getAuthApiInfo().login(r),
   });
 
-  const sendOtp = useMutation<string, Error, { data: SendOtp }>({
+  const sendOtp = useMutation<string, Error, SendOtp>({
     mutationKey: [key, "send-otp"],
-    mutationFn: async (r) => await getAuthApiInfo().sendOtp(r.data),
+    mutationFn: async (r) => await getAuthApiInfo().sendOtp(r),
     onSuccess: () => toast.success("OTP berhasil dikirim"),
     onError: (e) => toast.error(e.message),
   });

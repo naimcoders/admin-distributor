@@ -6,6 +6,51 @@ import Image from "src/components/Image";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { FC, ReactNode } from "react";
+import {
+  ETypeHistoryPilipay,
+  findMeWallet,
+  HistoryPilipay,
+} from "src/api/pilipay.service";
+import { Link, Spinner } from "@nextui-org/react";
+import { create } from "zustand";
+import {
+  EITransactionStatus,
+  findTransaction,
+  IQueryTransaction,
+} from "src/api/transaction.service";
+import { formatRupiah } from "src/helpers/idr";
+import { convertEpochToDate } from "src/helpers";
+import {
+  ArrowPathIcon,
+  PlusCircleIcon,
+  XMarkIcon,
+  MinusCircleIcon,
+} from "@heroicons/react/24/solid";
+
+type TStateHistory = {
+  data: HistoryPilipay | null;
+  setHistory: (data: HistoryPilipay | null) => void;
+};
+
+const stateHistoryDetail = create<TStateHistory>((set) => ({
+  data: null,
+  setHistory: (data) => set({ data }),
+}));
+
+const bindingTypeHistory = (history: HistoryPilipay): ETypeHistoryPilipay => {
+  if (history.topupRequestId) return ETypeHistoryPilipay.TOPUP;
+  if (history.withdrawRequestId) return ETypeHistoryPilipay.WITHDRAW;
+  if (history.orderId) return ETypeHistoryPilipay.ORDER;
+  return ETypeHistoryPilipay.TRANSFER;
+};
+
+const bindingHistoryTx = (h: HistoryPilipay | null): IQueryTransaction => {
+  if (!h) return { orderId: "", topupId: "", transactionId: "" };
+  if (h.topupRequestId) return { topupId: h.topupRequestId };
+  if (h.withdrawRequestId) return { transactionId: h.withdrawRequestId };
+  if (h.orderId) return { orderId: h.orderId };
+  return { orderId: "", topupId: "", transactionId: "" };
+};
 
 export const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
   return (
@@ -25,48 +70,139 @@ export const BeginHeader: FC<{ children?: ReactNode }> = ({ children }) => {
 
 const History = () => {
   const { isHistory, actionIsHistory } = useActiveModal();
+  const dataHistory = findMeWallet(true);
+  const setDetailHistory = stateHistoryDetail((v) => v.setHistory);
+  const dataHistoryState = stateHistoryDetail((v) => v.data);
 
   return (
     <Modal
       isOpen={isHistory}
-      closeModal={actionIsHistory}
+      closeModal={() => {
+        actionIsHistory();
+        setDetailHistory(null);
+      }}
       customHeader={<BeginHeader />}
     >
-      <main className="my-4 text-sm">
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Jumat, 22 Des 2023</h2>
-          <HistoryContent
-            label="Top Up"
-            desc="Alfamart"
-            icon={{ src: topUpImg, alt: "Top Up Image" }}
-            total={(100000).toLocaleString("id-ID")}
-          />
-          <HistoryContent
-            label="Transfer"
-            desc="08221134567"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(75000).toLocaleString("id-ID")}
-          />
-        </section>
-        <section className="flexcol gap-4 py-4 border-t border-gray-300">
-          <h2 className="font-interMedium">Kamis, 21 Des 2023</h2>
-          <HistoryContent
-            label="Transfer"
-            desc="Mandiri"
-            icon={{ src: transferImg, alt: "Transfer Image" }}
-            total={(50000).toLocaleString("id-ID")}
-          />
-        </section>
-      </main>
+      {dataHistoryState && <DetailHistory />}
+
+      {!dataHistoryState && (
+        <div className="min-h-[20rem] max-h-[20rem] overflow-auto">
+          {dataHistory?.isLoading && !dataHistory?.data && <Spinner />}
+          {dataHistory?.data && (
+            <section className="mt-5">
+              {dataHistory.data.history?.map((it) => (
+                <div key={it.id} className="border-gray-300 mt-3">
+                  <HistoryContent
+                    history={it}
+                    type={bindingTypeHistory(it)}
+                    onClick={() => setDetailHistory(it)}
+                    icon={{
+                      src: it?.topupRequestId ? topUpImg : transferImg,
+                      alt: "Top Up Image",
+                    }}
+                    label={
+                      it?.topupRequestId
+                        ? "Top up"
+                        : it?.withdrawRequestId
+                        ? "Withdraw"
+                        : "Transfer"
+                    }
+                  />
+                  <div className="bg-gray-200 w-full h-[1px] mt-2" />
+                </div>
+              ))}
+            </section>
+          )}
+        </div>
+      )}
     </Modal>
+  );
+};
+
+const DetailHistory = () => {
+  const data = stateHistoryDetail((v) => v.data);
+  const setHistoryDetail = stateHistoryDetail((v) => v.setHistory);
+  const dataTransaction = findTransaction(bindingHistoryTx(data));
+  const paymentActions = dataTransaction?.data?.actions;
+
+  return (
+    <div>
+      {dataTransaction.isLoading && !dataTransaction?.data && <Spinner />}
+      {dataTransaction.data && paymentActions && (
+        <section>
+          {paymentActions && (
+            <div className="mt-5 flex justify-between">
+              <div>
+                <p className="text-xs">
+                  {convertEpochToDate(dataTransaction.data.createdAt)}
+                </p>
+                <div className="mt-2">
+                  <p className="text-lg font-bold">
+                    {dataTransaction.data.paymentMethod}
+                  </p>
+
+                  {dataTransaction.data.status ===
+                    EITransactionStatus.PENDING && (
+                    <div>
+                      {paymentActions.eWallet && (
+                        <Link
+                          isExternal
+                          href={paymentActions.eWallet.url}
+                          className="text-xs -mt-1"
+                          onClick={() => setHistoryDetail(null)}
+                        >
+                          Klik Link Untuk Pembayaran
+                        </Link>
+                      )}
+                      {paymentActions.virtualAccount && (
+                        <p className="-mt-1">
+                          {
+                            paymentActions.virtualAccount.channel_properties
+                              .virtual_account_number
+                          }
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/*  */}
+              <div>
+                <h2 className={cx("font-interMedium")}>
+                  {formatRupiah(dataTransaction.data.amount)}
+                </h2>
+                <div
+                  className={cx(
+                    "mt-1 text-xs font-medium me-2 px-2.5 py-0.5 pb-1 rounded",
+                    dataTransaction.data.status ===
+                      EITransactionStatus.SUCCESS &&
+                      "bg-green-100  text-green-800",
+                    dataTransaction.data.status ===
+                      EITransactionStatus.FAILED && "bg-red-100  text-red-800",
+                    dataTransaction.data.status ===
+                      EITransactionStatus.PENDING &&
+                      "bg-blue-100  text-blue-800"
+                  )}
+                >
+                  <p className="capitalize text-center">
+                    {dataTransaction.data.status.toLowerCase()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+    </div>
   );
 };
 
 const HistoryContent: React.FC<{
   icon: { src: string; alt: string };
   label: string;
-  desc: string;
-  total: string;
+  history: HistoryPilipay;
+  type: ETypeHistoryPilipay;
+  onClick: () => void;
 }> = (props) => {
   return (
     <section className="flex justify-between">
@@ -78,19 +214,42 @@ const HistoryContent: React.FC<{
           radius="none"
         />
         <section>
-          <h2 className="font-interMedium">{props.label}</h2>
-          <p className="text-xs">{props.desc}</p>
+          <h2 className="font-interMedium text-sm">{props.label}</h2>
+          <p
+            onClick={props.onClick}
+            className="text-xs underline cursor-pointer"
+          >
+            Detail
+          </p>
         </section>
       </section>
 
-      <h2
-        className={cx(
-          "font-interMedium",
-          props.label === "Top Up" && "text-[#2754bb]"
-        )}
-      >
-        {props.label === "Top Up" ? "+" : "-"}Rp {props.total}
-      </h2>
+      <div className="w-[7rem]">
+        <div
+          className={cx(
+            "font-interMedium inline-flex space-x-2 place-items-center",
+            props.type === ETypeHistoryPilipay.TOPUP && "text-[#2754bb]"
+          )}
+        >
+          {props.history.status === EITransactionStatus.PENDING ? (
+            <ArrowPathIcon className="h-4 w-4" />
+          ) : props.history.status === EITransactionStatus.SUCCESS ? (
+            <>
+              {props.type === ETypeHistoryPilipay.TOPUP ? (
+                <PlusCircleIcon className="h-4 w-4" />
+              ) : (
+                <MinusCircleIcon className="h-4 w-4" />
+              )}
+            </>
+          ) : (
+            <XMarkIcon className="h-4 w-4" />
+          )}
+          <p className="text-xs">{formatRupiah(props.history.amount)}</p>
+        </div>
+        <p className="font-interMedium text-[0.60rem]">
+          {convertEpochToDate(props.history.createdAt)}
+        </p>
+      </div>
     </section>
   );
 };

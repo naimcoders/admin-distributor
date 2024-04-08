@@ -32,6 +32,7 @@ export const requestForToken = (): Promise<string> => {
     })
       .then((currentToken) => {
         if (currentToken) {
+          console.log(currentToken);
           resolve(currentToken);
         }
       })

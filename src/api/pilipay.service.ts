@@ -4,26 +4,34 @@ import { req } from "./request";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
+export enum ETypeHistoryPilipay {
+  TOPUP = "Top Up",
+  WITHDRAW = "Withdraw",
+  TRANSFER = "Transfer",
+  ORDER = "Order",
+}
+
 export interface Pilipay {
   id: string;
   userId: string;
   active: boolean;
   balance: number;
-  history: History[];
+  history: HistoryPilipay[];
   createdAt: number;
   updatedAt: number;
 }
 
-export interface History {
+export interface HistoryPilipay {
   id: string;
   walletId: string;
   amount: number;
   isCredit: boolean;
   status: string;
   description: string;
-  transactionId: string;
-  topupRequestId: string;
-  withdrawRequestId: string;
+  orderId: string | null;
+  transactionId: string | null;
+  topupRequestId: string | null;
+  withdrawRequestId: string | null;
   createdAt: number;
   successAt: number;
   failedAt: number;
@@ -142,7 +150,6 @@ export const findMeWallet = (showHistory: boolean) => {
   const data = useQuery<Pilipay, Error>({
     queryKey: [key],
     queryFn: async () => await getPilipayApiInfo().findMeWallet(showHistory),
-    enabled: !!showHistory,
   });
 
   return {
@@ -169,14 +176,7 @@ export const usePilipay = () => {
 
   const topup = useMutation<string, Error, ITopup>({
     mutationKey: [key],
-    mutationFn: async (r) => await getPilipayApiInfo().topup(r),
-    onSuccess: async () => {
-      toast.success("Silahkan melakukan pembayaran");
-    },
-    onError: (e) => {
-      toast.error("Gagal topup pilipay");
-      console.log(e);
-    },
+    mutationFn: (r) => getPilipayApiInfo().topup(r),
   });
 
   return { activated, topup };

@@ -20,6 +20,7 @@ export const uploadFile = async (req: IUpload) => {
 
 export const getFile = async (path: string, setFile: (v: string) => void) => {
   const fileRef = ref(FbStorage, path);
+  // Kenapa ada useEffect disini?
   React.useEffect(() => {
     if (!path) return;
     getDownloadURL(fileRef)

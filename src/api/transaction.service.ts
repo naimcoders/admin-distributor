@@ -3,6 +3,12 @@ import queryString from "query-string";
 import { req } from "./request";
 import { useQuery } from "@tanstack/react-query";
 
+export enum EITransactionStatus {
+  SUCCESS = "SUCCESS",
+  PENDING = "PENDING",
+  FAILED = "FAILED",
+}
+
 export interface ITransaction {
   id: string;
   userId: string;
@@ -11,7 +17,7 @@ export interface ITransaction {
   amount: number;
   paymentType: string;
   paymentMethod: string;
-  status: string;
+  status: EITransactionStatus;
   statusPaymentMethod: string;
   isCredit: boolean;
   orderId: string;
@@ -24,12 +30,10 @@ export interface ITransaction {
 }
 
 export interface Actions {
-  transactionId: string;
-  retail: Retail;
-  virtualAccount: VirtualAccount;
-  eWallet: EWallet;
-  payLater: PayLater;
-  idempotencyKey: string;
+  retail: Retail | null;
+  virtualAccount: VirtualAccount | null;
+  eWallet: EWallet | null;
+  payLater: PayLater | null;
   createdAt: number;
 }
 
@@ -63,14 +67,14 @@ export interface RetailChannelProperties {
 export interface VirtualAccount {
   amount: number;
   currency: string;
-  channelCode: string;
-  channelProperties: VirtualAccountChannelProperties;
+  channel_code: string;
+  channel_properties: VirtualAccountChannelProperties;
 }
 
 export interface VirtualAccountChannelProperties {
-  expiresAt: Date;
-  customerName: string;
-  virtualAccountNumber: string;
+  expires_at: Date;
+  customer_name: string;
+  virtual_account_number: string;
 }
 
 export interface History {
@@ -101,7 +105,11 @@ class Api {
 
   async findTransaction(q: IQueryTransaction): Promise<ITransaction> {
     const query = queryString.stringify(
-      { ...q },
+      {
+        transactionId: q.transactionId,
+        topupId: q.topupId,
+        orderId: q.orderId,
+      },
       { skipNull: true, skipEmptyString: true }
     );
 
@@ -126,8 +134,8 @@ const key = "transaction";
 
 export const findTransaction = (q: IQueryTransaction) => {
   const data = useQuery<ITransaction, Error>({
-    queryKey: [key],
-    queryFn: async () => await getApiTransactionInfo().findTransaction(q),
+    queryKey: [key, q],
+    queryFn: () => getApiTransactionInfo().findTransaction(q),
   });
 
   return {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import { FieldError, FieldErrors, FieldValues } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +12,33 @@ export const parseQueryString = <T extends object>(): T => {
   const parsed = queryString.parse(search) as T;
   return parsed;
 };
+
+export function convertEpochToDate(epochTime: number): string {
+  const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+
+  const date = new Date(epochTime * 1000); // Convert seconds to milliseconds
+
+  const dayOfWeek = days[date.getDay()];
+  const dayOfMonth = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${dayOfWeek}, ${dayOfMonth} ${month} ${year}`;
+}
 
 export const stringifyQuery = <T extends object>(prefix: T) => {
   return queryString.stringify(prefix, {

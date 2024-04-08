@@ -23,7 +23,7 @@ const Topup = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const [showListPaymentChannel, setShowListPaymentChannel] = useState(false);
   const [channelPayment, setPaymentChannel] = useState<PayoutChannels>();
-  // const [detailTx, setDetailTx] = useState<ITransaction>();
+  const [detailTx, setDetailTx] = useState<ITransaction>();
   const paymentChannel = findPaymentChannel();
   const { topup: topupActions } = usePilipay();
 

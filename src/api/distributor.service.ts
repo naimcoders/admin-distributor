@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { ReqPaging, ResPaging } from "src/interface";
 import { req } from "./request";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -5,6 +6,7 @@ import { useState } from "react";
 import queryString from "query-string";
 import { toast } from "react-toastify";
 import { useAuth } from "src/firebase/auth";
+import { setUser } from "src/stores/auth";
 
 export enum RoleDistributor {
   DISTRIBUTOR = "DISTRIBUTOR",
@@ -204,6 +206,15 @@ class Api {
 
   private path = "distributor";
 
+  async findTotalSubDistributor(userId: string): Promise<number> {
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/total-sub?userId=${userId}`,
+      errors: "",
+    });
+  }
+
   async find(
     distributorId: string,
     r: ReqPaging
@@ -291,6 +302,7 @@ class Api {
 
 interface ApiDistributorInfo {
   find(distributorId: string, r: ReqPaging): Promise<ResPaging<Distributor>>;
+  findTotalSubDistributor(userId: string): Promise<number>;
   findById(id: string): Promise<Distributor>;
   suspend(distributorId: string, r: Suspend): Promise<Distributor>;
   create(r: Create): Promise<Distributor>;
@@ -307,6 +319,22 @@ export function getDistributorApiInfo(): ApiDistributorInfo {
 }
 
 const key = "distributor";
+
+export const findTotalSubDistributor = () => {
+  const user = setUser((v) => v.user);
+  const { data, isLoading, error } = useQuery<number, Error>({
+    queryKey: [key, "total", user?.id],
+    queryFn: () =>
+      getDistributorApiInfo().findTotalSubDistributor(user?.id ?? ""),
+    enabled: !!user,
+  });
+
+  return {
+    data,
+    isLoading,
+    error: error?.message,
+  };
+};
 
 export const useDistributor = () => {
   const queryClient = useQueryClient();

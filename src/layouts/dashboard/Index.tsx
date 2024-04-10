@@ -1,5 +1,5 @@
 import { Button } from "src/components/Button";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
 import { Columns } from "src/types";
 import { useActiveModal } from "src/stores/modalStore";
 import { Currency } from "src/helpers";
@@ -16,9 +16,11 @@ import Image from "src/components/Image";
 import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
-import React from "react";
+import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
 import { formatRupiah } from "src/helpers/idr";
+import { findtotalProduct } from "src/api/product.service";
+import { findTotalSubDistributor } from "src/api/distributor.service";
 
 const Dashboard = () => {
   return (
@@ -32,57 +34,105 @@ const Dashboard = () => {
   );
 };
 
-interface ITopLines {
-  label: string;
-  amount: number;
-  bg: { topLeft: string; bottomRight: string };
-}
+// interface ITopLines {
+//   label: string;
+//   amount: number;
+//   bg: { topLeft: string; bottomRight: string };
+// }
 
-const arrTopLines: ITopLines[] = [
-  {
-    label: "total produk",
-    amount: 1457,
-    bg: { topLeft: "from-[#fcd78c]", bottomRight: "to-[#f48b84]" },
-  },
-  {
-    label: "total toko",
-    amount: 579,
-    bg: { topLeft: "from-[#fc8194]", bottomRight: "to-[#f44fa4]" },
-  },
-  {
-    label: "total sales",
-    amount: 138,
-    bg: { topLeft: "from-[#984acc]", bottomRight: "to-[#3d2bac]" },
-  },
-  {
-    label: "total distributor",
-    amount: 12,
-    bg: { topLeft: "from-[#23d8dc]", bottomRight: "to-[#5687e9]" },
-  },
-];
+// const arrTopLines: ITopLines[] = [
+//   {
+//     label: "total produk",
+//     amount: 1457,
+//     bg: { topLeft: "from-[#fcd78c]", bottomRight: "to-[#f48b84]" },
+//   },
+//   {
+//     label: "total toko",
+//     amount: 579,
+//     bg: { topLeft: "from-[#fc8194]", bottomRight: "to-[#f44fa4]" },
+//   },
+//   {
+//     label: "total sales",
+//     amount: 138,
+//     bg: { topLeft: "from-[#984acc]", bottomRight: "to-[#3d2bac]" },
+//   },
+//   {
+//     label: "total distributor",
+//     amount: 12,
+//     bg: { topLeft: "from-[#23d8dc]", bottomRight: "to-[#5687e9]" },
+//   },
+// ];
+
+const TotalData: FC<{ data?: number; title: string; gradient: string }> = ({
+  gradient,
+  data,
+  title,
+}) => (
+  <Card
+    className={cx(
+      "bg-gradient-to-r text-white flex-grow lg:flex-1 z-0 px-1",
+      gradient
+    )}
+  >
+    <CardHeader className="capitalize text-xl" as="h2">
+      {title}
+    </CardHeader>
+    <CardBody as="h2" className="text-5xl font-interMedium text-center -mt-4">
+      {data === undefined && <Spinner />}
+      {data && data.toLocaleString("id-ID")}
+    </CardBody>
+  </Card>
+);
+
+const TotalProduct = () => {
+  const data = findtotalProduct();
+  return (
+    <TotalData
+      title="total produk"
+      gradient="from-[#fcd78c] to-[#f48b84]"
+      data={data.data}
+    />
+  );
+};
+
+const TotalSubDistributor = () => {
+  const data = findTotalSubDistributor();
+  return (
+    <TotalData
+      title="total distributor"
+      gradient="from-[#23d8dc] to-[#5687e9]"
+      data={data.data}
+    />
+  );
+};
+
+const TotalStore = () => {
+  return (
+    <TotalData
+      title="total toko"
+      gradient="from-[#fc8194] to-[#f44fa4]"
+      data={0}
+    />
+  );
+};
+
+const TotalSales = () => {
+  return (
+    <TotalData
+      title="total sales"
+      gradient="from-[#984acc] to-[#3d2bac]"
+      data={0}
+    />
+  );
+};
 
 const TopLine = () => {
   return (
     <section className="grid-min-300 lg:gap-8">
-      {arrTopLines.map((v) => (
-        <Card
-          key={v.label}
-          className={cx(
-            "bg-gradient-to-r text-white flex-grow lg:flex-1 z-0 px-1",
-            `${v.bg.topLeft} ${v.bg.bottomRight}`
-          )}
-        >
-          <CardHeader className="capitalize text-xl" as="h2">
-            {v.label}
-          </CardHeader>
-          <CardBody
-            as="h2"
-            className="text-5xl font-interMedium text-center -mt-4"
-          >
-            {v.amount.toLocaleString("id-ID")}
-          </CardBody>
-        </Card>
-      ))}
+      <TotalProduct />
+      <TotalStore />
+      <TotalSales />
+      <TotalSubDistributor />
     </section>
   );
 };

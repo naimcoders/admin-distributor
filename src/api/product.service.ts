@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import queryString from "query-string";
 import { ReqPaging, ResPaging } from "src/interface";
 import { req } from "./request";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { setUser } from "src/stores/auth";
 
 export interface Product {
   categoryProduct: CategoryProduct;
@@ -295,6 +297,15 @@ class Api {
     });
   }
 
+  async findTotalProduct(userId: string): Promise<number> {
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      errors: this.errors,
+      path: `${this.path}/total?userId=${userId}`,
+    });
+  }
+
   async findById(productId: string): Promise<Product> {
     return await req<Product>({
       method: "GET",
@@ -324,8 +335,8 @@ class Api {
     });
   }
 
-  async removeImageUrl(productId: string, r: RemoveImage): Promise<{}> {
-    return await req<{}>({
+  async removeImageUrl(productId: string, r: RemoveImage): Promise<void> {
+    return await req<void>({
       method: "PATCH",
       body: r,
       isNoAuth: false,
@@ -340,7 +351,8 @@ interface ApiProductInfo {
   findById(productId: string): Promise<Product>;
   create(r: CreateProduct): Promise<Product>;
   update(productId: string, r: UpdateProduct): Promise<Product>;
-  removeImageUrl(productId: string, r: RemoveImage): Promise<{}>;
+  removeImageUrl(productId: string, r: RemoveImage): Promise<void>;
+  findTotalProduct(userId: string): Promise<number>;
 }
 
 export function getProductApiInfo(): ApiProductInfo {
@@ -349,10 +361,25 @@ export function getProductApiInfo(): ApiProductInfo {
 
 const key = "product";
 
+export const findtotalProduct = () => {
+  const user = setUser((v) => v.user);
+  const findTotalProduct = useQuery<number, Error>({
+    queryKey: [key, "total", user?.id],
+    queryFn: () => getProductApiInfo().findTotalProduct(user?.id ?? ""),
+    enabled: !!user,
+  });
+
+  return {
+    data: findTotalProduct?.data,
+    isLoading: findTotalProduct?.isLoading,
+    error: findTotalProduct?.error?.message,
+  };
+};
+
 export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
 
-  const removeImageUrl = useMutation<{}, Error, { data: RemoveImage }>({
+  const removeImageUrl = useMutation<void, Error, { data: RemoveImage }>({
     mutationKey: [key, "remove-image", productId],
     mutationFn: async (r) =>
       await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
@@ -379,14 +406,14 @@ export const useProduct = (productId?: string) => {
 
   const create = useMutation<Product, Error, { data: CreateProduct }>({
     mutationKey: [key],
-    mutationFn: async (r) => await getProductApiInfo().create(r.data),
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+    mutationFn: (r) => getProductApiInfo().create(r.data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [key] }),
     onError: (e) => toast.error(e.message),
   });
 
   const findById = useQuery<Product, Error>({
     queryKey: [key, productId],
-    queryFn: async () => getProductApiInfo().findById(productId ?? ""),
+    queryFn: () => getProductApiInfo().findById(productId ?? ""),
     enabled: !!productId,
   });
 

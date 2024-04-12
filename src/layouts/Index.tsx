@@ -101,15 +101,19 @@ export const SideBarFeature = () => {
       <LinkSideBar name="Produk" path={`produk?${qsProduct}`} />
       <LinkSideBar name="Toko" path={`toko?${qsStore}`} />
       {user?.role === RoleDistributor.DISTRIBUTOR && (
-        <LinkSideBar
-          name="Sub Distributor"
-          path={`sub-distributor?${qsDIstributor}`}
-        />
+        <>
+          <LinkSideBar
+            name="Sub Distributor"
+            path={`sub-distributor?${qsDIstributor}`}
+          />
+          <LinkSideBar name="Sales" path="sales" />
+          <LinkSideBar name="Ekspedisi" path="ekspedisi" />
+        </>
       )}
-      <LinkSideBar name="Sales" path="sales" />
-      <LinkSideBar name="Ekspedisi" path="ekspedisi" />
       <LinkSideBar name="Order" path="order" />
-      <LinkSideBar name="Report" path="report" />
+      {user?.role === RoleDistributor.DISTRIBUTOR && (
+        <LinkSideBar name="Report" path="report" />
+      )}
       <LinkSideBar name="Akun" path="akun" />
 
       <Button

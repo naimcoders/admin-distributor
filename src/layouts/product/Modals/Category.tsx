@@ -33,20 +33,24 @@ export const ModalCategory: FC<ModalCategoryProps> = ({
 
   return (
     <Modal title="kategori" isOpen={isCategory} closeModal={actionIsCategory}>
-      <ul className="flex flex-col gap-2 my-4">
-        {sortCategories?.map((v) => (
-          <li
-            key={v.id}
-            onClick={() => onClick(v.id, v.name)}
-            className={cx(
-              "hover:font-bold cursor-pointer w-max",
-              v.id === id && "font-bold"
-            )}
-          >
-            {v.name}
-          </li>
-        ))}
-      </ul>
+      {!sortCategories ? (
+        <div>Memuat kategori...</div>
+      ) : (
+        <ul className="flex flex-col gap-2 my-4">
+          {sortCategories?.map((v) => (
+            <li
+              key={v.id}
+              onClick={() => onClick(v.id, v.name)}
+              className={cx(
+                "hover:font-bold cursor-pointer w-max",
+                v.id === id && "font-bold"
+              )}
+            >
+              {v.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </Modal>
   );
 };

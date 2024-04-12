@@ -22,7 +22,7 @@ export interface ChildRef {
 }
 
 export const File = forwardRef(
-  (props: FileProps & TextfieldProps, ref: Ref<ChildRef>) => {
+  (props: FileProps & TextfieldProps<any>, ref: Ref<ChildRef>) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => ({

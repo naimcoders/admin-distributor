@@ -279,7 +279,7 @@ const Detail = () => {
         deliveryPrice,
         category: { categoryId },
         description: e.description,
-        subCategoryId: "",
+        subCategoryId,
         imageUrl,
         price: {
           ...priceStore,

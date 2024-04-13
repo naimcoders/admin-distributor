@@ -3,6 +3,7 @@ export interface ResPaging<T> {
   page: number;
   limit: number;
   canNext: boolean;
+  total?: number;
 }
 
 export interface ReqPaging {

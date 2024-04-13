@@ -1,37 +1,32 @@
 import { TableWithSearchAndTabs } from "src/components/Table";
-import useOrderColumns, { OrderProps } from "../column";
+import useOrderColumns from "../column";
 import { FieldValues, useForm } from "react-hook-form";
+import { findOrders } from "src/api/order.service";
+import Error from "src/components/Error";
 
 const Cancel = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
-  const { columns } = useOrderColumns("batal");
+  const { columns } = useOrderColumns("REJECT");
+  const { data, isLoading, error, isNext, page } = findOrders("REJECT");
 
   return (
-    <section>
-      <TableWithSearchAndTabs
-        page={1}
-        isPaginate
-        data={datas}
-        isNext={false}
-        columns={columns}
-        isLoading={false}
-        control={control}
-        placeholder="cari ID order/nama toko/pemilik/nomor HP"
-      />
-    </section>
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : (
+        <TableWithSearchAndTabs
+          isPaginate
+          page={page}
+          data={data?.items ?? []}
+          isNext={isNext}
+          columns={columns}
+          isLoading={isLoading}
+          control={control}
+          placeholder="cari ID order/nama toko/pemilik/nomor HP"
+        />
+      )}
+    </>
   );
 };
-
-const datas: OrderProps[] = [
-  {
-    idOrder: "OR 202312",
-    orderDate: "13 Des 2023",
-    orderName: "Ketut",
-    phoneNumber: "085867894321",
-    storeName: "Kembar Dua",
-    paymentMethod: "VA Permata",
-    totalPay: 723000,
-  },
-];
 
 export default Cancel;

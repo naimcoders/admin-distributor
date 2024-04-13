@@ -1,46 +1,32 @@
 import { TableWithSearchAndTabs } from "src/components/Table";
-import useOrderColumns, { OrderProps } from "../column";
-import { FieldValues, useForm } from "react-hook-form";
+import useOrderColumns from "../column";
+import { useForm } from "react-hook-form";
+import { findOrders } from "src/api/order.service";
+import Error from "src/components/Error";
 
 const Finish = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
-  const { columns } = useOrderColumns("selesai");
+  const { control } = useForm();
+  const { columns } = useOrderColumns("ACCEPT");
+  const { data, isLoading, error, isNext, page } = findOrders("ACCEPT");
 
   return (
-    <section>
-      <TableWithSearchAndTabs
-        page={1}
-        isPaginate
-        data={datas}
-        isNext={false}
-        columns={columns}
-        isLoading={false}
-        control={control}
-        placeholder="cari ID order/nama toko/pemilik/nomor HP"
-      />
-    </section>
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : (
+        <TableWithSearchAndTabs
+          page={page}
+          isPaginate
+          data={data?.items ?? []}
+          isNext={isNext}
+          columns={columns}
+          isLoading={isLoading}
+          control={control}
+          placeholder="cari ID order/nama toko/pemilik/nomor HP"
+        />
+      )}
+    </>
   );
 };
-
-const datas: OrderProps[] = [
-  {
-    idOrder: "OR 202312",
-    orderDate: "13 Des 2023",
-    orderName: "Guntur",
-    phoneNumber: "085867894321",
-    storeName: "Gunung Mas",
-    paymentMethod: "indomaret",
-    totalPay: 356000,
-  },
-  {
-    idOrder: "OR 202312",
-    orderDate: "13 Des 2023",
-    orderName: "Heni",
-    phoneNumber: "085867894321",
-    storeName: "Intan Mulia",
-    paymentMethod: "Pilipay",
-    totalPay: 284000,
-  },
-];
 
 export default Finish;

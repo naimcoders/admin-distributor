@@ -117,6 +117,9 @@ interface DefaultValues {
   password: string;
   detailAddress: string;
   name: string;
+  phoneNumber: string;
+  email: string;
+  ktp: string;
 }
 
 export const useDetailDistributorApi = (
@@ -132,8 +135,8 @@ export const useDetailDistributorApi = (
         data: {
           ownerName: e.ownerName ?? data.ownerName,
           name: e.name ?? data.name,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
+          email: e.email,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
         },
         distributorId,
       });
@@ -195,7 +198,7 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
     }
   };
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<DefaultValues>[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

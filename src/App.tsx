@@ -201,7 +201,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "order/menunggu/:id",
+            path: "order/waiting_accept/:id",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <OrderWaiting />

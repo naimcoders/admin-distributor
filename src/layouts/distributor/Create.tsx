@@ -35,7 +35,9 @@ interface DefaultValues {
   businessName: string;
   detailAddress: string;
   password: string;
-  cooridnate: {
+  ktp: string;
+  banner: string;
+  coordinate: {
     lat: number;
     lng: number;
   };
@@ -54,7 +56,7 @@ const Create = () => {
     <main className="flexcol gap-5 lg:gap-8">
       {!coordinate ? (
         <Textfield
-          name="coodinate"
+          name="coordinate"
           defaultValue=""
           label="koordinat usaha"
           placeholder="tentukan koordinat"
@@ -166,7 +168,7 @@ const Create = () => {
                     />
                   ) : (
                     <LabelAndImage
-                      src={v.defaultValue}
+                      src={String(v.defaultValue)}
                       label={v.label}
                       actions={v.uploadImage?.image.actions}
                     />
@@ -285,7 +287,7 @@ const useField = () => {
     setBannerBlob,
   } = useBanner();
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<DefaultValues>[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

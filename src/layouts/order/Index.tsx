@@ -1,4 +1,4 @@
-import Tabs, { ITabs } from "src/components/Tabs";
+import Tabs from "src/components/Tabs";
 import Waiting from "./waiting/Index";
 import Process from "./process/Index";
 import Finish from "./finish/Index";
@@ -13,10 +13,8 @@ const Order = () => {
   );
 };
 
-export default Order;
-
 const useTabs = () => {
-  const tabs: ITabs[] = [
+  const tabs = [
     {
       label: "menunggu",
       content: <Waiting />,
@@ -37,3 +35,5 @@ const useTabs = () => {
 
   return { tabs };
 };
+
+export default Order;

@@ -1,61 +1,52 @@
 import Label from "src/components/Label";
 import { Actions } from "src/components/Actions";
 import { Columns } from "src/types";
-import { Currency, detailNavigate } from "src/helpers";
+import { Currency, parsePhoneNumber } from "src/helpers";
+import { Order, ReqStatusOrder } from "src/api/order.service";
+import { useNavigate } from "react-router-dom";
 
-export interface OrderProps {
-  idOrder: string;
-  orderDate: string;
-  orderName: string;
-  phoneNumber: string;
-  storeName: string;
-  paymentMethod: string;
-  totalPay: number;
-}
+const useOrderColumns = (tab: ReqStatusOrder) => {
+  const navigate = useNavigate();
 
-type Tabs = "menunggu" | "proses" | "selesai" | "batal";
-const useOrderColumns = (tab: Tabs) => {
-  const { onNav } = detailNavigate();
-
-  const columns: Columns<OrderProps>[] = [
+  const columns: Columns<Order>[] = [
     {
       header: <p className="text-center">ID order</p>,
-      render: (v) => <Label label={v.idOrder} />,
+      render: (v) => <Label label={v.id} />,
     },
     {
       header: <p className="text-center">tanggal order</p>,
-      render: (v) => <Label label={v.orderDate} />,
+      render: (v) => <Label label={v.createdAt} />,
     },
     {
       header: <p className="text-center">nama pemesan</p>,
-      render: (v) => <Label label={v.orderName} />,
+      render: (v) => <Label label={v.customer.name} />,
     },
     {
       header: <p className="text-center">nomor HP</p>,
-      render: (v) => <Label label={v.phoneNumber} />,
+      render: (v) => <Label label={parsePhoneNumber(v.customer.phoneNumber)} />,
     },
     {
       header: <p className="text-center">nama toko</p>,
-      render: (v) => <Label label={v.storeName} />,
+      render: () => <Label label="-" />,
     },
     {
       header: <p className="text-center">metode bayar</p>,
-      render: (v) => <Label label={v.paymentMethod} />,
+      render: () => <Label label="-" />,
     },
     {
       header: <p className="text-right">total bayar (Rp)</p>,
       render: (v) => (
-        <Label label={Currency(v.totalPay)} className="justify-end" />
+        <Label label={Currency(v.price.totalPrice)} className="justify-end" />
       ),
     },
     {
       header: <p className="text-center">aksi</p>,
       render: (v) => (
         <Actions
-          id={v.idOrder}
+          id={v.id}
           action="detail"
           detail={{
-            onClick: () => onNav(`${tab}/${v.idOrder}`),
+            onClick: () => navigate(`${tab.toLowerCase()}/${v.id}`),
           }}
         />
       ),

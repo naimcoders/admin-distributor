@@ -1,6 +1,6 @@
 import queryString from "query-string";
 import { req } from "./request";
-import { ReqPaging } from "src/interface";
+import { ReqPaging, ResPaging } from "src/interface";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -14,7 +14,7 @@ export interface Order {
   pin: string;
   receiptUrl: string;
   status: string;
-  price: WelcomePrice;
+  price: Price;
   promo: Promo;
   delivery: Delivery;
   items: Item[];
@@ -142,7 +142,7 @@ export interface VariantColorProduct {
   imageUrl: string;
 }
 
-export interface WelcomePrice {
+export interface Price {
   deliveryPrice: number;
   discount: number;
   feeApp: number;
@@ -161,7 +161,7 @@ export interface Promo {
   updatedAt: number;
 }
 
-type ReqStatusOrder =
+export type ReqStatusOrder =
   | "PENDING"
   | "WAITING_ACCEPT"
   | "ACCEPT"
@@ -181,14 +181,14 @@ class Api {
     return Api.instance;
   }
 
-  private path = "api/v1/order";
+  private path = "order";
 
   async find(
     r: ReqPaging,
     status: ReqStatusOrder,
     customerId?: string,
     merchantId?: string
-  ): Promise<Order> {
+  ): Promise<ResPaging<Order>> {
     const query = queryString.stringify({
       page: r.page,
       limit: r.limit,
@@ -197,7 +197,7 @@ class Api {
       merchantId,
     });
 
-    return await req<Order>({
+    return await req<ResPaging<Order>>({
       method: "GET",
       isNoAuth: false,
       path: `${this.path}?${query}`,
@@ -212,7 +212,7 @@ interface ApiOrderInfo {
     status: ReqStatusOrder,
     customerId?: string,
     merchantId?: string
-  ): Promise<Order>;
+  ): Promise<ResPaging<Order>>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -242,7 +242,7 @@ export const findOrders = (
       merchantId
     );
 
-  const { data, error, isLoading } = useQuery<Order, Error>({
+  const { data, error, isLoading } = useQuery<ResPaging<Order>, Error>({
     queryKey: [key, page, limit, search, statusOrder, customerId, merchantId],
     queryFn: byPaging,
     enabled: !!statusOrder,
@@ -258,5 +258,6 @@ export const findOrders = (
     setPage,
     setLimit,
     setSearch,
+    isNext: data?.canNext,
   };
 };

@@ -422,7 +422,7 @@ const useFields = () => {
     actionIsSubCategory();
   };
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<FieldValues>[] = [
     objectFields({
       label: "nama produk *",
       name: "productName",

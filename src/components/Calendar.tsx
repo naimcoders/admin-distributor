@@ -26,6 +26,13 @@ export const Calendar = (
     const start = epochToDateConvert(startAt);
     const end = epochToDateConvert(endAt);
 
+    console.log({
+      startAt,
+      endAt,
+      start,
+      end,
+    });
+
     r.setValue("period", `${start} - ${end}`);
     r.close();
   };
@@ -49,7 +56,11 @@ export const Calendar = (
             <LabelPeriod label="dimulai" date={date.startAt} />
             <LabelPeriod label="berakhir" date={date.endAt} />
           </div>
-          <Button aria-label="pilih periode" onClick={onSubmit} />
+          <Button
+            aria-label="pilih periode"
+            onClick={onSubmit}
+            className="mx-auto"
+          />
         </section>
       )}
     </section>

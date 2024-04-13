@@ -65,20 +65,18 @@ export default function Table<T extends object>(props: Table<T>) {
       </section>
 
       {props.isLoading && (
-        <div>
+        <section>
           <CircularProgress
             size="lg"
             color="primary"
             aria-label="Loading..."
             className="mx-auto z-20"
           />
-        </div>
+        </section>
       )}
 
       {!props.isLoading && props.data.length < 1 && (
-        <div className="text-center font-interBold text-base">
-          Tidak ada data
-        </div>
+        <div className="text-center font-bold text-base">Tidak ada data</div>
       )}
 
       {!props.isPaginate ? null : (
@@ -102,7 +100,7 @@ export function TableWithSearchAndTabs<S extends object>(
   props: TableLayout<S>
 ) {
   return (
-    <div>
+    <section>
       <Textfield
         type="text"
         name="search"
@@ -124,7 +122,7 @@ export function TableWithSearchAndTabs<S extends object>(
         next={props.next}
         prev={props.prev}
       />
-    </div>
+    </section>
   );
 }
 
@@ -137,6 +135,7 @@ interface HeaderProps {
   search: {
     placeholder: string;
     setSearch: (v: string) => void;
+    className?: string;
   };
   createData?: {
     isValue: boolean;
@@ -147,7 +146,7 @@ interface HeaderProps {
 
 export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
   return (
-    <section className="flexcol gap-8">
+    <section className="flex flex-col gap-8">
       <Header
         search={props.header.search}
         createData={props.header.createData}
@@ -182,7 +181,7 @@ const Header = ({ search, createData }: HeaderProps) => {
         name="search"
         defaultValue=""
         control={control}
-        className="w-[24rem]"
+        className={cx("w-[24rem]", search.className)}
         placeholder={search.placeholder}
         startContent={<MagnifyingGlassIcon width={16} color="#808080" />}
       />

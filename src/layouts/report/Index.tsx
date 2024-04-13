@@ -20,7 +20,7 @@ const Report = () => {
   const setReportType = useGeneralStore((v) => v.setReportType);
 
   return (
-    <main className="flexcol sm:flex-row gap-x-8 pt-3 items-end">
+    <main className="flex flex-col sm:flex-row gap-x-8 items-end">
       <Select
         data={data}
         label="jenis report"

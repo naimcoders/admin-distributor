@@ -6,23 +6,25 @@ export interface SelectDataProps {
   value: string;
 }
 
-interface SelectProps
+interface SelectProps<T extends unknown>
   extends Omit<SelectDataProps, "value">,
     HTMLAttributes<HTMLInputElement> {
   data: SelectDataProps[];
   placeholder: string;
-  setSelected: (v: string) => void;
+  setSelected: (v: T) => void;
   errorMessage?: string;
+  defaultSelectedKeys?: string;
 }
 
-const Select: React.FC<SelectProps> = ({
+const Select = <T extends unknown>({
   data,
   label,
   placeholder,
   errorMessage,
   setSelected,
   className,
-}) => {
+  defaultSelectedKeys,
+}: SelectProps<T>) => {
   return (
     <Listbox
       items={data}
@@ -31,17 +33,21 @@ const Select: React.FC<SelectProps> = ({
       labelPlacement="outside"
       className={className}
       classNames={{
-        label: "capitalize font-interMedium pb-2",
+        label: "capitalize pb-2",
         value: "capitalize",
-        errorMessage: "capitalize font-interMedium",
+        errorMessage: "capitalize font-medium",
         listbox: "capitalize",
         base: "z-0",
       }}
       color={errorMessage ? "danger" : "default"}
       errorMessage={errorMessage}
+      defaultSelectedKeys={defaultSelectedKeys && [defaultSelectedKeys]}
     >
       {(item) => (
-        <SelectItem key={item.value} onClick={() => setSelected(item.value)}>
+        <SelectItem
+          key={item.value}
+          onClick={() => setSelected(item.value as T)}
+        >
           {item.label}
         </SelectItem>
       )}

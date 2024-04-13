@@ -2,7 +2,7 @@ import Error from "src/components/Error";
 import Label from "src/components/Label";
 import Rating from "src/components/Rating";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { Store, useStore } from "src/api/store.service";
+import { Store as StoreInf, useStore } from "src/api/store.service";
 import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
 import {
@@ -31,7 +31,7 @@ const Store = () => {
   }, [qs]);
 
   return (
-    <>
+    <section className="relative">
       {error ? (
         <Error error={error} />
       ) : (
@@ -53,14 +53,14 @@ const Store = () => {
           }}
         />
       )}
-    </>
+    </section>
   );
 };
 
 const useHook = () => {
   const { onNav } = detailNavigate();
 
-  const columns: Columns<Store>[] = [
+  const columns: Columns<StoreInf>[] = [
     {
       header: <p className="text-center">nama toko</p>,
       render: (v) => <Label label={v.storeName} />,

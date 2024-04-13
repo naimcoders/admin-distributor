@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { Calendar } from "src/components/Calendar";
 import { Modal } from "src/components/Modal";
@@ -36,14 +36,12 @@ const Report = () => {
   );
 };
 
-export default Report;
-
-const Period = () => {
+export const Period = () => {
   const {
     control,
     setValue,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm();
   const { isPeriod, actionIsPeriod } = useActiveModal();
 
   return (
@@ -61,10 +59,11 @@ const Period = () => {
         rules={{ required: { value: true, message: "pilih periode report" } }}
         className="w-[20rem]"
       />
-
       <Modal title="periode" isOpen={isPeriod} closeModal={actionIsPeriod}>
         <Calendar close={actionIsPeriod} setValue={setValue} />
       </Modal>
     </>
   );
 };
+
+export default Report;

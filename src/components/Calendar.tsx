@@ -1,12 +1,10 @@
-import cx from "classnames";
 import idLocale from "date-fns/locale/id";
 import { DateRangePicker } from "react-date-range";
-import { useState } from "react";
+import React, { useState } from "react";
 import { dateToEpochConvert, epochToDateConvert } from "src/helpers";
-import { Chip } from "@nextui-org/react";
 import { Button } from "./Button";
-import useGeneralStore from "src/stores/generalStore";
 import { ActionModal, UseForm } from "src/types";
+import useGeneralStore from "src/stores/generalStore";
 
 interface IDateRange {
   key: string;
@@ -17,23 +15,12 @@ interface IDateRange {
 export const Calendar = (
   r: Pick<ActionModal, "close"> & Pick<UseForm, "setValue">
 ) => {
-  const { dateRange, handleSelect } = useHook();
+  const { dateRange, handleSelect, epochTime } = useHook();
   const date = useGeneralStore((v) => v.date);
 
   const onSubmit = () => {
-    const startAt = dateToEpochConvert(new Date(date.startAt));
-    const endAt = dateToEpochConvert(new Date(date.endAt));
-    const start = epochToDateConvert(startAt);
-    const end = epochToDateConvert(endAt);
-
-    console.log({
-      startAt,
-      endAt,
-      start,
-      end,
-    });
-
-    r.setValue("period", `${start} - ${end}`);
+    console.log(epochTime, date);
+    r.setValue("period", `${date.startAt} - ${date.endAt}`);
     r.close();
   };
 
@@ -50,50 +37,29 @@ export const Calendar = (
         }}
       />
 
-      {!date.startAt ? null : (
-        <section className="flex flex-col gap-6">
-          <div className="flex gap-6">
-            <LabelPeriod label="dimulai" date={date.startAt} />
-            <LabelPeriod label="berakhir" date={date.endAt} />
-          </div>
-          <Button
-            aria-label="pilih periode"
-            onClick={onSubmit}
-            className="mx-auto"
-          />
-        </section>
+      {!epochTime.start && !epochTime.end ? null : (
+        <Button
+          aria-label="pilih periode"
+          onClick={onSubmit}
+          className="mx-auto"
+        />
       )}
     </section>
   );
 };
 
-const LabelPeriod = (props: {
-  label: "dimulai" | "berakhir";
-  date: string;
-}) => {
-  return (
-    <section className="flex flex-col gap-1">
-      <h2
-        className={cx(
-          "text-xs font-interMedium capitalize",
-          props.label === "berakhir" ? "text-[#F31260]" : "text-[#1e1e1e]"
-        )}
-      >
-        {props.label}
-      </h2>
-      <Chip
-        variant="flat"
-        classNames={{ base: "font-interMedium text-sm" }}
-        color={props.label === "berakhir" ? "danger" : "default"}
-      >
-        {props.date}
-      </Chip>
-    </section>
-  );
-};
+interface Time {
+  start: number;
+  end: number;
+}
 
 const useHook = () => {
+  const [epochTime, setEpochTime] = React.useState<Time>({
+    start: 0,
+    end: 0,
+  });
   const setDate = useGeneralStore((v) => v.setDate);
+
   const [dateRange, setDateRange] = useState<IDateRange[]>([
     { key: "selection", startDate: new Date(), endDate: new Date() },
   ]);
@@ -112,8 +78,9 @@ const useHook = () => {
 
     const startAtDate = epochToDateConvert(startAtEpoch);
     const endAtDate = epochToDateConvert(endAtEpoch);
+    setEpochTime({ start: startAtEpoch, end: endAtEpoch });
     setDate({ startAt: startAtDate, endAt: endAtDate });
   };
 
-  return { dateRange, handleSelect };
+  return { dateRange, handleSelect, epochTime };
 };

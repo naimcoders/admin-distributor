@@ -66,11 +66,11 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     if (!e.target.files) return null;
     const files = e.target.files[0];
     const blob = URL.createObjectURL(files);
-    const [datas] = variantTypes.filter((f) => f.name === labelProduct);
+    const [datas] = variantTypes?.filter((f) => f.name === labelProduct);
     datas.files = files;
     datas.imageUrl = blob;
 
-    const [variant] = variantTypes.filter((f) => f.name === labelProduct);
+    const [variant] = variantTypes?.filter((f) => f.name === labelProduct);
 
     try {
       await uploadFile({
@@ -81,7 +81,7 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
 
       const setImageValues: VariantTypeProps[] = [];
       let error = 0;
-      variantTypes.forEach((e) => {
+      variantTypes?.forEach((e) => {
         if (e.name === labelProduct) setImageValues.push(datas);
         if (e.name !== labelProduct) setImageValues.push(e);
         if (isVariantPhoto && e.imageUrl) error++;
@@ -115,10 +115,10 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
   };
 
   const onDeleteImageVariant = async (name: string, path?: string) => {
-    const [variantByName] = variantTypes.filter((v) => v.name === name);
+    const [variantByName] = variantTypes?.filter((v) => v.name === name);
     const checkBlob = path?.split(":")[0];
     if (checkBlob === "blob") {
-      const mapping = variantTypes.map((type) => ({
+      const mapping = variantTypes?.map((type) => ({
         ...type,
         name: type.name,
         variantColorProduct: type.variantColorProduct,
@@ -143,15 +143,15 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
     if (isAddSize) formSize.setFocus("size");
     if (!labelAndImage?.label) {
       setLabelAndImage({
-        label: variantTypes[0]?.name,
+        label: variantTypes?.[0]?.name,
       });
     }
-    if (variantTypes.length < 1) setLabelAndImage({ label: "" });
+    if (variantTypes?.length < 1) setLabelAndImage({ label: "" });
   }, [isAddType, isAddSize, variantTypes]);
 
   return (
     <Modal isOpen={isVariant} closeModal={actionIsVariant}>
-      <main className="my-4 flexcol gap-6">
+      <main className="my-4 flex flex-col gap-6">
         <ItemVariant
           title="warna/jenis/tipe"
           control={formType.control}
@@ -167,8 +167,8 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           }}
           update={{ isUpdate: isDeleteType, onEdit: handleChangeType }}
         >
-          {variantTypes.length > 0 &&
-            variantTypes.map((v, idx) => (
+          {variantTypes?.length > 0 &&
+            variantTypes?.map((v, idx) => (
               <section className="relative flex-grow" key={idx}>
                 <Btn
                   size="sm"
@@ -211,10 +211,10 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           />
         </section>
 
-        {isVariantPhoto && variantTypes.length > 0 && (
+        {isVariantPhoto && variantTypes?.length > 0 && (
           <>
             <section className="grid grid-cols-3 gap-2">
-              {variantTypes.map((v, k) => (
+              {variantTypes?.map((v, k) => (
                 <VariantImage
                   variantId={v.id}
                   label={v.name ?? ""}
@@ -256,8 +256,8 @@ export const VariantDetailProductModal: React.FC<VariantModalProps> = ({
           ) : (
             <>
               {variantTypes
-                .filter((f) => f.name === labelAndImage?.label)
-                .map((v) =>
+                ?.filter((f) => f.name === labelAndImage?.label)
+                ?.map((v) =>
                   v.variantColorProduct.map((s, idx) => (
                     <section className="relative flex-grow" key={idx}>
                       <Btn

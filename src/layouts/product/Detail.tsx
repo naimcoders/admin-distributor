@@ -131,16 +131,16 @@ const Detail = () => {
       setVariantTypesPrev(findById.data.variantProduct);
 
       let price = "";
-      if (findById.data.variantProduct.length < 1) {
+      if (findById.data.price.price) {
         price = Currency(findById.data.price.price ?? 0);
       } else {
         const prices: number[] = [];
-        const variantColor = findById.data.variantProduct.map(
+        const variantColor = findById.data.variantProduct?.map(
           (e) => e.variantColorProduct
         );
 
-        variantColor.forEach((e) => {
-          e.forEach((m) => {
+        variantColor?.forEach((e) => {
+          e?.forEach((m) => {
             prices.push(m.price ?? 0);
           });
         });
@@ -157,7 +157,7 @@ const Detail = () => {
       setValue("dangerous", findById.data.isDangerous ? "Ya" : "Tidak");
       setValue(
         "variant",
-        findById.data.variantProduct.map((e) => e.name).join(", ")
+        findById.data.variantProduct?.map((e) => e.name).join(", ")
       );
       setValue("price", price);
       setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
@@ -515,27 +515,26 @@ const Detail = () => {
                     {...v}
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={variantTypes.length > 0 ? v.readOnly : undefined}
-                    onClick={variantTypes.length > 0 ? v.onClick : undefined}
+                    readOnly={variantTypes?.length > 0 ? v.readOnly : undefined}
+                    onClick={variantTypes?.length > 0 ? v.onClick : undefined}
                     defaultValue=""
                     endContent={
-                      variantTypes.length &&
+                      variantTypes?.length &&
                       v.name === "price" && (
                         <ChevronRightIcon width={16} color={IconColor.zinc} />
                       )
                     }
                     rules={{
                       required: v.rules?.required,
-                      onBlur:
-                        variantTypes.length < 1
-                          ? (e) =>
-                              CurrencyIDInput({
-                                type: v.type!,
-                                fieldName: v.name,
-                                setValue,
-                                value: e.target.value,
-                              })
-                          : undefined,
+                      onBlur: findById.data?.price.price
+                        ? (e) =>
+                            CurrencyIDInput({
+                              type: v.type ?? "",
+                              fieldName: v.name,
+                              setValue,
+                              value: e.target.value,
+                            })
+                        : undefined,
                     }}
                   />
                 )}

@@ -37,9 +37,9 @@ const Promotion = ({
   const promoForm = useForm<DefaultValueProps>();
   const { actionIsPromotion, isPromotion } = useActiveModal();
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<DefaultValueProps>[] = [
     objectFields({
-      name: "normalPrice",
+      name: "price",
       label: "harga normal",
       type: "rp",
     }),

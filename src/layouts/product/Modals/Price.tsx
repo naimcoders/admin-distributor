@@ -134,13 +134,13 @@ const PriceModal: React.FC<PriceProps> = (props) => {
         </header>
 
         {!props.isMassal &&
-          props.variantTypes.map((v, idx) => (
+          props.variantTypes?.map((v, idx) => (
             <Fragment key={idx}>
               <hr />
               <section className="flexcol gap-4">
                 <h2>{v.name}</h2>
-                {v.variantColorProduct.length > 0 ? (
-                  v.variantColorProduct.map((m, num) => (
+                {v.variantColorProduct?.length > 0 ? (
+                  v.variantColorProduct?.map((m, num) => (
                     <Field
                       key={num}
                       variant={m.name}

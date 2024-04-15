@@ -19,7 +19,6 @@ export const Calendar = (
   const date = useGeneralStore((v) => v.date);
 
   const onSubmit = () => {
-    console.log(epochTime, date);
     r.setValue("period", `${date.startAt} - ${date.endAt}`);
     r.close();
   };

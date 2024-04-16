@@ -8,9 +8,7 @@ import { UseForm } from "src/types";
 import queryString from "query-string";
 
 export const uppercaseToCapitalize = (data: string) => {
-  return data
-    .toLocaleLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  return data.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
 export const parseQueryString = <T extends object>(): T => {

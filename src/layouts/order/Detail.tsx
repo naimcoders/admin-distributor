@@ -13,6 +13,17 @@ import {
   uppercaseToCapitalize,
 } from "src/helpers";
 
+const status: { eng: string; ina: string }[] = [
+  { eng: "WAITING_ACCEPT", ina: "Menunggu Konfirmasi" },
+  { eng: "ACCEPT", ina: "Dikonfirmasi" },
+  { eng: "DELIVERY", ina: "Pengiriman" },
+  { eng: "PENDING", ina: "Tertunda" },
+  { eng: "COMPLETE", ina: "Selesai" },
+  { eng: "REJECT", ina: "Batal" },
+  { eng: "ITEM_READY", ina: "Barang Tersedia" },
+  { eng: "VERIFY_PIN", ina: "Verifikasi PIN" },
+];
+
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
   const { error, isLoading, data } = findOrderById(orderId);
@@ -37,7 +48,7 @@ const Detail = () => {
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">status order</h1>
               <p className={cx("capitalize ", `text-[#fcb230]`)}>
-                {data?.status}
+                {status.map((v) => data?.status === v.eng && v.ina)}
               </p>
             </section>
             <section className="flexcol gap-2">

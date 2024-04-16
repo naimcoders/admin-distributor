@@ -34,35 +34,6 @@ const Dashboard = () => {
   );
 };
 
-// interface ITopLines {
-//   label: string;
-//   amount: number;
-//   bg: { topLeft: string; bottomRight: string };
-// }
-
-// const arrTopLines: ITopLines[] = [
-//   {
-//     label: "total produk",
-//     amount: 1457,
-//     bg: { topLeft: "from-[#fcd78c]", bottomRight: "to-[#f48b84]" },
-//   },
-//   {
-//     label: "total toko",
-//     amount: 579,
-//     bg: { topLeft: "from-[#fc8194]", bottomRight: "to-[#f44fa4]" },
-//   },
-//   {
-//     label: "total sales",
-//     amount: 138,
-//     bg: { topLeft: "from-[#984acc]", bottomRight: "to-[#3d2bac]" },
-//   },
-//   {
-//     label: "total distributor",
-//     amount: 12,
-//     bg: { topLeft: "from-[#23d8dc]", bottomRight: "to-[#5687e9]" },
-//   },
-// ];
-
 const TotalData: FC<{ data?: number; title: string; gradient: string }> = ({
   gradient,
   data,

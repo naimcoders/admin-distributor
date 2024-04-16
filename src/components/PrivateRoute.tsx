@@ -30,6 +30,7 @@ export const PrivateRoute = () => {
     <>
       {user ? (
         <main>
+          {/* <NotificationOrder /> */}
           <Notification />
           <Outlet />
         </main>

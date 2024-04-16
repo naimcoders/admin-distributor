@@ -393,8 +393,7 @@ export const useProduct = (productId?: string) => {
 
   const update = useMutation<Product, Error, { data: UpdateProduct }>({
     mutationKey: [key, "update", productId],
-    mutationFn: async (r) =>
-      await getProductApiInfo().update(productId ?? "", r.data),
+    mutationFn: (r) => getProductApiInfo().update(productId ?? "", r.data),
     onSuccess: () => {
       toast.success("Produk berhasil diperbarui");
       void queryClient.invalidateQueries({

@@ -24,6 +24,8 @@ const status: { eng: string; ina: string }[] = [
   { eng: "VERIFY_PIN", ina: "Verifikasi PIN" },
 ];
 
+const calculateSubTotal = (price: number, qty: number) => price * qty;
+
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
   const { error, isLoading, data } = findOrderById(orderId);
@@ -102,9 +104,16 @@ const Detail = () => {
                   <section className="grid grid-cols-4 gap-2">
                     <h2>{product.product.name}</h2>
                     <h2>-</h2>
-                    <h2 className="text-right">-</h2>
                     <h2 className="text-right">
                       {Currency(product.product.price.price)}
+                    </h2>
+                    <h2 className="text-right">
+                      {Currency(
+                        calculateSubTotal(
+                          product.product.price.price,
+                          product.qty
+                        )
+                      )}
                     </h2>
                   </section>
 

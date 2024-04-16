@@ -99,8 +99,11 @@ const Detail = () => {
               </h1>
 
               {/* ITEMS */}
-              {data?.items.map((product) => (
-                <section className="flex flex-col gap-2 col-span-4">
+              {data?.items.map((product, idx) => (
+                <section
+                  className="flex flex-col gap-2 col-span-4"
+                  key={`${idx}-${product.product.name}`}
+                >
                   <section className="grid grid-cols-4 gap-2">
                     <h2>{product.product.name}</h2>
                     <h2>-</h2>

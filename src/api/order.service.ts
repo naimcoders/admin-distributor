@@ -204,6 +204,15 @@ class Api {
       errors: "",
     });
   }
+
+  async findById(orderId: string): Promise<Order> {
+    return await req<Order>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/${orderId}`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiOrderInfo {
@@ -213,6 +222,7 @@ interface ApiOrderInfo {
     merchantId: string,
     customerId?: string
   ): Promise<ResPaging<Order>>;
+  findById(orderId: string): Promise<Order>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -260,4 +270,15 @@ export const findOrders = (
     setSearch,
     isNext: data?.canNext,
   };
+};
+
+export const findOrderById = (orderId: string) => {
+  const get = async () => await getOrderApiInfo().findById(orderId);
+  const { data, isLoading, error } = useQuery<Order, Error>({
+    queryKey: [key, orderId],
+    queryFn: get,
+    enabled: !!orderId,
+  });
+
+  return { data, isLoading, error: error?.message };
 };

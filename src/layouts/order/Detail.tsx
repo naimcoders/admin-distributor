@@ -163,13 +163,19 @@ const Detail = () => {
           <section className="text-sm grid grid-cols-4 gap-6 border-b border-gray-300 py-5">
             <section className="flex flex-col gap-2 col-span-1">
               <h1 className="font-medium capitalize">kurir</h1>
-              <p className="">-</p>
-              <p className="">-</p>
+              {!data?.delivery.courier ? (
+                "-"
+              ) : (
+                <>
+                  <p>{data?.delivery.courier.name}</p>
+                  <p>{parsePhoneNumber(data?.delivery.courier.phoneNumber)}</p>
+                </>
+              )}
             </section>
             <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">PIC sales</h1>
-              <p className="">-</p>
-              <p className="">-</p>
+              <p>-</p>
+              <p>-</p>
             </section>
           </section>
 

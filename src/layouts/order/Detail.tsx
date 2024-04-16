@@ -6,7 +6,7 @@ import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import { Currency, epochToDateConvert } from "src/helpers";
+import { Currency, epochToDateConvert, parsePhoneNumber } from "src/helpers";
 
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
@@ -48,21 +48,18 @@ const Detail = () => {
               <section className="flex gap-2">
                 <img src={pemesanImg} alt="Order Image" className="w-6 h-6" />
                 <div>
-                  <h2 className="font-medium">Arif Kurniawan</h2>
-                  <p>081122334456</p>
+                  <h2 className="font-medium">{data?.customer.name}</h2>
+                  <p>{parsePhoneNumber(data?.customer.phoneNumber)}</p>
                 </div>
               </section>
             </section>
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">nama toko</h1>
-              <p>Agung Jaya</p>
+              <p>-</p>
             </section>
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">alamat pengiriman</h1>
-              <p className="capitalize ">
-                Jl. Pongtiku No. 123 (Depan SMPN 4), Tallo, Kota Makassar,
-                Sulawesi Selatan, 90214
-              </p>
+              <p className="capitalize ">{data?.customer.address}</p>
             </section>
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">catatan pengiriman</h1>
@@ -83,26 +80,34 @@ const Detail = () => {
                 subtotal (Rp)
               </h1>
 
-              <section className="flex flex-col gap-2 col-span-4">
-                <section className="grid grid-cols-4 gap-2">
-                  <h2>4 x Beras Lahap 5 Kg</h2>
-                  <h2>Bintang Terang</h2>
-                  <h2 className="text-right">80.000</h2>
-                  <h2 className="text-right">320.000</h2>
-                </section>
-                <div className="flex gap-1 text-xs bg-green-200 text-green-500 font-medium px-3 py-2 rounded-md">
-                  <DocumentChartBarIcon width={15} />
-                  Tolong dipilihkan stok baru
-                </div>
-              </section>
+              {/* ITEMS */}
+              {data?.items.map((product) => (
+                <section className="flex flex-col gap-2 col-span-4">
+                  <section className="grid grid-cols-4 gap-2">
+                    <h2>{product.product.name}</h2>
+                    <h2>-</h2>
+                    <h2 className="text-right">-</h2>
+                    <h2 className="text-right">
+                      {Currency(product.product.price.price)}
+                    </h2>
+                  </section>
 
-              <section className="font-medium flex justify-between col-span-4">
+                  {product.note && (
+                    <div className="flex gap-1 text-xs bg-green-200 text-green-500 font-medium px-3 py-2 rounded-md">
+                      <DocumentChartBarIcon width={15} />
+                      Tolong dipilihkan stok baru
+                    </div>
+                  )}
+                </section>
+              ))}
+
+              <section className="font-medium flex justify-between col-span-4 mt-3">
                 <h2>Total Harga</h2>
-                <p>580.000</p>
+                <p>{Currency(data?.price.totalPriceItems ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Biaya Pengiriman</h2>
-                <p>{Currency(data?.price.deliveryPrice ?? 0)}</p>
+                <p>{Currency(data?.delivery.price ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Biaya Lainnya</h2>
@@ -112,9 +117,9 @@ const Detail = () => {
                 <h2>Diskon</h2>
                 <p>{Currency(data?.price.discount ?? 0)}</p>
               </section>
-              <section className="font-medium flex justify-between col-span-4">
+              <section className="font-medium flex justify-between col-span-4 mt-3">
                 <h2>Total Pembayaran</h2>
-                <p>{Currency(data?.price.totalPrice ?? 0)}</p>
+                <p>{Currency(data?.invoice.totalPrice ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>
@@ -131,13 +136,13 @@ const Detail = () => {
           <section className="text-sm grid grid-cols-4 gap-6 border-b border-gray-300 py-5">
             <section className="flex flex-col gap-2 col-span-1">
               <h1 className="font-medium capitalize">kurir</h1>
-              <p className="">JNE Cargo</p>
-              <p className="">081123456789</p>
+              <p className="">-</p>
+              <p className="">-</p>
             </section>
             <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">PIC sales</h1>
-              <p className="">Cahyo</p>
-              <p className="">08157788499</p>
+              <p className="">-</p>
+              <p className="">-</p>
             </section>
           </section>
 

@@ -33,6 +33,7 @@ export interface Invoice {
   invoiceNumber: string;
   discount: number;
   totalAmount: number;
+  totalPrice: number;
   pilipay: boolean;
   paymentType: string;
   paymentMethod: string;
@@ -45,6 +46,7 @@ export interface Invoice {
 
 export interface Customer {
   id: string;
+  address: string;
   customerId?: string;
   name: string;
   phoneNumber: string;
@@ -78,6 +80,8 @@ export interface History {
 
 export interface Item {
   id: string;
+  note: string;
+  qty: number;
   orderId: string;
   productId: string;
   product: Product;

@@ -95,7 +95,7 @@ const Detail = () => {
                   {product.note && (
                     <div className="flex gap-1 text-xs bg-green-200 text-green-500 font-medium px-3 py-2 rounded-md">
                       <DocumentChartBarIcon width={15} />
-                      Tolong dipilihkan stok baru
+                      {product.note}
                     </div>
                   )}
                 </section>
@@ -111,7 +111,7 @@ const Detail = () => {
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Biaya Lainnya</h2>
-                <p>0</p>
+                <p>{Currency(data?.price.feeApp ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Diskon</h2>

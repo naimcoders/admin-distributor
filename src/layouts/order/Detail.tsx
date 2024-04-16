@@ -6,7 +6,12 @@ import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import { Currency, epochToDateConvert, parsePhoneNumber } from "src/helpers";
+import {
+  Currency,
+  epochToDateConvert,
+  parsePhoneNumber,
+  uppercaseToCapitalize,
+} from "src/helpers";
 
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
@@ -124,8 +129,10 @@ const Detail = () => {
               <section className="flex justify-between col-span-4">
                 <h2>
                   Metode Pembayaran{" "}
-                  {data?.invoice.paymentType.split("_").join(" ")}{" "}
-                  {data?.invoice.paymentMethod}
+                  {uppercaseToCapitalize(
+                    data?.invoice.paymentType.split("_").join(" ") ?? ""
+                  )}{" "}
+                  {uppercaseToCapitalize(data?.invoice.paymentMethod ?? "")}
                 </h2>
               </section>
             </section>

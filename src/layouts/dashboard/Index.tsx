@@ -18,9 +18,9 @@ import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
 import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
-import { formatRupiah } from "src/helpers/idr";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
+import { findBuyers } from "src/api/performance.service";
 
 const Dashboard = () => {
   return (
@@ -144,11 +144,14 @@ const PiliPay = () => {
 };
 
 const PilipayTransaction = () => {
+  const buyers = findBuyers();
+  console.log(buyers);
+
   return (
     <section className="flex items-center gap-4 flex-1">
       <div className="text-white flex flex-col gap-2">
         <h2 className="capitalize text-[.75rem]">transaksi hari ini</h2>
-        <h2 className="font-interMedium">Rp1.978.000</h2>
+        <h2 className="font-medium">Rp1.978.000</h2>
       </div>
       <Button
         aria-label="Update"
@@ -184,9 +187,7 @@ const PilipayBalance = () => {
             <img src={walletSVG} alt="wallet" className="w-4" />
             Saldo PiliPay
           </span>
-          <h2 className="font-interMedium text-sm">
-            {formatRupiah(data?.balance ?? 0)}
-          </h2>
+          <h2 className="font-medium">Rp{Currency(data?.balance ?? 0)}</h2>
         </section>
 
         {!data?.id ? (
@@ -227,7 +228,7 @@ interface PiliPayActions {
 const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
   return (
     <section
-      className="flexcol gap-1 items-center cursor-pointer"
+      className="flex flex-col gap-1 items-center cursor-pointer"
       onClick={onClick}
     >
       <Image src={src} alt={alt} width={20} radius="none" />
@@ -235,8 +236,6 @@ const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
     </section>
   );
 };
-
-// ======
 
 const BottomLine = () => {
   return (

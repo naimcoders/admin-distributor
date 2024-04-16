@@ -2,7 +2,7 @@ import React from "react";
 import Error from "src/components/Error";
 import Label from "src/components/Label";
 import {
-  Distributor,
+  Distributor as IDistributor,
   RoleDistributor,
   useDistributor,
 } from "src/api/distributor.service";
@@ -70,7 +70,7 @@ const Distributor = () => {
     }
   };
 
-  const columns: Columns<Distributor>[] = [
+  const columns: Columns<IDistributor>[] = [
     {
       header: <p className="text-center">nama pemilik</p>,
       render: (v) => <Label label={v.ownerName} />,

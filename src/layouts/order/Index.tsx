@@ -4,6 +4,7 @@ import { TableWithoutTabs } from "src/components/Table";
 import { ReqStatusOrder, findOrders } from "src/api/order.service";
 import useOrderColumns from "./column";
 import Error from "src/components/Error";
+import { setUser } from "src/stores/auth";
 
 const data: SelectDataProps[] = [
   { label: "menunggu", value: "WAITING_ACCEPT" },
@@ -19,6 +20,7 @@ const data: SelectDataProps[] = [
 const Order = () => {
   const [selectedOrder, setSelectedOrder] =
     React.useState<ReqStatusOrder>("WAITING_ACCEPT");
+  const user = setUser((v) => v.user);
   const {
     data: orders,
     error,
@@ -26,7 +28,7 @@ const Order = () => {
     isNext,
     page,
     setSearch,
-  } = findOrders(selectedOrder);
+  } = findOrders(selectedOrder, user?.id ?? "");
   const { columns } = useOrderColumns(selectedOrder);
 
   return (

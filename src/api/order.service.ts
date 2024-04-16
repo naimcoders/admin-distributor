@@ -186,15 +186,15 @@ class Api {
   async find(
     r: ReqPaging,
     status: ReqStatusOrder,
-    customerId?: string,
-    merchantId?: string
+    merchantId: string,
+    customerId?: string
   ): Promise<ResPaging<Order>> {
     const query = queryString.stringify({
       page: r.page,
       limit: r.limit,
       status,
-      customerId,
       merchantId,
+      customerId,
     });
 
     return await req<ResPaging<Order>>({
@@ -210,8 +210,8 @@ interface ApiOrderInfo {
   find(
     r: ReqPaging,
     status: ReqStatusOrder,
-    customerId?: string,
-    merchantId?: string
+    merchantId: string,
+    customerId?: string
   ): Promise<ResPaging<Order>>;
 }
 
@@ -223,8 +223,8 @@ const key = "order";
 
 export const findOrders = (
   statusOrder: ReqStatusOrder,
-  customerId?: string,
-  merchantId?: string
+  merchantId: string,
+  customerId?: string
 ) => {
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(10);
@@ -238,8 +238,8 @@ export const findOrders = (
         search,
       },
       statusOrder,
-      customerId,
-      merchantId
+      merchantId,
+      customerId
     );
 
   const { data, error, isLoading } = useQuery<ResPaging<Order>, Error>({

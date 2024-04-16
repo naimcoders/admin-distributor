@@ -71,6 +71,10 @@ const useHook = () => {
           action="both"
           id={idx}
           detail={{ onClick: () => navigate(`/produk/${v.id}`) }}
+          switch={{
+            isSelected: v.isAvailable,
+            onClick: () => console.log(v.isAvailable),
+          }}
         />
       ),
       width: "w-40",

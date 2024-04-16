@@ -10,6 +10,7 @@ export interface Order {
   customer: Customer;
   merchantId: string;
   merchant: Customer;
+  invoice: Invoice;
   note: string;
   pin: string;
   receiptUrl: string;
@@ -21,6 +22,25 @@ export interface Order {
   idempotencyKey: string;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface Invoice {
+  id: string;
+  orderId: string;
+  customerId: string;
+  status: string;
+  merchantId: string;
+  invoiceNumber: string;
+  discount: number;
+  totalAmount: number;
+  pilipay: boolean;
+  paymentType: string;
+  paymentMethod: string;
+  createdAt: number;
+  successAt: number;
+  failedAt: number;
+  updatedAt: number;
+  expiredAt: number;
 }
 
 export interface Customer {

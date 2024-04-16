@@ -6,7 +6,7 @@ import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import { epochToDateConvert } from "src/helpers";
+import { Currency, epochToDateConvert } from "src/helpers";
 
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
@@ -32,7 +32,7 @@ const Detail = () => {
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">status order</h1>
               <p className={cx("capitalize ", `text-[#fcb230]`)}>
-                menunggu konfirmasi
+                {data?.status}
               </p>
             </section>
             <section className="flexcol gap-2">
@@ -66,7 +66,7 @@ const Detail = () => {
             </section>
             <section className="flexcol gap-2">
               <h1 className="font-medium capitalize">catatan pengiriman</h1>
-              <p>Ruko warna biru di sisi kiri jalan</p>
+              <p>{data?.note}</p>
             </section>
           </section>
 
@@ -102,22 +102,26 @@ const Detail = () => {
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Biaya Pengiriman</h2>
-                <p>0</p>
+                <p>{Currency(data?.price.deliveryPrice ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Biaya Lainnya</h2>
-                <p>5.000</p>
+                <p>0</p>
               </section>
               <section className="flex justify-between col-span-4">
                 <h2>Diskon</h2>
-                <p>0</p>
+                <p>{Currency(data?.price.discount ?? 0)}</p>
               </section>
               <section className="font-medium flex justify-between col-span-4">
                 <h2>Total Pembayaran</h2>
-                <p>585.000</p>
+                <p>{Currency(data?.price.totalPrice ?? 0)}</p>
               </section>
               <section className="flex justify-between col-span-4">
-                <h2>Metode Pembayaran VA Mandiri</h2>
+                <h2>
+                  Metode Pembayaran{" "}
+                  {data?.invoice.paymentType.split("_").join(" ")}{" "}
+                  {data?.invoice.paymentMethod}
+                </h2>
               </section>
             </section>
           </div>

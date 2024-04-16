@@ -7,7 +7,7 @@ import Error from "src/components/Error";
 import { setUser } from "src/stores/auth";
 
 const data: SelectDataProps[] = [
-  { label: "menunggu", value: "WAITING_ACCEPT" },
+  { label: "menunggu konfirmasi", value: "WAITING_ACCEPT" },
   { label: "pengiriman", value: "DELIVERY" },
   { label: "diterima", value: "ACCEPT" },
   { label: "selesai", value: "COMPLETE" },

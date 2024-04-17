@@ -4,6 +4,19 @@ import { setUser } from "src/stores/auth";
 import { setHoursEpochTime } from "src/helpers";
 import { useQuery } from "@tanstack/react-query";
 
+export interface Buyers {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  role: string;
+  lat: number;
+  lng: number;
+  address: string;
+  revenue: number;
+  totalOrder: number;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -15,6 +28,21 @@ class Api {
   }
 
   private path = "performance";
+
+  async findBuyers(merchantId: string): Promise<Buyers[]> {
+    const query = queryString.stringify(
+      { merchantId },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<Buyers[]>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/buyers?${query}`,
+      errors: "",
+    });
+  }
+
   async findRevenue(
     merchantId: string,
     startAt?: number,
@@ -53,6 +81,7 @@ class Api {
 }
 
 interface ApiPerformanceInfo {
+  findBuyers(merchantId: string): Promise<Buyers[]>;
   findRevenue(
     merchantId: string,
     startAt?: number,
@@ -67,13 +96,24 @@ function getPerformanceApiInfo(): ApiPerformanceInfo {
 
 const key = "performance";
 
+export const findBuyers = () => {
+  const user = setUser((v) => v.user);
+  const { data, isLoading, error } = useQuery<Buyers[], Error>({
+    queryKey: [key + "-buyers", user?.id],
+    queryFn: () => getPerformanceApiInfo().findBuyers(user?.id ?? ""),
+    enabled: !!user?.id,
+  });
+
+  return { data, isLoading, error: error?.message };
+};
+
 export const findRevenue = () => {
   const user = setUser((v) => v.user);
   const startAt = setHoursEpochTime(12, 1);
   const endAt = setHoursEpochTime(23, 59);
 
   const { data, isLoading, error } = useQuery<number, Error>({
-    queryKey: [key, "buyers", user?.id, startAt, endAt],
+    queryKey: [key + "-revenue", user?.id, startAt, endAt],
     queryFn: () =>
       getPerformanceApiInfo().findRevenue(user?.id ?? "", startAt, endAt),
     enabled: !!user?.id && !!startAt && !!endAt,
@@ -86,7 +126,7 @@ export const findOrderCount = () => {
   const user = setUser((v) => v.user);
 
   const { data, isLoading, error } = useQuery<number, Error>({
-    queryKey: [key, "buyers", user?.id],
+    queryKey: [key + "-order", user?.id],
     queryFn: () => getPerformanceApiInfo().findOrderCount(user?.id ?? ""),
     enabled: !!user?.id,
   });

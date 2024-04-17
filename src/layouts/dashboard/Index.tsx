@@ -130,7 +130,7 @@ const MiddleLine = () => {
         {error ? (
           <h2 className="text-red-200">Error</h2>
         ) : isLoading ? (
-          <Spinner className="-mt-4" />
+          <Spinner size="sm" />
         ) : (
           <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
             Rp{Currency(data ?? 0)}
@@ -161,7 +161,7 @@ const PilipayTransaction = () => {
         {error ? (
           <h2 className="text-red-200">Error</h2>
         ) : isLoading ? (
-          <Spinner color="secondary" />
+          <Spinner color="secondary" size="sm" />
         ) : (
           <h2 className="font-medium">Rp{data}</h2>
         )}

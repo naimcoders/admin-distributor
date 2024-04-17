@@ -20,7 +20,11 @@ import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
-import { findOrderCount, findRevenue } from "src/api/performance.service";
+import {
+  findBuyers,
+  findOrderCount,
+  findRevenue,
+} from "src/api/performance.service";
 
 const Dashboard = () => {
   return (
@@ -109,7 +113,7 @@ const TopLine = () => {
 };
 
 const MiddleLine = () => {
-  const { data, error, isLoading } = findOrderCount();
+  const orders = findOrderCount();
 
   return (
     <section className="grid-min-300 gap-8">
@@ -127,13 +131,13 @@ const MiddleLine = () => {
         <CardHeader as="h2" className="text-lg capitalize justify-center">
           total transaksi
         </CardHeader>
-        {error ? (
+        {orders.error ? (
           <h2 className="text-red-200">Error</h2>
-        ) : isLoading ? (
+        ) : orders.isLoading ? (
           <Spinner size="sm" />
         ) : (
           <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
-            Rp{Currency(data ?? 0)}
+            Rp{Currency(orders.data ?? 0)}
           </CardBody>
         )}
       </Card>
@@ -285,6 +289,46 @@ interface Product {
 }
 
 const stores: Store[] = [
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
+  {
+    bestStore: "Sukses Jaya Mandiri",
+    omset: 21311442,
+    transaction: 1231,
+  },
   {
     bestStore: "Sukses Jaya Mandiri",
     omset: 21311442,

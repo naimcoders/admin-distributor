@@ -98,6 +98,7 @@ const key = "performance";
 
 export const findBuyers = () => {
   const user = setUser((v) => v.user);
+
   const { data, isLoading, error } = useQuery<Buyers[], Error>({
     queryKey: [key + "-buyers", user?.id],
     queryFn: () => getPerformanceApiInfo().findBuyers(user?.id ?? ""),

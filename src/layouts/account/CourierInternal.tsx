@@ -95,6 +95,7 @@ const useHook = () => {
       name: "email",
       label: "email",
       type: "email",
+      autoComplete: "on",
     }),
     objectFields({
       name: "phoneNumber",

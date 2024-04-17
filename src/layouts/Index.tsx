@@ -8,11 +8,8 @@ import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
 import { stringifyQuery } from "src/helpers";
-import { useActiveModal } from "src/stores/modalStore";
-// import { CreateNewPin } from "src/components/Pin";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
-import { KeyIcon } from "@heroicons/react/24/outline";
 import Skeleton from "src/components/Skeleton";
 
 const Layout = () => {
@@ -33,8 +30,6 @@ const Layout = () => {
           </main>
         </section>
       )}
-
-      {/* <CreateNewPin header={{ label: "buat PIN" }} /> */}
     </main>
   );
 };
@@ -42,7 +37,6 @@ const Layout = () => {
 const Header = () => {
   const { pathname } = useLocation();
   const [path, setPath] = React.useState("");
-  const { actionIsCreatePin } = useActiveModal();
 
   React.useEffect(() => {
     setPath(pathname?.split("/")[1]);
@@ -58,15 +52,6 @@ const Header = () => {
       </section>
 
       <section className="flex gap-4">
-        {currentPath === "dashboard" && (
-          <KeyIcon
-            width={20}
-            color="#FFFFFF"
-            title="Aktifkan akun"
-            className="cursor-pointer"
-            onClick={actionIsCreatePin}
-          />
-        )}
         <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-2xl capitalize">
           {currentPath}
         </h1>

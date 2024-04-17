@@ -15,7 +15,6 @@ class Api {
   }
 
   private path = "performance";
-
   async findRevenue(
     merchantId: string,
     startAt?: number,
@@ -37,6 +36,20 @@ class Api {
       errors: "",
     });
   }
+
+  async findOrderCount(merchantId: string): Promise<number> {
+    const query = queryString.stringify(
+      { merchantId },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/order-count?${query}`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiPerformanceInfo {
@@ -45,6 +58,7 @@ interface ApiPerformanceInfo {
     startAt?: number,
     endAt?: number
   ): Promise<number>;
+  findOrderCount(merchantId: string): Promise<number>;
 }
 
 function getPerformanceApiInfo(): ApiPerformanceInfo {
@@ -63,6 +77,18 @@ export const findRevenue = () => {
     queryFn: () =>
       getPerformanceApiInfo().findRevenue(user?.id ?? "", startAt, endAt),
     enabled: !!user?.id && !!startAt && !!endAt,
+  });
+
+  return { data, isLoading, error: error?.message };
+};
+
+export const findOrderCount = () => {
+  const user = setUser((v) => v.user);
+
+  const { data, isLoading, error } = useQuery<number, Error>({
+    queryKey: [key, "buyers", user?.id],
+    queryFn: () => getPerformanceApiInfo().findOrderCount(user?.id ?? ""),
+    enabled: !!user?.id,
   });
 
   return { data, isLoading, error: error?.message };

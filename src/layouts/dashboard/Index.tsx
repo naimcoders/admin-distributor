@@ -20,8 +20,7 @@ import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
-import { findRevenue } from "src/api/performance.service";
-import Error from "src/components/Error";
+import { findOrderCount, findRevenue } from "src/api/performance.service";
 
 const Dashboard = () => {
   return (
@@ -110,6 +109,8 @@ const TopLine = () => {
 };
 
 const MiddleLine = () => {
+  const { data, error, isLoading } = findOrderCount();
+
   return (
     <section className="grid-min-300 gap-8">
       <PiliPay />
@@ -126,9 +127,15 @@ const MiddleLine = () => {
         <CardHeader as="h2" className="text-lg capitalize justify-center">
           total transaksi
         </CardHeader>
-        <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
-          Rp17,829
-        </CardBody>
+        {error ? (
+          <h2 className="text-red-200">Error</h2>
+        ) : isLoading ? (
+          <Spinner className="-mt-4" />
+        ) : (
+          <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
+            Rp{Currency(data ?? 0)}
+          </CardBody>
+        )}
       </Card>
     </section>
   );
@@ -154,7 +161,7 @@ const PilipayTransaction = () => {
         {error ? (
           <h2 className="text-red-200">Error</h2>
         ) : isLoading ? (
-          <h2>Loading...</h2>
+          <Spinner color="secondary" />
         ) : (
           <h2 className="font-medium">Rp{data}</h2>
         )}

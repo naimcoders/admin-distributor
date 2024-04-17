@@ -55,7 +55,7 @@ export const ItemVariant: React.FC<ItemProps> = ({
 
           {!isActiveItem && (
             <Button
-              aria-label={!add.isAdd ? "tambah" : "batal"}
+              label={!add.isAdd ? "tambah" : "batal"}
               endContent={
                 !add.isAdd ? <PlusIcon width={16} /> : <XMarkIcon width={16} />
               }

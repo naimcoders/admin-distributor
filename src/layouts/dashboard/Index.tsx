@@ -205,7 +205,7 @@ const PilipayBalance = () => {
 
         {!data?.id ? (
           <Button
-            aria-label="aktifkan"
+            label="aktifkan"
             className="w-full text-black text-sm bg-blue-300 font-semibold"
             onClick={() => setIsActivated(true)}
           />

@@ -3,7 +3,7 @@ import {
   TextfieldProps,
   objectFields,
 } from "src/components/Textfield";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
@@ -102,7 +102,7 @@ const Profile = ({
           </section>
 
           <Button
-            aria-label={isPending ? "loading..." : "simpan"}
+            label={isPending ? "loading..." : "simpan"}
             onClick={onSubmit}
             className="mx-auto lg:mt-10 mt-6 sm:mt-8"
           />
@@ -112,21 +112,21 @@ const Profile = ({
   );
 };
 
-interface DefaultValues {
-  ownerName: string;
-  password: string;
-  detailAddress: string;
-  name: string;
-  phoneNumber: string;
-  email: string;
-  ktp: string;
-}
+// export interface DefaultProfileValues {
+//   ownerName: string;
+//   password: string;
+//   detailAddress: string;
+//   name: string;
+//   phoneNumber: string;
+//   email: string;
+//   ktp: string;
+// }
 
 export const useDetailDistributorApi = (
   distributorId: string,
   data: Distributor
 ) => {
-  const forms = useForm<DefaultValues>();
+  const forms = useForm<FieldValues>();
   const { updateSubDistributor } = useDistributor();
 
   const onSubmit = forms.handleSubmit(async (e) => {
@@ -198,7 +198,7 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
     }
   };
 
-  const fields: TextfieldProps<DefaultValues>[] = [
+  const fields: TextfieldProps<FieldValues>[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

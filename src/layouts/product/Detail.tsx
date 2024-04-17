@@ -572,7 +572,7 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={isLoading ? "loading..." : "simpan"}
+            label={isLoading ? "loading..." : "simpan"}
           />
         </main>
       )}
@@ -586,13 +586,13 @@ const Detail = () => {
         </h2>
         <section className="flex gap-4 lg:mt-8 mt-5">
           <Button
-            aria-label="Batal"
+            label="Batal"
             variant="flat"
             className="w-full"
             onClick={actionIsDeleteImageProduct}
           />
           <Button
-            aria-label="Hapus"
+            label="Hapus"
             className="bg-[#c41414] w-full"
             onClick={() => onRemoveImage(imageUrlDel!)}
           />

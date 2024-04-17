@@ -39,7 +39,7 @@ const Product = () => {
             onSelectionChange={onSelectionChange}
           />
           <Button
-            aria-label="produk"
+            label="produk"
             startContent={<PlusIcon width={16} />}
             className="absolute top-0 left-[300px]"
             onClick={() => navigate("/produk/tambah")}

@@ -184,10 +184,10 @@ const Detail = () => {
 
           <section className="py-5 flex gap-5 justify-end">
             <Button
-              aria-label="tolak"
+              label="tolak"
               className="bg-transparent text-[#F31260] border border-[#F31260]"
             />
-            <Button aria-label="terima 59:59" />
+            <Button label="terima 59:59" />
           </section>
         </main>
       )}

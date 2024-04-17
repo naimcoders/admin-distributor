@@ -178,7 +178,7 @@ const Create = () => {
           </section>
 
           <Button
-            aria-label={isLoading ? "loading..." : "simpan"}
+            label={isLoading ? "loading..." : "simpan"}
             onClick={onSubmit}
             className="mx-auto lg:mt-12 mt-6"
           />

@@ -119,7 +119,7 @@ const Form = () => {
       ))}
 
       <Button
-        aria-label={isPending ? "Loading..." : "Login"}
+        label={isPending ? "Loading..." : "Login"}
         onClick={onSubmit}
         className="mt-4 mx-auto text-base bg-accentYellow text-black"
       />

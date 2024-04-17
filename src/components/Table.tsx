@@ -188,7 +188,7 @@ const Header = ({ search, createData }: HeaderProps) => {
 
       {createData?.isValue && (
         <Button
-          aria-label={createData.label}
+          label={createData.label}
           onClick={createData.onClick}
           startContent={<PlusIcon width={16} />}
         />

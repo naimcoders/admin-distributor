@@ -20,7 +20,7 @@ const NotFound = () => {
           </h1>
         </section>
         <Button
-          aria-label="Kembali"
+          label="Kembali"
           onClick={goBack}
           color="secondary"
           className="text-black font-interMedium"

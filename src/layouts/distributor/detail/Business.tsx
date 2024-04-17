@@ -12,6 +12,7 @@ import { UserCoordinate } from "src/components/Coordinate";
 import { useDetailDistributorApi } from "./Profile";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
+import { FieldValues } from "react-hook-form";
 
 interface Business {
   distributorId: string;
@@ -80,7 +81,7 @@ const Business = ({
           </section>
 
           <Button
-            aria-label={isPending ? "loading..." : "simpan"}
+            label={isPending ? "loading..." : "simpan"}
             className="mx-auto mt-5"
             onClick={onSubmit}
           />
@@ -91,7 +92,7 @@ const Business = ({
 };
 
 const useHook = (data?: Distributor) => {
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<FieldValues>[] = [
     objectFields({
       label: "nama usaha",
       name: "name",

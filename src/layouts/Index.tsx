@@ -117,7 +117,7 @@ export const SideBarFeature = () => {
       <LinkSideBar name="Akun" path="akun" />
 
       <Button
-        aria-label="Logout"
+        label="Logout"
         className="bg-[#c41414] mx-auto mt-4"
         endContent={
           <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />

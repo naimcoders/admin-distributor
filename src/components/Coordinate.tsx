@@ -193,7 +193,7 @@ const Coordinate = () => {
           </div>
 
           <Button
-            aria-label="pilih koordinat"
+            label="pilih koordinat"
             className="mx-auto mt-2"
             onClick={closeModal}
           />

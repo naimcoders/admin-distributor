@@ -68,7 +68,7 @@ const Transfer = () => {
         closeModal={actionIsTransfer}
         customHeader={<BeginHeader />}
       >
-        <main className="my-4 border-t border-gray-300 pt-4 flexcol gap-4">
+        <main className="my-4 border-t border-gray-300 pt-4 flex flex-col gap-4">
           <h2 className="text-center">Transfer Pilipay</h2>
 
           {!isOtherField && (
@@ -76,7 +76,7 @@ const Transfer = () => {
               {nominals.map((v) => (
                 <section
                   key={v.label}
-                  onClick={() => console.log(v.label)} // TOOD: SHOULD BE HANDLE IN FUTURE
+                  onClick={() => console.log(v.label)}
                   className={cx(
                     "border border-gray-400 text-center py-2 rounded-xl cursor-pointer",
                     selectedNominal === v.label && "bg-gray-200"
@@ -118,7 +118,7 @@ const Transfer = () => {
           <section className="grid grid-cols-2 gap-4 mt-4">
             {isOtherField && (
               <Button
-                aria-label="kembali"
+                label="kembali"
                 className="w-full"
                 variant="flat"
                 onClick={handleOther}
@@ -126,7 +126,7 @@ const Transfer = () => {
             )}
             <Button
               onClick={handleNext}
-              aria-label="selanjutnya"
+              label="selanjutnya"
               className={cx("w-full", !isOtherField && "col-span-2")}
             />
           </section>
@@ -177,7 +177,7 @@ const Transfer = () => {
           <p>Rp{parseSelectedNominal()}</p>
         </section>
 
-        <Button aria-label="konfirmasi" className="w-full" onClick={onSubmit} />
+        <Button label="konfirmasi" className="w-full" onClick={onSubmit} />
       </Confirm>
     </>
   );

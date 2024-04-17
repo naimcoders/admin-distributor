@@ -169,12 +169,12 @@ const PriceModal: React.FC<PriceProps> = (props) => {
         <section className="flex gap-4 mt-4">
           <Button
             variant="flat"
-            aria-label="kembali"
+            label="kembali"
             className="w-full"
             onClick={handleBack}
           />
           <Button
-            aria-label="simpan"
+            label="simpan"
             className="w-full"
             onClick={handleSubmitPrice}
           />

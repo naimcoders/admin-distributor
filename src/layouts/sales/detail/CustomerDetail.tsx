@@ -141,7 +141,7 @@ const PicSalesModal = ({
       </CheckboxGroup>
 
       <div className="flex justify-center">
-        <Button aria-label="selanjutnya" className="mx-auto" onClick={onNext} />
+        <Button label="selanjutnya" className="mx-auto" onClick={onNext} />
       </div>
     </Modal>
   );
@@ -151,7 +151,7 @@ const useHook = () => {
   // const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
   const { actionIsCategory } = useActiveModal();
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<FieldValues>[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

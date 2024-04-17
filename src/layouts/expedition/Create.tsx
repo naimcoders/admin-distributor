@@ -128,7 +128,7 @@ const Create = () => {
       </GridInput>
 
       <div className="flex justify-center mt-10">
-        <Button aria-label="simpan" onClick={onSubmit} />
+        <Button label="simpan" onClick={onSubmit} />
       </div>
 
       <CoordinateModal />
@@ -158,7 +158,7 @@ const useHook = () => {
   const { actionIsCoordinate } = useActiveModal();
   const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<FieldValues>[] = [
     objectFields({
       label: "nama pemilik",
       name: "ownerName",

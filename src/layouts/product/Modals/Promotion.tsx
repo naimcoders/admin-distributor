@@ -107,7 +107,7 @@ const Promotion = ({
         </section>
 
         <Button
-          aria-label="mulai promosi"
+          label="mulai promosi"
           className="mx-auto block mt-8"
           onClick={() => console.log("submit promotion")}
         />

@@ -105,7 +105,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     <Modal isOpen={isConfirm} closeModal={actionIsConfirm}>
       <section className="my-2 flexcol lg:gap-6 gap-4 items-center">
         <p>{label}</p>
-        <Button aria-label={onSubmit.label} onClick={onSubmit.action} />
+        <Button label={onSubmit.label} onClick={onSubmit.action} />
       </section>
     </Modal>
   );

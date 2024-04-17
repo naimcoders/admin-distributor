@@ -140,7 +140,7 @@ const Topup = () => {
               <section className="grid grid-cols-2 gap-4 mt-4">
                 {isOtherField && (
                   <Button
-                    aria-label="kembali"
+                    label="kembali"
                     className="w-full"
                     variant="flat"
                     onClick={handleOther}
@@ -148,7 +148,7 @@ const Topup = () => {
                 )}
                 <Button
                   onClick={() => setShowListPaymentChannel(true)}
-                  aria-label="selanjutnya"
+                  label="selanjutnya"
                   className={cx("w-full", !isOtherField && "col-span-2")}
                 />
               </section>
@@ -158,7 +158,7 @@ const Topup = () => {
               <Button
                 isLoading={topupActions.isPending}
                 onClick={onActionTopup}
-                aria-label="Proses Topup"
+                label="Proses Topup"
                 className={cx("w-full", !isOtherField && "col-span-2")}
               />
             </>

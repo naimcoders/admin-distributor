@@ -1,6 +1,6 @@
 import { Switch } from "@nextui-org/react";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { DeliveryPrice } from "src/api/product.service";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
@@ -24,14 +24,6 @@ interface PostageProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   data?: DeliveryPrice;
 }
 
-interface PriceValues {
-  price: string;
-  wide: string;
-  height: string;
-  length: string;
-  weight: string;
-}
-
 export const PostageModal: React.FC<PostageProps> = ({
   setValue,
   clearErrors,
@@ -41,7 +33,7 @@ export const PostageModal: React.FC<PostageProps> = ({
   const { isPostage, actionIsPostage } = useActiveModal();
   const { packageSize, outOfTownDeliveryField } = usePostage(data);
 
-  const forms = useForm<PriceValues>();
+  const forms = useForm<FieldValues>();
 
   const handleSwitchOutOfTown = () => setIsOutOfTown((v) => !v);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
@@ -199,18 +191,14 @@ export const PostageModal: React.FC<PostageProps> = ({
           )}
         </section>
 
-        <Button
-          aria-label="simpan"
-          className="mx-auto mt-4"
-          onClick={onSubmit}
-        />
+        <Button label="simpan" className="mx-auto mt-4" onClick={onSubmit} />
       </section>
     </Modal>
   );
 };
 
 export const usePostage = (data?: DeliveryPrice) => {
-  const packageSize: TextfieldProps[] = [
+  const packageSize: TextfieldProps<FieldValues>[] = [
     objectFields({
       name: "wide",
       label: "lebar",
@@ -231,7 +219,7 @@ export const usePostage = (data?: DeliveryPrice) => {
     }),
   ];
 
-  const outOfTownDeliveryField: TextfieldProps[] = [
+  const outOfTownDeliveryField: TextfieldProps<FieldValues>[] = [
     objectFields({
       name: "jneReguler",
       defaultValue: "30.000",

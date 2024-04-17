@@ -37,11 +37,7 @@ export const Calendar = (
       />
 
       {!epochTime.start && !epochTime.end ? null : (
-        <Button
-          aria-label="pilih periode"
-          onClick={onSubmit}
-          className="mx-auto"
-        />
+        <Button label="pilih periode" onClick={onSubmit} className="mx-auto" />
       )}
     </section>
   );

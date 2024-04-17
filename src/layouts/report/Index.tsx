@@ -31,7 +31,7 @@ const Report = () => {
 
       <Period />
 
-      <Button aria-label="export" />
+      <Button label="export" />
     </main>
   );
 };

@@ -300,7 +300,7 @@ const Create = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            aria-label={isLoading ? "loading..." : "simpan"}
+            label={isLoading ? "loading..." : "simpan"}
           />
 
           {/* modal */}

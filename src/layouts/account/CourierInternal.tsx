@@ -12,12 +12,14 @@ import { Spinner } from "@nextui-org/react";
 
 const CourierInternal = () => {
   const { rekenings } = useHook();
-  const { control, errors, onSubmit, isPending } = useApi();
+  const { control, errors, onSubmit, isPending, onSubmitKeyDown } = useApi();
 
   return (
     <Template
       title="kurir internal"
-      btnLabelForm={isPending ? <Spinner color="secondary" /> : "buat kurir"}
+      btnLabelForm={
+        isPending ? <Spinner color="secondary" size="sm" /> : "buat kurir"
+      }
       onClick={onSubmit}
     >
       {rekenings.map((v) => (
@@ -30,6 +32,7 @@ const CourierInternal = () => {
           rules={{
             required: { value: true, message: v.errorMessage ?? "" },
           }}
+          onKeyDown={onSubmitKeyDown}
         />
       ))}
     </Template>
@@ -41,6 +44,7 @@ const useApi = () => {
     control,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<ReqCourierInternal>();
 
@@ -49,19 +53,34 @@ const useApi = () => {
   const onSubmit = handleSubmit(async (e) => {
     try {
       await createCourierInternal.mutateAsync(e);
+      toast.success("Kurir internal berhasil dibuat");
       reset();
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to create courier internal: ${error.message}`);
-      console.error(`Failed to create courier internal: ${error.message}`);
     }
   });
+
+  const onSubmitKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      try {
+        const values = getValues();
+        await createCourierInternal.mutateAsync(values);
+        toast.success("Kurir internal berhasil dibuat");
+        reset();
+      } catch (e) {
+        const error = e as Error;
+        toast.error(`Failed to create courier internal: ${error.message}`);
+      }
+    }
+  };
 
   return {
     control,
     errors,
     onSubmit,
     isPending: createCourierInternal.isPending,
+    onSubmitKeyDown,
   };
 };
 

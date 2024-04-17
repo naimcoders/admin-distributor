@@ -119,7 +119,7 @@ const MiddleLine = () => {
         <CardHeader as="h2" className="text-lg capitalize justify-center">
           total omset
         </CardHeader>
-        <CardBody as="h2" className="font-interBold text-xl text-center -mt-4">
+        <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
           Rp18,950,000
         </CardBody>
       </Card>

@@ -79,7 +79,7 @@ const useFields = () => {
   const [isPassword, setIsPassword] = React.useState(false);
   const [isOldPassword, setIsOldPassword] = React.useState(false);
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<DefaultValues>[] = [
     objectFields({
       label: "email",
       name: "email",

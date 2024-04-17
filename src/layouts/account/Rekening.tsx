@@ -21,8 +21,7 @@ const Rekening = () => {
     formState: { errors },
   } = useForm<FieldValues>({ mode: "onChange" });
 
-  const { rekenings } = useRekening();
-  const { actionIsBankName } = useActiveModal();
+  const { rekenings } = useHook();
 
   const onSubmit = handleSubmit(async (e) => {
     console.log(e);
@@ -31,15 +30,11 @@ const Rekening = () => {
   return (
     <Template title="detail rekening" onClick={onSubmit} btnLabelForm="simpan">
       {rekenings.map((el, idx) => (
-        <div key={idx}>
+        <section key={idx}>
           {["text", "number"].includes(el.type!) && (
             <Textfield
-              type={el.type}
-              label={el.label}
+              {...el}
               control={control}
-              name={el.name ?? ""}
-              placeholder={el.placeholder}
-              defaultValue={el.defaultValue}
               errorMessage={handleErrorMessage(errors, el.name)}
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },
@@ -49,22 +44,16 @@ const Rekening = () => {
 
           {["modal"].includes(el.type!) && (
             <Textfield
-              type={el.type}
-              label={el.label}
+              {...el}
               control={control}
-              name={el.name ?? ""}
-              placeholder={el.placeholder}
-              defaultValue={el.defaultValue}
               errorMessage={handleErrorMessage(errors, el.name)}
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },
               }}
-              readOnly={el.readOnly}
               endContent={<ChevronRightIcon width={16} />}
-              onClick={actionIsBankName}
             />
           )}
-        </div>
+        </section>
       ))}
 
       <BankModal setValue={setValue} clearErrors={clearErrors} />
@@ -110,7 +99,9 @@ const BankModal = ({
   );
 };
 
-const useRekening = () => {
+const useHook = () => {
+  const { actionIsBankName } = useActiveModal();
+
   const rekenings: TextfieldProps<FieldValues>[] = [
     objectFields({
       name: "fullname",
@@ -124,6 +115,7 @@ const useRekening = () => {
       label: "nama bank",
       type: "modal",
       defaultValue: "",
+      onClick: actionIsBankName,
     }),
     objectFields({
       name: "noRek",

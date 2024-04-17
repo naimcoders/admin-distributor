@@ -47,7 +47,7 @@ export interface Vehicle {
   typeVehicle: string;
 }
 
-interface ReqCourierInternal {
+export interface ReqCourierInternal {
   email: string;
   name: string;
   phoneNumber: string;

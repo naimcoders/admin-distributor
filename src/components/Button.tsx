@@ -1,18 +1,16 @@
 import cx from "classnames";
 import { Button as Btn } from "@nextui-org/react";
-import { HTMLAttributes } from "react";
 import { Color, Radius, Size } from "src/types";
 
 type PickButton = Pick<
-  HTMLAttributes<HTMLButtonElement>,
-  "aria-label" | "className" | "onClick"
+  React.HTMLAttributes<HTMLButtonElement>,
+  "className" | "onClick"
 >;
 
 interface Button extends PickButton {
   color: Color;
   radius: Radius;
   size: Size;
-  isLoading?: boolean;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   variant:
@@ -23,7 +21,9 @@ interface Button extends PickButton {
     | "faded"
     | "shadow"
     | "ghost";
+  label: string | React.ReactNode;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 export const Button = ({
@@ -34,10 +34,10 @@ export const Button = ({
   onClick,
   radius,
   size,
-  "aria-label": label,
   variant,
   disabled,
   isLoading,
+  label,
 }: Partial<Button>) => {
   return (
     <Btn

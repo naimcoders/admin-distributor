@@ -21,6 +21,7 @@ import ActivatedPilipay from "./modals/Activated";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
 import { findRevenue } from "src/api/performance.service";
+import Error from "src/components/Error";
 
 const Dashboard = () => {
   return (
@@ -144,13 +145,19 @@ const PiliPay = () => {
 };
 
 const PilipayTransaction = () => {
-  const buyers = findRevenue();
+  const { data, isLoading, error } = findRevenue();
 
   return (
     <section className="flex items-center gap-4 flex-1">
       <div className="text-white flex flex-col gap-2">
         <h2 className="capitalize text-[.75rem]">transaksi hari ini</h2>
-        <h2 className="font-medium">Rp1.978.000</h2>
+        {error ? (
+          <h2 className="text-red-200">Error</h2>
+        ) : isLoading ? (
+          <h2>Loading...</h2>
+        ) : (
+          <h2 className="font-medium">Rp{data}</h2>
+        )}
       </div>
       <Button
         aria-label="Update"

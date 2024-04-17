@@ -1,11 +1,7 @@
 import queryString from "query-string";
 import { req } from "./request";
 import { setUser } from "src/stores/auth";
-import {
-  dateToEpochConvert,
-  epochToDateConvert,
-  setHoursEpochTime,
-} from "src/helpers";
+import { setHoursEpochTime } from "src/helpers";
 import { useQuery } from "@tanstack/react-query";
 
 class Api {
@@ -37,7 +33,7 @@ class Api {
     return await req<number>({
       method: "GET",
       isNoAuth: false,
-      path: `${this.path}?${query}`,
+      path: `${this.path}/revenue?${query}`,
       errors: "",
     });
   }
@@ -66,7 +62,7 @@ export const findRevenue = () => {
     queryKey: [key, "buyers", user?.id, startAt, endAt],
     queryFn: () =>
       getPerformanceApiInfo().findRevenue(user?.id ?? "", startAt, endAt),
-    enabled: !!user?.id,
+    enabled: !!user?.id && !!startAt && !!endAt,
   });
 
   return { data, isLoading, error: error?.message };

@@ -24,7 +24,7 @@ export const PrivateRoute = () => {
       </div>
     );
 
-  // user?.getIdToken().then((e) => console.log(e));
+  // user?.getIdToke n().then((e) => console.log(e));
 
   return (
     <>

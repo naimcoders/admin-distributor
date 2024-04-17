@@ -167,7 +167,7 @@ const PilipayTransaction = () => {
         )}
       </div>
       <Button
-        aria-label="Update"
+        label="Update"
         radius="sm"
         className="w-full text-black text-sm bg-blue-300 font-semibold"
       />

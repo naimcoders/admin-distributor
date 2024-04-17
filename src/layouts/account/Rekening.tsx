@@ -99,7 +99,7 @@ const BankModal = ({
         {data.map((v) => (
           <li
             key={v}
-            className={cx("hover:font-interBold cursor-pointer w-max")}
+            className={cx("hover:font-bold cursor-pointer w-max")}
             onClick={() => onClick(v)}
           >
             {v}
@@ -111,7 +111,7 @@ const BankModal = ({
 };
 
 const useRekening = () => {
-  const rekenings: TextfieldProps[] = [
+  const rekenings: TextfieldProps<FieldValues>[] = [
     objectFields({
       name: "fullname",
       label: "nama sesuai rekening",

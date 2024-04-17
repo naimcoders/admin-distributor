@@ -20,7 +20,7 @@ import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
-import { findBuyers } from "src/api/performance.service";
+import { findRevenue } from "src/api/performance.service";
 
 const Dashboard = () => {
   return (
@@ -144,8 +144,7 @@ const PiliPay = () => {
 };
 
 const PilipayTransaction = () => {
-  const buyers = findBuyers();
-  console.log(buyers);
+  const buyers = findRevenue();
 
   return (
     <section className="flex items-center gap-4 flex-1">

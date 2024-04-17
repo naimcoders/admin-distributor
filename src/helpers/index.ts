@@ -7,6 +7,12 @@ import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 import queryString from "query-string";
 
+export const setHoursEpochTime = (hours: number, minutes: number): number => {
+  const now = new Date();
+  const setHours = now.setHours(hours, minutes, 0, 0);
+  return setHours;
+};
+
 export const uppercaseToCapitalize = (data: string) => {
   return data.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 };

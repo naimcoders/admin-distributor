@@ -1,7 +1,12 @@
 import queryString from "query-string";
 import { req } from "./request";
 import { setUser } from "src/stores/auth";
-import { dateToEpochConvert, epochToDateConvert } from "src/helpers";
+import {
+  dateToEpochConvert,
+  epochToDateConvert,
+  setHoursEpochTime,
+} from "src/helpers";
+import { useQuery } from "@tanstack/react-query";
 
 class Api {
   private static instance: Api;
@@ -50,7 +55,19 @@ function getPerformanceApiInfo(): ApiPerformanceInfo {
   return Api.getInstance();
 }
 
-export const findBuyers = () => {
+const key = "performance";
+
+export const findRevenue = () => {
   const user = setUser((v) => v.user);
-  const now = new Date();
+  const startAt = setHoursEpochTime(12, 1);
+  const endAt = setHoursEpochTime(23, 59);
+
+  const { data, isLoading, error } = useQuery<number, Error>({
+    queryKey: [key, "buyers", user?.id, startAt, endAt],
+    queryFn: () =>
+      getPerformanceApiInfo().findRevenue(user?.id ?? "", startAt, endAt),
+    enabled: !!user?.id,
+  });
+
+  return { data, isLoading, error: error?.message };
 };

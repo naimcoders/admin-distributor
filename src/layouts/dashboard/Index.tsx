@@ -21,10 +21,12 @@ import ActivatedPilipay from "./modals/Activated";
 import { findtotalProduct } from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
 import {
+  Buyers,
   findBuyers,
   findOrderCount,
   findRevenue,
 } from "src/api/performance.service";
+import Error from "src/components/Error";
 
 const Dashboard = () => {
   return (
@@ -255,91 +257,38 @@ const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
 };
 
 const BottomLine = () => {
+  const stores = findBuyers();
+
   return (
-    <footer className="flex flex-col gap-8 sm:flex-row sm:flex-wrap">
-      <Table
-        columns={columnStore}
-        data={stores}
-        isLoading={false}
-        isTransparent
-        className="flex-1"
-      />
+    <footer className="grid lg:grid-cols-2 grid-cols-1 lg:gap-8 gap-4">
+      {stores.error ? (
+        <Error error={stores.error} />
+      ) : (
+        <Table
+          columns={columnStore}
+          data={stores.data ?? []}
+          isLoading={stores.isLoading}
+          isTransparent
+          className="overflow-y-auto whitespace-nowrap h-[18rem]"
+        />
+      )}
 
       <Table
         columns={columnProduct}
         data={products}
         isLoading={false}
         isTransparent
-        className="flex-1"
+        className="overflow-y-auto whitespace-nowrap h-[18rem]"
       />
     </footer>
   );
 };
-
-interface Store {
-  bestStore: string;
-  omset: number;
-  transaction: number;
-}
 
 interface Product {
   bestStore: string;
   category: string;
   totalPay: number;
 }
-
-const stores: Store[] = [
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    omset: 21311442,
-    transaction: 1231,
-  },
-];
 
 const products: Product[] = [
   {
@@ -354,23 +303,25 @@ const products: Product[] = [
   },
 ];
 
-const columnStore: Columns<Store>[] = [
+const columnStore: Columns<Buyers>[] = [
   {
     header: <p className="text-[#30b2e5] text-sm">toko terlaris</p>,
-    render: (v, idx) => <Label label={`${idx + 1}. ${v.bestStore}`} />,
+    render: (v, idx) => <Label label={`${idx + 1}. ${v.name}`} />,
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total omset (Rp)</p>
     ),
-    render: (v) => <Label label={Currency(v.omset)} className="justify-end" />,
+    render: (v) => (
+      <Label label={Currency(v.revenue)} className="justify-end" />
+    ),
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total transaksi</p>
     ),
     render: (v) => (
-      <Label label={Currency(v.transaction)} className="justify-end" />
+      <Label label={Currency(v.totalOrder)} className="justify-end" />
     ),
   },
 ];

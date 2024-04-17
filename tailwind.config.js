@@ -23,6 +23,7 @@ export default {
         calcSideBar: "calc(100vh - 12%)",
         calcSideBarDrawer: "calc(100vh - 16%)",
         calcOutlet: "calc(100vh - 100px)",
+        calcDashboardTable: "calc(100% - 200px)",
       },
       fontFamily: {
         interRegular: ["interRegular", "sans"],

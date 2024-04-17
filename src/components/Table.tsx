@@ -19,51 +19,48 @@ interface Table<T extends object>
 
 export default function Table<T extends object>(props: Table<T>) {
   return (
-    <div className={cx("flex flex-col gap-6", props.className)}>
-      <section className="relative">
-        <table className="w-full text-left bg-white shadow-sm table-fixed">
-          <thead
-            className={cx(
-              "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",
-              props.isTransparent ? "bg-transparent" : "bg-slate-100"
-            )}
-          >
-            <tr>
-              {props.columns.map((val, idx) => (
-                <th
-                  key={idx}
-                  className={cx(
-                    "p-3 font-semibold border border-gray-300 W-12 text-[13px]",
-                    val.width
-                  )}
-                >
-                  {val.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
+    <section className={cx("relative flex flex-col gap-4", props.className)}>
+      <table className="w-full text-left bg-white shadow-sm table-fixed">
+        <thead
+          className={cx(
+            "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",
+            props.isTransparent ? "bg-transparent" : "bg-slate-100"
+          )}
+        >
+          <tr>
+            {props.columns.map((val, idx) => (
+              <th
+                key={idx}
+                className={cx(
+                  "p-3 font-semibold border border-gray-300 W-12 text-[13px]",
+                  val.width
+                )}
+              >
+                {val.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
 
-          <tbody className="border border-gray-300">
-            {!props.isLoading &&
-              props.data &&
-              props.data?.map((it, idx) => (
-                <tr key={idx}>
-                  {props.columns.map((col, key) => (
-                    <td
-                      key={key}
-                      className={cx(
-                        "text-[13px] p-3 text-gray-700 W-12 border border-gray-300"
-                      )}
-                    >
-                      {col.render(it, idx)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </section>
-
+        <tbody className="border border-gray-300">
+          {!props.isLoading &&
+            props.data &&
+            props.data?.map((it, idx) => (
+              <tr key={idx}>
+                {props.columns.map((col, key) => (
+                  <td
+                    key={key}
+                    className={cx(
+                      "text-[13px] p-3 text-gray-700 W-12 border border-gray-300"
+                    )}
+                  >
+                    {col.render(it, idx)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+        </tbody>
+      </table>
       {props.isLoading && (
         <section>
           <CircularProgress
@@ -87,7 +84,7 @@ export default function Table<T extends object>(props: Table<T>) {
           prev={props.prev}
         />
       )}
-    </div>
+    </section>
   );
 }
 

@@ -7,6 +7,10 @@ import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 import queryString from "query-string";
 
+export const splitSlash = (value: string): string => {
+  return value.split("/")[1];
+};
+
 export const setHoursEpochTime = (hours: number, minutes: number): number => {
   const now = new Date();
   const setHours = now.setHours(hours, minutes, 0, 0);

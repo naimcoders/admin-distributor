@@ -7,7 +7,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Button } from "src/components/Button";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "src/firebase/auth";
-import { stringifyQuery } from "src/helpers";
+import { splitSlash, stringifyQuery } from "src/helpers";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import Skeleton from "src/components/Skeleton";
@@ -25,7 +25,11 @@ const Layout = () => {
       ) : (
         <section className="bg-background">
           <AsideNav />
-          <main className="p-6 lg:p-8 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet">
+          <main
+            className={cx(
+              "p-6 lg:pt-6 lg:pb-3 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet"
+            )}
+          >
             <Outlet />
           </main>
         </section>
@@ -39,7 +43,7 @@ const Header = () => {
   const [path, setPath] = React.useState("");
 
   React.useEffect(() => {
-    setPath(pathname?.split("/")[1]);
+    setPath(splitSlash(pathname));
   }, [pathname]);
 
   const currentPath = path.split("-").join(" ");

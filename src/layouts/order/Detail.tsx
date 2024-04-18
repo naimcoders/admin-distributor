@@ -27,7 +27,7 @@ const status: { eng: string; ina: string }[] = [
   { eng: "DELIVERY", ina: "Pengiriman" },
   { eng: "COMPLETE", ina: "Selesai" },
   { eng: "REJECT", ina: "Batal" },
-  { eng: "ITEM_READY", ina: "Barang tersedia" },
+  { eng: "ITEM_READY", ina: "Diantar kurir" },
   { eng: "VERIFY_PIN", ina: "Verifikasi PIN" },
 ];
 

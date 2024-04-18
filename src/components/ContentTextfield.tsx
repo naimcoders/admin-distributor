@@ -10,7 +10,9 @@ const ContentTextfield: FC<ContentProps> = ({ label, children }) => {
   return (
     <>
       {label ? (
-        <div className={`text-[${IconColor.zinc}] text-sm`}>{label}</div>
+        <div className={`text-[${IconColor.zinc}] text-sm cursor-default`}>
+          {label}
+        </div>
       ) : (
         children
       )}

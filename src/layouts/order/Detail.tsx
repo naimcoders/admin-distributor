@@ -7,6 +7,7 @@ import {
   acceptOrder,
   findOrderById,
   itemReadyOrder,
+  rejectOrder,
 } from "src/api/order.service";
 import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
@@ -252,6 +253,23 @@ const useItemReady = (orderId: string) => {
       const error = e as Error;
       toast.error(`Failed to submit the item ready: ${error.message}`);
       console.error(`Failed to submit the item ready: ${error.message}`);
+    }
+  };
+
+  return { onItemReady, isLoadingItemReady: isPending };
+};
+
+const useReject = (orderId: string) => {
+  const { mutateAsync, isPending } = rejectOrder(orderId);
+
+  const onItemReady = async () => {
+    try {
+      await mutateAsync();
+      toast.success("Order berhasil ditolak");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to reject the order: ${error.message}`);
+      console.error(`Failed to reject the order: ${error.message}`);
     }
   };
 

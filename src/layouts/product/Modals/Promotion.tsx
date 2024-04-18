@@ -99,7 +99,11 @@ const Promotion = ({
                   }}
                   control={promoForm.control}
                   endContent={
-                    <ChevronRightIcon color={IconColor.zinc} width={16} />
+                    <ChevronRightIcon
+                      color={IconColor.zinc}
+                      width={16}
+                      className="cursor-default"
+                    />
                   }
                 />
               )}

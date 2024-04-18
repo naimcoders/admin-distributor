@@ -1,7 +1,7 @@
 import queryString from "query-string";
 import { req } from "./request";
 import { ReqPaging, ResPaging } from "src/interface";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 
 export interface Order {
@@ -237,6 +237,15 @@ class Api {
       errors: "",
     });
   }
+
+  async accept(orderId: string): Promise<string> {
+    return await req<string>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${orderId}/accept`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiOrderInfo {
@@ -247,6 +256,7 @@ interface ApiOrderInfo {
     customerId?: string
   ): Promise<ResPaging<Order>>;
   findById(orderId: string): Promise<Order>;
+  accept(orderId: string): Promise<string>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -264,8 +274,8 @@ export const findOrders = (
   const [limit, setLimit] = React.useState(10);
   const [search, setSearch] = React.useState("");
 
-  const byPaging = async () =>
-    await getOrderApiInfo().find(
+  const byPaging = () =>
+    getOrderApiInfo().find(
       {
         limit,
         page,
@@ -297,7 +307,7 @@ export const findOrders = (
 };
 
 export const findOrderById = (orderId: string) => {
-  const get = async () => await getOrderApiInfo().findById(orderId);
+  const get = () => getOrderApiInfo().findById(orderId);
   const { data, isLoading, error } = useQuery<Order, Error>({
     queryKey: [key, orderId],
     queryFn: get,
@@ -305,4 +315,13 @@ export const findOrderById = (orderId: string) => {
   });
 
   return { data, isLoading, error: error?.message };
+};
+
+export const acceptOrder = (orderId: string) => {
+  const { mutateAsync, isPending } = useMutation<string, Error>({
+    mutationKey: ["accept-order", orderId],
+    mutationFn: () => getOrderApiInfo().accept(orderId),
+  });
+
+  return { mutateAsync, isPending };
 };

@@ -1,7 +1,10 @@
 import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
+import { Spinner } from "@nextui-org/react";
 import cx from "classnames";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { findOrderById } from "src/api/order.service";
+import { toast } from "react-toastify";
+import { acceptOrder, findOrderById } from "src/api/order.service";
 import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
@@ -29,6 +32,7 @@ const calculateSubTotal = (price: number, qty: number) => price * qty;
 const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
   const { error, isLoading, data } = findOrderById(orderId);
+  const { onAccept, isLoadingAccept } = useAccept(orderId);
 
   return (
     <>
@@ -39,21 +43,21 @@ const Detail = () => {
       ) : (
         <main className="bg-white rounded-lg px-5">
           <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
-            <section className="flexcol gap-2">
+            <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">ID Order</h1>
               <p>{data?.id}</p>
             </section>
-            <section className="flexcol gap-2">
+            <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">tanggal order</h1>
               <p>{epochToDateConvert(data?.createdAt)}</p>
             </section>
-            <section className="flexcol gap-2">
+            <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">status order</h1>
               <p className={cx("capitalize ", `text-[#fcb230]`)}>
                 {status.map((v) => data?.status === v.eng && v.ina)}
               </p>
             </section>
-            <section className="flexcol gap-2">
+            <section className="flex flex-col gap-2">
               <h1 className="font-medium capitalize">tanggal diterima</h1>
             </section>
           </section>
@@ -187,12 +191,40 @@ const Detail = () => {
               label="tolak"
               className="bg-transparent text-[#F31260] border border-[#F31260]"
             />
-            <Button label="terima 59:59" />
+            <Button
+              label={
+                isLoadingAccept ? (
+                  <Spinner color="secondary" size="sm" />
+                ) : (
+                  "terima 59:59"
+                )
+              }
+              onClick={onAccept}
+            />
           </section>
         </main>
       )}
     </>
   );
+};
+
+const useAccept = (orderId: string) => {
+  const { mutateAsync, isPending } = acceptOrder(orderId);
+  const [acceptResult, setAcceptResult] = React.useState("");
+
+  const onAccept = async () => {
+    try {
+      const result = await mutateAsync();
+      setAcceptResult(result);
+      toast.success("Order berhasil diterima");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to accept the order: ${error.message}`);
+      console.log(`Failed to accept the order: ${error.message}`);
+    }
+  };
+
+  return { onAccept, isLoadingAccept: isPending, acceptResult };
 };
 
 export default Detail;

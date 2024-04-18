@@ -2,10 +2,10 @@ import Label from "src/components/Label";
 import { Actions } from "src/components/Actions";
 import { Columns } from "src/types";
 import { Currency, parsePhoneNumber } from "src/helpers";
-import { Order, ReqStatusOrder } from "src/api/order.service";
+import { Order } from "src/api/order.service";
 import { useNavigate } from "react-router-dom";
 
-const useOrderColumns = (tab: ReqStatusOrder) => {
+const useOrderColumns = (tab: string) => {
   const navigate = useNavigate();
 
   const columns: Columns<Order>[] = [

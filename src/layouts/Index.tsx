@@ -82,6 +82,7 @@ export const SideBarFeature = () => {
   const qsProduct = stringifyQuery({ tab: "produk", page: 1 });
   const qsStore = stringifyQuery({ page: 1 });
   const qsDIstributor = stringifyQuery({ page: 1 });
+  const qsOrder = stringifyQuery({ status: "waiting_accept" });
 
   return (
     <>
@@ -99,7 +100,7 @@ export const SideBarFeature = () => {
           <LinkSideBar name="Ekspedisi" path="ekspedisi" />
         </>
       )}
-      <LinkSideBar name="Order" path="order" />
+      <LinkSideBar name="Order" path={`order?${qsOrder}`} />
       {user?.role === RoleDistributor.DISTRIBUTOR && (
         <LinkSideBar name="Report" path="report" />
       )}

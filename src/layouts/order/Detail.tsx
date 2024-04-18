@@ -1,5 +1,5 @@
 import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
-import { Spinner } from "@nextui-org/react";
+import { Chip, Spinner } from "@nextui-org/react";
 import cx from "classnames";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -191,33 +191,37 @@ const Detail = () => {
           </section>
 
           <section className="py-5">
-            {/* <p className="text-blue-800">Menunggu konfirmasi kurir</p> */}
+            {data?.status === "ITEM_READY" && (
+              <Chip color="primary" size="md" variant="flat">
+                Menunggu konfirmasi kurir
+              </Chip>
+            )}
 
-            <div className="flex lg:gap-5 gap-4 justify-center md:justify-end">
-              {data?.status === "WAITING_ACCEPT" && (
-                <>
-                  <Button
-                    label="tolak"
-                    className="bg-transparent text-[#F31260] border border-[#F31260]"
-                  />
+            {data?.status === "WAITING_ACCEPT" && (
+              <div className="flex lg:gap-5 gap-4 justify-center md:justify-end ">
+                <Button
+                  label="tolak"
+                  className="bg-transparent text-[#F31260] border border-[#F31260]"
+                />
 
-                  <Button
-                    label={
-                      isLoadingAccept ? (
-                        <Spinner color="secondary" size="sm" />
-                      ) : (
-                        "terima 59:59"
-                      )
-                    }
-                    onClick={onAccept}
-                  />
-                </>
-              )}
+                <Button
+                  label={
+                    isLoadingAccept ? (
+                      <Spinner color="secondary" size="sm" />
+                    ) : (
+                      "terima 59:59"
+                    )
+                  }
+                  onClick={onAccept}
+                />
+              </div>
+            )}
 
-              {data?.status === "ACCEPT" && (
+            {data?.status === "ACCEPT" && (
+              <div className="flex justify-end">
                 <Button label="tandai pesanan siap dikirim" className="w-max" />
-              )}
-            </div>
+              </div>
+            )}
           </section>
         </main>
       )}

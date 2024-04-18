@@ -255,6 +255,15 @@ class Api {
       errors: "",
     });
   }
+
+  async reject(orderId: string): Promise<string> {
+    return await req<string>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${orderId}/reject`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiOrderInfo {
@@ -267,6 +276,7 @@ interface ApiOrderInfo {
   findById(orderId: string): Promise<Order>;
   accept(orderId: string): Promise<string>;
   itemReady(orderId: string): Promise<string>;
+  reject(orderId: string): Promise<string>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -345,6 +355,19 @@ export const itemReadyOrder = (orderId: string) => {
   const { mutateAsync, isPending } = useMutation<string, Error>({
     mutationKey: ["item-ready-order", orderId],
     mutationFn: () => getOrderApiInfo().itemReady(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [key, orderId] });
+    },
+  });
+
+  return { mutateAsync, isPending };
+};
+
+export const rejectOrder = (orderId: string) => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMutation<string, Error>({
+    mutationKey: ["reject-order", orderId],
+    mutationFn: () => getOrderApiInfo().reject(orderId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: [key, orderId] });
     },

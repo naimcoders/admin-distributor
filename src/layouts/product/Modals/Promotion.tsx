@@ -135,7 +135,8 @@ const useFields = (normalPrice: string) => {
     setTimeout(actionIsPromotion, 400);
   };
 
-  // console.log(normalPrice);
+  // fee = DISKON eg. 5%
+  // priceDiscount = hasil kalkulasi eg. 1000 * 5% = 50
 
   const fields: TextfieldProps<DefaultValueProps>[] = [
     objectFields({
@@ -145,12 +146,12 @@ const useFields = (normalPrice: string) => {
       defaultValue: normalPrice,
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
-    objectFields({
-      name: "discount",
-      label: "diskon",
-      type: "rp",
-      defaultValue: "",
-    }),
+    // objectFields({
+    //   name: "discount",
+    //   label: "diskon",
+    //   type: "rp",
+    //   defaultValue: "",
+    // }),
     objectFields({
       name: "discountPercentage",
       label: "persentase diskon",

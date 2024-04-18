@@ -3,7 +3,11 @@ import { Spinner } from "@nextui-org/react";
 import cx from "classnames";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { acceptOrder, findOrderById } from "src/api/order.service";
+import {
+  acceptOrder,
+  findOrderById,
+  itemReadyOrder,
+} from "src/api/order.service";
 import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
@@ -217,11 +221,28 @@ const useAccept = (orderId: string) => {
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to accept the order: ${error.message}`);
-      console.log(`Failed to accept the order: ${error.message}`);
+      console.error(`Failed to accept the order: ${error.message}`);
     }
   };
 
   return { onAccept, isLoadingAccept: isPending };
+};
+
+const useItemReady = (orderId: string) => {
+  const { mutateAsync, isPending } = itemReadyOrder(orderId);
+
+  const onItemReady = async () => {
+    try {
+      await mutateAsync();
+      toast.success("Pesanan siap dikirim");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to submit the item ready: ${error.message}`);
+      console.error(`Failed to submit the item ready: ${error.message}`);
+    }
+  };
+
+  return { onItemReady, isLoadingItemReady: isPending };
 };
 
 export default Detail;

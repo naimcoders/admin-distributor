@@ -246,6 +246,15 @@ class Api {
       errors: "",
     });
   }
+
+  async itemReady(orderId: string): Promise<string> {
+    return await req<string>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${orderId}/item-ready`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiOrderInfo {
@@ -257,6 +266,7 @@ interface ApiOrderInfo {
   ): Promise<ResPaging<Order>>;
   findById(orderId: string): Promise<Order>;
   accept(orderId: string): Promise<string>;
+  itemReady(orderId: string): Promise<string>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -321,6 +331,15 @@ export const acceptOrder = (orderId: string) => {
   const { mutateAsync, isPending } = useMutation<string, Error>({
     mutationKey: ["accept-order", orderId],
     mutationFn: () => getOrderApiInfo().accept(orderId),
+  });
+
+  return { mutateAsync, isPending };
+};
+
+export const itemReadyOrder = (orderId: string) => {
+  const { mutateAsync, isPending } = useMutation<string, Error>({
+    mutationKey: ["item-ready-order", orderId],
+    mutationFn: () => getOrderApiInfo().itemReady(orderId),
   });
 
   return { mutateAsync, isPending };

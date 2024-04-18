@@ -1,7 +1,7 @@
 import queryString from "query-string";
 import { req } from "./request";
 import { ReqPaging, ResPaging } from "src/interface";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 export interface Order {
@@ -328,18 +328,26 @@ export const findOrderById = (orderId: string) => {
 };
 
 export const acceptOrder = (orderId: string) => {
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation<string, Error>({
     mutationKey: ["accept-order", orderId],
     mutationFn: () => getOrderApiInfo().accept(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [key, orderId] });
+    },
   });
 
   return { mutateAsync, isPending };
 };
 
 export const itemReadyOrder = (orderId: string) => {
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation<string, Error>({
     mutationKey: ["item-ready-order", orderId],
     mutationFn: () => getOrderApiInfo().itemReady(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [key, orderId] });
+    },
   });
 
   return { mutateAsync, isPending };

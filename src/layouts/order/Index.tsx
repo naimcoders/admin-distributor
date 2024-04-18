@@ -7,14 +7,14 @@ import Error from "src/components/Error";
 import { setUser } from "src/stores/auth";
 
 const data: SelectDataProps[] = [
-  { label: "menunggu konfirmasi", value: "WAITING_ACCEPT" },
-  { label: "pengiriman", value: "DELIVERY" },
+  { label: "menunggu diterima", value: "WAITING_ACCEPT" },
+  { label: "pending", value: "PENDING" },
   { label: "diterima", value: "ACCEPT" },
-  { label: "selesai", value: "COMPLETE" },
-  { label: "tertunda", value: "PENDING" },
-  { label: "batal", value: "REJECT" },
   { label: "barang siap", value: "ITEM_READY" },
   { label: "verifikasi PIN", value: "VERIFY_PIN" },
+  { label: "pengiriman", value: "DELIVERY" },
+  { label: "selesai", value: "COMPLETE" },
+  { label: "batal", value: "REJECT" },
 ];
 
 const Order = () => {

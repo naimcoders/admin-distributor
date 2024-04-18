@@ -20,10 +20,10 @@ import {
 } from "src/helpers";
 
 const status: { eng: string; ina: string }[] = [
-  { eng: "WAITING_ACCEPT", ina: "Menunggu Konfirmasi" },
-  { eng: "ACCEPT", ina: "Dikonfirmasi" },
+  { eng: "PENDING", ina: "Pending" },
+  { eng: "WAITING_ACCEPT", ina: "Menunggu Diterima" },
+  { eng: "ACCEPT", ina: "Diterima" },
   { eng: "DELIVERY", ina: "Pengiriman" },
-  { eng: "PENDING", ina: "Tertunda" },
   { eng: "COMPLETE", ina: "Selesai" },
   { eng: "REJECT", ina: "Batal" },
   { eng: "ITEM_READY", ina: "Barang Tersedia" },
@@ -190,20 +190,29 @@ const Detail = () => {
           </section>
 
           <section className="py-5 flex gap-5 justify-end">
-            <Button
-              label="tolak"
-              className="bg-transparent text-[#F31260] border border-[#F31260]"
-            />
-            <Button
-              label={
-                isLoadingAccept ? (
-                  <Spinner color="secondary" size="sm" />
-                ) : (
-                  "terima 59:59"
-                )
-              }
-              onClick={onAccept}
-            />
+            {data?.status === "WAITING_ACCEPT" && (
+              <>
+                <Button
+                  label="tolak"
+                  className="bg-transparent text-[#F31260] border border-[#F31260]"
+                />
+
+                <Button
+                  label={
+                    isLoadingAccept ? (
+                      <Spinner color="secondary" size="sm" />
+                    ) : (
+                      "terima 59:59"
+                    )
+                  }
+                  onClick={onAccept}
+                />
+              </>
+            )}
+
+            {/* {data?.status === "WAITING_ACCEPT" && (
+              <Button label="tandai pesanan siap dikirim" className="w-max" />
+            )} */}
           </section>
         </main>
       )}

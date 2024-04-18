@@ -56,7 +56,7 @@ const Header = () => {
       </section>
 
       <section className="flex gap-4">
-        <h1 className="text-secondary font-interMedium tracking-wide hidden md:block text-2xl capitalize">
+        <h1 className="text-secondary font-medium tracking-wide hidden md:block text-2xl capitalize">
           {currentPath}
         </h1>
       </section>

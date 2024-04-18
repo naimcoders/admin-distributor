@@ -21,12 +21,12 @@ import {
 
 const status: { eng: string; ina: string }[] = [
   { eng: "PENDING", ina: "Pending" },
-  { eng: "WAITING_ACCEPT", ina: "Menunggu Diterima" },
-  { eng: "ACCEPT", ina: "Diterima" },
+  { eng: "WAITING_ACCEPT", ina: "Menunggu konfirmasi" },
+  { eng: "ACCEPT", ina: "Pesanan diproses" },
   { eng: "DELIVERY", ina: "Pengiriman" },
   { eng: "COMPLETE", ina: "Selesai" },
   { eng: "REJECT", ina: "Batal" },
-  { eng: "ITEM_READY", ina: "Barang Tersedia" },
+  { eng: "ITEM_READY", ina: "Barang tersedia" },
   { eng: "VERIFY_PIN", ina: "Verifikasi PIN" },
 ];
 
@@ -189,30 +189,34 @@ const Detail = () => {
             </section>
           </section>
 
-          <section className="py-5 flex gap-5 justify-end">
-            {data?.status === "WAITING_ACCEPT" && (
-              <>
-                <Button
-                  label="tolak"
-                  className="bg-transparent text-[#F31260] border border-[#F31260]"
-                />
+          <section className="py-5">
+            {/* <p className="text-blue-800">Menunggu konfirmasi kurir</p> */}
 
-                <Button
-                  label={
-                    isLoadingAccept ? (
-                      <Spinner color="secondary" size="sm" />
-                    ) : (
-                      "terima 59:59"
-                    )
-                  }
-                  onClick={onAccept}
-                />
-              </>
-            )}
+            <div className="flex gap-5 justify-end">
+              {data?.status === "WAITING_ACCEPT" && (
+                <>
+                  <Button
+                    label="tolak"
+                    className="bg-transparent text-[#F31260] border border-[#F31260]"
+                  />
 
-            {/* {data?.status === "WAITING_ACCEPT" && (
-              <Button label="tandai pesanan siap dikirim" className="w-max" />
-            )} */}
+                  <Button
+                    label={
+                      isLoadingAccept ? (
+                        <Spinner color="secondary" size="sm" />
+                      ) : (
+                        "terima 59:59"
+                      )
+                    }
+                    onClick={onAccept}
+                  />
+                </>
+              )}
+
+              {data?.status === "ACCEPT" && (
+                <Button label="tandai pesanan siap dikirim" className="w-max" />
+              )}
+            </div>
           </section>
         </main>
       )}

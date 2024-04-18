@@ -20,6 +20,7 @@ interface PromotionProps extends Pick<UseForm, "setValue"> {
   images: string[];
   productName: string;
   description: string;
+  normalPrice: string;
 }
 
 interface DefaultValueProps {
@@ -34,10 +35,11 @@ const Promotion = ({
   images,
   productName,
   description,
+  normalPrice,
 }: PromotionProps) => {
   const promoForm = useForm<DefaultValueProps>();
   const { fields, actionIsPromotion, isPromotion, isPeriod, onClosePeriod } =
-    useFields();
+    useFields(normalPrice);
 
   return (
     <>
@@ -65,7 +67,6 @@ const Promotion = ({
               {["text", "rp", "number"].includes(v.type!) && (
                 <Textfield
                   {...v}
-                  defaultValue=""
                   control={promoForm.control}
                   errorMessage={handleErrorMessage(
                     promoForm.formState.errors,
@@ -120,7 +121,7 @@ const Promotion = ({
   );
 };
 
-const useFields = () => {
+const useFields = (normalPrice: string) => {
   const { actionIsPeriod, actionIsPromotion, isPromotion, isPeriod } =
     useActiveModal();
 
@@ -134,22 +135,28 @@ const useFields = () => {
     setTimeout(actionIsPromotion, 400);
   };
 
+  // console.log(normalPrice);
+
   const fields: TextfieldProps<DefaultValueProps>[] = [
     objectFields({
       name: "price",
       label: "harga normal",
-      type: "rp",
+      type: "text",
+      defaultValue: normalPrice,
+      readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       name: "discount",
       label: "diskon",
       type: "rp",
+      defaultValue: "",
     }),
     objectFields({
       name: "discountPercentage",
       label: "persentase diskon",
       type: "number",
       endContent: <ContentTextfield label="%" />,
+      defaultValue: "",
     }),
     objectFields({
       name: "period",
@@ -158,6 +165,7 @@ const useFields = () => {
       onClick: onOpenPeriod,
     }),
   ];
+
   return {
     fields,
     actionIsPromotion,

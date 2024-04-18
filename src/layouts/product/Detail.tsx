@@ -60,6 +60,7 @@ const Detail = () => {
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   const [subCategoryId, setSubCategoryId] = React.useState("");
   const [subDistributorId, setSubDistributorId] = React.useState("");
+  const [price, setPrice] = React.useState("");
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
@@ -130,9 +131,8 @@ const Detail = () => {
       setImageUrl(findById.data.imageUrl);
       setVariantTypesPrev(findById.data.variantProduct);
 
-      let price = "";
       if (findById.data.price.price) {
-        price = Currency(findById.data.price.price ?? 0);
+        setPrice(Currency(findById.data.price.price ?? 0));
       } else {
         const prices: number[] = [];
         const variantColor = findById.data.variantProduct?.map(
@@ -147,7 +147,7 @@ const Detail = () => {
 
         const min = Currency(Math.min(...prices));
         const max = Currency(Math.max(...prices));
-        price = min === max ? max : `${min} - ${max}`;
+        setPrice(min === max ? max : `${min} - ${max}`);
       }
 
       setSubCategoryId(findById.data.subCategoryProductId);
@@ -165,7 +165,7 @@ const Detail = () => {
       setValue("condition", "Baru");
       setValue("description", findById.data.description);
     }
-  }, [findById.data, imageUrl]);
+  }, [findById.data, imageUrl, price]);
 
   React.useEffect(() => {
     if (newImageFile) onUploadImage();
@@ -633,6 +633,7 @@ const Detail = () => {
         variantTypes={variantTypes}
       />
       <Promotion
+        normalPrice={price}
         setValue={setValue}
         images={findById.data?.imageUrl ?? []}
         productName={findById.data?.name ?? "-"}

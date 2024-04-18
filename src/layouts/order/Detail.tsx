@@ -1,7 +1,6 @@
 import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
 import { Spinner } from "@nextui-org/react";
 import cx from "classnames";
-import React from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { acceptOrder, findOrderById } from "src/api/order.service";
@@ -210,12 +209,10 @@ const Detail = () => {
 
 const useAccept = (orderId: string) => {
   const { mutateAsync, isPending } = acceptOrder(orderId);
-  const [acceptResult, setAcceptResult] = React.useState("");
 
   const onAccept = async () => {
     try {
-      const result = await mutateAsync();
-      setAcceptResult(result);
+      await mutateAsync();
       toast.success("Order berhasil diterima");
     } catch (e) {
       const error = e as Error;
@@ -224,7 +221,7 @@ const useAccept = (orderId: string) => {
     }
   };
 
-  return { onAccept, isLoadingAccept: isPending, acceptResult };
+  return { onAccept, isLoadingAccept: isPending };
 };
 
 export default Detail;

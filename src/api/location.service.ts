@@ -1,15 +1,21 @@
 import { req } from "./request";
 import { useQuery } from "@tanstack/react-query";
 import queryString from "query-string";
+import { setUser } from "src/stores/auth";
 
 export interface Location {
+  id: string;
   addressName: string;
+  detailAddress: string;
   city: string;
   district: string;
   lat: number;
   lng: number;
   province: string;
   zipCode: string;
+  isPrimary: boolean;
+  type: "BUSINESS";
+  userId: string;
 }
 
 interface Coordinate {
@@ -28,6 +34,15 @@ class Api {
   }
 
   private path = "location";
+
+  async findLocationByUserId(userId: string): Promise<Location[]> {
+    return await req<Location[]>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/${userId}`,
+      errors: "",
+    });
+  }
 
   async findGeoLocation(r: Coordinate): Promise<Location> {
     const query = queryString.stringify(
@@ -48,6 +63,7 @@ class Api {
 }
 
 interface ApiLocationInfo {
+  findLocationByUserId(userId: string): Promise<Location[]>;
   findGeoLocation(r: Coordinate): Promise<Location>;
 }
 
@@ -57,9 +73,18 @@ function getLocationApiInfo(): ApiLocationInfo {
 
 const key = "location";
 
+export const findLocationByUserId = () => {
+  const user = setUser((v) => v.user);
+
+  return useQuery<Location[], Error>({
+    queryKey: [key, user?.id],
+    queryFn: () => getLocationApiInfo().findLocationByUserId(user?.id ?? ""),
+    enabled: !!user?.id,
+  });
+};
+
 export const useLocation = () => {
   const findGeoLocation = (lat: number, lng: number) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Location, Error>({
       queryKey: [key, lat, lng],
       queryFn: async () =>

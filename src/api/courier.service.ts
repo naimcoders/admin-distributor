@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { req } from "./request";
+import { Location } from "./location.service";
 
 export interface Courier {
   courierInternal: CourierInternal;
@@ -51,6 +52,7 @@ export interface ReqCourierInternal {
   email: string;
   name: string;
   phoneNumber: string;
+  location: Location;
 }
 
 class Api {

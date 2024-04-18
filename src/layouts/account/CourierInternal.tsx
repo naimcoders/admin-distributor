@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { handleErrorMessage } from "src/helpers";
 import { toast } from "react-toastify";
 import { Spinner } from "@nextui-org/react";
+import { findLocationByUserId } from "src/api/location.service";
 
 const CourierInternal = () => {
   const { rekenings } = useHook();
@@ -24,8 +25,8 @@ const CourierInternal = () => {
     >
       {rekenings.map((v) => (
         <Textfield
-          key={v.label}
           {...v}
+          key={v.label}
           defaultValue=""
           control={control}
           errorMessage={handleErrorMessage(errors, v.name)}
@@ -49,10 +50,18 @@ const useApi = () => {
   } = useForm<ReqCourierInternal>();
 
   const { createCourierInternal } = useCourier();
+  const { data } = findLocationByUserId();
 
   const onSubmit = handleSubmit(async (e) => {
     try {
-      await createCourierInternal.mutateAsync(e);
+      if (!data) return;
+
+      const obj = {
+        ...e,
+        location: data[0],
+      };
+
+      await createCourierInternal.mutateAsync(obj);
       toast.success("Kurir internal berhasil dibuat");
       reset();
     } catch (e) {
@@ -64,8 +73,15 @@ const useApi = () => {
   const onSubmitKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       try {
+        if (!data) return;
         const values = getValues();
-        await createCourierInternal.mutateAsync(values);
+
+        const obj = {
+          ...values,
+          location: data[0],
+        };
+
+        await createCourierInternal.mutateAsync(obj);
         toast.success("Kurir internal berhasil dibuat");
         reset();
       } catch (e) {

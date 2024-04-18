@@ -193,7 +193,7 @@ const Detail = () => {
           <section className="py-5">
             {/* <p className="text-blue-800">Menunggu konfirmasi kurir</p> */}
 
-            <div className="flex gap-5 justify-end">
+            <div className="flex lg:gap-5 gap-4 justify-center md:justify-end">
               {data?.status === "WAITING_ACCEPT" && (
                 <>
                   <Button

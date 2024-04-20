@@ -195,9 +195,9 @@ const Detail = () => {
   const onSubmit = handleSubmit(async (e) => {
     setIsLoading(true);
     // ON CREATE VARIANT
-    if (variantTypesPrev.length < variantTypes.length) {
-      variantTypes.forEach(async (type) => {
-        const typePrevByName = variantTypesPrev.map((prev) => prev.name);
+    if (variantTypesPrev?.length < variantTypes?.length) {
+      variantTypes?.forEach(async (type) => {
+        const typePrevByName = variantTypesPrev?.map((prev) => prev.name);
         if (!typePrevByName.includes(type.name)) {
           try {
             const newVariant = await create.mutateAsync({
@@ -225,7 +225,7 @@ const Detail = () => {
     }
 
     // ON REMOVE VARIANT
-    if (variantId.length) {
+    if (variantId?.length) {
       variantId.forEach(async (id) => {
         try {
           await remove.mutateAsync({ variantId: id });
@@ -239,7 +239,7 @@ const Detail = () => {
     }
 
     // ON REMOVE VARIANT COLOR
-    if (variantColorId.length) {
+    if (variantColorId?.length) {
       variantColorId.forEach(async (id) => {
         try {
           await removeVariantColor.mutateAsync({ variantColorId: id });
@@ -253,7 +253,7 @@ const Detail = () => {
     }
 
     // ON UPDATE VARIANT CURRENT VARIANTS
-    variantTypesPrev.forEach((typePrev) => {
+    variantTypesPrev?.forEach((typePrev) => {
       variantTypes.map(async (type) => {
         if (typePrev.name === type.name) {
           try {
@@ -286,6 +286,7 @@ const Detail = () => {
           price: newPrice,
         },
         createForDistrbutorId: subDistributorId,
+        isAvailable: true,
       };
 
       const result = await update.mutateAsync({ data: obj });

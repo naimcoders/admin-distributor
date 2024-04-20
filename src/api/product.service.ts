@@ -250,7 +250,7 @@ export interface CreateProduct {
       price?: number;
     }[];
   }[];
-  isAvailable?: boolean;
+  isAvailable: boolean;
   createForDistrbutorId?: string;
 }
 

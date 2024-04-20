@@ -18,7 +18,11 @@ import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
 import React, { FC } from "react";
 import ActivatedPilipay from "./modals/Activated";
-import { findtotalProduct } from "src/api/product.service";
+import {
+  ProductBestSelling,
+  findtotalProduct,
+  productBestSelling,
+} from "src/api/product.service";
 import { findTotalSubDistributor } from "src/api/distributor.service";
 import {
   Buyers,
@@ -258,6 +262,7 @@ const BtnPiliPayActions = ({ label, src, alt, onClick }: PiliPayActions) => {
 
 const BottomLine = () => {
   const stores = findBuyers();
+  const products = productBestSelling();
 
   return (
     <footer className="grid lg:grid-cols-2 grid-cols-1 lg:gap-8 gap-4">
@@ -273,35 +278,20 @@ const BottomLine = () => {
         />
       )}
 
-      <Table
-        columns={columnProduct}
-        data={products}
-        isLoading={false}
-        isTransparent
-        className="overflow-y-auto whitespace-nowrap h-[18rem]"
-      />
+      {products.error ? (
+        <Error error={products.error} />
+      ) : (
+        <Table
+          columns={columnProduct}
+          data={products.data ?? []}
+          isLoading={products.isLoading}
+          isTransparent
+          className="overflow-y-auto whitespace-nowrap h-[18rem]"
+        />
+      )}
     </footer>
   );
 };
-
-interface Product {
-  bestStore: string;
-  category: string;
-  totalPay: number;
-}
-
-const products: Product[] = [
-  {
-    bestStore: "Kertas A4 1 Rim",
-    category: "Kantor & Alat Tulis",
-    totalPay: 532,
-  },
-  {
-    bestStore: "Sukses Jaya Mandiri",
-    category: "Bahan Bangunan",
-    totalPay: 513,
-  },
-];
 
 const columnStore: Columns<Buyers>[] = [
   {
@@ -326,21 +316,21 @@ const columnStore: Columns<Buyers>[] = [
   },
 ];
 
-const columnProduct: Columns<Product>[] = [
+const columnProduct: Columns<ProductBestSelling>[] = [
   {
     header: <p className="text-[#ae5eaa] text-sm">produk terlaris</p>,
-    render: (v, idx) => <Label label={`${idx + 1}. ${v.bestStore}`} />,
+    render: (v, idx) => <Label label={`${idx + 1}. ${v.productName}`} />,
   },
   {
     header: <p className="text-[#ae5eaa] text-sm">kategori</p>,
-    render: (v) => <Label label={v.category} />,
+    render: (v) => <Label label={v.categoryName} />,
   },
   {
     header: (
       <p className="text-right text-[#ae5eaa] text-sm">total pembelian</p>
     ),
     render: (v) => (
-      <Label label={Currency(v.totalPay)} className="justify-end" />
+      <Label label={Currency(v.orderCount)} className="justify-end" />
     ),
   },
 ];

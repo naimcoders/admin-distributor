@@ -258,6 +258,13 @@ interface RemoveImage {
   imageUrl: string;
 }
 
+export interface ProductBestSelling {
+  productId: string;
+  productName: string;
+  categoryName: string;
+  orderCount: number;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -344,6 +351,20 @@ class Api {
       path: `${this.path}/${productId}`,
     });
   }
+
+  async ProductBestSelling(userId: string): Promise<ProductBestSelling[]> {
+    const query = queryString.stringify(
+      { userId },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<ProductBestSelling[]>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/best-selling?${query}`,
+      errors: this.errors,
+    });
+  }
 }
 
 interface ApiProductInfo {
@@ -353,6 +374,7 @@ interface ApiProductInfo {
   update(productId: string, r: UpdateProduct): Promise<Product>;
   removeImageUrl(productId: string, r: RemoveImage): Promise<void>;
   findTotalProduct(userId: string): Promise<number>;
+  ProductBestSelling(userId: string): Promise<ProductBestSelling[]>;
 }
 
 export function getProductApiInfo(): ApiProductInfo {
@@ -360,6 +382,18 @@ export function getProductApiInfo(): ApiProductInfo {
 }
 
 const key = "product";
+
+export const productBestSelling = () => {
+  const user = setUser((v) => v.user);
+
+  const { data, isLoading, error } = useQuery<ProductBestSelling[], Error>({
+    queryKey: [`${key}-best-selling`, user?.id],
+    queryFn: () => getProductApiInfo().ProductBestSelling(user?.id ?? ""),
+    enabled: !!user?.id,
+  });
+
+  return { data, isLoading, error: error?.message };
+};
 
 export const findtotalProduct = () => {
   const user = setUser((v) => v.user);

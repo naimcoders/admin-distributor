@@ -139,7 +139,7 @@ const MiddleLine = () => {
           <Spinner size="sm" />
         ) : (
           <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
-            {Currency(revenue.data ?? 0)}
+            Rp{Currency(revenue.data ?? 0)}
           </CardBody>
         )}
       </Card>

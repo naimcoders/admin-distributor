@@ -250,7 +250,8 @@ export interface CreateProduct {
       price?: number;
     }[];
   }[];
-  createForDistrbutorId: string;
+  isAvailable?: boolean;
+  createForDistrbutorId?: string;
 }
 
 interface UpdateProduct extends Omit<CreateProduct, "imageUrl" | "variant"> {}
@@ -429,12 +430,10 @@ export const useProduct = (productId?: string) => {
     mutationKey: [key, "update", productId],
     mutationFn: (r) => getProductApiInfo().update(productId ?? "", r.data),
     onSuccess: () => {
-      toast.success("Produk berhasil diperbarui");
       void queryClient.invalidateQueries({
-        queryKey: [key, productId],
+        queryKey: [key],
       });
     },
-    onError: (e) => toast.error(e.message),
   });
 
   const create = useMutation<Product, Error, { data: CreateProduct }>({

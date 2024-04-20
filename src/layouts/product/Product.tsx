@@ -8,11 +8,14 @@ import { epochToDateConvert, stringifyQuery, useSetSearch } from "src/helpers";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { setUser } from "src/stores/auth";
+import { useSuspend } from "../distributor/Index";
+import { ConfirmModal } from "src/components/Modal";
+import { toast } from "react-toastify";
+import { useActiveModal } from "src/stores/modalStore";
 
 const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
   const navigate = useNavigate();
   const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
-  const { columns } = useHook();
   const user = setUser((v) => v.user);
   const { data, isLoading, isNext, page, setSearch, setPage } =
     useProduct().find(user?.id ?? "", Number(pageQuery));
@@ -27,24 +30,81 @@ const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
     navigate(`/produk?${qs}`);
   }, [qs]);
 
+  const { actionIsConfirm } = useActiveModal();
+  const { columns, id, isSuspend, product } = useHook();
+  const { update } = useProduct(id);
+
+  const onSuspend = async () => {
+    if (!product) return;
+
+    try {
+      const data = {
+        category: {
+          categoryId: product.categoryProduct.category.id,
+        },
+        deliveryPrice: product.deliveryPrice,
+        description: product.description,
+        isAvailable: !isSuspend,
+        isDangerous: product.isDangerous,
+        name: product.name,
+        price: product.price,
+        subCategoryId: product.subCategoryProductId,
+      };
+
+      await update.mutateAsync({ data });
+      toast.success(isSuspend ? "Produk dinon-aktifkan" : "Produk diaktifkan");
+      actionIsConfirm();
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to non-active the product: ${error.message}`);
+      console.error(`Failed to non-active the product: ${error.message}`);
+    }
+  };
+
   return (
-    <TableWithSearchAndTabs
-      columns={columns}
-      control={control}
-      isLoading={isLoading}
-      data={data?.items ?? []}
-      isNext={isNext}
-      next={onNext}
-      prev={onPrev}
-      page={page}
-      isPaginate
-      placeholder="cari nama produk/kategori/Sub-Kategori"
-    />
+    <>
+      <TableWithSearchAndTabs
+        columns={columns}
+        control={control}
+        isLoading={isLoading}
+        data={data?.items ?? []}
+        isNext={isNext}
+        next={onNext}
+        prev={onPrev}
+        page={page}
+        isPaginate
+        placeholder="cari nama produk/kategori/Sub-Kategori"
+      />
+
+      <ConfirmModal
+        label={
+          isSuspend
+            ? "Yakin ingin menonaktifkan produk ini?"
+            : "Yakin ingin mengaktifkan produk ini?"
+        }
+        onSubmit={{
+          label: isSuspend ? "non-aktifkan" : "aktifkan",
+          action: onSuspend,
+        }}
+      />
+    </>
   );
 };
 
 const useHook = () => {
   const navigate = useNavigate();
+  const { id, isSuspend, onSwitch: onTriggerSwitch } = useSuspend();
+  const [product, setProduct] = React.useState<Product>();
+
+  const onSwitch = (
+    productId: string,
+    isSuspendData: boolean,
+    product: Product
+  ) => {
+    setProduct(product);
+    onTriggerSwitch(productId, isSuspendData);
+  };
+
   const columns: Columns<Product>[] = [
     {
       header: <p className="text-center">nama produk</p>,
@@ -73,7 +133,7 @@ const useHook = () => {
           detail={{ onClick: () => navigate(`/produk/${v.id}`) }}
           switch={{
             isSelected: v.isAvailable,
-            onClick: () => console.log(v.isAvailable),
+            onClick: () => onSwitch(v.id, v.isAvailable, v),
           }}
         />
       ),
@@ -81,7 +141,7 @@ const useHook = () => {
     },
   ];
 
-  return { columns };
+  return { columns, isSuspend, id, product };
 };
 
 export default SubProduct;

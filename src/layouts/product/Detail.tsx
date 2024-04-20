@@ -289,11 +289,13 @@ const Detail = () => {
       };
 
       const result = await update.mutateAsync({ data: obj });
+
+      toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
       if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
-      console.error(`Failed to update : ${error.message}`);
+      toast.error(`Failed to update : ${error.message}`);
     } finally {
       clearVariantId();
       clearVariantColorId();

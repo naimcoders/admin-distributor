@@ -19,20 +19,21 @@ import { ConfirmModal } from "src/components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useActiveModal } from "src/stores/modalStore";
 import { setUser } from "src/stores/auth";
+import Skeleton from "src/components/Skeleton";
 
 export const useSuspend = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
-  const [distributorId, setIsDistributorId] = React.useState("");
+  const [id, setId] = React.useState("");
 
   const { actionIsConfirm } = useActiveModal();
 
-  const onSwitch = (distributorId: string, isSuspend: boolean) => {
-    setIsSuspend(isSuspend);
-    setIsDistributorId(distributorId);
+  const onSwitch = (id: string, isSuspendData: boolean) => {
+    setIsSuspend(isSuspendData);
+    setId(id);
     actionIsConfirm();
   };
 
-  return { distributorId, isSuspend, onSwitch, closeConfirm: actionIsConfirm };
+  return { id, isSuspend, onSwitch, closeConfirm: actionIsConfirm };
 };
 
 const Distributor = () => {
@@ -56,13 +57,14 @@ const Distributor = () => {
   const prev = () => setPage((num) => num - 1);
   const next = () => setPage((num) => num + 1);
 
-  const { onSwitch, isSuspend, closeConfirm, distributorId } = useSuspend();
+  const { onSwitch, isSuspend, closeConfirm, id } = useSuspend();
+
   const onSuspend = async () => {
     try {
       await mutateAsync({
-        closeModal: closeConfirm,
-        id: distributorId,
+        id,
         isSuspend: !isSuspend,
+        closeModal: closeConfirm,
       });
     } catch (e) {
       const error = e as Error;
@@ -107,9 +109,9 @@ const Distributor = () => {
   ];
 
   return (
-    <React.Fragment>
+    <>
       {authLoading ? (
-        <p>Loading...</p>
+        <Skeleton />
       ) : (
         <>
           {user?.role === RoleDistributor.DISTRIBUTOR ? (
@@ -160,7 +162,7 @@ const Distributor = () => {
           )}
         </>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

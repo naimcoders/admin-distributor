@@ -1,7 +1,6 @@
 import queryString from "query-string";
 import { req } from "./request";
 import { setUser } from "src/stores/auth";
-import { setHoursEpochTime } from "src/helpers";
 import { useQuery } from "@tanstack/react-query";
 
 export interface Buyers {
@@ -108,10 +107,8 @@ export const findBuyers = () => {
   return { data, isLoading, error: error?.message };
 };
 
-export const findRevenue = () => {
+export const findRevenue = (startAt: number, endAt: number) => {
   const user = setUser((v) => v.user);
-  const startAt = setHoursEpochTime(12, 1);
-  const endAt = setHoursEpochTime(23, 59);
 
   const { data, isLoading, error } = useQuery<number, Error>({
     queryKey: [key + "-revenue", user?.id, startAt, endAt],

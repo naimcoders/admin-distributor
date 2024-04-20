@@ -2,7 +2,7 @@ import { Button } from "src/components/Button";
 import { Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
 import { Columns } from "src/types";
 import { useActiveModal } from "src/stores/modalStore";
-import { Currency } from "src/helpers";
+import { Currency, setHoursEpochTime } from "src/helpers";
 import { findMeWallet } from "src/api/pilipay.service";
 import withdrawLogo from "src/assets/images/withdraw.png";
 import walletSVG from "src/assets/svg/wallet-fill.svg";
@@ -31,6 +31,7 @@ import {
   findRevenue,
 } from "src/api/performance.service";
 import Error from "src/components/Error";
+import { setUser } from "src/stores/auth";
 
 const Dashboard = () => {
   return (
@@ -120,6 +121,9 @@ const TopLine = () => {
 
 const MiddleLine = () => {
   const orders = findOrderCount();
+  const user = setUser((v) => v.user);
+  const endAt = setHoursEpochTime(23, 59);
+  const revenue = findRevenue(user?.createdAt ?? 0, endAt);
 
   return (
     <section className="grid-min-300 gap-8">
@@ -129,10 +133,17 @@ const MiddleLine = () => {
         <CardHeader as="h2" className="text-lg capitalize justify-center">
           total omset
         </CardHeader>
-        <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
-          Rp18,950,000
-        </CardBody>
+        {revenue.error ? (
+          <h2 className="text-red-200">Error</h2>
+        ) : revenue.isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
+            {Currency(revenue.data ?? 0)}
+          </CardBody>
+        )}
       </Card>
+
       <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">
         <CardHeader as="h2" className="text-lg capitalize justify-center">
           total transaksi
@@ -143,7 +154,7 @@ const MiddleLine = () => {
           <Spinner size="sm" />
         ) : (
           <CardBody as="h2" className="font-bold text-xl text-center -mt-4">
-            Rp{Currency(orders.data ?? 0)}
+            {Currency(orders.data ?? 0)}
           </CardBody>
         )}
       </Card>
@@ -162,7 +173,9 @@ const PiliPay = () => {
 };
 
 const PilipayTransaction = () => {
-  const { data, isLoading, error } = findRevenue();
+  const startAt = setHoursEpochTime(12, 1);
+  const endAt = setHoursEpochTime(23, 59);
+  const { data, isLoading, error } = findRevenue(startAt, endAt);
 
   return (
     <section className="flex items-center gap-4 flex-1">

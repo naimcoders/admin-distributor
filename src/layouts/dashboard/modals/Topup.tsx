@@ -88,7 +88,6 @@ const Topup = () => {
                     <section
                       key={v.label}
                       onClick={() => {
-                        // formState.setValue("amount", v.value);
                         setAmount((a) => (!a || a !== v.value ? v.value : 0));
                       }}
                       className={cx(

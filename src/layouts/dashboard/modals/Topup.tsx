@@ -16,6 +16,7 @@ import {
 } from "src/api/pilipay.service";
 import { cn, Image } from "@nextui-org/react";
 import { toast } from "react-toastify";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 const Topup = () => {
   const formState = useForm<ITopup>();
@@ -43,7 +44,7 @@ const Topup = () => {
         paymentMethod: channelPayment?.paymentChannel ?? "",
         paymentType: channelPayment?.paymentMethod ?? "",
       });
-      toast.success("Silahkan untuk pembayaran");
+      toast.success("Silakan untuk pembayaran");
     } catch (e) {
       toast.error("Gagal melakukan topup");
     } finally {
@@ -59,11 +60,22 @@ const Topup = () => {
         customHeader={<BeginHeader />}
       >
         <main className="my-4 border-t border-gray-300 pt-4 flexcol gap-4">
-          <h2 className="text-center">
-            {!showListPaymentChannel
-              ? "Top Up Pilipay"
-              : "Pilih Metode Pembayaran"}
-          </h2>
+          <div className="relative">
+            {showListPaymentChannel && (
+              <ArrowLeftIcon
+                width={18}
+                className="cursor-pointer absolute top-1"
+                title="Kembali"
+                onClick={() => setShowListPaymentChannel(false)}
+              />
+            )}
+
+            <h2 className="text-center">
+              {!showListPaymentChannel
+                ? "Top Up Pilipay"
+                : "Pilih Metode Pembayaran"}
+            </h2>
+          </div>
 
           {!showListPaymentChannel ? (
             <section>

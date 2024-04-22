@@ -81,7 +81,7 @@ const TotalSubDistributor = () => {
   const data = findTotalSubDistributor();
   return (
     <TotalData
-      title="total distributor"
+      title="total sub-distributor"
       gradient="from-[#23d8dc] to-[#5687e9]"
       data={data.data}
     />

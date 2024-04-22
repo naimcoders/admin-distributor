@@ -5,7 +5,7 @@ import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
-import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import { Currency, CurrencyIDInput, handleErrorMessage } from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import Confirm from "./Confirm";
@@ -13,6 +13,7 @@ import cx from "classnames";
 
 const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
+  const [amount, setAmount] = useState(0);
 
   const {
     isTransfer,
@@ -22,13 +23,6 @@ const Transfer = () => {
   } = useActiveModal();
 
   const {
-    nominals,
-    selectedNominal,
-    setSelectedNominal,
-    parseSelectedNominal,
-  } = useNominal();
-
-  const {
     control,
     setValue,
     handleSubmit,
@@ -36,12 +30,12 @@ const Transfer = () => {
   } = useForm<FieldValues>();
 
   const handleOther = () => {
-    setSelectedNominal("");
+    setAmount(0);
     setIsOtherField((v) => !v);
   };
 
   const handleNext = () => {
-    if (!selectedNominal && !isOtherField) {
+    if (!amount && !isOtherField) {
       toast.error("Pilih nominal transfer");
       return;
     }
@@ -58,7 +52,6 @@ const Transfer = () => {
   const onSubmit = handleSubmit((e) => {
     console.log(e);
     actionIsConfirmTransfer();
-    // setTimeout(actionIsPinVerification, 500);
   });
 
   return (
@@ -76,10 +69,14 @@ const Transfer = () => {
               {nominals.map((v) => (
                 <section
                   key={v.label}
-                  onClick={() => console.log(v.label)}
+                  onClick={() =>
+                    setAmount((nominal) =>
+                      !nominal || nominal !== v.value ? v.value : 0
+                    )
+                  }
                   className={cx(
                     "border border-gray-400 text-center py-2 rounded-xl cursor-pointer",
-                    selectedNominal === v.label && "bg-gray-200"
+                    amount === v.value && "bg-gray-200"
                   )}
                 >
                   {v.label}
@@ -138,7 +135,7 @@ const Transfer = () => {
         title="transfer"
         isModal={isConfirmTransfer}
         actionModal={actionIsConfirmTransfer}
-        selectedNominal={parseSelectedNominal()}
+        selectedNominal={amount}
       >
         <Textfield
           type="number"
@@ -163,7 +160,7 @@ const Transfer = () => {
           <section className="text-sm">
             <section className="flex justify-between">
               <h2>Jumlah Transfer</h2>
-              <p>Rp{parseSelectedNominal()}</p>
+              <p>Rp{Currency(amount)}</p>
             </section>
             <section className="flex justify-between">
               <h2>Biaya Transfer</h2>
@@ -174,7 +171,7 @@ const Transfer = () => {
 
         <section className="border-t border-gray-300 py-4 flex justify-between font-semibold">
           <h2>Total</h2>
-          <p>Rp{parseSelectedNominal()}</p>
+          <p>Rp{Currency(amount)}</p>
         </section>
 
         <Button label="konfirmasi" className="w-full" onClick={onSubmit} />
@@ -183,20 +180,27 @@ const Transfer = () => {
   );
 };
 
+export const nominals: NominalProps[] = [
+  { value: 50000, label: "50k" },
+  { value: 100000, label: "100k" },
+  { value: 200000, label: "200k" },
+  { value: 500000, label: "500k" },
+];
+
 interface NominalProps {
-  value: string;
+  value: number;
   label: string;
 }
 
 export const useNominal = () => {
   const [selectedNominal, setSelectedNominal] = useState("");
 
-  const nominals: NominalProps[] = [
-    { value: "50000", label: "50k" },
-    { value: "100000", label: "100k" },
-    { value: "200000", label: "200k" },
-    { value: "500000", label: "500k" },
-  ];
+  // const nominals: NominalProps[] = [
+  //   { value: "50000", label: "50k" },
+  //   { value: "100000", label: "100k" },
+  //   { value: "200000", label: "200k" },
+  //   { value: "500000", label: "500k" },
+  // ];
 
   const parseSelectedNominal = (): string => {
     const parseit = selectedNominal.split("k")[0];

@@ -1,11 +1,12 @@
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { FC, ReactNode } from "react";
 import { Modal } from "src/components/Modal";
+import { Currency } from "src/helpers";
 
 interface ConfirmProps extends HeaderProps {
   isModal: boolean;
   actionModal: () => void;
-  selectedNominal: string;
+  selectedNominal: number;
   children?: ReactNode;
 }
 
@@ -26,7 +27,9 @@ const Confirm: FC<ConfirmProps> = ({
       <main className="flexcol gap-4">
         <section className="flexcol gap-1">
           <h2 className="capitalize">jumlah transfer</h2>
-          <h2 className="font-semibold text-lg">Rp{selectedNominal}</h2>
+          <h2 className="font-semibold text-lg">
+            Rp{Currency(selectedNominal)}
+          </h2>
         </section>
 
         {children}

@@ -7,7 +7,7 @@ import { Textfield } from "src/components/Textfield";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import cx from "classnames";
-import { useNominal } from "./Transfer";
+import { nominals } from "./Transfer";
 import {
   findPaymentChannel,
   ITopup,
@@ -22,25 +22,28 @@ const Topup = () => {
   const formState = useForm<ITopup>();
   const [isOtherField, setIsOtherField] = useState(false);
   const [showListPaymentChannel, setShowListPaymentChannel] = useState(false);
+  const [amount, setAmount] = useState(0);
   const [channelPayment, setPaymentChannel] = useState<PayoutChannels>();
   const paymentChannel = findPaymentChannel();
   const { topup: topupActions } = usePilipay();
 
   const { isTopUp, actionIsTopUp } = useActiveModal();
-  const { nominals, selectedNominal, setSelectedNominal } = useNominal();
 
   const handleOther = () => {
-    setSelectedNominal("");
+    setAmount(0);
     setIsOtherField((v) => !v);
   };
 
   const onActionTopup = async () => {
     try {
+      const newAmount = formState.getValues("amount");
+      const fixAmount = !newAmount ? amount : Number(newAmount);
+
       toast.loading("Loading...", {
         toastId: "loading-topup",
       });
       await topupActions.mutateAsync({
-        amount: Number(formState.getValues("amount")),
+        amount: fixAmount,
         paymentMethod: channelPayment?.paymentChannel ?? "",
         paymentType: channelPayment?.paymentMethod ?? "",
       });
@@ -85,12 +88,12 @@ const Topup = () => {
                     <section
                       key={v.label}
                       onClick={() => {
-                        formState.setValue("amount", Number(v.value));
-                        setSelectedNominal(v.label);
+                        // formState.setValue("amount", v.value);
+                        setAmount((a) => (!a || a !== v.value ? v.value : 0));
                       }}
                       className={cx(
                         "border border-gray-400 text-center py-2 rounded-xl cursor-pointer",
-                        selectedNominal === v.label && "bg-gray-200"
+                        amount === v.value && "bg-gray-200"
                       )}
                     >
                       {v.label}
@@ -109,6 +112,7 @@ const Topup = () => {
               ) : (
                 <Textfield
                   name="amount"
+                  defaultValue=""
                   control={formState.control}
                   classNameWrapper="col-span-2"
                   placeholder="masukkan jumlah lainnya"
@@ -159,7 +163,19 @@ const Topup = () => {
                   />
                 )}
                 <Button
-                  onClick={() => setShowListPaymentChannel(true)}
+                  onClick={() => {
+                    if (!amount && !isOtherField) {
+                      toast.error("Pilih nominal top up");
+                      return;
+                    }
+
+                    if (isOtherField && !formState.getValues("amount")) {
+                      toast.error("Masukkan nominal top up");
+                      return;
+                    }
+
+                    setShowListPaymentChannel(true);
+                  }}
                   label="selanjutnya"
                   className={cx("w-full", !isOtherField && "col-span-2")}
                 />

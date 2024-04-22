@@ -180,39 +180,16 @@ const Transfer = () => {
   );
 };
 
+interface NominalProps {
+  value: number;
+  label: string;
+}
+
 export const nominals: NominalProps[] = [
   { value: 50000, label: "50k" },
   { value: 100000, label: "100k" },
   { value: 200000, label: "200k" },
   { value: 500000, label: "500k" },
 ];
-
-interface NominalProps {
-  value: number;
-  label: string;
-}
-
-export const useNominal = () => {
-  const [selectedNominal, setSelectedNominal] = useState("");
-
-  // const nominals: NominalProps[] = [
-  //   { value: "50000", label: "50k" },
-  //   { value: "100000", label: "100k" },
-  //   { value: "200000", label: "200k" },
-  //   { value: "500000", label: "500k" },
-  // ];
-
-  const parseSelectedNominal = (): string => {
-    const parseit = selectedNominal.split("k")[0];
-    return `${parseit}.000`;
-  };
-
-  return {
-    nominals,
-    selectedNominal,
-    setSelectedNominal,
-    parseSelectedNominal,
-  };
-};
 
 export default Transfer;

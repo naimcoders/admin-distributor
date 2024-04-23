@@ -49,6 +49,7 @@ const Transfer = () => {
 
   const handleOther = () => {
     setAmount(0);
+    resetField("other");
     setIsOtherField((v) => !v);
   };
 

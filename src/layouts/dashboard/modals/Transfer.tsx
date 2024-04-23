@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
@@ -15,6 +15,11 @@ import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import Confirm from "./Confirm";
 import cx from "classnames";
+
+interface DefaultValues {
+  phoneNumber: string;
+  other: string;
+}
 
 const Transfer = () => {
   const [isOtherField, setIsOtherField] = useState(false);
@@ -32,7 +37,7 @@ const Transfer = () => {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm<DefaultValues>();
 
   const handleOther = () => {
     setAmount(0);
@@ -62,8 +67,9 @@ const Transfer = () => {
   };
 
   const onSubmit = handleSubmit((e) => {
-    console.log(e);
-    actionIsConfirmTransfer();
+    console.log(amount, e.phoneNumber);
+    // TODO: validate the amount with pilipay balance
+    // actionIsConfirmTransfer();
   });
 
   return (

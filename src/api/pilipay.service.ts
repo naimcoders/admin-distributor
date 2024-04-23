@@ -163,6 +163,8 @@ export const findPaymentChannel = () => {
   };
 };
 
+const key = "pilipay";
+
 export const findMeWallet = (showHistory: boolean) => {
   const data = useQuery<Pilipay, Error>({
     queryKey: [key],
@@ -175,8 +177,6 @@ export const findMeWallet = (showHistory: boolean) => {
     error: data?.error,
   };
 };
-
-const key = "pilipay";
 
 export const transferBalance = () => {
   const queryClient = useQueryClient();

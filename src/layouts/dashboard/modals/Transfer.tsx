@@ -9,6 +9,7 @@ import {
   Currency,
   CurrencyIDInput,
   handleErrorMessage,
+  parsePhoneNumber,
   parseTextToNumber,
 } from "src/helpers";
 import { Button } from "src/components/Button";
@@ -42,6 +43,8 @@ const Transfer = () => {
     setValue,
     handleSubmit,
     formState: { errors },
+    reset,
+    resetField,
   } = useForm<DefaultValues>();
 
   const handleOther = () => {
@@ -88,11 +91,13 @@ const Transfer = () => {
   const onSubmit = handleSubmit(async (e) => {
     try {
       toast.loading("Loading...", { toastId: "transfer-loading" });
-      await mutateAsync({ amount, pin: e.pin, toPhoneNumber: e.phoneNumber });
+      const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
+      await mutateAsync({ amount, pin: e.pin, toPhoneNumber: newPhoneNumber });
 
       toast.success("Transfer berhasil");
       actionIsPin();
       setAmount(0);
+      reset();
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to transfer: ${error.message}`);
@@ -233,6 +238,7 @@ const Transfer = () => {
             title="verifikasi PIN"
             onBack={() => {
               actionIsPin();
+              resetField("pin");
               setTimeout(actionIsConfirmTransfer, 500);
             }}
           />

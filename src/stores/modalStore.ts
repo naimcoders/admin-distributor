@@ -43,8 +43,8 @@ interface Modal {
   setIsConfirmTransfer: (v: boolean) => void;
   isConfirmTopup: boolean;
   setIsConfirmTopup: (v: boolean) => void;
-  isCreatePin: boolean;
-  setIsCreatePin: (v: boolean) => void;
+  isPin: boolean;
+  setIsPin: (v: boolean) => void;
 }
 
 const useModalStore = create<Modal>((set) => ({
@@ -54,8 +54,8 @@ const useModalStore = create<Modal>((set) => ({
   setIsPromotion: (v) => set({ isPromotion: v }),
   isDeleteImageProduct: false,
   setIsDeleteImageProduct: (v) => set({ isDeleteImageProduct: v }),
-  isCreatePin: false,
-  setIsCreatePin: (v) => set({ isCreatePin: v }),
+  isPin: false,
+  setIsPin: (v) => set({ isPin: v }),
   isPrice: false,
   setIsPrice: (v) => set({ isPrice: v }),
   isBankName: false,
@@ -124,7 +124,7 @@ export const useActiveModal = () => {
     modals.setIsConfirmTransfer(!modals.isConfirmTransfer);
   const actionIsConfirmTopUp = () =>
     modals.setIsConfirmTopup(!modals.isConfirmTopup);
-  const actionIsCreatePin = () => modals.setIsCreatePin(!modals.isCreatePin);
+  const actionIsPin = () => modals.setIsPin(!modals.isPin);
   const actionIsDeleteImageProduct = () =>
     modals.setIsDeleteImageProduct(!modals.isDeleteImageProduct);
 
@@ -171,7 +171,7 @@ export const useActiveModal = () => {
     actionIsWithdraw,
     isPrice: modals.isPrice,
     actionIsPrice,
-    actionIsCreatePin,
-    isCreatePin: modals.isCreatePin,
+    actionIsPin,
+    isPin: modals.isPin,
   };
 };

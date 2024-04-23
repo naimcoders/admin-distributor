@@ -13,12 +13,15 @@ import {
 } from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
-import Confirm from "./Confirm";
+import Confirm, { ConfirmHeader } from "./Confirm";
 import cx from "classnames";
+import { findMeWallet, transferBalance } from "../../../api/pilipay.service";
+import { Spinner } from "@nextui-org/react";
 
 interface DefaultValues {
   phoneNumber: string;
   other: string;
+  pin: string;
 }
 
 const Transfer = () => {
@@ -30,6 +33,8 @@ const Transfer = () => {
     actionIsTransfer,
     actionIsConfirmTransfer,
     isConfirmTransfer,
+    isPin,
+    actionIsPin,
   } = useActiveModal();
 
   const {
@@ -66,10 +71,34 @@ const Transfer = () => {
     setTimeout(actionIsTransfer, 500);
   };
 
-  const onSubmit = handleSubmit((e) => {
-    console.log(amount, e.phoneNumber);
-    // TODO: validate the amount with pilipay balance
-    // actionIsConfirmTransfer();
+  const { data: wallet } = findMeWallet(true);
+  const { mutateAsync, isPending } = transferBalance();
+
+  const onNextToPin = () => {
+    if (!wallet) return;
+    if (amount <= wallet.balance) {
+      actionIsConfirmTransfer();
+      setTimeout(actionIsPin, 500);
+    } else {
+      toast.error("Saldo tidak cukup");
+      return;
+    }
+  };
+
+  const onSubmit = handleSubmit(async (e) => {
+    try {
+      toast.loading("Loading...", { toastId: "transfer-loading" });
+      await mutateAsync({ amount, pin: e.pin, toPhoneNumber: e.phoneNumber });
+
+      toast.success("Transfer berhasil");
+      actionIsPin();
+      setAmount(0);
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to transfer: ${error.message}`);
+    } finally {
+      toast.dismiss("transfer-loading");
+    }
   });
 
   return (
@@ -192,8 +221,40 @@ const Transfer = () => {
           <p>Rp{Currency(amount)}</p>
         </section>
 
-        <Button label="konfirmasi" className="w-full" onClick={onSubmit} />
+        <Button label="konfirmasi" className="w-full" onClick={onNextToPin} />
       </Confirm>
+
+      {/* PIN Verification */}
+      <Modal
+        isOpen={isPin}
+        closeModal={actionIsPin}
+        customHeader={
+          <ConfirmHeader
+            title="verifikasi PIN"
+            onBack={() => {
+              actionIsPin();
+              setTimeout(actionIsConfirmTransfer, 500);
+            }}
+          />
+        }
+      >
+        <Textfield
+          name="pin"
+          label="Masukkan PIN Anda"
+          control={control}
+          defaultValue=""
+          errorMessage={handleErrorMessage(errors, "pin")}
+          classNames={{ input: "text-center" }}
+          rules={{ required: { value: true, message: "Masukkan PIN" } }}
+        />
+        <Button
+          label={
+            isPending ? <Spinner size="sm" color="secondary" /> : "tranfer"
+          }
+          onClick={onSubmit}
+          className="mx-auto lg:mt-6 mt-4 block"
+        />
+      </Modal>
     </>
   );
 };

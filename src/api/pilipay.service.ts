@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import queryString from "query-string";
 import { req } from "./request";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export enum ETypeHistoryPilipay {
@@ -65,6 +65,12 @@ export interface ITopup {
   paymentMethod: string;
 }
 
+export interface ITransferBalance {
+  amount: number;
+  toPhoneNumber: string;
+  pin: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -120,6 +126,16 @@ class Api {
       body: r,
     });
   }
+
+  async transferBalance(r: ITransferBalance): Promise<Pilipay> {
+    return await req<Pilipay>({
+      method: "POST",
+      isNoAuth: false,
+      path: `${this.path}/transfer-balance`,
+      body: r,
+      errors: "",
+    });
+  }
 }
 
 interface ApiPilipayInfo {
@@ -127,6 +143,7 @@ interface ApiPilipayInfo {
   activated(r: Activated): Promise<Pilipay>;
   findPaymentChannel(): Promise<PayoutChannels[]>;
   topup(r: ITopup): Promise<string>;
+  transferBalance(r: ITransferBalance): Promise<Pilipay>;
 }
 
 function getPilipayApiInfo(): ApiPilipayInfo {
@@ -160,6 +177,22 @@ export const findMeWallet = (showHistory: boolean) => {
 };
 
 const key = "pilipay";
+
+export const transferBalance = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending } = useMutation<
+    Pilipay,
+    Error,
+    ITransferBalance
+  >({
+    mutationKey: ["transfer-balance"],
+    mutationFn: (r) => getPilipayApiInfo().transferBalance(r),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+
+  return { mutateAsync, isPending };
+};
 
 export const usePilipay = () => {
   const activated = useMutation<Pilipay, Error, Activated>({

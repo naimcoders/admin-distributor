@@ -5,7 +5,12 @@ import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
-import { Currency, CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import {
+  Currency,
+  CurrencyIDInput,
+  handleErrorMessage,
+  parseTextToNumber,
+} from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import Confirm from "./Confirm";
@@ -34,15 +39,22 @@ const Transfer = () => {
     setIsOtherField((v) => !v);
   };
 
-  const handleNext = () => {
+  const handleNext = handleSubmit((e) => {
     if (!amount && !isOtherField) {
       toast.error("Pilih nominal transfer");
       return;
     }
 
+    if (isOtherField && !e.other) {
+      toast.error("Masukkan nominal transfer");
+      return;
+    }
+
+    if (e.other) setAmount(parseTextToNumber(e.other));
+
     actionIsTransfer();
     setTimeout(actionIsConfirmTransfer, 500);
-  };
+  });
 
   const onBack = () => {
     actionIsConfirmTransfer();

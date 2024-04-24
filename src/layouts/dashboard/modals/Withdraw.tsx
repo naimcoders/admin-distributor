@@ -5,7 +5,11 @@ import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { BeginHeader } from "./History";
 import { Textfield } from "src/components/Textfield";
-import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import {
+  CurrencyIDInput,
+  handleErrorMessage,
+  parseTextToNumber,
+} from "src/helpers";
 import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import { ConfirmHeader } from "./Confirm";
@@ -16,19 +20,15 @@ import { nominals } from "./Transfer";
 interface DefaultValues {
   other: string;
   pin: string;
+  phoneNumber: string;
 }
 
 const Withdraw = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const [amount, setAmount] = useState(0);
+  const [isPin, setIsPin] = useState(false);
 
-  const {
-    isWithdraw,
-    actionIsWithdraw,
-    actionIsConfirmTransfer,
-    isPin,
-    actionIsPin,
-  } = useActiveModal();
+  const { isWithdraw, actionIsWithdraw } = useActiveModal();
 
   const {
     control,
@@ -45,42 +45,44 @@ const Withdraw = () => {
   };
 
   const handleNext = handleSubmit((e) => {
+    if (!wallet) return;
     if (!amount && !isOtherField) {
-      toast.error("Pilih nominal transfer");
+      toast.error("Pilih nominal withdraw");
       return;
     }
 
     if (isOtherField && !e.other) {
-      toast.error("Masukkan nominal transfer");
+      toast.error("Masukkan nominal withdraw");
       return;
     }
 
-    console.log(amount);
+    const balanceValue = wallet.balance;
+    const amountOther = e.other ? parseTextToNumber(e.other) : 0;
 
-    // if (e.other) setAmount(parseTextToNumber(e.other));
-
-    // actionIsWithdraw();
-    // setTimeout(actionIsPin, 500);
+    if (
+      (amountOther && amountOther <= balanceValue) ||
+      (amount && amount <= balanceValue)
+    ) {
+      actionIsWithdraw();
+      setTimeout(() => setIsPin(true), 500);
+      console.log(balanceValue);
+    } else {
+      toast.error("Saldo tidak cukup");
+      return;
+    }
   });
 
   const onBack = () => {
-    actionIsPin();
+    setIsPin(false);
     resetField("pin");
     setTimeout(actionIsWithdraw, 500);
   };
 
   const { data: wallet } = findMeWallet(true);
 
-  const onSubmit = () => {
-    if (!wallet) return;
-    if (amount <= wallet.balance) {
-      actionIsConfirmTransfer();
-      setTimeout(actionIsPin, 500);
-    } else {
-      toast.error("Saldo tidak cukup");
-      return;
-    }
-  };
+  const onSubmit = handleSubmit(async (e) => {
+    console.log("submit");
+  });
 
   // const onSubmit = handleSubmit(async (e) => {
   //   try {
@@ -179,7 +181,7 @@ const Withdraw = () => {
       {/* PIN Verification */}
       <Modal
         isOpen={isPin}
-        closeModal={actionIsPin}
+        closeModal={() => setIsPin(false)}
         customHeader={<ConfirmHeader title="verifikasi PIN" onBack={onBack} />}
       >
         <Textfield

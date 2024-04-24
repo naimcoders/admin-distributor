@@ -27,11 +27,6 @@ interface DefaultValues {
   accountHolderName: string;
 }
 
-const channelData: SelectDataProps[] = [
-  { label: "E-WALLET", value: "EWALLET" },
-  { label: "BANK", value: "BANK" },
-];
-
 const Withdraw = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -47,6 +42,7 @@ const Withdraw = () => {
     handleSubmit,
     formState: { errors },
     resetField,
+    reset,
   } = useForm<DefaultValues>();
 
   const handleOther = () => {
@@ -94,13 +90,10 @@ const Withdraw = () => {
     setTimeout(() => setIsPin(true), 500);
   });
 
-  const { data: channelWithdraw } = findWithdraw(channelCategory);
+  const { channelData } = useBanks();
   const { mutateAsync } = createWithdraw();
 
   const onSubmit = handleSubmit(async (e) => {
-    // console.log(channelWithdraw);
-    console.log(e);
-
     try {
       // await mutateAsync({
       //   amount,
@@ -111,6 +104,7 @@ const Withdraw = () => {
       //   channelCategory: "",
       // });
       toast.success("Berhasil melakukan withdraw");
+      reset();
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to withdraw: ${error.message}`);
@@ -210,13 +204,13 @@ const Withdraw = () => {
         <section className="flex flex-col gap-5">
           <Textfield
             name="accountHolderName"
-            label="nama lengkap"
-            placeholder="masukkan nama lengkap"
+            label="nama pemilik rekening"
+            placeholder="masukkan pemilik rekening"
             control={control}
             defaultValue=""
             errorMessage={handleErrorMessage(errors, "accountHolderName")}
             rules={{
-              required: { value: true, message: "masukkan nama lengkap" },
+              required: { value: true, message: "masukkan pemilik rekening" },
             }}
           />
 
@@ -235,9 +229,9 @@ const Withdraw = () => {
           />
 
           <Select
-            data={channelData}
-            label="kategori channel"
-            placeholder="pilih kategori channel"
+            data={channelData ?? [{ label: "Tidak ada data", value: "" }]}
+            label="bank"
+            placeholder="pilih bank"
             setSelected={setChannelCategory}
             defaultSelectedKeys={channelCategory}
           />
@@ -281,6 +275,19 @@ const Withdraw = () => {
       </Modal>
     </>
   );
+};
+
+const useBanks = () => {
+  const { data } = findWithdraw("BANK");
+
+  const bankNames = data?.map((e) => ({
+    label: e.channel_name,
+    value: e.channel_name,
+  }));
+
+  const channelData: SelectDataProps[] | undefined = bankNames;
+
+  return { channelData };
 };
 
 export default Withdraw;

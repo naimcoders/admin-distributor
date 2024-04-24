@@ -71,6 +71,15 @@ export interface ITransferBalance {
   pin: string;
 }
 
+export interface IWithdraw {
+  amount: number;
+  pin: string;
+  number: string;
+  channelCode: string;
+  channelCategory: string;
+  accountHolderName: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -136,6 +145,16 @@ class Api {
       errors: "",
     });
   }
+
+  async withdraw(r: IWithdraw): Promise<Pilipay> {
+    return await req<Pilipay>({
+      method: "POST",
+      isNoAuth: false,
+      path: `${this.path}/withdraw`,
+      body: r,
+      errors: "",
+    });
+  }
 }
 
 interface ApiPilipayInfo {
@@ -144,6 +163,7 @@ interface ApiPilipayInfo {
   findPaymentChannel(): Promise<PayoutChannels[]>;
   topup(r: ITopup): Promise<string>;
   transferBalance(r: ITransferBalance): Promise<Pilipay>;
+  withdraw(r: IWithdraw): Promise<Pilipay>;
 }
 
 function getPilipayApiInfo(): ApiPilipayInfo {
@@ -176,6 +196,15 @@ export const findMeWallet = (showHistory: boolean) => {
     isLoading: data.isLoading,
     error: data?.error,
   };
+};
+
+export const createWithdraw = () => {
+  const { mutateAsync, isPending } = useMutation<Pilipay, Error, IWithdraw>({
+    mutationKey: ["create-withdraw"],
+    mutationFn: (r) => getPilipayApiInfo().withdraw(r),
+  });
+
+  return { mutateAsync, isPending };
 };
 
 export const transferBalance = () => {

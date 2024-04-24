@@ -14,7 +14,7 @@ import { Button } from "src/components/Button";
 import ContentTextfield from "src/components/ContentTextfield";
 import { ConfirmHeader } from "./Confirm";
 import cx from "classnames";
-import { findMeWallet } from "../../../api/pilipay.service";
+import { createWithdraw, findMeWallet } from "../../../api/pilipay.service";
 import { nominals } from "./Transfer";
 import Select, { SelectDataProps } from "src/components/Select";
 import { findWithdraw } from "src/api/channel.service";
@@ -95,28 +95,27 @@ const Withdraw = () => {
   });
 
   const { data: channelWithdraw } = findWithdraw(channelCategory);
+  const { mutateAsync } = createWithdraw();
 
   const onSubmit = handleSubmit(async (e) => {
-    console.log(channelWithdraw);
+    // console.log(channelWithdraw);
+    console.log(e);
+
+    try {
+      // await mutateAsync({
+      //   amount,
+      //   pin: e.pin,
+      //   accountHolderName: e.accountHolderName,
+      //   number: e.noRek,
+      //   channelCode: "",
+      //   channelCategory: "",
+      // });
+      toast.success("Berhasil melakukan withdraw");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to withdraw: ${error.message}`);
+    }
   });
-
-  // const onSubmit = handleSubmit(async (e) => {
-  //   try {
-  //     toast.loading("Loading...", { toastId: "transfer-loading" });
-  //     const newPhoneNumber = parsePhoneNumber(e.phoneNumber);
-  //     await mutateAsync({ amount, pin: e.pin, toPhoneNumber: newPhoneNumber });
-
-  //     toast.success("Transfer berhasil");
-  //     actionIsPin();
-  //     setAmount(0);
-  //     reset();
-  //   } catch (e) {
-  //     const error = e as Error;
-  //     toast.error(`Failed to transfer: ${error.message}`);
-  //   } finally {
-  //     toast.dismiss("transfer-loading");
-  //   }
-  // });
 
   return (
     <>
@@ -240,6 +239,7 @@ const Withdraw = () => {
             label="kategori channel"
             placeholder="pilih kategori channel"
             setSelected={setChannelCategory}
+            defaultSelectedKeys={channelCategory}
           />
         </section>
 

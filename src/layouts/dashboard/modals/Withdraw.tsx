@@ -76,7 +76,6 @@ const Withdraw = () => {
     ) {
       actionIsWithdraw();
       setTimeout(() => setIsChannel(true), 500);
-      console.log(balanceValue);
     } else {
       toast.error("Saldo tidak cukup");
       return;
@@ -97,7 +96,7 @@ const Withdraw = () => {
 
   const { data: channelWithdraw } = findWithdraw(channelCategory);
 
-  const onSubmit = handleSubmit((e) => {
+  const onSubmit = handleSubmit(async (e) => {
     console.log(channelWithdraw);
   });
 

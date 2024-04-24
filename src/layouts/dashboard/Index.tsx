@@ -32,6 +32,7 @@ import {
 } from "src/api/performance.service";
 import Error from "src/components/Error";
 import { setUser } from "src/stores/auth";
+import Withdraw from "./modals/Withdraw";
 
 const Dashboard = () => {
   return (
@@ -201,13 +202,14 @@ const PilipayTransaction = () => {
 // PILIPAY
 const PilipayBalance = () => {
   const [isActivated, setIsActivated] = React.useState(false);
-  const { actionIsHistory, actionIsTransfer, actionIsTopUp } = useActiveModal();
+  const { actionIsHistory, actionIsTransfer, actionIsTopUp, actionIsWithdraw } =
+    useActiveModal();
 
   const payments: { label: string; src: string; onClick?: () => void }[] = [
     { label: "riwayat", src: historyImg, onClick: actionIsHistory },
     { label: "top up", src: topUpImg, onClick: actionIsTopUp },
     { label: "transfer", src: transferImg, onClick: actionIsTransfer },
-    { label: "withdraw", src: withdrawLogo },
+    { label: "withdraw", src: withdrawLogo, onClick: actionIsWithdraw },
   ];
 
   const { data } = findMeWallet(true);
@@ -249,6 +251,7 @@ const PilipayBalance = () => {
         <History />
         <Transfer />
         <Topup />
+        <Withdraw />
       </section>
     </>
   );

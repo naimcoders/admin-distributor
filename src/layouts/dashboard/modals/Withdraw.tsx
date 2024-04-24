@@ -16,17 +16,28 @@ import { ConfirmHeader } from "./Confirm";
 import cx from "classnames";
 import { findMeWallet } from "../../../api/pilipay.service";
 import { nominals } from "./Transfer";
+import Select, { SelectDataProps } from "src/components/Select";
+import { findWithdraw } from "src/api/channel.service";
 
 interface DefaultValues {
   other: string;
   pin: string;
   phoneNumber: string;
+  noRek: string;
+  accountHolderName: string;
 }
+
+const channelData: SelectDataProps[] = [
+  { label: "E-WALLET", value: "EWALLET" },
+  { label: "BANK", value: "BANK" },
+];
 
 const Withdraw = () => {
   const [isOtherField, setIsOtherField] = useState(false);
   const [amount, setAmount] = useState(0);
   const [isPin, setIsPin] = useState(false);
+  const [isChannel, setIsChannel] = useState(false);
+  const [channelCategory, setChannelCategory] = useState("");
 
   const { isWithdraw, actionIsWithdraw } = useActiveModal();
 
@@ -44,7 +55,7 @@ const Withdraw = () => {
     setIsOtherField((v) => !v);
   };
 
-  const handleNext = handleSubmit((e) => {
+  const onNextToChannel = handleSubmit((e) => {
     if (!wallet) return;
     if (!amount && !isOtherField) {
       toast.error("Pilih nominal withdraw");
@@ -64,7 +75,7 @@ const Withdraw = () => {
       (amount && amount <= balanceValue)
     ) {
       actionIsWithdraw();
-      setTimeout(() => setIsPin(true), 500);
+      setTimeout(() => setIsChannel(true), 500);
       console.log(balanceValue);
     } else {
       toast.error("Saldo tidak cukup");
@@ -72,16 +83,22 @@ const Withdraw = () => {
     }
   });
 
-  const onBack = () => {
-    setIsPin(false);
-    resetField("pin");
-    setTimeout(actionIsWithdraw, 500);
-  };
-
   const { data: wallet } = findMeWallet(true);
 
-  const onSubmit = handleSubmit(async (e) => {
-    console.log("submit");
+  const onNextToPin = handleSubmit(() => {
+    if (!channelCategory) {
+      toast.error("Pilih kategori channel");
+      return;
+    }
+
+    setIsChannel(false);
+    setTimeout(() => setIsPin(true), 500);
+  });
+
+  const { data: channelWithdraw } = findWithdraw(channelCategory);
+
+  const onSubmit = handleSubmit((e) => {
+    console.log(channelWithdraw);
   });
 
   // const onSubmit = handleSubmit(async (e) => {
@@ -170,7 +187,7 @@ const Withdraw = () => {
               />
             )}
             <Button
-              onClick={handleNext}
+              onClick={onNextToChannel}
               label="selanjutnya"
               className={cx("w-full", !isOtherField && "col-span-2")}
             />
@@ -178,11 +195,75 @@ const Withdraw = () => {
         </main>
       </Modal>
 
+      {/* CHANNEL */}
+      <Modal
+        isOpen={isChannel}
+        closeModal={() => setIsChannel(false)}
+        customHeader={
+          <ConfirmHeader
+            title="channel"
+            onBack={() => {
+              setIsChannel(false);
+              setTimeout(actionIsWithdraw, 500);
+            }}
+          />
+        }
+      >
+        <section className="flex flex-col gap-5">
+          <Textfield
+            name="accountHolderName"
+            label="nama lengkap"
+            placeholder="masukkan nama lengkap"
+            control={control}
+            defaultValue=""
+            errorMessage={handleErrorMessage(errors, "accountHolderName")}
+            rules={{
+              required: { value: true, message: "masukkan nama lengkap" },
+            }}
+          />
+
+          <Textfield
+            name="noRek"
+            label="nomor rekening"
+            type="number"
+            placeholder="masukkan nomor rekening"
+            control={control}
+            defaultValue=""
+            errorMessage={handleErrorMessage(errors, "noRek")}
+            className="mb-2"
+            rules={{
+              required: { value: true, message: "masukkan nomor rekening" },
+            }}
+          />
+
+          <Select
+            data={channelData}
+            label="kategori channel"
+            placeholder="pilih kategori channel"
+            setSelected={setChannelCategory}
+          />
+        </section>
+
+        <Button
+          label="selanjutnya"
+          onClick={onNextToPin}
+          className="mx-auto lg:mt-8 mt-5 block"
+        />
+      </Modal>
+
       {/* PIN Verification */}
       <Modal
         isOpen={isPin}
         closeModal={() => setIsPin(false)}
-        customHeader={<ConfirmHeader title="verifikasi PIN" onBack={onBack} />}
+        customHeader={
+          <ConfirmHeader
+            title="verifikasi PIN"
+            onBack={() => {
+              setIsPin(false);
+              setTimeout(() => setIsChannel(true), 500);
+            }}
+          />
+        }
       >
         <Textfield
           name="pin"

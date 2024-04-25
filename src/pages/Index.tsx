@@ -1,5 +1,5 @@
 import cx from "classnames";
-import mokes from "src/assets/images/mokes.png";
+import piliDistributor from "src/assets/images/logo_pilidistributor.png";
 import Image from "src/components/Image";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -22,8 +22,13 @@ const LoginPage = () => {
 
   return (
     <main className="bg-primary min-h-screen flex flex-col justify-between">
-      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-28 lg:gap-56 my-auto">
-        <Image src={mokes} alt="Mokes" width={250} loading="lazy" />
+      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-32 lg:gap-72 my-auto">
+        <Image
+          src={piliDistributor}
+          alt="PiliDistributor"
+          width={250}
+          loading="lazy"
+        />
         <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:max-w-[28rem] relative">
           <span
             className={cx(

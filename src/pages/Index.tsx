@@ -1,5 +1,6 @@
 import cx from "classnames";
 import piliDistributor from "src/assets/images/logo_pilidistributor.png";
+import futureAccent from "src/assets/images/future_accent.png";
 import Image from "src/components/Image";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -30,7 +31,7 @@ const LoginPage = () => {
           width={250}
           loading="lazy"
         />
-        <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:max-w-[28rem] relative">
+        <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:max-w-[28rem] relative z-10">
           <span
             className={cx(
               "w-3 h-3 rounded-full absolute top-2 right-2",
@@ -48,9 +49,17 @@ const LoginPage = () => {
           <Form />
         </section>
       </section>
+
       <footer className="py-4 px-12 text-center">
         <p className="text-white">&copy;2024, MOKES, All Rights Reserved</p>
       </footer>
+
+      <img
+        src={futureAccent}
+        alt="Future Accent"
+        loading="lazy"
+        className="w-[50%] absolute right-0 bottom-0 scale-x-[-1] opacity-60"
+      />
     </main>
   );
 };

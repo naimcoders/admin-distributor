@@ -15,6 +15,7 @@ type Image = Pick<
 > & {
   actions?: IconImage[];
   radius?: Radius;
+  classNameWrapper?: string;
 };
 
 export default function Image({
@@ -25,13 +26,14 @@ export default function Image({
   loading,
   radius,
   className,
+  classNameWrapper,
 }: Image) {
   const [onHover, setOnHover] = useState(false);
   const mouseEnter = () => setOnHover(true);
   const mouseLeave = () => setOnHover(false);
 
   return (
-    <section className="relative">
+    <section className={cx("relative", classNameWrapper)}>
       <Img
         alt={alt}
         src={src}

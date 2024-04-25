@@ -24,14 +24,16 @@ const LoginPage = () => {
 
   return (
     <main className="min-h-screen flex flex-col justify-between loginBackground">
-      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-32 lg:gap-72 my-auto">
+      <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-32 lg:gap-96 my-auto">
         <Image
           src={piliDistributor}
           alt="PiliDistributor"
           width={250}
           loading="lazy"
+          className="z-10"
         />
-        <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:max-w-[28rem] relative z-10">
+
+        <section className="bg-secondary p-2 rounded-2xl flex flex-col gap-10 px-6 py-10 w-3/4 sm:max-w-[28rem] relative">
           <span
             className={cx(
               "w-3 h-3 rounded-full absolute top-2 right-2",
@@ -58,7 +60,7 @@ const LoginPage = () => {
         src={futureAccent}
         alt="Future Accent"
         loading="lazy"
-        className="w-[50%] absolute right-0 bottom-0 scale-x-[-1] opacity-60"
+        className="w-[50%] absolute left-[4rem] opacity-60"
       />
     </main>
   );

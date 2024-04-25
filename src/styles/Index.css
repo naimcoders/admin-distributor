@@ -32,6 +32,10 @@
     font-display: swap;
   }
 
+  .loginBackground {
+    background-image: url("src/assets/images/login_background.png");
+  }
+
   label {
     @apply text-sm;
   }

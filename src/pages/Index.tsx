@@ -21,7 +21,7 @@ const LoginPage = () => {
   const { notificationPermission } = useHook();
 
   return (
-    <main className="bg-primary min-h-screen flex flex-col justify-between">
+    <main className="min-h-screen flex flex-col justify-between loginBackground">
       <section className="md:px-12 py-8 flex flex-col gap-10 items-center md:flex-row justify-center md:gap-32 lg:gap-72 my-auto">
         <Image
           src={piliDistributor}

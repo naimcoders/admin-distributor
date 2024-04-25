@@ -33,6 +33,7 @@ const Banner = () => {
               onClick: () => setLogoUrl(""),
             },
           ]}
+          className="object-contain"
         />
       ) : (
         <>
@@ -62,6 +63,7 @@ const Banner = () => {
               onClick: () => setBannerUrl(""),
             },
           ]}
+          className="object-contain"
         />
       ) : (
         <>

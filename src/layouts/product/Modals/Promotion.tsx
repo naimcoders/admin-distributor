@@ -88,7 +88,6 @@ const Promotion = ({
               {["modal"].includes(v.type!) && (
                 <Textfield
                   {...v}
-                  defaultValue=""
                   readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                   errorMessage={handleErrorMessage(
                     promoForm.formState.errors,
@@ -146,7 +145,6 @@ const useFields = (normalPrice: string) => {
     objectFields({
       name: "price",
       label: "harga normal",
-      type: "text",
       defaultValue: normalPrice,
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
@@ -169,6 +167,7 @@ const useFields = (normalPrice: string) => {
       label: "periode diskon",
       type: "modal",
       onClick: onOpenPeriod,
+      defaultValue: "",
     }),
   ];
 

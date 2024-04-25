@@ -146,6 +146,7 @@ const useFields = (normalPrice: string) => {
       name: "price",
       label: "harga normal",
       defaultValue: normalPrice,
+      type: "text",
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({

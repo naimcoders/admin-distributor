@@ -1,7 +1,6 @@
 import React from "react";
 import cx from "classnames";
 import Image from "src/components/Image";
-import mokes from "src/assets/images/mokes.png";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Button } from "src/components/Button";
@@ -41,6 +40,7 @@ const Layout = () => {
 const Header = () => {
   const { pathname } = useLocation();
   const [path, setPath] = React.useState("");
+  const user = setUser((v) => v.user);
 
   React.useEffect(() => {
     setPath(splitSlash(pathname));
@@ -52,7 +52,14 @@ const Header = () => {
     <header className="px-6 py-3 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
       <section className="flex gap-6 items-center">
         <Hamburger />
-        <Image src={mokes} alt="Mokes" width={65} />
+        {user && (
+          <Image
+            src={user.imageUrl}
+            alt="Logo"
+            width={65}
+            className="rounded-full aspect-square object-cover"
+          />
+        )}
       </section>
 
       <section className="flex gap-4">

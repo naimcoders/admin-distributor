@@ -150,12 +150,13 @@ const useFields = (normalPrice: string) => {
       defaultValue: normalPrice,
       readOnly: { isValue: true, cursor: "cursor-default" },
     }),
-    // objectFields({
-    //   name: "discount",
-    //   label: "diskon",
-    //   type: "rp",
-    //   defaultValue: "",
-    // }),
+    objectFields({
+      name: "discount",
+      label: "nilai diskon (Rp)",
+      type: "rp",
+      defaultValue: "",
+      startContent: <ContentTextfield label="Rp" />,
+    }),
     objectFields({
       name: "discountPercentage",
       label: "persentase diskon",

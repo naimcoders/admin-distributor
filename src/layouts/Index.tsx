@@ -57,6 +57,7 @@ const Header = () => {
             src={user.imageUrl}
             alt="Logo"
             width={65}
+            loading="lazy"
             className="rounded-full aspect-square object-cover"
           />
         )}

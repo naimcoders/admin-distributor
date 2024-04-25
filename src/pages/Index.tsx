@@ -16,6 +16,7 @@ import { useLogin as useLoginApi } from "src/api/auth.service";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { IconColor } from "src/types";
+import { Spinner } from "@nextui-org/react";
 
 const LoginPage = () => {
   const { notificationPermission } = useHook();
@@ -124,7 +125,7 @@ const Form = () => {
       ))}
 
       <Button
-        label={isPending ? "Loading..." : "Login"}
+        label={isPending ? <Spinner size="sm" /> : "Login"}
         onClick={onSubmit}
         className="mt-4 mx-auto text-base bg-accentYellow text-black"
       />

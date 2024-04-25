@@ -11,8 +11,19 @@ import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import Skeleton from "src/components/Skeleton";
 
+const setFavicon = (faviconUrl: string) => {
+  const favicon = document.querySelector('link[rel="shortcut icon"]');
+  if (favicon instanceof HTMLLinkElement) {
+    favicon.href = faviconUrl;
+  }
+};
+
 const Layout = () => {
   const user = setUser((v) => v.user);
+
+  React.useEffect(() => {
+    if (user) setFavicon(user.imageUrl);
+  }, [user]);
 
   return (
     <main>
@@ -58,7 +69,7 @@ const Header = () => {
             alt="Logo"
             width={65}
             loading="lazy"
-            className="rounded-full aspect-square object-cover"
+            className="rounded-full aspect-square object-cover "
           />
         )}
       </section>

@@ -575,7 +575,7 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            label={isLoading ? "loading..." : "simpann"}
+            label={isLoading ? "loading..." : "simpan"}
           />
         </main>
       )}

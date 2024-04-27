@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
   Button as Btn,
   PopoverContent,
+  Spinner,
 } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProduct } from "src/api/product.service";
@@ -273,23 +274,23 @@ const Detail = () => {
       const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
-      const obj = {
-        name: e.productName,
-        isDangerous,
-        deliveryPrice,
-        category: { categoryId },
-        description: e.description,
-        subCategoryId,
-        imageUrl,
-        price: {
-          ...priceStore,
-          price: newPrice,
-        },
-        createForDistrbutorId: subDistributorId,
-        isAvailable: true,
-      };
 
-      const result = await update.mutateAsync({ data: obj });
+      const result = await update.mutateAsync({
+        data: {
+          name: e.productName,
+          isDangerous,
+          deliveryPrice,
+          category: { categoryId },
+          description: e.description,
+          subCategoryId,
+          price: {
+            ...priceStore,
+            price: newPrice,
+          },
+          createForDistrbutorId: subDistributorId,
+          isAvailable: true,
+        },
+      });
 
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
@@ -575,7 +576,9 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            label={isLoading ? "loading..." : "simpan"}
+            label={
+              isLoading ? <Spinner color="secondary" size="sm" /> : "simpan"
+            }
           />
         </main>
       )}

@@ -11,10 +11,15 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { useForm } from "react-hook-form";
-import { CurrencyIDInput, handleErrorMessage } from "src/helpers";
+import {
+  CurrencyIDInput,
+  handleErrorMessage,
+  parseTextToNumber,
+} from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import ContentTextfield from "src/components/ContentTextfield";
 import { Calendar } from "src/components/Calendar";
+import useGeneralStore from "src/stores/generalStore";
 
 interface PromotionProps extends Pick<UseForm, "setValue"> {
   images: string[];
@@ -40,6 +45,14 @@ const Promotion = ({
   const promoForm = useForm<DefaultValueProps>();
   const { fields, actionIsPromotion, isPromotion, isPeriod, onClosePeriod } =
     useFields(normalPrice);
+
+  // console.log(parseTextToNumber(promoForm.watch("discount")));
+  const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const arr = variantTypes.map((m) =>
+    m.variantColorProduct.map((e) => e.price)
+  );
+  const variantPrices: number[] = [];
+  arr.forEach((e) => e.forEach((m) => variantPrices.push(m as number)));
 
   return (
     <>

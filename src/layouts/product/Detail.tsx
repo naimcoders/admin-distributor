@@ -8,7 +8,6 @@ import {
   PopoverTrigger,
   Button as Btn,
   PopoverContent,
-  Spinner,
 } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProduct } from "src/api/product.service";

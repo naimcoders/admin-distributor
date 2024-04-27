@@ -29,6 +29,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Spinner,
 } from "@nextui-org/react";
 import { Button } from "src/components/Button";
 import { DangerousModal } from "./Modals/Dangerous";
@@ -108,25 +109,26 @@ const Create = () => {
         })),
       }));
 
-      const obj = {
-        name: e.productName,
-        isDangerous,
-        deliveryPrice,
-        variant: variants,
-        category: { categoryId },
-        description: e.description,
-        subCategoryId,
-        price: {
-          fee: 0,
-          startAt: 0,
-          expiredAt: 0,
-          price: newPrice,
-          priceDiscount: 0,
+      const result = await create.mutateAsync({
+        data: {
+          category: { categoryId },
+          name: e.productName,
+          isDangerous,
+          deliveryPrice,
+          variant: variants,
+          createForDistrbutorId: subDistributorId,
+          description: e.description,
+          subCategoryId,
+          isAvailable: true,
+          price: {
+            fee: 0,
+            startAt: 0,
+            expiredAt: 0,
+            price: newPrice,
+            priceDiscount: 0,
+          },
         },
-        createForDistrbutorId: subDistributorId,
-      };
-
-      const result = await create.mutateAsync({ data: obj });
+      });
 
       // ON UPLOAD IMAGE PRODUCTS
       if (photos.length > 0) {
@@ -300,7 +302,9 @@ const Create = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            label={isLoading ? "loading..." : "simpan"}
+            label={
+              isLoading ? <Spinner size="sm" color="secondary" /> : "simpan"
+            }
           />
 
           {/* modal */}

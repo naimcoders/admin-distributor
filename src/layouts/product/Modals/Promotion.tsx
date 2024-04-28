@@ -35,6 +35,23 @@ interface DefaultValueProps {
   period: string;
 }
 
+const rangeVariantPrice = (
+  variantPrices: number[],
+  discount: number | undefined
+) => {
+  if (!discount) return;
+
+  return variantPrices.map((e) => {
+    return formatNumber((discount / e) * 100);
+  });
+};
+
+const formatNumber = (value: number): string => {
+  const hasDecimal = value % 1 !== 0;
+  if (hasDecimal) return value.toFixed(2);
+  return value.toString();
+};
+
 const Promotion = ({
   // setValue,
   images,
@@ -42,17 +59,27 @@ const Promotion = ({
   description,
   normalPrice,
 }: PromotionProps) => {
+  const [variantPrice, setVariantPrice] = React.useState<number[]>([]);
+
   const promoForm = useForm<DefaultValueProps>();
   const { fields, actionIsPromotion, isPromotion, isPeriod, onClosePeriod } =
     useFields(normalPrice);
 
-  // console.log(parseTextToNumber(promoForm.watch("discount")));
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
-  const arr = variantTypes.map((m) =>
-    m.variantColorProduct.map((e) => e.price)
-  );
-  const variantPrices: number[] = [];
-  arr.forEach((e) => e.forEach((m) => variantPrices.push(m as number)));
+
+  React.useEffect(() => {
+    if (variantTypes && variantTypes.length > 0) {
+      const arr = variantTypes.map((m) =>
+        m.variantColorProduct.map((e) => e.price)
+      );
+      arr.forEach((e) =>
+        e.forEach((m) => {
+          const data = m as number;
+          setVariantPrice((v) => [...v, data]);
+        })
+      );
+    }
+  }, [variantTypes]);
 
   return (
     <>
@@ -151,9 +178,6 @@ const useFields = (normalPrice: string) => {
     setTimeout(actionIsPromotion, 400);
   };
 
-  // fee = DISKON eg. 5%
-  // priceDiscount = hasil kalkulasi eg. 1000 * 5% = 50
-
   const fields: TextfieldProps<DefaultValueProps>[] = [
     objectFields({
       name: "price",
@@ -172,9 +196,10 @@ const useFields = (normalPrice: string) => {
     objectFields({
       name: "discountPercentage",
       label: "persentase diskon",
-      type: "number",
+      type: "text",
       endContent: <ContentTextfield label="%" />,
       defaultValue: "",
+      readOnly: { isValue: true, cursor: "cursor-default" },
     }),
     objectFields({
       name: "period",

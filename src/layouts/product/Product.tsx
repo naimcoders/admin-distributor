@@ -129,7 +129,11 @@ const useHook = () => {
     {
       header: <p className="text-center">periode</p>,
       render: (v) => (
-        <Label label={`${v.price.startAt} - ${v.price.expiredAt}`} />
+        <Label
+          label={
+            !v.price.startAt ? "-" : `${v.price.startAt} - ${v.price.expiredAt}`
+          }
+        />
       ),
     },
     {

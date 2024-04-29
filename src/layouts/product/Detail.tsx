@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
   Button as Btn,
   PopoverContent,
+  Spinner,
 } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProduct } from "src/api/product.service";
@@ -575,7 +576,7 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto mt-5"
-            label={isLoading ? "loading..." : "simpan"}
+            label={isLoading ? <Spinner color="secondary" /> : "simpan"}
           />
         </main>
       )}
@@ -641,6 +642,7 @@ const Detail = () => {
         images={findById.data?.imageUrl ?? []}
         productName={findById.data?.name ?? "-"}
         description={findById.data?.description ?? "-"}
+        price={parseTextToNumber(price)}
       />
       <SubDistributorModal
         clearErrors={clearErrors}

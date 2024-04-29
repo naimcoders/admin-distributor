@@ -12,6 +12,7 @@ import {
 } from "src/components/Textfield";
 import { useForm } from "react-hook-form";
 import {
+  Currency,
   CurrencyIDInput,
   handleErrorMessage,
   parseTextToNumber,
@@ -26,6 +27,7 @@ interface PromotionProps extends Pick<UseForm, "setValue"> {
   productName: string;
   description: string;
   normalPrice: string;
+  price: number;
 }
 
 interface DefaultValueProps {
@@ -62,6 +64,7 @@ const Promotion = ({
   productName,
   description,
   normalPrice,
+  price,
 }: PromotionProps) => {
   const [variantPrice, setVariantPrice] = React.useState<number[]>([]);
 
@@ -75,7 +78,7 @@ const Promotion = ({
   );
 
   React.useEffect(() => {
-    if (variantTypes && variantTypes.length > 0) {
+    if (variantTypes[0]?.id) {
       const arr = variantTypes.map((m) =>
         m.variantColorProduct.map((e) => e.price)
       );
@@ -130,17 +133,22 @@ const Promotion = ({
                     required: { value: true, message: v.errorMessage ?? "" },
                     onBlur: (e) => {
                       if (promoForm.getValues("discount")) {
-                        promoForm.setValue(
-                          "discountPercentage",
-                          rangeVariantPrice(
-                            variantPrice,
-                            parseTextToNumber(e.target.value)
-                          ) ?? ""
-                        );
-
-                        console.log(
-                          rangeVariantPrice(variantPrice, e.target.value)
-                        );
+                        if (variantTypes[0]?.id) {
+                          promoForm.setValue(
+                            "discountPercentage",
+                            rangeVariantPrice(
+                              variantPrice,
+                              parseTextToNumber(e.target.value)
+                            ) ?? ""
+                          );
+                        } else {
+                          const discount = parseTextToNumber(e.target.value);
+                          const calc = (discount / price) * 100;
+                          promoForm.setValue(
+                            "discountPercentage",
+                            Currency(calc)
+                          );
+                        }
                       } else {
                         promoForm.setValue("discountPercentage", "");
                       }

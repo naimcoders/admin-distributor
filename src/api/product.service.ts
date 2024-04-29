@@ -234,6 +234,7 @@ export interface CreateProduct {
   name: string;
   subCategoryId: string;
   price: {
+    id?: string;
     price: number;
     priceDiscount: number;
     fee: number;

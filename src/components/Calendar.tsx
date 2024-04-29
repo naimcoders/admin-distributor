@@ -54,6 +54,7 @@ const useHook = () => {
     end: 0,
   });
   const setDate = useGeneralStore((v) => v.setDate);
+  const setEpoch = useGeneralStore((v) => v.setEpoch);
 
   const [dateRange, setDateRange] = useState<IDateRange[]>([
     { key: "selection", startDate: new Date(), endDate: new Date() },
@@ -74,6 +75,7 @@ const useHook = () => {
     const startAtDate = epochToDateConvert(startAtEpoch);
     const endAtDate = epochToDateConvert(endAtEpoch);
     setEpochTime({ start: startAtEpoch, end: endAtEpoch });
+    setEpoch({ startAt: startAtEpoch, endAt: endAtEpoch });
     setDate({ startAt: startAtDate, endAt: endAtDate });
   };
 

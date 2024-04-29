@@ -5,7 +5,6 @@ import { ChildRef, File, LabelAndImage } from "src/components/File";
 import { IconColor } from "src/types";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from "src/firebase";
-import { toast } from "react-toastify";
 import { setUser } from "src/stores/auth";
 
 const Banner = () => {
@@ -121,7 +120,7 @@ const useBanner = () => {
       async () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         setBannerUrl(url);
-        toast.success("Banner berhasil diunggah");
+        window.location.reload();
       }
     );
   };
@@ -171,7 +170,7 @@ const useLogo = () => {
       async () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         setLogoUrl(url);
-        toast.success("Logo berhasil diunggah");
+        window.location.reload();
       }
     );
   };

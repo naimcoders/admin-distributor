@@ -121,6 +121,18 @@ const useHook = () => {
       ),
     },
     {
+      header: <p className="text-center">diskon</p>,
+      render: (v) => (
+        <Label label={v.price.priceDiscount ?? 0} className="justify-end" />
+      ),
+    },
+    {
+      header: <p className="text-center">periode</p>,
+      render: (v) => (
+        <Label label={`${v.price.startAt} - ${v.price.expiredAt}`} />
+      ),
+    },
+    {
       header: <p className="text-center">tanggal dibuat</p>,
       render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
     },

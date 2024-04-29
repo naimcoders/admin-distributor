@@ -519,11 +519,19 @@ const Detail = () => {
                     {...v}
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={variantTypes?.length > 0 ? v.readOnly : undefined}
-                    onClick={variantTypes?.length > 0 ? v.onClick : undefined}
+                    readOnly={
+                      variantTypes && variantTypes[0]?.id
+                        ? v.readOnly
+                        : undefined
+                    }
+                    onClick={
+                      variantTypes && variantTypes[0]?.id
+                        ? v.onClick
+                        : undefined
+                    }
                     defaultValue=""
                     endContent={
-                      variantTypes?.length &&
+                      variantTypes[0]?.id &&
                       v.name === "price" && (
                         <ChevronRightIcon width={16} color={IconColor.zinc} />
                       )
@@ -643,6 +651,7 @@ const Detail = () => {
         productName={findById.data?.name ?? "-"}
         description={findById.data?.description ?? "-"}
         price={parseTextToNumber(price)}
+        productData={findById.data}
       />
       <SubDistributorModal
         clearErrors={clearErrors}

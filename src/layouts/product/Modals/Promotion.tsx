@@ -14,6 +14,8 @@ import { useForm } from "react-hook-form";
 import {
   Currency,
   CurrencyIDInput,
+  checkForDash,
+  dateToEpochConvert,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -21,6 +23,8 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import ContentTextfield from "src/components/ContentTextfield";
 import { Calendar } from "src/components/Calendar";
 import useGeneralStore from "src/stores/generalStore";
+import { Product, useProduct } from "src/api/product.service";
+import { toast } from "react-toastify";
 
 interface PromotionProps extends Pick<UseForm, "setValue"> {
   images: string[];
@@ -28,6 +32,7 @@ interface PromotionProps extends Pick<UseForm, "setValue"> {
   description: string;
   normalPrice: string;
   price: number;
+  productData?: Product;
 }
 
 interface DefaultValueProps {
@@ -35,6 +40,7 @@ interface DefaultValueProps {
   discount: string;
   discountPercentage: string;
   period: string;
+  fee: string;
 }
 
 const rangeVariantPrice = (
@@ -65,6 +71,7 @@ const Promotion = ({
   description,
   normalPrice,
   price,
+  productData,
 }: PromotionProps) => {
   const [variantPrice, setVariantPrice] = React.useState<number[]>([]);
 
@@ -90,6 +97,49 @@ const Promotion = ({
       );
     }
   }, [variantTypes]);
+
+  const epoch = useGeneralStore((v) => v.epoch);
+  const setEpoch = useGeneralStore((v) => v.setEpoch);
+  const setDate = useGeneralStore((v) => v.setDate);
+  const { update } = useProduct();
+
+  const onSubmit = promoForm.handleSubmit(async (e) => {
+    if (!productData) return;
+
+    try {
+      toast.loading("Loading...", { toastId: "loading-promo" });
+
+      await update.mutateAsync({
+        data: {
+          name: productData.name,
+          isDangerous: productData.isDangerous,
+          deliveryPrice: productData.deliveryPrice,
+          category: { categoryId: productData.categoryProduct.category.id },
+          description: productData.description,
+          subCategoryId: productData.subCategoryProduct.id,
+          price: {
+            fee: Number(e.fee),
+            price: !variantTypes[0]?.id ? parseTextToNumber(e.price) : 0,
+            priceDiscount: parseTextToNumber(e.discount),
+            expiredAt: epoch.endAt,
+            startAt: epoch.startAt,
+          },
+          // createForDistrbutorId: subDistributorId,
+          isAvailable: true,
+        },
+      });
+
+      toast.success("Berhasil mengatur promosi");
+      setEpoch({ endAt: 0, startAt: 0 });
+      setDate({ endAt: "", startAt: "" });
+      actionIsPromotion();
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to setting promotion ${error.message}`);
+    } finally {
+      toast.dismiss("loading-promo");
+    }
+  });
 
   return (
     <>
@@ -132,17 +182,18 @@ const Promotion = ({
                   rules={{
                     required: { value: true, message: v.errorMessage ?? "" },
                     onBlur: (e) => {
-                      if (promoForm.getValues("discount")) {
+                      const discountValue = promoForm.getValues("discount");
+                      if (discountValue) {
                         if (variantTypes[0]?.id) {
                           promoForm.setValue(
                             "discountPercentage",
                             rangeVariantPrice(
                               variantPrice,
-                              parseTextToNumber(e.target.value)
+                              parseTextToNumber(discountValue)
                             ) ?? ""
                           );
                         } else {
-                          const discount = parseTextToNumber(e.target.value);
+                          const discount = parseTextToNumber(discountValue);
                           const calc = (discount / price) * 100;
                           promoForm.setValue(
                             "discountPercentage",
@@ -194,7 +245,7 @@ const Promotion = ({
         <Button
           label="mulai promosi"
           className="mx-auto block mt-8"
-          onClick={() => console.log("submit promotion")}
+          onClick={onSubmit}
         />
       </Modal>
 
@@ -241,6 +292,12 @@ const useFields = (normalPrice: string) => {
       endContent: <ContentTextfield label="%" />,
       defaultValue: "",
       readOnly: { isValue: true, cursor: "cursor-default" },
+    }),
+    objectFields({
+      name: "fee",
+      label: "fee",
+      type: "number",
+      defaultValue: "",
     }),
     objectFields({
       name: "period",

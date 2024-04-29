@@ -41,9 +41,13 @@ const rangeVariantPrice = (
 ) => {
   if (!discount) return;
 
-  return variantPrices.map((e) => {
-    return formatNumber((discount / e) * 100);
+  const mapping = variantPrices.map((e) => {
+    return (discount / e) * 100;
   });
+
+  const min = formatNumber(Math.min(...mapping));
+  const max = formatNumber(Math.max(...mapping));
+  return `${min} - ${max}`;
 };
 
 const formatNumber = (value: number): string => {
@@ -84,15 +88,11 @@ const Promotion = ({
     }
   }, [variantTypes]);
 
-  // console.log(variantPrice);
-
   return (
     <>
       <Modal
         isOpen={isPromotion}
         closeModal={() => {
-          promoForm.resetField("discount");
-          promoForm.resetField("discountPercentage");
           setVariantPrice([]);
           setVariantTypesDetailProduct([]);
           actionIsPromotion();
@@ -135,7 +135,11 @@ const Promotion = ({
                           rangeVariantPrice(
                             variantPrice,
                             parseTextToNumber(e.target.value)
-                          )?.join(" - ") ?? ""
+                          ) ?? ""
+                        );
+
+                        console.log(
+                          rangeVariantPrice(variantPrice, e.target.value)
                         );
                       } else {
                         promoForm.setValue("discountPercentage", "");

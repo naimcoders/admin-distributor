@@ -66,6 +66,9 @@ const Promotion = ({
     useFields(normalPrice);
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
+  const setVariantTypesDetailProduct = useGeneralStore(
+    (v) => v.setVariantTypesDetailProduct
+  );
 
   React.useEffect(() => {
     if (variantTypes && variantTypes.length > 0) {
@@ -91,6 +94,7 @@ const Promotion = ({
           promoForm.resetField("discount");
           promoForm.resetField("discountPercentage");
           setVariantPrice([]);
+          setVariantTypesDetailProduct([]);
           actionIsPromotion();
         }}
       >

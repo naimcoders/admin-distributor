@@ -35,6 +35,7 @@ const Withdraw = () => {
   const [channelCode, setChannelCode] = useState("");
 
   const { isWithdraw, actionIsWithdraw } = useActiveModal();
+  const { channelData, banks } = useBanks();
 
   const {
     control,
@@ -86,11 +87,19 @@ const Withdraw = () => {
       return;
     }
 
-    setIsChannel(false);
-    setTimeout(() => setIsPin(true), 500);
+    if (!banks) return;
+
+    const [bankByChannelCode] = banks.filter(
+      (bank) => bank.channel_code === channelCode
+    );
+
+    const amountLimitMinimum = bankByChannelCode.amount_limits.minimum;
+    const amountLimitMaximum = bankByChannelCode.amount_limits.maximum;
+
+    // setIsChannel(false);
+    // setTimeout(() => setIsPin(true), 500);
   });
 
-  const { channelData } = useBanks();
   const { mutateAsync } = createWithdraw();
 
   const onSubmit = handleSubmit(async (e) => {
@@ -297,7 +306,7 @@ const useBanks = () => {
 
   const channelData: SelectDataProps[] | undefined = bankNames;
 
-  return { channelData };
+  return { channelData, banks: data };
 };
 
 export default Withdraw;

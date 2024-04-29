@@ -120,7 +120,7 @@ const useBanner = () => {
       async () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         setBannerUrl(url);
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 1200);
       }
     );
   };
@@ -170,7 +170,7 @@ const useLogo = () => {
       async () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         setLogoUrl(url);
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 1200);
       }
     );
   };

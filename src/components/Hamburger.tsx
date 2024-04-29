@@ -22,7 +22,7 @@ const Hamburger = () => {
 
       <Drawer
         open={isOpen}
-        onClose={() => setIsOpen((v) => !v)}
+        onClose={() => setIsOpen(false)}
         direction="left"
         lockBackgroundScroll
       >
@@ -30,7 +30,7 @@ const Hamburger = () => {
           <Image src={mokes} alt="Mokes" width={70} />
         </div>
         <section className="mt-1 overflow-y-auto flex flex-col h-calcSideBarDrawer">
-          <SideBarFeature />
+          <SideBarFeature onClickNav={() => setIsOpen(false)} />
         </section>
       </Drawer>
     </section>

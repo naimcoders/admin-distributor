@@ -95,7 +95,7 @@ const AsideNav = () => {
   );
 };
 
-export const SideBarFeature = () => {
+export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
   const { logout } = useAuth();
   const user = setUser((v) => v.user);
   const qsProduct = stringifyQuery({ tab: "produk", page: 1 });
@@ -105,25 +105,42 @@ export const SideBarFeature = () => {
 
   return (
     <>
-      <LinkSideBar name="Dashboard" path="dashboard" />
-      <LinkSideBar name="Banner" path="banner" />
-      <LinkSideBar name="Produk" path={`produk?${qsProduct}`} />
-      <LinkSideBar name="Toko" path={`toko?${qsStore}`} />
+      <LinkSideBar name="Dashboard" path="dashboard" onClickNav={onClickNav} />
+      <LinkSideBar name="Banner" path="banner" onClickNav={onClickNav} />
+      <LinkSideBar
+        name="Produk"
+        path={`produk?${qsProduct}`}
+        onClickNav={onClickNav}
+      />
+      <LinkSideBar
+        name="Toko"
+        path={`toko?${qsStore}`}
+        onClickNav={onClickNav}
+      />
       {user?.role === RoleDistributor.DISTRIBUTOR && (
         <>
           <LinkSideBar
+            onClickNav={onClickNav}
             name="Sub Distributor"
             path={`sub-distributor?${qsDIstributor}`}
           />
-          <LinkSideBar name="Sales" path="sales" />
-          <LinkSideBar name="Ekspedisi" path="ekspedisi" />
+          <LinkSideBar name="Sales" path="sales" onClickNav={onClickNav} />
+          <LinkSideBar
+            name="Ekspedisi"
+            path="ekspedisi"
+            onClickNav={onClickNav}
+          />
         </>
       )}
-      <LinkSideBar name="Order" path={`order?${qsOrder}`} />
+      <LinkSideBar
+        name="Order"
+        path={`order?${qsOrder}`}
+        onClickNav={onClickNav}
+      />
       {user?.role === RoleDistributor.DISTRIBUTOR && (
-        <LinkSideBar name="Report" path="report" />
+        <LinkSideBar name="Report" path="report" onClickNav={onClickNav} />
       )}
-      <LinkSideBar name="Akun" path="akun" />
+      <LinkSideBar name="Akun" path="akun" onClickNav={onClickNav} />
 
       <Button
         label="Logout"
@@ -137,7 +154,15 @@ export const SideBarFeature = () => {
   );
 };
 
-export const LinkSideBar = ({ name, path }: { name: string; path: string }) => {
+export const LinkSideBar = ({
+  name,
+  path,
+  onClickNav,
+}: {
+  name: string;
+  path: string;
+  onClickNav?: () => void;
+}) => {
   return (
     <NavLink
       to={path}
@@ -148,6 +173,7 @@ export const LinkSideBar = ({ name, path }: { name: string; path: string }) => {
           isActive && "bg-primary text-secondary border-t border-gray-500"
         )
       }
+      onClick={onClickNav}
     >
       {name}
     </NavLink>

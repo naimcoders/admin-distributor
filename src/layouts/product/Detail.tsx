@@ -166,12 +166,16 @@ const Detail = () => {
       setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
       setValue("condition", "Baru");
       setValue("description", findById.data.description);
-      setValue(
-        "promotion",
-        `(${Currency(findById.data.price.priceDiscount)}) ${epochToDateConvert(
-          findById.data.price.startAt
-        )} - ${epochToDateConvert(findById.data.price.expiredAt)}`
-      );
+      if (findById.data.price.priceDiscount) {
+        setValue(
+          "promotion",
+          `(${Currency(
+            findById.data.price.priceDiscount ?? 0
+          )}) ${epochToDateConvert(
+            findById.data.price.startAt ?? 0
+          )} - ${epochToDateConvert(findById.data.price.expiredAt ?? 0)}`
+        );
+      }
     }
   }, [findById.data, imageUrl, price]);
 
@@ -282,6 +286,8 @@ const Detail = () => {
       const price = e.price;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
 
+      if (!findById.data) return;
+
       const result = await update.mutateAsync({
         data: {
           name: e.productName,
@@ -295,9 +301,24 @@ const Detail = () => {
             price: newPrice,
           },
           createForDistrbutorId: subDistributorId,
-          isAvailable: true,
+          isAvailable: findById.data.isAvailable,
         },
       });
+
+      // console.log({
+      //   name: e.productName,
+      //   isDangerous,
+      //   deliveryPrice,
+      //   category: { categoryId },
+      //   description: e.description,
+      //   subCategoryId,
+      //   price: {
+      //     ...priceStore,
+      //     price: newPrice,
+      //   },
+      //   createForDistrbutorId: subDistributorId,
+      //   isAvailable: true,
+      // });
 
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
@@ -435,7 +456,7 @@ const Detail = () => {
       name: "promotion",
       type: "modal",
       onClick: actionIsPromotion,
-      defaultValue: "ll",
+      defaultValue: "",
     }),
   ];
 

@@ -289,7 +289,9 @@ const useFields = (normalPrice: string, productData?: Product) => {
       label: "nilai diskon (Rp)",
       type: "rp",
       startContent: <ContentTextfield label="Rp" />,
-      defaultValue: Currency(productData?.price.priceDiscount ?? 0),
+      defaultValue: productData?.price.priceDiscount
+        ? Currency(productData?.price.priceDiscount ?? 0)
+        : "",
     }),
     objectFields({
       name: "discountPercentage",
@@ -303,16 +305,20 @@ const useFields = (normalPrice: string, productData?: Product) => {
       name: "fee",
       label: "fee",
       type: "number",
-      defaultValue: Currency(productData?.price.fee ?? 0),
+      defaultValue: productData?.price.fee
+        ? Currency(productData?.price.fee ?? 0)
+        : "",
     }),
     objectFields({
       name: "period",
       label: "periode diskon",
       type: "modal",
       onClick: onOpenPeriod,
-      defaultValue: `${epochToDateConvert(
-        productData?.price.startAt
-      )} - ${epochToDateConvert(productData?.price.expiredAt)}`,
+      defaultValue: productData?.price.priceDiscount
+        ? `${epochToDateConvert(
+            productData?.price.startAt
+          )} - ${epochToDateConvert(productData?.price.expiredAt)}`
+        : "",
     }),
   ];
 

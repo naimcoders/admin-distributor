@@ -13,13 +13,15 @@ interface IDateRange {
 }
 
 export const Calendar = (
-  r: Pick<ActionModal, "close"> & Pick<UseForm, "setValue">
+  r: Pick<ActionModal, "close"> &
+    Pick<UseForm, "setValue" | "clearErrors"> & { fieldName: string }
 ) => {
   const { dateRange, handleSelect, epochTime } = useHook();
   const date = useGeneralStore((v) => v.date);
 
   const onSubmit = () => {
     r.setValue("period", `${date.startAt} - ${date.endAt}`);
+    r.clearErrors(r.fieldName);
     r.close();
   };
 

@@ -40,6 +40,7 @@ export const Period = () => {
   const {
     control,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm();
   const { isPeriod, actionIsPeriod } = useActiveModal();
@@ -59,8 +60,14 @@ export const Period = () => {
         rules={{ required: { value: true, message: "pilih periode report" } }}
         className="w-[20rem]"
       />
+
       <Modal title="periode" isOpen={isPeriod} closeModal={actionIsPeriod}>
-        <Calendar close={actionIsPeriod} setValue={setValue} />
+        <Calendar
+          close={actionIsPeriod}
+          setValue={setValue}
+          clearErrors={clearErrors}
+          fieldName="period"
+        />
       </Modal>
     </>
   );

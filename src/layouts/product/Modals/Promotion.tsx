@@ -200,6 +200,7 @@ const Promotion = ({
                             Currency(calc)
                           );
                         }
+                        promoForm.clearErrors("discountPercentage");
                       } else {
                         promoForm.setValue("discountPercentage", "");
                       }
@@ -250,7 +251,12 @@ const Promotion = ({
       </Modal>
 
       <Modal title="periode" isOpen={isPeriod} closeModal={onClosePeriod}>
-        <Calendar close={onClosePeriod} setValue={promoForm.setValue} />
+        <Calendar
+          close={onClosePeriod}
+          setValue={promoForm.setValue}
+          clearErrors={promoForm.clearErrors}
+          fieldName="period"
+        />
       </Modal>
     </>
   );

@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import {
   Currency,
   CurrencyIDInput,
+  epochToDateConvert,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -77,7 +78,7 @@ const Promotion = ({
 
   const promoForm = useForm<DefaultValueProps>();
   const { fields, actionIsPromotion, isPromotion, isPeriod, onClosePeriod } =
-    useFields(normalPrice);
+    useFields(normalPrice, productData);
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypesDetailProduct = useGeneralStore(
@@ -262,7 +263,7 @@ const Promotion = ({
   );
 };
 
-const useFields = (normalPrice: string) => {
+const useFields = (normalPrice: string, productData?: Product) => {
   const { actionIsPeriod, actionIsPromotion, isPromotion, isPeriod } =
     useActiveModal();
 
@@ -288,29 +289,31 @@ const useFields = (normalPrice: string) => {
       name: "discount",
       label: "nilai diskon (Rp)",
       type: "rp",
-      defaultValue: "",
       startContent: <ContentTextfield label="Rp" />,
+      defaultValue: Currency(productData?.price.priceDiscount ?? 0),
     }),
     objectFields({
       name: "discountPercentage",
       label: "persentase diskon",
       type: "text",
       endContent: <ContentTextfield label="%" />,
-      defaultValue: "",
       readOnly: { isValue: true, cursor: "cursor-default" },
+      defaultValue: "",
     }),
     objectFields({
       name: "fee",
       label: "fee",
       type: "number",
-      defaultValue: "",
+      defaultValue: Currency(productData?.price.fee ?? 0),
     }),
     objectFields({
       name: "period",
       label: "periode diskon",
       type: "modal",
       onClick: onOpenPeriod,
-      defaultValue: "",
+      defaultValue: `${epochToDateConvert(
+        productData?.price.startAt
+      )} - ${epochToDateConvert(productData?.price.expiredAt)}`,
     }),
   ];
 

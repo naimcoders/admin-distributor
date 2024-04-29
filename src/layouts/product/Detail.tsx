@@ -62,7 +62,6 @@ const Detail = () => {
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   const [subCategoryId, setSubCategoryId] = React.useState("");
   const [subDistributorId, setSubDistributorId] = React.useState("");
-  const [promoValue, setPromoValue] = React.useState("");
   const [price, setPrice] = React.useState("");
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);

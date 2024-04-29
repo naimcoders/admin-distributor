@@ -135,7 +135,7 @@ const Promotion = ({
       actionIsPromotion();
     } catch (e) {
       const error = e as Error;
-      toast.error(`Failed to setting promotion ${error.message}`);
+      toast.error(`Failed to set promotion: ${error.message}`);
     } finally {
       toast.dismiss("loading-promo");
     }

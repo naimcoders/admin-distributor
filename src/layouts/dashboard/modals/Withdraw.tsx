@@ -32,7 +32,7 @@ const Withdraw = () => {
   const [amount, setAmount] = useState(0);
   const [isPin, setIsPin] = useState(false);
   const [isChannel, setIsChannel] = useState(false);
-  const [channelCategory, setChannelCategory] = useState("");
+  const [channelCode, setChannelCode] = useState("");
 
   const { isWithdraw, actionIsWithdraw } = useActiveModal();
 
@@ -81,8 +81,8 @@ const Withdraw = () => {
   const { data: wallet } = findMeWallet(true);
 
   const onNextToPin = handleSubmit(() => {
-    if (!channelCategory) {
-      toast.error("Pilih kategori channel");
+    if (!channelCode) {
+      toast.error("Pilih bank");
       return;
     }
 
@@ -103,6 +103,16 @@ const Withdraw = () => {
       //   channelCode: "",
       //   channelCategory: "",
       // });
+
+      console.log({
+        amount,
+        pin: e.pin,
+        accountHolderName: e.accountHolderName,
+        number: e.noRek,
+        channelCode,
+        channelCategory: "BANK",
+      });
+
       toast.success("Berhasil melakukan withdraw");
       reset();
     } catch (e) {
@@ -232,8 +242,8 @@ const Withdraw = () => {
             data={channelData ?? [{ label: "Tidak ada data", value: "" }]}
             label="bank"
             placeholder="pilih bank"
-            setSelected={setChannelCategory}
-            defaultSelectedKeys={channelCategory}
+            setSelected={setChannelCode}
+            defaultSelectedKeys={channelCode}
           />
         </section>
 
@@ -282,7 +292,7 @@ const useBanks = () => {
 
   const bankNames = data?.map((e) => ({
     label: e.channel_name,
-    value: e.channel_name,
+    value: e.channel_code,
   }));
 
   const channelData: SelectDataProps[] | undefined = bankNames;

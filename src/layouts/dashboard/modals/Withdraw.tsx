@@ -103,7 +103,6 @@ const Withdraw = () => {
     ) {
       setIsChannel(false);
       setTimeout(() => setIsPin(true), 500);
-      console.log({ amountLimitMinimum, amountLimitMaximum });
     } else {
       toast.error("Saldo ...");
     }
@@ -113,16 +112,8 @@ const Withdraw = () => {
 
   const onSubmit = handleSubmit(async (e) => {
     try {
-      // await mutateAsync({
-      //   amount,
-      //   pin: e.pin,
-      //   accountHolderName: e.accountHolderName,
-      //   number: e.noRek,
-      //   channelCode: "",
-      //   channelCategory: "",
-      // });
-
-      console.log({
+      toast.loading("Loading...", { toastId: "loading-withdraw" });
+      await mutateAsync({
         amount,
         pin: e.pin,
         accountHolderName: e.accountHolderName,
@@ -131,11 +122,24 @@ const Withdraw = () => {
         channelCategory: "BANK",
       });
 
+      // console.log({
+      //   amount,
+      //   pin: e.pin,
+      //   accountHolderName: e.accountHolderName,
+      //   number: e.noRek,
+      //   channelCode,
+      //   channelCategory: "BANK",
+      // });
+
       toast.success("Berhasil melakukan withdraw");
       reset();
+      setIsPin(false);
+      setAmount(0);
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to withdraw: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-withdraw");
     }
   });
 

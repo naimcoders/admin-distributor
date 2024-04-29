@@ -75,6 +75,7 @@ const Promotion = ({
   productId,
 }: PromotionProps) => {
   const [variantPrice, setVariantPrice] = React.useState<number[]>([]);
+  const [percentageDiscount, setPercentageDiscount] = React.useState("");
 
   const promoForm = useForm<DefaultValueProps>();
   const { fields, actionIsPromotion, isPromotion, isPeriod, onClosePeriod } =
@@ -125,7 +126,6 @@ const Promotion = ({
             expiredAt: epoch.endAt,
             startAt: epoch.startAt,
           },
-          // createForDistrbutorId: subDistributorId,
           isAvailable: true,
         },
       });

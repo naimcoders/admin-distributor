@@ -4,7 +4,12 @@ import { Product, useProduct } from "src/api/product.service";
 import { FieldValues, useForm } from "react-hook-form";
 import { Columns } from "src/types";
 import { Actions } from "src/components/Actions";
-import { epochToDateConvert, stringifyQuery, useSetSearch } from "src/helpers";
+import {
+  Currency,
+  epochToDateConvert,
+  stringifyQuery,
+  useSetSearch,
+} from "src/helpers";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { setUser } from "src/stores/auth";
@@ -123,7 +128,10 @@ const useHook = () => {
     {
       header: <p className="text-center">diskon</p>,
       render: (v) => (
-        <Label label={v.price.priceDiscount ?? 0} className="justify-end" />
+        <Label
+          label={Currency(v.price.priceDiscount ?? 0)}
+          className="justify-end"
+        />
       ),
     },
     {

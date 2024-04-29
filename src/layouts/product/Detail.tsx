@@ -25,6 +25,7 @@ import {
   Currency,
   CurrencyIDInput,
   checkForDash,
+  epochToDateConvert,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -61,6 +62,7 @@ const Detail = () => {
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
   const [subCategoryId, setSubCategoryId] = React.useState("");
   const [subDistributorId, setSubDistributorId] = React.useState("");
+  const [promoValue, setPromoValue] = React.useState("");
   const [price, setPrice] = React.useState("");
 
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
@@ -165,6 +167,12 @@ const Detail = () => {
       setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
       setValue("condition", "Baru");
       setValue("description", findById.data.description);
+      setValue(
+        "promotion",
+        `(${Currency(findById.data.price.priceDiscount)}) ${epochToDateConvert(
+          findById.data.price.startAt
+        )} - ${epochToDateConvert(findById.data.price.expiredAt)}`
+      );
     }
   }, [findById.data, imageUrl, price]);
 
@@ -360,6 +368,7 @@ const Detail = () => {
       name: "category",
       type: "modal",
       onClick: actionIsCategory,
+      defaultValue: "",
       rules: { required: { value: true, message: "Pilih kategori" } },
     }),
     objectFields({
@@ -367,12 +376,14 @@ const Detail = () => {
       name: "subCategory",
       type: "modal",
       onClick: onClickSubCategory,
+      defaultValue: "",
     }),
     objectFields({
       label: "produk berbahaya",
       name: "dangerous",
       type: "modal",
       onClick: actionIsDangerous,
+      defaultValue: "",
     }),
     objectFields({
       label: "variasi",
@@ -380,6 +391,7 @@ const Detail = () => {
       type: "modal",
       placeholder: "tentukan variasi",
       onClick: actionIsVariant,
+      defaultValue: "",
     }),
     objectFields({
       label: "harga (Rp) *",
@@ -404,6 +416,7 @@ const Detail = () => {
       name: "condition",
       type: "modal",
       onClick: actionIsCondition,
+      defaultValue: "",
       rules: { required: { value: true, message: "pilih kondisi" } },
     }),
     objectFields({
@@ -411,6 +424,7 @@ const Detail = () => {
       name: "subDistributor",
       type: "modal",
       onClick: actionIsSubDistributor,
+      defaultValue: "",
     }),
     objectFields({
       label: "deskripsi *",
@@ -422,6 +436,7 @@ const Detail = () => {
       name: "promotion",
       type: "modal",
       onClick: actionIsPromotion,
+      defaultValue: "ll",
     }),
   ];
 
@@ -557,7 +572,6 @@ const Detail = () => {
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    defaultValue=""
                     endContent={
                       <ChevronRightIcon width={16} color={IconColor.zinc} />
                     }

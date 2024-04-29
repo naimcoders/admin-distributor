@@ -114,13 +114,28 @@ const Promotion = ({
                   )}
                   rules={{
                     required: { value: true, message: v.errorMessage ?? "" },
-                    onBlur: (e) =>
-                      CurrencyIDInput({
-                        type: v.type ?? "",
-                        fieldName: v.name,
-                        setValue: promoForm.setValue,
-                        value: e.target.value,
-                      }),
+                    onBlur: (e) => {
+                      if (promoForm.getValues("discount")) {
+                        promoForm.setValue(
+                          "discountPercentage",
+                          rangeVariantPrice(
+                            variantPrice,
+                            parseTextToNumber(promoForm.getValues("discount"))
+                          )?.join(" - ") ?? ""
+                        );
+                      } else {
+                        promoForm.setValue("discountPercentage", "");
+                      }
+
+                      if (v.name !== "discountPercentage") {
+                        CurrencyIDInput({
+                          type: v.type ?? "",
+                          fieldName: v.name,
+                          setValue: promoForm.setValue,
+                          value: e.target.value,
+                        });
+                      }
+                    },
                   }}
                 />
               )}

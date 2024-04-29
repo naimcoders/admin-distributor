@@ -81,9 +81,19 @@ const Promotion = ({
     }
   }, [variantTypes]);
 
+  // console.log(variantPrice);
+
   return (
     <>
-      <Modal isOpen={isPromotion} closeModal={actionIsPromotion}>
+      <Modal
+        isOpen={isPromotion}
+        closeModal={() => {
+          promoForm.resetField("discount");
+          promoForm.resetField("discountPercentage");
+          setVariantPrice([]);
+          actionIsPromotion();
+        }}
+      >
         <header className="flex gap-4">
           {images.map((v, k) => (
             <Image
@@ -120,7 +130,7 @@ const Promotion = ({
                           "discountPercentage",
                           rangeVariantPrice(
                             variantPrice,
-                            parseTextToNumber(promoForm.getValues("discount"))
+                            parseTextToNumber(e.target.value)
                           )?.join(" - ") ?? ""
                         );
                       } else {

@@ -131,7 +131,11 @@ const useHook = () => {
       render: (v) => (
         <Label
           label={
-            !v.price.startAt ? "-" : `${v.price.startAt} - ${v.price.expiredAt}`
+            !v.price.startAt
+              ? "-"
+              : `${epochToDateConvert(v.price.startAt)} - ${epochToDateConvert(
+                  v.price.expiredAt
+                )}`
           }
         />
       ),

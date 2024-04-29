@@ -652,6 +652,7 @@ const Detail = () => {
         description={findById.data?.description ?? "-"}
         price={parseTextToNumber(price)}
         productData={findById.data}
+        productId={id}
       />
       <SubDistributorModal
         clearErrors={clearErrors}

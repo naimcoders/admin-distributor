@@ -14,8 +14,6 @@ import { useForm } from "react-hook-form";
 import {
   Currency,
   CurrencyIDInput,
-  checkForDash,
-  dateToEpochConvert,
   handleErrorMessage,
   parseTextToNumber,
 } from "src/helpers";
@@ -32,6 +30,7 @@ interface PromotionProps extends Pick<UseForm, "setValue"> {
   description: string;
   normalPrice: string;
   price: number;
+  productId: string;
   productData?: Product;
 }
 
@@ -72,6 +71,7 @@ const Promotion = ({
   normalPrice,
   price,
   productData,
+  productId,
 }: PromotionProps) => {
   const [variantPrice, setVariantPrice] = React.useState<number[]>([]);
 
@@ -101,7 +101,7 @@ const Promotion = ({
   const epoch = useGeneralStore((v) => v.epoch);
   const setEpoch = useGeneralStore((v) => v.setEpoch);
   const setDate = useGeneralStore((v) => v.setDate);
-  const { update } = useProduct();
+  const { update } = useProduct(productId);
 
   const onSubmit = promoForm.handleSubmit(async (e) => {
     if (!productData) return;

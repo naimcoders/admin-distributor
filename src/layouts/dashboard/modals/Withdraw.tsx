@@ -87,17 +87,26 @@ const Withdraw = () => {
       return;
     }
 
-    if (!banks) return;
+    if (!banks || !wallet) return;
 
     const [bankByChannelCode] = banks.filter(
       (bank) => bank.channel_code === channelCode
     );
 
+    const walletBalance = wallet.balance;
     const amountLimitMinimum = bankByChannelCode.amount_limits.minimum;
     const amountLimitMaximum = bankByChannelCode.amount_limits.maximum;
 
-    // setIsChannel(false);
-    // setTimeout(() => setIsPin(true), 500);
+    if (
+      walletBalance >= amountLimitMinimum &&
+      walletBalance < amountLimitMaximum
+    ) {
+      setIsChannel(false);
+      setTimeout(() => setIsPin(true), 500);
+      console.log({ amountLimitMinimum, amountLimitMaximum });
+    } else {
+      toast.error("Saldo ...");
+    }
   });
 
   const { mutateAsync } = createWithdraw();

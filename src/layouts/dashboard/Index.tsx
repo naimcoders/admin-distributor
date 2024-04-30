@@ -127,7 +127,7 @@ const MiddleLine = () => {
   const revenue = findRevenue(user?.createdAt ?? 0, endAt);
 
   return (
-    <section className="grid lg:grid-cols-4 gap-8">
+    <section className="grid lg:grid-cols-4 lg:gap-8 md:gap-6 gap-4">
       <PiliPay />
 
       <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">

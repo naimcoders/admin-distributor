@@ -37,7 +37,7 @@ const Layout = () => {
           <AsideNav />
           <main
             className={cx(
-              "p-6 lg:pt-6 lg:pb-3 md:w-calcSideBar md:ml-56 relative overflow-auto h-calcOutlet"
+              "p-6 lg:pt-6 lg:pb-3 md:w-calcSideBar md:ml-56 relative min-h-calcOutlet"
             )}
           >
             <Outlet />
@@ -69,7 +69,9 @@ const Header = () => {
             alt="Logo"
             width={65}
             loading="lazy"
-            className="rounded-full aspect-square object-cover "
+            className={cx(
+              "rounded-full aspect-square object-cover hidden md:block"
+            )}
           />
         )}
       </section>

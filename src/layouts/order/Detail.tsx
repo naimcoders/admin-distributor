@@ -269,12 +269,14 @@ const useAccept = (orderId: string) => {
 
   const onAccept = async () => {
     try {
+      toast.loading("Loading...", { toastId: "loading-accept" });
       await mutateAsync();
       toast.success("Order berhasil diterima");
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to accept the order: ${error.message}`);
-      console.error(`Failed to accept the order: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-accept");
     }
   };
 
@@ -286,11 +288,14 @@ const useItemReady = (orderId: string) => {
 
   const onItemReady = async () => {
     try {
+      toast.loading("Loading...", { toastId: "loading-item-ready" });
       await mutateAsync();
       toast.success("Pesanan siap dikirim");
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to submit the item ready: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-item-ready");
     }
   };
 
@@ -302,11 +307,14 @@ const useReject = (orderId: string) => {
 
   const onReject = async () => {
     try {
+      toast.loading("Loading...", { toastId: "loading-reject" });
       await mutateAsync();
       toast.success("Order berhasil ditolak");
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to reject the order: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-reject");
     }
   };
 

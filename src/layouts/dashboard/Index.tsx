@@ -111,7 +111,7 @@ const TotalSales = () => {
 
 const TopLine = () => {
   return (
-    <section className="grid-min-300 lg:gap-8">
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6 lg:gap-8">
       <TotalProduct />
       <TotalStore />
       <TotalSales />
@@ -127,7 +127,7 @@ const MiddleLine = () => {
   const revenue = findRevenue(user?.createdAt ?? 0, endAt);
 
   return (
-    <section className="grid-min-300 gap-8">
+    <section className="grid lg:grid-cols-4 gap-8">
       <PiliPay />
 
       <Card className="z-0 px-1 bg-gradient-to-b from-[#f1f1f1] to-[#b9b7b7]">

@@ -31,7 +31,7 @@ const Product = () => {
       {error ? (
         <Error error={error} />
       ) : (
-        <main className="relative">
+        <main className="relative overflow-auto whitespace-nowrap">
           <Tabs
             items={tabs}
             color="primary"

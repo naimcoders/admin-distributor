@@ -104,7 +104,7 @@ export function TableWithSearchAndTabs<S extends object>(
         defaultValue=""
         control={props.control}
         placeholder={props.placeholder}
-        className="sm:absolute sm:top-0 sm:right-0 w-[24rem]"
+        className="lg:absolute lg:top-0 lg:right-0 w-[24rem] mt-5 lg:mt-0"
         startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
       />
 

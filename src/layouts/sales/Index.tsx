@@ -9,24 +9,26 @@ const Sales = () => {
   const { onNav } = detailNavigate();
 
   return (
-    <TableWithoutTabs
-      header={{
-        search: {
-          placeholder: "cari nama sales/nomor HP/kategori",
-          setSearch: () => console.log("set search"),
-        },
-        createData: {
-          isValue: true,
-          label: "sales",
-          onClick: () => onNav("tambah"),
-        },
-      }}
-      table={{
-        columns,
-        data: sales,
-        isLoading: false,
-      }}
-    />
+    <main className="overflow-auto whitespace-nowrap pb-5">
+      <TableWithoutTabs
+        header={{
+          search: {
+            placeholder: "cari nama sales/nomor HP/kategori",
+            setSearch: () => console.log("set search"),
+          },
+          createData: {
+            isValue: true,
+            label: "sales",
+            onClick: () => onNav("tambah"),
+          },
+        }}
+        table={{
+          columns,
+          data: sales,
+          isLoading: false,
+        }}
+      />
+    </main>
   );
 };
 

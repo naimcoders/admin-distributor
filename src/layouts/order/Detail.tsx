@@ -56,6 +56,7 @@ const Detail = () => {
   const { orderId } = useParams() as { orderId: string };
   const { error, isLoading, data } = findOrderById(orderId);
   const { onAccept, isLoadingAccept } = useAccept(orderId);
+  const { onReject, isLoadingReject } = useReject(orderId);
 
   return (
     <>
@@ -94,7 +95,7 @@ const Detail = () => {
             {/*  */}
 
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
-              <section className="flexcol gap-2">
+              <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">pemesan</h1>
                 <section className="flex gap-2">
                   <img src={pemesanImg} alt="Order Image" className="w-6 h-6" />
@@ -104,15 +105,15 @@ const Detail = () => {
                   </div>
                 </section>
               </section>
-              <section className="flexcol gap-2">
+              <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">nama toko</h1>
                 <p>-</p>
               </section>
-              <section className="flexcol gap-2">
+              <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">alamat pengiriman</h1>
                 <p className="capitalize ">{data?.customer.address}</p>
               </section>
-              <section className="flexcol gap-2">
+              <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">catatan pengiriman</h1>
                 <p>{data?.note}</p>
               </section>
@@ -227,8 +228,11 @@ const Detail = () => {
               {data?.status === "WAITING_ACCEPT" && (
                 <div className="flex lg:gap-5 gap-4 justify-center md:justify-end ">
                   <Button
-                    label="tolak"
+                    label={
+                      isLoadingReject ? <Spinner color="danger" /> : "tolak"
+                    }
                     className="bg-transparent text-[#F31260] border border-[#F31260]"
+                    onClick={onReject}
                   />
 
                   <Button
@@ -287,7 +291,6 @@ const useItemReady = (orderId: string) => {
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to submit the item ready: ${error.message}`);
-      console.error(`Failed to submit the item ready: ${error.message}`);
     }
   };
 
@@ -297,18 +300,17 @@ const useItemReady = (orderId: string) => {
 const useReject = (orderId: string) => {
   const { mutateAsync, isPending } = rejectOrder(orderId);
 
-  const onItemReady = async () => {
+  const onReject = async () => {
     try {
       await mutateAsync();
       toast.success("Order berhasil ditolak");
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to reject the order: ${error.message}`);
-      console.error(`Failed to reject the order: ${error.message}`);
     }
   };
 
-  return { onItemReady, isLoadingItemReady: isPending };
+  return { onReject, isLoadingReject: isPending };
 };
 
 export default Detail;

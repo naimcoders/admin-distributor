@@ -1,7 +1,7 @@
+import cx from "classnames";
 import { ArrowDownTrayIcon, PrinterIcon } from "@heroicons/react/24/outline";
 import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
 import { Chip, Spinner } from "@nextui-org/react";
-import cx from "classnames";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -71,7 +71,7 @@ const Detail = () => {
             <Download />
           </section>
 
-          <section className="bg-white rounded-lg px-5">
+          <section className="bg-white rounded-lg px-5 mb-4">
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">ID Order</h1>
@@ -122,7 +122,7 @@ const Detail = () => {
             {/*  */}
 
             <div className="overflow-auto whitespace-nowrap border-b border-gray-300 py-5">
-              <section className="text-sm flex gap-2 md:grid md:grid-cols-4">
+              <section className="text-sm flex md:grid md:grid-cols-4 gap-2">
                 <h1 className="font-medium capitalize">jenis pesanan</h1>
                 <h1 className="font-medium capitalize">sub-distributor</h1>
                 <h1 className="font-medium capitalize text-right">
@@ -135,7 +135,7 @@ const Detail = () => {
                 {/* ITEMS */}
                 {data?.items.map((product, idx) => (
                   <section
-                    className="flex flex-col gap-2 col-span-4"
+                    className="flex flex-col gap-2 col-span-4 mt-1"
                     key={`${idx}-${product.product.name}`}
                   >
                     <section className="grid grid-cols-4 gap-2">

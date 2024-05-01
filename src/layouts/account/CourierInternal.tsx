@@ -56,12 +56,12 @@ const useApi = () => {
     try {
       if (!data) return;
 
-      const obj = {
-        ...e,
+      await createCourierInternal.mutateAsync({
+        email: e.email,
+        name: e.name,
+        phoneNumber: e.phoneNumber,
         location: data[0],
-      };
-
-      await createCourierInternal.mutateAsync(obj);
+      });
       toast.success("Kurir internal berhasil dibuat");
       reset();
     } catch (e) {

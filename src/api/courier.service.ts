@@ -1,6 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { req } from "./request";
 import { Location } from "./location.service";
+import queryString from "query-string";
 
 export interface Courier {
   courierInternal: CourierInternal;
@@ -52,7 +53,7 @@ export interface ReqCourierInternal {
   email: string;
   name: string;
   phoneNumber: string;
-  location: Location;
+  location?: Location;
 }
 
 class Api {
@@ -76,26 +77,58 @@ class Api {
       errors: "",
     });
   }
+
+  async findByMyCourier(userId: string): Promise<Courier> {
+    const query = queryString.stringify(
+      { userId },
+      { skipNull: true, skipEmptyString: true }
+    );
+
+    return await req<Courier>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/internal?${query}`,
+      errors: "",
+    });
+  }
+
+  async updateCourierInternal(r: ReqCourierInternal): Promise<Courier> {
+    return await req<Courier>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/internal`,
+      body: r,
+      errors: "",
+    });
+  }
 }
 
 interface ApiCourierInfo {
   createCourierInternal(r: ReqCourierInternal): Promise<Courier>;
+  findByMyCourier(userId: string): Promise<Courier>;
+  updateCourierInternal(r: ReqCourierInternal): Promise<Courier>;
 }
 
 function getCourierApiInfo(): ApiCourierInfo {
   return Api.getInstance();
 }
 
-// const key = "courier";
 const keyCourierInternal = "courier-internal";
 
-export const useCourier = () => {
-  const createCourierInternal = useMutation<Courier, Error, ReqCourierInternal>(
-    {
-      mutationKey: [keyCourierInternal, "create"],
-      mutationFn: (r) => getCourierApiInfo().createCourierInternal(r),
-    }
-  );
+export const createCourierInternal = () => {
+  const queryClient = useQueryClient();
 
-  return { createCourierInternal };
+  const { mutateAsync, isPending } = useMutation<
+    Courier,
+    Error,
+    ReqCourierInternal
+  >({
+    mutationKey: [keyCourierInternal, "create"],
+    mutationFn: (r) => getCourierApiInfo().createCourierInternal(r),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [keyCourierInternal] });
+    },
+  });
+
+  return { mutateAsync, isLoadingCreateCourier: isPending };
 };

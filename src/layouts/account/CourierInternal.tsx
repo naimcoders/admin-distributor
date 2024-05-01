@@ -52,7 +52,6 @@ const useApi = () => {
     formState: { errors },
   } = useForm<ReqCourierInternal>();
 
-  // const { createCourierInternal } = useCourier();
   const createCourier = createCourierInternal();
   const { data } = findLocationByUserId();
 

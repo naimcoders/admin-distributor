@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { req } from "./request";
 import { Location } from "./location.service";
 import queryString from "query-string";
@@ -115,6 +115,16 @@ function getCourierApiInfo(): ApiCourierInfo {
 
 const keyCourierInternal = "courier-internal";
 
+export const findMyCouurier = (merchantId: string) => {
+  const { data, isLoading, error } = useQuery<Courier, Error>({
+    queryKey: [keyCourierInternal],
+    queryFn: () => getCourierApiInfo().findByMyCourier(merchantId),
+    enabled: !!merchantId,
+  });
+
+  return { data, isLoading, error };
+};
+
 export const createCourierInternal = () => {
   const queryClient = useQueryClient();
 
@@ -125,6 +135,24 @@ export const createCourierInternal = () => {
   >({
     mutationKey: [keyCourierInternal, "create"],
     mutationFn: (r) => getCourierApiInfo().createCourierInternal(r),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [keyCourierInternal] });
+    },
+  });
+
+  return { mutateAsync, isPending };
+};
+
+export const updateCourierInternal = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending } = useMutation<
+    Courier,
+    Error,
+    ReqCourierInternal
+  >({
+    mutationKey: [keyCourierInternal, "update"],
+    mutationFn: (r) => getCourierApiInfo().updateCourierInternal(r),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: [keyCourierInternal] });
     },

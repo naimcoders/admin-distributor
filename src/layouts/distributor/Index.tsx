@@ -140,6 +140,7 @@ const Distributor = () => {
                       page,
                       next,
                       prev,
+                      isPaginate: true,
                     }}
                   />
 

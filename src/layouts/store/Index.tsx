@@ -39,23 +39,25 @@ const Store = () => {
       {error ? (
         <Error error={error} />
       ) : (
-        <TableWithoutTabs
-          header={{
-            search: {
-              placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
-              setSearch: () => console.log("search"),
-            },
-          }}
-          table={{
-            columns,
-            data: data ?? [],
-            isLoading: isLoading,
-            isNext: false,
-            page: 1,
-            // next: onNext,
-            // prev: onPrev,
-          }}
-        />
+        <main className="overflow-auto whitespace-nowrap pb-5">
+          <TableWithoutTabs
+            header={{
+              search: {
+                placeholder: "cari nama toko/pemilik/no HP/PIC Sales",
+                setSearch: () => console.log("search"),
+              },
+            }}
+            table={{
+              columns,
+              data: data ?? [],
+              isLoading: isLoading,
+              isNext: false,
+              page: 1,
+              // next: onNext,
+              // prev: onPrev,
+            }}
+          />
+        </main>
       )}
     </section>
   );

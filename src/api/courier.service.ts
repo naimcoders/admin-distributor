@@ -115,11 +115,11 @@ function getCourierApiInfo(): ApiCourierInfo {
 
 const keyCourierInternal = "courier-internal";
 
-export const findMyCouurier = (merchantId: string) => {
+export const findMyCourier = (merchantId: string) => {
   const { data, isLoading, error } = useQuery<Courier, Error>({
     queryKey: [keyCourierInternal],
     queryFn: () => getCourierApiInfo().findByMyCourier(merchantId),
-    enabled: !!merchantId,
+    // enabled: !!merchantId,
   });
 
   return { data, isLoading, error };

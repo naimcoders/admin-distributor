@@ -7,16 +7,42 @@ import Template from "./Template";
 import {
   ReqCourierInternal,
   createCourierInternal,
+  findMyCourier,
 } from "src/api/courier.service";
 import { useForm } from "react-hook-form";
-import { handleErrorMessage } from "src/helpers";
+import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { toast } from "react-toastify";
 import { Spinner } from "@nextui-org/react";
 import { findLocationByUserId } from "src/api/location.service";
+import { setUser } from "src/stores/auth";
 
 const CourierInternal = () => {
-  const { rekenings } = useHook();
   const { control, errors, onSubmit, isPending, onSubmitKeyDown } = useApi();
+
+  const user = setUser((v) => v.user);
+  const { data, isLoading } = findMyCourier(user?.id ?? "");
+
+  const rekenings: TextfieldProps<ReqCourierInternal>[] = [
+    objectFields({
+      name: "name",
+      label: "nama lengkap",
+      type: "text",
+      defaultValue: data?.name ?? "",
+    }),
+    objectFields({
+      name: "email",
+      label: "email",
+      type: "email",
+      autoComplete: "on",
+      defaultValue: data?.email,
+    }),
+    objectFields({
+      name: "phoneNumber",
+      label: "nomor HP",
+      type: "text",
+      defaultValue: parsePhoneNumber(data?.phoneNumber),
+    }),
+  ];
 
   return (
     <Template
@@ -26,19 +52,23 @@ const CourierInternal = () => {
       }
       onClick={onSubmit}
     >
-      {rekenings.map((v) => (
-        <Textfield
-          {...v}
-          key={v.label}
-          defaultValue=""
-          control={control}
-          errorMessage={handleErrorMessage(errors, v.name)}
-          rules={{
-            required: { value: true, message: v.errorMessage ?? "" },
-          }}
-          onKeyDown={onSubmitKeyDown}
-        />
-      ))}
+      {isLoading ? (
+        <Spinner size="lg" />
+      ) : (
+        rekenings.map((v) => (
+          <Textfield
+            {...v}
+            key={v.label}
+            defaultValue={v.defaultValue}
+            control={control}
+            errorMessage={handleErrorMessage(errors, v.name)}
+            rules={{
+              required: { value: true, message: v.errorMessage ?? "" },
+            }}
+            onKeyDown={onSubmitKeyDown}
+          />
+        ))
+      )}
     </Template>
   );
 };
@@ -101,29 +131,6 @@ const useApi = () => {
     isPending: createCourier.isPending,
     onSubmitKeyDown,
   };
-};
-
-const useHook = () => {
-  const rekenings: TextfieldProps<ReqCourierInternal>[] = [
-    objectFields({
-      name: "name",
-      label: "nama lengkap",
-      type: "text",
-    }),
-    objectFields({
-      name: "email",
-      label: "email",
-      type: "email",
-      autoComplete: "on",
-    }),
-    objectFields({
-      name: "phoneNumber",
-      label: "nomor HP",
-      type: "number",
-    }),
-  ];
-
-  return { rekenings };
 };
 
 export default CourierInternal;

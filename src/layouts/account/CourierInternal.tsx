@@ -16,6 +16,11 @@ import { Spinner } from "@nextui-org/react";
 import { findLocationByUserId } from "src/api/location.service";
 import { setUser } from "src/stores/auth";
 
+// TODO:
+// 1. FIX THE SIZE OF HEADER LAYOUT
+// 2. FIX SCROLL TABLE
+// 3. FIX COURIER INTERNAL WHEN POST & PUT
+
 const CourierInternal = () => {
   const { control, errors, onSubmit, isPending, onSubmitKeyDown } = useApi();
 

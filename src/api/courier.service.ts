@@ -130,5 +130,5 @@ export const createCourierInternal = () => {
     },
   });
 
-  return { mutateAsync, isLoadingCreateCourier: isPending };
+  return { mutateAsync, isPending };
 };

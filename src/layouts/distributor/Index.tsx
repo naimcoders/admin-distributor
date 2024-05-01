@@ -119,7 +119,7 @@ const Distributor = () => {
               {error ? (
                 <Error error={error} />
               ) : (
-                <>
+                <main className="whitespace-nowrap overflow-auto pb-5">
                   <TableWithoutTabs
                     header={{
                       search: {
@@ -154,7 +154,7 @@ const Distributor = () => {
                       action: onSuspend,
                     }}
                   />
-                </>
+                </main>
               )}
             </section>
           ) : (

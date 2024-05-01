@@ -20,7 +20,7 @@ interface Table<T extends object>
 export default function Table<T extends object>(props: Table<T>) {
   return (
     <section className={cx("relative flex flex-col gap-4", props.className)}>
-      <table className="w-full text-left bg-white shadow-sm table-fixed">
+      <table className="w-full text-left bg-white shadow-sm lg:table-fixed">
         <thead
           className={cx(
             "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",

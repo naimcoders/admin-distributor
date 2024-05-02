@@ -79,6 +79,7 @@ const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
         page={page}
         isPaginate
         placeholder="cari nama produk/kategori/Sub-Kategori"
+        className="whitespace-nowrap overflow-y-auto"
       />
 
       <ConfirmModal

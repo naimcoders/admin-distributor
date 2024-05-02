@@ -23,7 +23,7 @@ export default function Table<T extends object>(props: Table<T>) {
       <table className="min-w-full text-left bg-white shadow-sm table-fixed">
         <thead
           className={cx(
-            "capitalize text-gray-700 border border-gray-300 sticky -top-[.15rem]",
+            "capitalize text-gray-700 border border-gray-300 sticky -top-[.15rem] z-10",
             props.isTransparent ? "bg-transparent" : "bg-[#F4F4F5]"
           )}
         >
@@ -110,7 +110,7 @@ export function TableWithSearchAndTabs<S extends object>(
 
       <Table
         isPaginate={props.isPaginate}
-        className="mt-4"
+        className={cx("mt-4", props.className)}
         data={props.data}
         page={props.page}
         isNext={props.isNext}

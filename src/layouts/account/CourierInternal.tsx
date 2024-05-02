@@ -49,11 +49,19 @@ const CourierInternal = () => {
     }),
   ];
 
+  console.log(data);
+
   return (
     <Template
       title="kurir internal"
       btnLabelForm={
-        isPending ? <Spinner color="secondary" size="sm" /> : "buat kurir"
+        isPending ? (
+          <Spinner color="secondary" size="sm" />
+        ) : !data ? (
+          "buat kurir"
+        ) : (
+          "perbarui kurir"
+        )
       }
       onClick={onSubmit}
     >

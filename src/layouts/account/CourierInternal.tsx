@@ -49,8 +49,6 @@ const CourierInternal = () => {
     }),
   ];
 
-  console.log(data);
-
   return (
     <Template
       title="kurir internal"

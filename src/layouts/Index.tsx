@@ -60,7 +60,7 @@ const Header = () => {
   const currentPath = path.split("-").join(" ");
 
   return (
-    <header className="px-6 py-3 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
+    <header className="px-6 py-2 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-10">
       <section className="flex gap-6 items-center">
         <Hamburger />
         {user && (

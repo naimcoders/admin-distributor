@@ -5,9 +5,11 @@ import {
 } from "src/components/Textfield";
 import Template from "./Template";
 import {
+  Courier,
   ReqCourierInternal,
   createCourierInternal,
   findMyCourier,
+  updateCourierInternal,
 } from "src/api/courier.service";
 import { useForm } from "react-hook-form";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -17,17 +19,16 @@ import { findLocationByUserId } from "src/api/location.service";
 import { setUser } from "src/stores/auth";
 
 // TODO:
-// 1. FIX THE SIZE OF HEADER LAYOUT
 // 2. FIX SCROLL TABLE
 // 3. FIX COURIER INTERNAL WHEN POST & PUT
 
 const CourierInternal = () => {
-  const { control, errors, onSubmit, isPending, onSubmitKeyDown } = useApi();
-
   const user = setUser((v) => v.user);
   const { data, isLoading } = findMyCourier(user?.id ?? "");
+  const { control, errors, onSubmit, isPending, onSubmitKeyDown } =
+    useApi(data);
 
-  const rekenings: TextfieldProps<ReqCourierInternal>[] = [
+  const couriers: TextfieldProps<ReqCourierInternal>[] = [
     objectFields({
       name: "name",
       label: "nama lengkap",
@@ -66,7 +67,7 @@ const CourierInternal = () => {
       {isLoading ? (
         <Spinner size="lg" />
       ) : (
-        rekenings.map((v) => (
+        couriers.map((v) => (
           <Textfield
             {...v}
             key={v.label}
@@ -84,38 +85,47 @@ const CourierInternal = () => {
   );
 };
 
-const useApi = () => {
+const useApi = (courierData?: Courier) => {
   const {
     control,
     handleSubmit,
-    reset,
     getValues,
     formState: { errors },
   } = useForm<ReqCourierInternal>();
 
   const createCourier = createCourierInternal();
+  const updateCourier = updateCourierInternal();
   const { data } = findLocationByUserId();
 
   const onSubmit = handleSubmit(async (e) => {
     try {
       if (!data) return;
 
-      await createCourier.mutateAsync({
-        email: e.email,
-        name: e.name,
-        phoneNumber: e.phoneNumber,
-        location: data[0],
-      });
-      toast.success("Kurir internal berhasil dibuat");
-      reset();
+      if (!courierData) {
+        await createCourier.mutateAsync({
+          email: e.email,
+          name: e.name,
+          phoneNumber: e.phoneNumber,
+          location: data[0],
+        });
+        toast.success("Kurir internal berhasil dibuat");
+      } else {
+        await updateCourier.mutateAsync({
+          email: e.email,
+          name: e.name,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
+          location: data[0],
+        });
+        toast.success("Kurir internal berhasil diperbarui");
+      }
     } catch (e) {
       const error = e as Error;
-      toast.error(`Failed to create courier internal: ${error.message}`);
+      toast.error(`Failed courier internal: ${error.message}`);
     }
   });
 
   const onSubmitKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !courierData) {
       try {
         if (!data) return;
         const values = getValues();
@@ -127,7 +137,6 @@ const useApi = () => {
 
         await createCourier.mutateAsync(obj);
         toast.success("Kurir internal berhasil dibuat");
-        reset();
       } catch (e) {
         const error = e as Error;
         toast.error(`Failed to create courier internal: ${error.message}`);

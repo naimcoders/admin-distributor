@@ -117,7 +117,7 @@ const keyCourierInternal = "courier-internal";
 
 export const findMyCourier = (merchantId: string) => {
   const { data, isLoading, error } = useQuery<Courier, Error>({
-    queryKey: [keyCourierInternal],
+    queryKey: [keyCourierInternal, merchantId],
     queryFn: () => getCourierApiInfo().findByMyCourier(merchantId),
     enabled: !!merchantId,
   });
@@ -154,7 +154,9 @@ export const updateCourierInternal = () => {
     mutationKey: [keyCourierInternal, "update"],
     mutationFn: (r) => getCourierApiInfo().updateCourierInternal(r),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [keyCourierInternal] });
+      void queryClient.invalidateQueries({
+        queryKey: [keyCourierInternal],
+      });
     },
   });
 

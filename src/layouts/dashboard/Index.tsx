@@ -289,8 +289,7 @@ const BottomLine = () => {
           columns={columnStore}
           data={stores.data ?? []}
           isLoading={stores.isLoading}
-          isTransparent
-          className="overflow-y-auto whitespace-nowrap h-[18rem]"
+          className="overflow-y-auto whitespace-nowrap h-calcDashboardTable"
         />
       )}
 
@@ -301,8 +300,7 @@ const BottomLine = () => {
           columns={columnProduct}
           data={products.data ?? []}
           isLoading={products.isLoading}
-          isTransparent
-          className="overflow-y-auto whitespace-nowrap h-[18rem]"
+          className="overflow-y-auto whitespace-nowrap h-calcDashboardTable"
         />
       )}
     </footer>

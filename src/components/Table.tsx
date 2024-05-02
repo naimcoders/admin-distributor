@@ -23,8 +23,8 @@ export default function Table<T extends object>(props: Table<T>) {
       <table className="min-w-full text-left bg-white shadow-sm table-fixed">
         <thead
           className={cx(
-            "capitalize text-gray-700 border border-gray-300 bg-[#F4F4F5]",
-            props.isTransparent ? "bg-transparent" : "bg-slate-100"
+            "capitalize text-gray-700 border border-gray-300 sticky -top-[.15rem]",
+            props.isTransparent ? "bg-transparent" : "bg-[#F4F4F5]"
           )}
         >
           <tr>

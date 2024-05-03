@@ -3,7 +3,7 @@ import { useController } from "react-hook-form";
 import { TextfieldProps } from "./Textfield";
 import { Textarea as Txtarea } from "@nextui-org/react";
 
-const Textarea = (props: TextfieldProps) => {
+const Textarea = (props: TextfieldProps<any>) => {
   const { field } = useController(props);
 
   return (

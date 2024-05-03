@@ -167,7 +167,7 @@ const Create = () => {
       clearDeliveryPrice();
       reset();
       toast.success("Produk berhasil dibuat");
-      // navigate(-1);
+      navigate(-1);
     } catch (e) {
       const error = e as Error;
       console.error(`Something wrong to create product : ${error.message}`);

@@ -66,7 +66,7 @@ const useHook = () => {
   const location = data?.location[0];
   const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<any>[] = [
     objectFields({
       readOnly: { isValue: true, cursor: "cursor-default" },
       label: "nama pemilik",

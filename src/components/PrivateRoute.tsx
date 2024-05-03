@@ -4,7 +4,6 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { setUser } from "src/stores/auth";
 import Notification from "./Notification";
-import NotificationOrder from "./socket-notification";
 
 export const PrivateRoute = () => {
   const { error, loading, user } = useAuth();

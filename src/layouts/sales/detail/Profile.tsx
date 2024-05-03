@@ -103,7 +103,7 @@ const useHook = () => {
   const { actionIsCategory } = useActiveModal();
   const { ktpRef, onClick, onChange, setKtpBlob } = useKtp();
 
-  const fields: TextfieldProps[] = [
+  const fields: TextfieldProps<any>[] = [
     objectFields({
       label: "nama sales",
       name: "salesName",

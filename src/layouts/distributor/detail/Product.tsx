@@ -1,8 +1,9 @@
 import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Product, useProduct } from "src/api/product.service";
+import { Product as IProduct, useProduct } from "src/api/product.service";
 import { Actions } from "src/components/Actions";
 import Label, { LabelPrice } from "src/components/Label";
+import Pagination from "src/components/Pagination";
 import { TableWithSearchAndTabs } from "src/components/Table";
 import {
   epochToDateConvert,
@@ -30,25 +31,25 @@ const Product = ({ distributorId }: ProductProps) => {
   const onPrev = () => setPage((v) => v - 1);
 
   return (
-    <TableWithSearchAndTabs
-      isPaginate
-      columns={columns}
-      data={data?.items ?? []}
-      control={control}
-      isLoading={isLoading}
-      isNext={isNext}
-      placeholder="cari nama produk, kategori, sub-kategori"
-      next={onNext}
-      prev={onPrev}
-      page={page}
-    />
+    <main>
+      <TableWithSearchAndTabs
+        columns={columns}
+        data={data?.items ?? []}
+        control={control}
+        isLoading={isLoading}
+        placeholder="cari nama produk, kategori, sub-kategori"
+        page={page}
+        className="mb-4"
+      />
+      <Pagination next={onNext} prev={onPrev} page={page} isNext={isNext} />
+    </main>
   );
 };
 
 const useHook = () => {
   const navigate = useNavigate();
 
-  const columns: Columns<Product>[] = [
+  const columns: Columns<IProduct>[] = [
     {
       header: <p className="text-center">nama produk</p>,
       render: (v) => <Label label={v.name} />,

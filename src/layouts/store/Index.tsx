@@ -1,20 +1,10 @@
 import Error from "src/components/Error";
 import Label from "src/components/Label";
 import Rating from "src/components/Rating";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { Store as StoreInf, useStore } from "src/api/store.service";
 import { Actions } from "src/components/Actions";
 import { TableWithoutTabs } from "src/components/Table";
-import {
-  Currency,
-  detailNavigate,
-  parsePhoneNumber,
-  parseQueryString,
-  stringifyQuery,
-} from "src/helpers";
+import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
 import { Columns } from "src/types";
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Buyers, findBuyers } from "src/api/performance.service";
 
 const Store = () => {
@@ -25,7 +15,6 @@ const Store = () => {
 
   const { data, isLoading, error } = findBuyers();
 
-  const navigate = useNavigate();
   // const onPrev = () => setPage((num) => num - 1);
   // const onNext = () => setPage((num) => num + 1);
 
@@ -51,10 +40,7 @@ const Store = () => {
               columns,
               data: data ?? [],
               isLoading: isLoading,
-              isNext: false,
               page: 1,
-              // next: onNext,
-              // prev: onPrev,
             }}
           />
         </main>
@@ -73,11 +59,11 @@ const useHook = () => {
     },
     {
       header: <p className="text-center">rating</p>,
-      render: (v) => <Rating rate={0} />,
+      render: () => <Rating rate={0} />,
     },
     {
       header: <p className="text-center">nama pemilik</p>,
-      render: (v) => (
+      render: () => (
         <Label
           label="-"
           // startContent={

@@ -75,7 +75,6 @@ const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
         isLoading={isLoading}
         data={data?.items ?? []}
         page={page}
-        isPaginate
         placeholder="cari nama produk/kategori/Sub-Kategori"
         className="whitespace-nowrap overflow-y-auto h-calcProductTable mb-4"
       />

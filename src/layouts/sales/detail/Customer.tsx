@@ -10,14 +10,7 @@ const Customer = () => {
 
   return (
     <main className="mt-5">
-      <Table
-        columns={columns}
-        data={customers}
-        isLoading={false}
-        page={1}
-        isNext={false}
-        isPaginate
-      />
+      <Table columns={columns} data={customers} isLoading={false} page={1} />
     </main>
   );
 };

@@ -167,7 +167,7 @@ const PiliPay = () => {
   return (
     <section className="bg-primary px-4 py-6 rounded-xl flex gap-4 shadow-md md:col-span-2 whitespace-nowrap overflow-auto flex-grow">
       <PilipayTransaction />
-      <div className="w-[.11rem] h-full bg-white opacity-[.4] rounded-md" />
+      {/* <div className="w-[.19rem] h-full bg-white opacity-[.4] rounded-md" /> */}
       <PilipayBalance />
     </section>
   );
@@ -179,7 +179,7 @@ const PilipayTransaction = () => {
   const { data, isLoading, error } = findRevenue(startAt, endAt);
 
   return (
-    <section className="flex items-center gap-4 flex-1">
+    <section className="flex items-center gap-3 flex-1">
       <div className="text-white flex flex-col gap-2">
         <h2 className="capitalize text-[.75rem]">transaksi hari ini</h2>
         {error ? (
@@ -191,7 +191,7 @@ const PilipayTransaction = () => {
         )}
       </div>
       <Button
-        label="Update"
+        label="update"
         radius="sm"
         className="w-full text-black text-sm bg-blue-300 font-semibold"
       />
@@ -219,7 +219,7 @@ const PilipayBalance = () => {
       {isActivated && (
         <ActivatedPilipay isOpen={isActivated} setOpen={setIsActivated} />
       )}
-      <section className="flex gap-10 items-center">
+      <section className="flex gap-4 items-center">
         <section className="text-white flex flex-col gap-2">
           <span className="text-[.75rem] tracking-wider inline-flex gap-1">
             <img src={walletSVG} alt="wallet" className="w-4" />

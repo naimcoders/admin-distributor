@@ -17,6 +17,7 @@ interface IPayment {
   topupId: string;
   isOpen: boolean;
   close: () => void;
+  onClearState: () => void;
   onBack?: () => void;
 }
 
@@ -36,7 +37,13 @@ const onClipboard = async (text: string) => {
   }
 };
 
-const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
+const Payment: React.FC<IPayment> = ({
+  isOpen,
+  close,
+  onBack,
+  topupId,
+  onClearState,
+}) => {
   const { data, isLoading, error } = findTransaction({ topupId });
 
   console.log(data);
@@ -53,7 +60,7 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
         <Spinner />
       ) : (
         <main>
-          {!data?.actions.eWallet && (
+          {data?.paymentType !== "EWALLET" && (
             <section className="border-b border-gray-300 pb-3 flex items-center justify-between">
               <div>
                 <p className="text-sm">Batas akhir pembayaran</p>
@@ -65,9 +72,23 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
                     {getTime(data.actions.retail.channel_properties.expires_at)}
                   </h2>
                 )}
+                {data?.actions.virtualAccount && (
+                  <h2 className="font-semibold">
+                    {convertEpochToDate(
+                      data.actions.virtualAccount.channel_properties.expires_at
+                    )}{" "}
+                    {getTime(
+                      data.actions.virtualAccount.channel_properties.expires_at
+                    )}
+                  </h2>
+                )}
               </div>
 
-              <Button label={<CountdownTimer />} className="bg-[#c41414]" />
+              <Button
+                label={<CountdownTimer />}
+                className="bg-[#c41414]"
+                disabled
+              />
             </section>
           )}
           <section
@@ -80,6 +101,7 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
               {data?.paymentMethod} {data?.paymentType.split("_").join(" ")}
             </h1>
           </section>
+
           {data?.actions.eWallet && (
             <ActionContent
               amount={1000}
@@ -125,9 +147,17 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
           <section className="py-3">
             <p className="text-sm">Total Pembayaran</p>
             <div className="flex justify-between">
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <h2 className="font-semibold">
-                  Rp{Currency(data?.amount ?? 0)}
+                  Rp{Currency(data?.amount ?? 0)},{" "}
+                  {!data?.actions.eWallet && (
+                    <span className="text-sm font-normal">
+                      a/n{" "}
+                      {data?.actions.retail?.channel_properties.customer_name ??
+                        data?.actions.virtualAccount?.channel_properties
+                          .customer_name}
+                    </span>
+                  )}
                 </h2>
                 <ClipboardIcon
                   width={16}
@@ -137,12 +167,19 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
                   title="Salin"
                 />
               </div>
-              <p className="text-sm text-blue-500 cursor-pointer">
+              <p className="text-sm text-blue-500 cursor-pointer text-center">
                 Lihat Detail
               </p>
             </div>
           </section>
-          <Button label="selesai" className="mt-4 block w-full" />
+          <Button
+            label="selesai"
+            className="mt-4 block w-full"
+            onClick={() => {
+              close();
+              onClearState();
+            }}
+          />
         </main>
       )}
     </Modal>

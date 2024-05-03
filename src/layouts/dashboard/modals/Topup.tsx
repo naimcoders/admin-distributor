@@ -17,7 +17,7 @@ import {
 import { cn, Image } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import Payment from "./payment";
+import Payment from "./Payment";
 
 const Topup = () => {
   const formState = useForm<ITopup>();
@@ -204,7 +204,16 @@ const Topup = () => {
       </Modal>
 
       {topUpId && (
-        <Payment close={actionIsPayment} isOpen={isPayment} topupId={topUpId} />
+        <Payment
+          close={actionIsPayment}
+          isOpen={isPayment}
+          topupId={topUpId}
+          onClearState={() => {
+            setAmount(0);
+            setTopUpId("");
+            setShowListPaymentChannel(false);
+          }}
+        />
       )}
     </>
   );

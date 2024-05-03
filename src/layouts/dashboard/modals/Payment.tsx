@@ -7,6 +7,11 @@ import Error from "src/components/Error";
 import { Spinner } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { Currency, convertEpochToDate } from "src/helpers";
+import { ClipboardIcon } from "@heroicons/react/24/outline";
+import { IconColor } from "src/types";
+import { toast } from "react-toastify";
+import { Button } from "src/components/Button";
+import CountdownTimer from "src/components/CountdownTimer";
 
 interface IPayment {
   topupId: string;
@@ -19,6 +24,16 @@ const getTime = (value: Date) => {
   const now = new Date(value);
   const result = `${now.getHours()}:${now.getMinutes()}`;
   return result;
+};
+
+const onClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Berhasil disalin");
+  } catch (e) {
+    const error = e as Error;
+    toast.error(`Gagal menyalin teks ke clipboard: ${error.message}`);
+  }
 };
 
 const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
@@ -39,16 +54,20 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
       ) : (
         <main>
           {!data?.actions.eWallet && (
-            <section className="border-b border-gray-300 pb-3">
-              <p className="text-sm">Batas akhir pembayaran</p>
-              {data?.actions.retail && (
-                <h2 className="font-semibold">
-                  {convertEpochToDate(
-                    data.actions.retail.channel_properties.expires_at
-                  )}{" "}
-                  {getTime(data.actions.retail.channel_properties.expires_at)}
-                </h2>
-              )}
+            <section className="border-b border-gray-300 pb-3 flex items-center justify-between">
+              <div>
+                <p className="text-sm">Batas akhir pembayaran</p>
+                {data?.actions.retail && (
+                  <h2 className="font-semibold">
+                    {convertEpochToDate(
+                      data.actions.retail.channel_properties.expires_at
+                    )}{" "}
+                    {getTime(data.actions.retail.channel_properties.expires_at)}
+                  </h2>
+                )}
+              </div>
+
+              <Button label={<CountdownTimer />} className="bg-[#c41414]" />
             </section>
           )}
           <section
@@ -68,12 +87,18 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
               value={data.actions.eWallet.url}
               paymentType={data.paymentType}
               classNameWrapper="truncate py-3"
+              onClipboard={() => onClipboard(data?.actions?.eWallet?.url ?? "")}
             />
           )}
           {data?.actions.retail && (
             <ActionContent
               amount={data.actions.retail.amount}
               classNameWrapper="py-3"
+              onClipboard={() =>
+                onClipboard(
+                  data?.actions.retail?.channel_properties?.payment_code ?? ""
+                )
+              }
               title="Kode Pembayaran"
               value={data?.actions.retail?.channel_properties?.payment_code}
               paymentType={data.paymentType}
@@ -83,6 +108,12 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
             <ActionContent
               amount={data.actions.virtualAccount.amount}
               classNameWrapper="py-3"
+              onClipboard={() =>
+                onClipboard(
+                  data?.actions.virtualAccount?.channel_properties
+                    ?.virtual_account_number ?? ""
+                )
+              }
               title="Nomor Virtual Account"
               value={
                 data?.actions.virtualAccount?.channel_properties
@@ -94,12 +125,24 @@ const Payment: React.FC<IPayment> = ({ isOpen, close, onBack, topupId }) => {
           <section className="py-3">
             <p className="text-sm">Total Pembayaran</p>
             <div className="flex justify-between">
-              <h2 className="font-semibold">Rp{Currency(data?.amount ?? 0)}</h2>
+              <div className="flex gap-2">
+                <h2 className="font-semibold">
+                  Rp{Currency(data?.amount ?? 0)}
+                </h2>
+                <ClipboardIcon
+                  width={16}
+                  color={IconColor.zinc}
+                  onClick={() => onClipboard(String(data?.amount))}
+                  className="cursor-pointer"
+                  title="Salin"
+                />
+              </div>
               <p className="text-sm text-blue-500 cursor-pointer">
                 Lihat Detail
               </p>
             </div>
           </section>
+          <Button label="selesai" className="mt-4 block w-full" />
         </main>
       )}
     </Modal>
@@ -112,6 +155,7 @@ interface IAction {
   amount: number;
   paymentType: string;
   classNameWrapper?: string;
+  onClipboard?: () => void;
 }
 
 const ActionContent = ({
@@ -119,6 +163,7 @@ const ActionContent = ({
   value,
   classNameWrapper,
   paymentType,
+  onClipboard,
 }: IAction) => {
   return (
     <>
@@ -129,7 +174,16 @@ const ActionContent = ({
             {value}
           </Link>
         ) : (
-          <h2 className="font-semibold">{value}</h2>
+          <div className="flex gap-2">
+            <h2 className="font-semibold">{value}</h2>
+            <ClipboardIcon
+              width={16}
+              color={IconColor.zinc}
+              onClick={onClipboard}
+              className="cursor-pointer"
+              title="Salin"
+            />
+          </div>
         )}
       </section>
     </>

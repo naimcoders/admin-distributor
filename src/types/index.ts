@@ -26,8 +26,6 @@ export interface TableProps<T extends object> {
   columns: Columns<T>[];
   isLoading: boolean;
   page?: number;
-  isNext?: boolean;
-  isPaginate?: boolean;
 }
 
 export interface UseForm {

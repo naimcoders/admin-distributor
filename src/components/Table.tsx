@@ -1,5 +1,4 @@
 import cx from "classnames";
-import Pagination from "./Pagination";
 import { TableProps } from "src/types";
 import { CircularProgress } from "@nextui-org/react";
 import { HTMLAttributes, useEffect } from "react";
@@ -13,8 +12,6 @@ interface Table<T extends object>
   extends Pick<HTMLAttributes<HTMLDivElement>, "className">,
     TableProps<T> {
   isTransparent?: boolean;
-  next?: () => void | null;
-  prev?: () => void | null;
 }
 
 export default function Table<T extends object>(props: Table<T>) {
@@ -23,7 +20,7 @@ export default function Table<T extends object>(props: Table<T>) {
       <table className="min-w-full text-left bg-white shadow-sm table-fixed">
         <thead
           className={cx(
-            "capitalize text-gray-700 border border-gray-300 sticky -top-[.15rem] z-10",
+            "capitalize text-gray-700 border border-gray-300 sticky top-0 z-10",
             props.isTransparent ? "bg-transparent" : "bg-[#F4F4F5]"
           )}
         >
@@ -76,14 +73,14 @@ export default function Table<T extends object>(props: Table<T>) {
         <div className="text-center font-bold text-base">Tidak ada data</div>
       )}
 
-      {!props.isPaginate ? null : (
+      {/* {!props.isPaginate ? null : (
         <Pagination
           page={props.page ?? 1}
           isNext={props.isNext}
           next={props.next}
           prev={props.prev}
         />
-      )}
+      )} */}
     </section>
   );
 }
@@ -109,15 +106,11 @@ export function TableWithSearchAndTabs<S extends object>(
       />
 
       <Table
-        isPaginate={props.isPaginate}
         className={cx("mt-4", props.className)}
         data={props.data}
         page={props.page}
-        isNext={props.isNext}
         columns={props.columns}
         isLoading={props.isLoading}
-        next={props.next}
-        prev={props.prev}
       />
     </section>
   );
@@ -153,11 +146,8 @@ export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
         columns={props.table.columns}
         data={props.table.data}
         isLoading={props.table.isLoading}
-        isNext={props.table.isNext}
         page={props.table.page}
-        next={props.table.next}
-        prev={props.table.prev}
-        isPaginate={props.table.isPaginate}
+        className={props.table.className}
       />
     </section>
   );

@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useActiveModal } from "src/stores/modalStore";
 import { setUser } from "src/stores/auth";
 import Skeleton from "src/components/Skeleton";
+import Pagination from "src/components/Pagination";
 
 export const useSuspend = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
@@ -71,6 +72,16 @@ const Distributor = () => {
       console.log(error.message);
     }
   };
+
+  // const arr: IDistributor[] = [
+  //   {
+  //     ownerName: 'dada',
+  //     email: 'dada',
+  //     phoneNumber: '5235',
+  //     createdAt: 1231423,
+  //     id: '313',
+  //   }
+  // ]
 
   const columns: Columns<IDistributor>[] = [
     {
@@ -136,12 +147,17 @@ const Distributor = () => {
                       columns,
                       data: data?.items ?? [],
                       isLoading,
-                      isNext,
                       page,
-                      next,
-                      prev,
-                      isPaginate: true,
+                      className:
+                        "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
                     }}
+                  />
+
+                  <Pagination
+                    page={page}
+                    next={next}
+                    prev={prev}
+                    isNext={isNext}
                   />
 
                   <ConfirmModal

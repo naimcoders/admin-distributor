@@ -37,7 +37,7 @@ const Layout = () => {
           <AsideNav />
           <main
             className={cx(
-              "p-6 lg:pt-6 lg:pb-3 md:w-calcSideBar md:ml-56 relative"
+              "p-6 lg:pt-6 lg:pb-3 md:w-calcSideBar md:ml-56 relative overflow-hidden"
             )}
           >
             <Outlet />
@@ -60,7 +60,7 @@ const Header = () => {
   const currentPath = path.split("-").join(" ");
 
   return (
-    <header className="px-6 py-2 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-20">
+    <header className="px-6 py-3 lg:py-2 lg:px-8 bg-primary flex gap-4 justify-between items-center sticky top-0 z-20">
       <section className="flex gap-6 items-center">
         <Hamburger />
         {user && (

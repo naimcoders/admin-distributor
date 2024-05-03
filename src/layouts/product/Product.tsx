@@ -17,6 +17,7 @@ import { useSuspend } from "../distributor/Index";
 import { ConfirmModal } from "src/components/Modal";
 import { toast } from "react-toastify";
 import { useActiveModal } from "src/stores/modalStore";
+import Pagination from "src/components/Pagination";
 
 const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
   const navigate = useNavigate();
@@ -73,14 +74,13 @@ const SubProduct = ({ pageQuery, tab }: { pageQuery: string; tab: string }) => {
         control={control}
         isLoading={isLoading}
         data={data?.items ?? []}
-        isNext={isNext}
-        next={onNext}
-        prev={onPrev}
         page={page}
         isPaginate
         placeholder="cari nama produk/kategori/Sub-Kategori"
-        className="whitespace-nowrap overflow-y-auto"
+        className="whitespace-nowrap overflow-y-auto h-calcProductTable mb-4"
       />
+
+      <Pagination page={page} isNext={isNext} next={onNext} prev={onPrev} />
 
       <ConfirmModal
         label={

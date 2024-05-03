@@ -45,6 +45,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 onClick={left}
                 isDisabled={activePage > 1 ? false : true}
                 title="Previous"
+                size="sm"
               >
                 <ChevronLeftIcon width={16} color="#1E1E1E" />
               </Button>
@@ -56,6 +57,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 color="secondary"
                 aria-label="active page"
                 className="text-[#27272A]"
+                size="sm"
               >
                 {page}
               </Button>
@@ -69,6 +71,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 onClick={right}
                 isDisabled={isNext ? false : true}
                 title="Next"
+                size="sm"
               >
                 <ChevronRightIcon width={16} color="#1E1E1E" />
               </Button>

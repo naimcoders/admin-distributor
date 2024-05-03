@@ -7,6 +7,7 @@ import Error from "src/components/Error";
 import { setUser } from "src/stores/auth";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate } from "react-router-dom";
+import Pagination from "src/components/Pagination";
 
 const data: SelectDataProps[] = [
   { label: "menunggu diterima", value: "WAITING_ACCEPT" },
@@ -34,8 +35,12 @@ const Order = () => {
     isNext,
     page,
     setSearch,
+    setPage,
   } = findOrders(selectedOrder as ReqStatusOrder, user?.id ?? "");
   const { columns } = useOrderColumns(selectedOrder);
+
+  const onPrev = () => setPage((num) => num - 1);
+  const onNext = () => setPage((num) => num + 1);
 
   React.useEffect(() => {
     const qs = stringifyQuery({ status: selectedOrder.toLowerCase() });
@@ -55,23 +60,27 @@ const Order = () => {
       {error ? (
         <Error error={error} />
       ) : (
-        <TableWithoutTabs
-          header={{
-            search: {
-              placeholder: "cari ID order/nama toko/pemilik/nomor HP",
-              setSearch,
-              className: "lg:absolute lg:top-0 lg:right-0 mt-6 lg:mt-0",
-            },
-          }}
-          table={{
-            data: orders?.items ?? [],
-            columns,
-            isLoading,
-            isNext,
-            isPaginate: true,
-            page,
-          }}
-        />
+        <>
+          <TableWithoutTabs
+            header={{
+              search: {
+                placeholder: "cari ID order/nama toko/pemilik/nomor HP",
+                setSearch,
+                className: "lg:absolute lg:top-0 lg:right-0 mt-6 lg:mt-0",
+              },
+            }}
+            table={{
+              data: orders?.items ?? [],
+              columns,
+              isLoading,
+              page,
+              className:
+                "overflow-auto whitespace-nowrap h-calcSubDistributorTable",
+            }}
+          />
+
+          <Pagination page={page} isNext={isNext} next={onNext} prev={onPrev} />
+        </>
       )}
     </main>
   );

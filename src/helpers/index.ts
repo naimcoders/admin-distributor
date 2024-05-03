@@ -27,7 +27,7 @@ export const parseQueryString = <T extends object>(): T => {
   return parsed;
 };
 
-export function convertEpochToDate(epochTime: number): string {
+export function convertEpochToDate(epochTime: number | Date): string {
   const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const months = [
     "Jan",
@@ -44,7 +44,9 @@ export function convertEpochToDate(epochTime: number): string {
     "Des",
   ];
 
-  const date = new Date(epochTime * 1000); // Convert seconds to milliseconds
+  const date = new Date(
+    typeof epochTime === "number" ? epochTime * 1000 : epochTime
+  ); // Convert seconds to milliseconds
 
   const dayOfWeek = days[date.getDay()];
   const dayOfMonth = date.getDate();

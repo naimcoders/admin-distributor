@@ -17,17 +17,20 @@ import {
 import { cn, Image } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import Payment from "./payment";
 
 const Topup = () => {
   const formState = useForm<ITopup>();
   const [isOtherField, setIsOtherField] = useState(false);
+  const [topUpId, setTopUpId] = useState("");
   const [showListPaymentChannel, setShowListPaymentChannel] = useState(false);
   const [amount, setAmount] = useState(0);
   const [channelPayment, setPaymentChannel] = useState<PayoutChannels>();
   const paymentChannel = findPaymentChannel();
   const { topup: topupActions } = usePilipay();
 
-  const { isTopUp, actionIsTopUp } = useActiveModal();
+  const { isTopUp, actionIsTopUp, actionIsPayment, isPayment } =
+    useActiveModal();
 
   const handleOther = () => {
     setAmount(0);
@@ -42,11 +45,18 @@ const Topup = () => {
       toast.loading("Loading...", {
         toastId: "loading-topup",
       });
-      await topupActions.mutateAsync({
+      const result = await topupActions.mutateAsync({
         amount: fixAmount,
         paymentMethod: channelPayment?.paymentChannel ?? "",
         paymentType: channelPayment?.paymentMethod ?? "",
       });
+      setTopUpId(result);
+
+      if (result) {
+        actionIsTopUp();
+        setTimeout(actionIsPayment, 800);
+      }
+
       toast.success("Silakan untuk pembayaran");
     } catch (e) {
       toast.error("Gagal melakukan topup");
@@ -192,6 +202,10 @@ const Topup = () => {
           )}
         </main>
       </Modal>
+
+      {topUpId && (
+        <Payment close={actionIsPayment} isOpen={isPayment} topupId={topUpId} />
+      )}
     </>
   );
 };

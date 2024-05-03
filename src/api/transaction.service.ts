@@ -54,14 +54,14 @@ export interface PayLater {
 export interface Retail {
   amount: number;
   currency: string;
-  channelCode: string;
-  channelProperties: RetailChannelProperties;
+  channel_code: string;
+  channel_properties: RetailChannelProperties;
 }
 
 export interface RetailChannelProperties {
-  paymentCode: string;
-  customerName: string;
-  expiresAt: Date;
+  payment_code: string;
+  customer_name: string;
+  expires_at: Date;
 }
 
 export interface VirtualAccount {

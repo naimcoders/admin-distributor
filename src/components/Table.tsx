@@ -154,11 +154,11 @@ export function TableWithoutTabs<S extends object>(props: TableWithoutTabs<S>) {
 }
 
 const Header = ({ search, createData }: HeaderProps) => {
-  const { control, watch } = useForm<FieldValues>({ mode: "onChange" });
+  const { control, watch } = useForm<FieldValues>();
   const debounced = useDebounce(watch("search"), 500);
 
   useEffect(() => {
-    if (debounced) search.setSearch(debounced);
+    search.setSearch(debounced);
   }, [debounced]);
 
   return (

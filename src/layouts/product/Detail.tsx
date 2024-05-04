@@ -326,7 +326,7 @@ const Detail = () => {
 
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
-      if (result.name) navigate(-1);
+      // if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
       toast.error(`Failed to update : ${error.message}`);

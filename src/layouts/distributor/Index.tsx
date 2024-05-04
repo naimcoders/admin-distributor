@@ -73,16 +73,6 @@ const Distributor = () => {
     }
   };
 
-  // const arr: IDistributor[] = [
-  //   {
-  //     ownerName: 'dada',
-  //     email: 'dada',
-  //     phoneNumber: '5235',
-  //     createdAt: 1231423,
-  //     id: '313',
-  //   }
-  // ]
-
   const columns: Columns<IDistributor>[] = [
     {
       header: <p className="text-center">nama pemilik</p>,

@@ -315,7 +315,7 @@ const Detail = () => {
       //   deliveryPrice,
       //   category: { categoryId },
       //   description: e.description,
-      //   subCategoryId,
+      //   subCategoryId: subCategoryId === "-" ? "" : subCategoryId,
       //   price: {
       //     ...priceStore,
       //     price: newPrice,
@@ -326,7 +326,7 @@ const Detail = () => {
 
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
-      // if (result.name) navigate(-1);
+      if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
       toast.error(`Failed to update : ${error.message}`);
@@ -518,8 +518,8 @@ const Detail = () => {
       ) : findById.isLoading ? (
         <Skeleton />
       ) : (
-        <main className="flexcol gap-5 lg:gap-8">
-          <header className="flexcol gap-4">
+        <main className="flex flex-col gap-5 lg:gap-8">
+          <header className="flex flex-col gap-4">
             <section className="flex gap-6 items-start flex-wrap">
               {currentProductImage?.map((v, k) => (
                 <Image
@@ -571,7 +571,7 @@ const Detail = () => {
             </section>
           </header>
 
-          <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
+          <main className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
             {fields.map((v) => (
               <React.Fragment key={v.label}>
                 {["text", "rp"].includes(v.type!) && (

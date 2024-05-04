@@ -24,8 +24,6 @@ const CourierInternal = () => {
   const { control, errors, onSubmit, isPending, onSubmitKeyDown } =
     useApi(data);
 
-  console.log(data);
-
   const couriers: TextfieldProps<ReqCourierInternal>[] = [
     objectFields({
       name: "name",

@@ -178,9 +178,11 @@ const Create = () => {
           </section>
 
           <Button
-            label={isLoading ? <Spinner color="secondary" /> : "simpan"}
+            label={
+              isLoading ? <Spinner color="secondary" size="sm" /> : "simpan"
+            }
             onClick={onSubmit}
-            className="mx-auto lg:mt-12 my-5"
+            className="mx-auto lg:mt-12 my-4"
           />
         </>
       )}

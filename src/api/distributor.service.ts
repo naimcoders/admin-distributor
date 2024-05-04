@@ -336,6 +336,23 @@ export const findTotalSubDistributor = () => {
   };
 };
 
+export const createDistributor = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMutation<
+    Distributor,
+    Error,
+    { data: Create }
+  >({
+    mutationKey: [key, "create"],
+    mutationFn: async (r) => await getDistributorApiInfo().create(r.data),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    },
+  });
+
+  return { mutateAsync, isPending };
+};
+
 export const useDistributor = () => {
   const queryClient = useQueryClient();
 
@@ -435,16 +452,6 @@ export const useDistributor = () => {
     onError: (e) => toast.error(e.message),
   });
 
-  const create = useMutation<Distributor, Error, { data: Create }>({
-    mutationKey: [key, "create"],
-    mutationFn: async (r) => await getDistributorApiInfo().create(r.data),
-    onSuccess: () => {
-      toast.success("Distributor berhasil dibuat");
-      void queryClient.invalidateQueries({ queryKey: [key] });
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
   const updateDocument = useMutation<null, Error, { data: UpdateDocument }>({
     mutationKey: [key, "update-document"],
     mutationFn: async (r) =>
@@ -460,7 +467,6 @@ export const useDistributor = () => {
     find,
     findById,
     suspend,
-    create,
     updateDocument,
     updateSubDistributor,
     updateDistributor,

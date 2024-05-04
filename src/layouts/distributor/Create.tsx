@@ -21,7 +21,7 @@ import useGeneralStore from "src/stores/generalStore";
 import { useLocation } from "src/api/location.service";
 import { Chip, CircularProgress, Spinner } from "@nextui-org/react";
 import { toast } from "react-toastify";
-import { useDistributor } from "src/api/distributor.service";
+import { createDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
 import { uploadFile } from "src/firebase/upload";
 import { checkPassword } from "src/pages/Index";
@@ -47,7 +47,7 @@ const Create = () => {
   const coordinate = useGeneralStore((v) => v.coordinate);
   const { fields, bannerFile, ktpFile } = useField();
   const { actionIsCoordinate } = useActiveModal();
-  const { forms, geoLocation, zipCode, onSubmit, isLoading } = useApi(
+  const { forms, geoLocation, zipCode, onSubmit, isPending } = useApi(
     ktpFile,
     bannerFile
   );
@@ -179,7 +179,7 @@ const Create = () => {
 
           <Button
             label={
-              isLoading ? <Spinner color="secondary" size="sm" /> : "simpan"
+              isPending ? <Spinner color="secondary" size="sm" /> : "simpan"
             }
             onClick={onSubmit}
             className="mx-auto lg:mt-12 my-4"
@@ -195,14 +195,13 @@ const Create = () => {
 const useApi = (ktpFile?: File, bannerFile?: File) => {
   const forms = useForm<DefaultValues>();
   const coordinate = useGeneralStore((v) => v.coordinate);
-  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const { findGeoLocation } = useLocation();
   const geoLocation = findGeoLocation(coordinate?.lat!, coordinate?.lng!);
   const zipCode = geoLocation.data?.zipCode ? geoLocation.data?.zipCode : "-";
 
-  const { create } = useDistributor();
+  const { mutateAsync, isPending } = createDistributor();
   const { user } = useAuth();
 
   const onSubmit = forms.handleSubmit(async (e) => {
@@ -222,7 +221,7 @@ const useApi = (ktpFile?: File, bannerFile?: File) => {
     const ktpImage = `distributor_document/${Date.now()}.png`;
 
     try {
-      setIsLoading(true);
+      toast.loading("Loading...", { toastId: "loading-create-distributor" });
       await uploadFile({
         file: ktpFile,
         prefix: ktpImage,
@@ -254,7 +253,7 @@ const useApi = (ktpFile?: File, bannerFile?: File) => {
         documents: { ktpImage },
       };
 
-      const result = await create.mutateAsync({
+      const result = await mutateAsync({
         data: obj,
       });
 
@@ -264,16 +263,17 @@ const useApi = (ktpFile?: File, bannerFile?: File) => {
           prefix: `distributor_banner/${result.id}/${Date.now()}.png`,
         });
         navigate(-1);
+        toast.success("Sub-Distributor berhasil dibuat");
       }
     } catch (e) {
       const error = e as Error;
-      console.error(error.message);
+      toast.error(`Failed to create sub-distributor: ${error.message}`);
     } finally {
-      setIsLoading(false);
+      toast.dismiss("loading-create-distributor");
     }
   });
 
-  return { zipCode, geoLocation, forms, onSubmit, isLoading };
+  return { zipCode, geoLocation, forms, onSubmit, isPending };
 };
 
 const useField = () => {

@@ -10,7 +10,6 @@ import transferImg from "src/assets/images/transfer.png";
 import topUpImg from "src/assets/images/top up.png";
 import historyImg from "src/assets/images/riwayat.png";
 import cx from "classnames";
-import Label from "src/components/Label";
 import Table from "src/components/Table";
 import Image from "src/components/Image";
 import History from "./modals/History";
@@ -300,7 +299,7 @@ const BottomLine = () => {
           columns={columnProduct}
           data={products.data ?? []}
           isLoading={products.isLoading}
-          className="h-calcDashboardTable"
+          className="h-calcDashboardTable whitespace-nowrap overflow-y-auto"
         />
       )}
     </footer>
@@ -310,41 +309,39 @@ const BottomLine = () => {
 const columnStore: Columns<Buyers>[] = [
   {
     header: <p className="text-[#30b2e5] text-sm">toko terlaris</p>,
-    render: (v, idx) => <Label label={`${idx + 1}. ${v.name}`} />,
+    render: (v, idx) => <p className="truncate">{`${idx + 1}. ${v.name}`}</p>,
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total omset (Rp)</p>
     ),
-    render: (v) => (
-      <Label label={Currency(v.revenue)} className="justify-end" />
-    ),
+    render: (v) => <p className="truncate">{Currency(v.revenue)}</p>,
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total transaksi</p>
     ),
-    render: (v) => (
-      <Label label={Currency(v.totalOrder)} className="justify-end" />
-    ),
+    render: (v) => <p className="truncate">{Currency(v.totalOrder)}</p>,
   },
 ];
 
 const columnProduct: Columns<ProductBestSelling>[] = [
   {
     header: <p className="text-[#ae5eaa] text-sm">produk terlaris</p>,
-    render: (v, idx) => <Label label={`${idx + 1}. ${v.productName}`} />,
+    render: (v, idx) => (
+      <p className="truncate">{`${idx + 1}. ${v.productName}`}</p>
+    ),
   },
   {
     header: <p className="text-[#ae5eaa] text-sm">kategori</p>,
-    render: (v) => <Label label={v.categoryName} />,
+    render: (v) => <p className="truncate">{v.categoryName}</p>,
   },
   {
     header: (
       <p className="text-right text-[#ae5eaa] text-sm">total pembelian</p>
     ),
     render: (v) => (
-      <Label label={Currency(v.orderCount)} className="justify-end" />
+      <p className="truncate text-right">{Currency(v.orderCount)}</p>
     ),
   },
 ];

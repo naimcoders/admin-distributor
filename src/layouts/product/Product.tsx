@@ -114,16 +114,19 @@ const useHook = () => {
     {
       header: <p className="text-center">nama produk</p>,
       render: (v) => <Label label={v.name} />,
+      width: "w-[15rem]",
     },
     {
       header: <p className="text-center">kategori</p>,
       render: (v) => <Label label={v.categoryProduct.category.name} />,
+      width: "w-[15rem]",
     },
     {
       header: <p className="text-right">harga (Rp)</p>,
       render: (v) => (
         <LabelPrice product={v} label="" className="justify-end" />
       ),
+      width: "w-[10rem]",
     },
     {
       header: <p className="text-center">diskon</p>,
@@ -133,6 +136,7 @@ const useHook = () => {
           className="justify-end"
         />
       ),
+      width: "w-[10rem]",
     },
     {
       header: <p className="text-center">periode</p>,
@@ -147,10 +151,12 @@ const useHook = () => {
           }
         />
       ),
+      width: "w-[10rem]",
     },
     {
       header: <p className="text-center">tanggal dibuat</p>,
       render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
+      width: "w-[10rem]",
     },
     {
       header: <p className="text-center">aksi</p>,
@@ -165,7 +171,7 @@ const useHook = () => {
           }}
         />
       ),
-      width: "w-40",
+      width: "w-[10rem]",
     },
   ];
 

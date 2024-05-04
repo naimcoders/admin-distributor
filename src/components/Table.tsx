@@ -17,7 +17,7 @@ interface Table<T extends object>
 export default function Table<T extends object>(props: Table<T>) {
   return (
     <section className={cx("relative flex flex-col gap-4", props.className)}>
-      <table className="min-w-full text-left bg-white shadow-sm table-fixed">
+      <table className="min-w-full text-left bg-white shadow-sm">
         <thead
           className={cx(
             "capitalize text-gray-700 border border-gray-300 sticky top-0 z-10",
@@ -29,9 +29,7 @@ export default function Table<T extends object>(props: Table<T>) {
               <th
                 key={idx}
                 className={cx(
-                  "text-[13px] p-3 text-gray-700 W-12 border border-gray-300",
-                  "p-3 font-semibold border border-gray-300 W-12 text-[13px]",
-                  val.width
+                  "text-[13px] p-3 text-gray-700 border border-gray-300"
                 )}
               >
                 {val.header}
@@ -49,8 +47,7 @@ export default function Table<T extends object>(props: Table<T>) {
                   <td
                     key={key}
                     className={cx(
-                      "text-[13px] p-3 text-gray-700 W-12 border border-gray-300 truncate",
-                      col.width
+                      "text-[13px] p-3 text-gray-700 border border-gray-300 truncate max-w-[10rem]"
                     )}
                   >
                     {col.render(it, idx)}

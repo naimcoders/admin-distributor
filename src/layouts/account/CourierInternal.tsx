@@ -41,10 +41,8 @@ const CourierInternal = () => {
     objectFields({
       name: "phoneNumber",
       label: "nomor HP",
-      type: "number",
-      defaultValue: data?.phoneNumber
-        ? parsePhoneNumber(data?.phoneNumber)
-        : "",
+      type: "text",
+      defaultValue: parsePhoneNumber(data?.phoneNumber),
     }),
   ];
 
@@ -99,11 +97,11 @@ const useApi = (courierData?: Courier) => {
     try {
       if (!data) return;
 
-      if (!courierData) {
+      if (!courierData?.name) {
         await createCourier.mutateAsync({
           email: e.email,
           name: e.name,
-          phoneNumber: e.phoneNumber,
+          phoneNumber: parsePhoneNumber(e.phoneNumber),
           location: data[0],
         });
         toast.success("Kurir internal berhasil dibuat");
@@ -123,21 +121,37 @@ const useApi = (courierData?: Courier) => {
   });
 
   const onSubmitKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !courierData) {
+    if (e.key === "Enter" && !courierData?.name) {
       try {
         if (!data) return;
         const values = getValues();
 
-        const obj = {
+        await createCourier.mutateAsync({
           ...values,
+          phoneNumber: parsePhoneNumber(values.phoneNumber),
           location: data[0],
-        };
-
-        await createCourier.mutateAsync(obj);
+        });
         toast.success("Kurir internal berhasil dibuat");
       } catch (e) {
         const error = e as Error;
         toast.error(`Failed to create courier internal: ${error.message}`);
+      }
+    }
+
+    if (e.key === "Enter" && courierData?.name) {
+      try {
+        if (!data) return;
+
+        const values = getValues();
+        await updateCourier.mutateAsync({
+          ...values,
+          phoneNumber: parsePhoneNumber(values.phoneNumber),
+          location: data[0],
+        });
+        toast.success("Kurir internal berhasil diperbarui");
+      } catch (e) {
+        const error = e as Error;
+        toast.error(`Failed to update courier internal: ${error.message}`);
       }
     }
   };

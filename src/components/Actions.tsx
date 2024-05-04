@@ -2,6 +2,8 @@ import folder from "src/assets/images/folder.png";
 import { Switch } from "@nextui-org/react";
 import cx from "classnames";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { IconColor } from "src/types";
 
 interface Switch {
   isSelected?: boolean;
@@ -10,20 +12,21 @@ interface Switch {
 
 interface ActionProps {
   id: number | string;
-  action: "switch" | "detail" | "both";
+  action: "switch" | "detail" | "switchAndDetail" | "deleteAndDetail";
   switch?: Switch;
   detail?: HTMLAttributes<HTMLImageElement>;
+  delete?: () => void;
 }
 
 export const Actions: React.FC<ActionProps> = (props) => {
   return (
     <section
       className={cx(
-        "flex justify-center gap-3 items-center",
-        props.action === "both" && "px-3"
+        "flex justify-center gap-4 items-center",
+        props.action === "switchAndDetail" && "px-3"
       )}
     >
-      {props.action === "both" && (
+      {props.action === "switchAndDetail" && (
         <>
           <Switch
             as="button"
@@ -37,6 +40,22 @@ export const Actions: React.FC<ActionProps> = (props) => {
             aria-labelledby={String(props.id)}
             size="sm"
             classNames={{ base: "z-0" }}
+          />
+
+          <FolderIcon
+            onClick={props.detail?.onClick}
+            className={props.detail?.className}
+          />
+        </>
+      )}
+
+      {props.action === "deleteAndDetail" && (
+        <>
+          <TrashIcon
+            width={20}
+            color={IconColor.red}
+            onClick={props.delete}
+            className="cursor-pointer"
           />
 
           <FolderIcon

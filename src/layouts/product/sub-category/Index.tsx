@@ -1,4 +1,3 @@
-import Label from "src/components/Label";
 import Error from "src/components/Error";
 import { FieldValues, useForm } from "react-hook-form";
 import { TableWithSearchAndTabs } from "src/components/Table";
@@ -9,6 +8,7 @@ import {
   useProductCategory,
 } from "src/api/product-category.service";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CategorySub = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -48,10 +48,17 @@ const CategorySub = () => {
 const useCategorySub = () => {
   const navigate = useNavigate();
 
+  const onDeleteCategory = (data: ProductCategory) => {
+    if (data.subCategory.length > 0) {
+      toast.error("Tidak bisa menghapus kategori");
+      return;
+    }
+  };
+
   const columns: Columns<ProductCategory>[] = [
     {
       header: <p className="text-center">kategori produk</p>,
-      render: (v) => <Label label={v.category.name} />,
+      render: (v) => <p className="truncate">{v.category.name}</p>,
     },
     {
       header: <p className="text-center">sub-kategori</p>,
@@ -59,10 +66,9 @@ const useCategorySub = () => {
         v.subCategory.length < 1 ? (
           <p className="text-gray-400 cursor-default font-bold">-</p>
         ) : (
-          <Label
-            label={v.subCategory.map((e) => e.name).join(", ")}
-            className="truncate normal-case"
-          />
+          <p className="truncate normal-case">
+            {v.subCategory.map((e) => e.name).join(", ")}
+          </p>
         ),
     },
     {
@@ -70,11 +76,12 @@ const useCategorySub = () => {
       render: (v) => (
         <Actions
           id={v.id}
-          action="detail"
+          action="deleteAndDetail"
           detail={{
             onClick: () =>
               navigate(`/produk/sub-kategori/${v.category.name}/${v.id}`),
           }}
+          delete={() => onDeleteCategory(v)}
         />
       ),
       width: "w-40",

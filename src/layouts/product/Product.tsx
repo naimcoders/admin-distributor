@@ -126,7 +126,7 @@ const useHook = () => {
     {
       header: <p className="text-right">harga (Rp)</p>,
       render: (v) => <LabelPrice product={v} label="" className="text-right" />,
-      width: "max-w-[8rem]",
+      width: "max-w-[10rem] lg:max-w-[8rem]",
     },
     {
       header: <p className="text-center">diskon</p>,

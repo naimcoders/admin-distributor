@@ -22,7 +22,7 @@ export const Actions: React.FC<ActionProps> = (props) => {
   return (
     <section
       className={cx(
-        "flex justify-center gap-4 items-center",
+        "flex justify-center lg:gap-4 gap-3 items-center",
         props.action === "switchAndDetail" && "px-3"
       )}
     >

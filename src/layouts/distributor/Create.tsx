@@ -19,7 +19,7 @@ import { IconColor } from "src/types";
 import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
 import useGeneralStore from "src/stores/generalStore";
 import { useLocation } from "src/api/location.service";
-import { Chip, CircularProgress } from "@nextui-org/react";
+import { Chip, CircularProgress, Spinner } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useDistributor } from "src/api/distributor.service";
 import { useAuth } from "src/firebase/auth";
@@ -178,9 +178,9 @@ const Create = () => {
           </section>
 
           <Button
-            label={isLoading ? "loading..." : "simpan"}
+            label={isLoading ? <Spinner color="secondary" /> : "simpan"}
             onClick={onSubmit}
-            className="mx-auto lg:mt-12 mt-6"
+            className="mx-auto lg:mt-12 my-5"
           />
         </>
       )}

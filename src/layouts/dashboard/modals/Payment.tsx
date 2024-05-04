@@ -201,27 +201,25 @@ const ActionContent = ({
   onClipboard,
 }: IAction) => {
   return (
-    <>
-      <section className={classNameWrapper}>
-        <p className="text-sm mb-1">{title}</p>
-        {paymentType === "EWALLET" ? (
-          <Link to={value} className="text-sm text-blue-600" target="_blank">
-            {value}
-          </Link>
-        ) : (
-          <div className="flex gap-2">
-            <h2 className="font-semibold">{value}</h2>
-            <ClipboardIcon
-              width={16}
-              color={IconColor.zinc}
-              onClick={onClipboard}
-              className="cursor-pointer"
-              title="Salin"
-            />
-          </div>
-        )}
-      </section>
-    </>
+    <section className={classNameWrapper}>
+      <p className="text-sm mb-1">{title}</p>
+      {paymentType === "EWALLET" ? (
+        <Link to={value} className="text-sm text-blue-600" target="_blank">
+          {value}
+        </Link>
+      ) : (
+        <div className="flex gap-2">
+          <h2 className="font-semibold">{value}</h2>
+          <ClipboardIcon
+            width={16}
+            color={IconColor.zinc}
+            onClick={onClipboard}
+            className="cursor-pointer"
+            title="Salin"
+          />
+        </div>
+      )}
+    </section>
   );
 };
 

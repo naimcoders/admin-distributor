@@ -108,6 +108,10 @@ const Payment: React.FC<IPayment> = ({
               paymentType={data.paymentType}
               classNameWrapper="truncate py-3"
               onClipboard={() => onClipboard(data?.actions?.eWallet?.url ?? "")}
+              onCloseModalPayment={() => {
+                close();
+                onClearState();
+              }}
             />
           )}
           {data?.actions.retail && (
@@ -189,6 +193,7 @@ interface IAction {
   value: string;
   amount: number;
   paymentType: string;
+  onCloseModalPayment?: () => void;
   classNameWrapper?: string;
   onClipboard?: () => void;
 }
@@ -199,12 +204,18 @@ const ActionContent = ({
   classNameWrapper,
   paymentType,
   onClipboard,
+  onCloseModalPayment,
 }: IAction) => {
   return (
     <section className={classNameWrapper}>
       <p className="text-sm mb-1">{title}</p>
       {paymentType === "EWALLET" ? (
-        <Link to={value} className="text-sm text-blue-600" target="_blank">
+        <Link
+          to={value}
+          className="text-sm text-blue-600"
+          target="_blank"
+          onClick={onCloseModalPayment}
+        >
           {value}
         </Link>
       ) : (

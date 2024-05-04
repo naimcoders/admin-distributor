@@ -103,7 +103,7 @@ const useHook = (data?: Distributor) => {
       label: "alamat usaha",
       name: "businessAddress",
       type: "text",
-      defaultValue: data?.locations[0]?.addressName,
+      defaultValue: data?.locations?.[0]?.addressName,
       readOnly: { isValue: true, cursor: "cursor-default" },
       description: "*tidak dapat diedit",
     }),
@@ -111,7 +111,7 @@ const useHook = (data?: Distributor) => {
       label: "alamat detail",
       name: "detailAddress",
       type: "text",
-      defaultValue: data?.locations[0]?.detailAddress,
+      defaultValue: data?.locations?.[0]?.detailAddress,
       readOnly: { isValue: true, cursor: "cursor-default" },
       description: "*tidak dapat diedit",
     }),
@@ -120,8 +120,8 @@ const useHook = (data?: Distributor) => {
       name: "coordinate",
       type: "coordinate",
       defaultValue: {
-        lat: data?.locations[0]?.lat,
-        lng: data?.locations[0]?.lng,
+        lat: data?.locations?.[0]?.lat,
+        lng: data?.locations?.[0]?.lng,
       },
     }),
     objectFields({

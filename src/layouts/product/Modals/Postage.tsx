@@ -21,6 +21,8 @@ import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
 
 interface PostageProps extends Pick<UseForm, "setValue" | "clearErrors"> {
+  isCourierInternal: boolean;
+  setIsCourierInternal: () => void;
   data?: DeliveryPrice;
 }
 
@@ -28,6 +30,8 @@ export const PostageModal: React.FC<PostageProps> = ({
   setValue,
   clearErrors,
   data,
+  isCourierInternal,
+  setIsCourierInternal,
 }) => {
   const [isOutOfTown, setIsOutOfTown] = React.useState(false);
   const { isPostage, actionIsPostage } = useActiveModal();
@@ -64,7 +68,7 @@ export const PostageModal: React.FC<PostageProps> = ({
     if (!error) {
       const obj: DeliveryPrice = {
         id: "",
-        isCourierInternal: isOutOfTown,
+        isCourierInternal,
         height: parseTextToNumber(e.height),
         length: parseTextToNumber(e.length),
         price: parseTextToNumber(e.price),
@@ -136,9 +140,17 @@ export const PostageModal: React.FC<PostageProps> = ({
         <hr />
 
         <section>
-          <h2 className="font-semibold capitalize mb-4">
-            pengiriman dalam kota
-          </h2>
+          <header className="flex justify-between">
+            <h2 className="font-semibold capitalize">pengiriman dalam kota</h2>
+            <Switch
+              size="sm"
+              color="success"
+              isSelected={isCourierInternal}
+              onClick={setIsCourierInternal}
+              title="Kurir Internal"
+            />
+          </header>
+
           <Textfield
             name="price"
             label="kurir distributor"
@@ -174,7 +186,7 @@ export const PostageModal: React.FC<PostageProps> = ({
           </header>
 
           {isOutOfTown && (
-            <section className="mt-4 flexcol gap-4">
+            <section className="mt-4 flex flex-col gap-4">
               {outOfTownDeliveryField.map((v) => (
                 <Textfield
                   key={v.label}

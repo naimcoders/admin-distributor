@@ -59,6 +59,7 @@ import { SubDistributorModal } from "./Modals/SubDistributor";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isCourierInternal, setIsCourierInternal] = React.useState(true);
   const [imageUrlDel, setImageUrlDel] = React.useState("");
   const [newImageFile, setNewImageFile] = React.useState<File>();
   const [isMassal, setIsMassal] = React.useState(false);
@@ -77,6 +78,7 @@ const Detail = () => {
 
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
+  const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
   const priceStore = useGeneralStore((v) => v.price);
   const setPriceStore = useGeneralStore((v) => v.setPrice);
   const navigate = useNavigate();
@@ -166,6 +168,7 @@ const Detail = () => {
         findById.data.variantProduct?.map((e) => e.name).join(", ")
       );
       setValue("price", price);
+      setIsCourierInternal(findById.data.deliveryPrice.isCourierInternal);
       setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
       setValue("postage", Currency(findById.data.deliveryPrice.price ?? 0));
       setValue("condition", "Baru");
@@ -296,7 +299,10 @@ const Detail = () => {
         data: {
           name: e.productName,
           isDangerous,
-          deliveryPrice,
+          deliveryPrice: {
+            ...deliveryPrice,
+            isCourierInternal,
+          },
           category: { categoryId },
           description: e.description,
           subCategoryId: subCategoryId === "-" ? "" : subCategoryId,
@@ -309,23 +315,9 @@ const Detail = () => {
         },
       });
 
-      // console.log({
-      //   name: e.productName,
-      //   isDangerous,
-      //   deliveryPrice,
-      //   category: { categoryId },
-      //   description: e.description,
-      //   subCategoryId: subCategoryId === "-" ? "" : subCategoryId,
-      //   price: {
-      //     ...priceStore,
-      //     price: newPrice,
-      //   },
-      //   createForDistrbutorId: subDistributorId,
-      //   isAvailable: true,
-      // });
-
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
+      clearDeliveryPrice();
       if (result.name) navigate(-1);
     } catch (err) {
       const error = err as Error;
@@ -700,6 +692,8 @@ const Detail = () => {
         setValue={setValue}
         clearErrors={clearErrors}
         data={deliveryPrice}
+        isCourierInternal={isCourierInternal}
+        setIsCourierInternal={() => setIsCourierInternal((v) => !v)}
       />
       <PriceModal
         fieldName="price"

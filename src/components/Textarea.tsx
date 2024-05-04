@@ -7,7 +7,7 @@ const Textarea = (props: TextfieldProps<any>) => {
   const { field } = useController(props);
 
   return (
-    <section className={cx("flexcol gap-4", props.classNameWrapper)}>
+    <section className={cx("flex flex-col gap-4", props.classNameWrapper)}>
       {props.label && (
         <label htmlFor={props.label} className="text-sm capitalize">
           {props.label}
@@ -22,7 +22,7 @@ const Textarea = (props: TextfieldProps<any>) => {
         errorMessage={props.errorMessage}
         classNames={{
           input: "placeholder:capitalize",
-          errorMessage: "capitalize font-interMedium",
+          errorMessage: "capitalize font-semibold",
         }}
       />
     </section>

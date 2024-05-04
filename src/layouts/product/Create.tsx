@@ -49,6 +49,7 @@ import { SubDistributorModal } from "./Modals/SubDistributor";
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCourierInternal, setIsCourierInternal] = useState(true);
   const [subDistributorId, setSubDistributorId] = useState("");
 
   const {
@@ -284,7 +285,7 @@ const Create = () => {
             ))}
           </main>
 
-          <main className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
+          <main className="grid grid-cols-3">
             <Textarea
               label="deskripsi *"
               name="description"
@@ -295,6 +296,7 @@ const Create = () => {
               rules={{
                 required: { value: true, message: "Masukkan deskripsi" },
               }}
+              classNameWrapper="col-span-2"
             />
           </main>
 
@@ -323,7 +325,12 @@ const Create = () => {
           />
           <DangerousModal setValue={setValue} />
           <ConditionModal setValue={setValue} />
-          <PostageModal setValue={setValue} clearErrors={clearErrors} />
+          <PostageModal
+            setValue={setValue}
+            clearErrors={clearErrors}
+            isCourierInternal={isCourierInternal}
+            setIsCourierInternal={() => setIsCourierInternal((v) => !v)}
+          />
           <VariantModal fieldName="variant" setValue={setValue} />
           <PriceModal
             fieldName="price"

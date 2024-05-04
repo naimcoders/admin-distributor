@@ -402,20 +402,22 @@ const Detail = () => {
       type: "modal",
       onClick: onClickSubCategory,
       defaultValue: "",
-      endContent: subCategoryId ? (
-        <XMarkIcon
-          width={18}
-          color={IconColor.red}
-          className="cursor-pointer"
-          title="Hapus"
-          onClick={() => {
-            setSubCategoryId("");
-            setValue("subCategory", "-");
-          }}
-        />
-      ) : (
-        <ChevronRightIcon width={16} color={IconColor.zinc} />
-      ),
+      endContent:
+        findById.data?.categoryProduct.category.id === categoryId &&
+        subCategoryId ? (
+          <XMarkIcon
+            width={18}
+            color={IconColor.red}
+            className="cursor-pointer"
+            title="Hapus"
+            onClick={() => {
+              setSubCategoryId("");
+              setValue("subCategory", "-");
+            }}
+          />
+        ) : (
+          <ChevronRightIcon width={16} color={IconColor.zinc} />
+        ),
     }),
     objectFields({
       label: "produk berbahaya",
@@ -510,6 +512,13 @@ const Detail = () => {
       setImageUrlDel("");
     }
   };
+
+  // console.log(findById.data?.categoryProduct.category.id);
+  React.useEffect(() => {
+    if (categoryId !== findById.data?.categoryProduct.category.id) {
+      setValue("subCategory", "-");
+    }
+  }, [findById.data, categoryId]);
 
   return (
     <>

@@ -113,30 +113,29 @@ const useHook = () => {
   const columns: Columns<Product>[] = [
     {
       header: <p className="text-center">nama produk</p>,
-      render: (v) => <Label label={v.name} />,
-      width: "w-[15rem]",
+      render: (v) => <p className="truncate">{v.name}</p>,
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-center">kategori</p>,
-      render: (v) => <Label label={v.categoryProduct.category.name} />,
-      width: "w-[15rem]",
+      render: (v) => (
+        <p className="truncate">{v.categoryProduct.category.name}</p>
+      ),
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-right">harga (Rp)</p>,
-      render: (v) => (
-        <LabelPrice product={v} label="" className="justify-end" />
-      ),
-      width: "w-[10rem]",
+      render: (v) => <LabelPrice product={v} label="" className="text-right" />,
+      width: "max-w-[8rem]",
     },
     {
       header: <p className="text-center">diskon</p>,
       render: (v) => (
-        <Label
-          label={Currency(v.price.priceDiscount ?? 0)}
-          className="justify-end"
-        />
+        <p className="truncate text-right">
+          {Currency(v.price.priceDiscount ?? 0)}
+        </p>
       ),
-      width: "w-[10rem]",
+      width: "min-w-[6rem]",
     },
     {
       header: <p className="text-center">periode</p>,
@@ -151,12 +150,12 @@ const useHook = () => {
           }
         />
       ),
-      width: "w-[10rem]",
+      width: "min-w-[6rem]",
     },
     {
       header: <p className="text-center">tanggal dibuat</p>,
       render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
-      width: "w-[10rem]",
+      width: "max-w-[6rem]",
     },
     {
       header: <p className="text-center">aksi</p>,

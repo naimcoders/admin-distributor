@@ -45,7 +45,7 @@ export const LabelPrice: React.FC<LabelProps & { product: Product }> = ({
     }
   }, [product]);
 
-  return <p className={cx("flex gap-2", className)}>{price}</p>;
+  return <p className={cx("truncate", className)}>{price}</p>;
 };
 
 export default Label;

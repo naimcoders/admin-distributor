@@ -47,7 +47,8 @@ export default function Table<T extends object>(props: Table<T>) {
                   <td
                     key={key}
                     className={cx(
-                      "text-[13px] p-3 text-gray-700 border border-gray-300 truncate max-w-[10rem]"
+                      "text-[13px] p-3 text-gray-700 border border-gray-300 truncate",
+                      col.width
                     )}
                   >
                     {col.render(it, idx)}

@@ -32,20 +32,12 @@ class Api {
 
   private path = "category-product";
 
-  private errors: { [key: number]: string } = {
-    400: "input tidak valid",
-    401: "hak akses ditolak",
-    403: "forbidden",
-    404: "data tidak ditemukan",
-    500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
-  };
-
   async find(): Promise<ProductCategory[]> {
     return await req<ProductCategory[]>({
       method: "GET",
       isNoAuth: false,
-      errors: this.errors,
       path: this.path,
+      errors: "",
     });
   }
 
@@ -54,7 +46,7 @@ class Api {
       method: "GET",
       path: this.path,
       isNoAuth: false,
-      errors: this.errors,
+      errors: "",
     });
   }
 }

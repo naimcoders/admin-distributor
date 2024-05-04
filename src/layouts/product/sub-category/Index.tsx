@@ -8,7 +8,6 @@ import {
   useProductCategory,
 } from "src/api/product-category.service";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const CategorySub = () => {
   const { control } = useForm<FieldValues>({ mode: "onChange" });
@@ -48,13 +47,6 @@ const CategorySub = () => {
 const useCategorySub = () => {
   const navigate = useNavigate();
 
-  const onDeleteCategory = (data: ProductCategory) => {
-    if (data.subCategory.length > 0) {
-      toast.error("Tidak bisa menghapus kategori");
-      return;
-    }
-  };
-
   const columns: Columns<ProductCategory>[] = [
     {
       header: <p className="text-center">kategori produk</p>,
@@ -76,12 +68,11 @@ const useCategorySub = () => {
       render: (v) => (
         <Actions
           id={v.id}
-          action="deleteAndDetail"
+          action="detail"
           detail={{
             onClick: () =>
               navigate(`/produk/sub-kategori/${v.category.name}/${v.id}`),
           }}
-          delete={() => onDeleteCategory(v)}
         />
       ),
       width: "w-40",

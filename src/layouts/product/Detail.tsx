@@ -639,7 +639,7 @@ const Detail = () => {
 
           <Button
             onClick={onSubmit}
-            className="mx-auto mt-5"
+            className="mx-auto my-5"
             label={isLoading ? <Spinner color="secondary" /> : "simpan"}
           />
         </main>

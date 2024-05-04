@@ -301,7 +301,7 @@ const Create = () => {
           {/* submit */}
           <Button
             onClick={onSubmit}
-            className="mx-auto mt-5"
+            className="mx-auto my-5"
             label={
               isLoading ? <Spinner size="sm" color="secondary" /> : "simpan"
             }

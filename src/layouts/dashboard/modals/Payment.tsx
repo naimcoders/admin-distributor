@@ -46,8 +46,6 @@ const Payment: React.FC<IPayment> = ({
 }) => {
   const { data, isLoading, error } = findTransaction({ topupId });
 
-  console.log(data);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -207,7 +205,7 @@ const ActionContent = ({
       <section className={classNameWrapper}>
         <p className="text-sm mb-1">{title}</p>
         {paymentType === "EWALLET" ? (
-          <Link to={value} className="text-sm text-blue-600">
+          <Link to={value} className="text-sm text-blue-600" target="_blank">
             {value}
           </Link>
         ) : (

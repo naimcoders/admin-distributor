@@ -20,21 +20,13 @@ class Api {
 
   private path = "variant";
 
-  private errors: { [key: number]: string } = {
-    400: "input tidak valid",
-    401: "hak akses ditolak",
-    403: "forbidden",
-    404: "data tidak ditemukan",
-    500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
-  };
-
   async create(r: VariantProduct): Promise<VariantProduct> {
     return await req<VariantProduct>({
       method: "POST",
       body: r,
       isNoAuth: false,
-      errors: this.errors,
       path: this.path,
+      errors: "",
     });
   }
 
@@ -43,8 +35,8 @@ class Api {
       method: "PATCH",
       body: r,
       isNoAuth: false,
-      errors: this.errors,
       path: `${this.path}/${variantId}`,
+      errors: "",
     });
   }
 
@@ -53,8 +45,8 @@ class Api {
       method: "PUT",
       body: r,
       isNoAuth: false,
-      errors: this.errors,
       path: `${this.path}/${variantId}`,
+      errors: "",
     });
   }
 
@@ -62,8 +54,8 @@ class Api {
     return await req<{}>({
       method: "DELETE",
       isNoAuth: false,
-      errors: this.errors,
       path: `${this.path}/${variantId}`,
+      errors: "",
     });
   }
 
@@ -71,8 +63,8 @@ class Api {
     return await req<{}>({
       method: "DELETE",
       isNoAuth: false,
-      errors: this.errors,
       path: `${this.path}/variant-color/${variantColorId}`,
+      errors: "",
     });
   }
 }

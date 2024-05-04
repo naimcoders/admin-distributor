@@ -300,7 +300,7 @@ const BottomLine = () => {
           columns={columnProduct}
           data={products.data ?? []}
           isLoading={products.isLoading}
-          className="overflow-y-auto whitespace-nowrap h-calcDashboardTable"
+          className="h-calcDashboardTable"
         />
       )}
     </footer>

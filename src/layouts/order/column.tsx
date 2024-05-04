@@ -1,7 +1,7 @@
 import Label from "src/components/Label";
 import { Actions } from "src/components/Actions";
 import { Columns } from "src/types";
-import { Currency, parsePhoneNumber } from "src/helpers";
+import { Currency, epochToDateConvert, parsePhoneNumber } from "src/helpers";
 import { Order } from "src/api/order.service";
 import { useNavigate } from "react-router-dom";
 
@@ -15,7 +15,7 @@ const useOrderColumns = (tab: string) => {
     },
     {
       header: <p className="text-center">tanggal order</p>,
-      render: (v) => <Label label={v.createdAt} />,
+      render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
     },
     {
       header: <p className="text-center">nama pemesan</p>,

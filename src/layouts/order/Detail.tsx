@@ -70,7 +70,9 @@ const Detail = () => {
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">ID Order</h1>
-                <p>{data?.id}</p>
+                <p className="truncate" title={data?.id}>
+                  {data?.id}
+                </p>
               </section>
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium capitalize">tanggal order</h1>
@@ -134,8 +136,10 @@ const Detail = () => {
                     key={`${idx}-${product.product.name}`}
                   >
                     <section className="grid grid-cols-4 gap-2">
-                      <h2>{product.product.name}</h2>
-                      <h2>-</h2>
+                      <h2 className="truncate" title={product.product.name}>
+                        {product.product.name}
+                      </h2>
+                      <h2 className="truncate">-</h2>
                       <h2 className="text-right">
                         {Currency(product.product.price.price)}
                       </h2>

@@ -53,6 +53,8 @@ export interface Customer {
   email: string;
   courierId?: string;
   merchantId?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Delivery {

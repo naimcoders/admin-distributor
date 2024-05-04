@@ -89,8 +89,6 @@ export const parseTextToNumber = (val: string) => {
   return result;
 };
 
-export const modalDOM = document.querySelector("#modal");
-
 export const handleErrorMessage = (
   errors: FieldErrors<FieldValues>,
   data?: string

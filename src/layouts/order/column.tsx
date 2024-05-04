@@ -11,33 +11,42 @@ const useOrderColumns = (tab: string) => {
   const columns: Columns<Order>[] = [
     {
       header: <p className="text-center">ID order</p>,
-      render: (v) => <Label label={v.id} />,
+      render: (v) => <p className="truncate">{v.id}</p>,
+      width: "max-w-[8rem]",
     },
     {
       header: <p className="text-center">tanggal order</p>,
-      render: (v) => <Label label={epochToDateConvert(v.createdAt)} />,
+      render: (v) => (
+        <p className="truncate">{epochToDateConvert(v.createdAt)}</p>
+      ),
+      width: "max-w-[5rem]",
     },
     {
       header: <p className="text-center">nama pemesan</p>,
-      render: (v) => <Label label={v.customer.name} />,
+      render: (v) => <p className="truncate">{v.customer.name}</p>,
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-center">nomor HP</p>,
       render: (v) => <Label label={parsePhoneNumber(v.customer.phoneNumber)} />,
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-center">nama toko</p>,
-      render: () => <Label label="-" />,
+      render: () => <p className="truncate">-</p>,
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-center">metode bayar</p>,
-      render: () => <Label label="-" />,
+      render: () => <p className="truncate">-</p>,
+      width: "max-w-[10rem]",
     },
     {
       header: <p className="text-right">total bayar (Rp)</p>,
       render: (v) => (
-        <Label label={Currency(v.price.totalPrice)} className="justify-end" />
+        <p className="truncate text-right">{Currency(v.price.totalPrice)}</p>
       ),
+      width: "max-w-[8rem]",
     },
     {
       header: <p className="text-center">aksi</p>,

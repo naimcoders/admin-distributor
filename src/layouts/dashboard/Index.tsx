@@ -310,18 +310,21 @@ const columnStore: Columns<Buyers>[] = [
   {
     header: <p className="text-[#30b2e5] text-sm">toko terlaris</p>,
     render: (v, idx) => <p className="truncate">{`${idx + 1}. ${v.name}`}</p>,
+    width: "max-w-[10rem]",
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total omset (Rp)</p>
     ),
     render: (v) => <p className="truncate">{Currency(v.revenue)}</p>,
+    width: "max-w-[10rem]",
   },
   {
     header: (
       <p className="text-right text-[#30b2e5] text-sm">total transaksi</p>
     ),
     render: (v) => <p className="truncate">{Currency(v.totalOrder)}</p>,
+    width: "max-w-[10rem]",
   },
 ];
 
@@ -331,10 +334,12 @@ const columnProduct: Columns<ProductBestSelling>[] = [
     render: (v, idx) => (
       <p className="truncate">{`${idx + 1}. ${v.productName}`}</p>
     ),
+    width: "max-w-[10rem]",
   },
   {
     header: <p className="text-[#ae5eaa] text-sm">kategori</p>,
     render: (v) => <p className="truncate">{v.categoryName}</p>,
+    width: "max-w-[10rem]",
   },
   {
     header: (
@@ -343,6 +348,7 @@ const columnProduct: Columns<ProductBestSelling>[] = [
     render: (v) => (
       <p className="truncate text-right">{Currency(v.orderCount)}</p>
     ),
+    width: "max-w-[10rem]",
   },
 ];
 

@@ -48,7 +48,7 @@ export default function Image({
       {actions && (
         <div
           className={cx(
-            "absolute right-2 top-2 cursor-pointer",
+            "absolute top-2 left-2 cursor-pointer",
             !onHover ? "hidden" : "block"
           )}
           onMouseEnter={mouseEnter}

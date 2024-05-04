@@ -1,6 +1,10 @@
 import React from "react";
 import cx from "classnames";
-import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import square from "src/assets/images/square.png";
 import rectangle from "src/assets/images/rectangle.png";
 import {
@@ -390,6 +394,7 @@ const Detail = () => {
       onClick: actionIsCategory,
       defaultValue: "",
       rules: { required: { value: true, message: "Pilih kategori" } },
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "sub-kategori",
@@ -397,6 +402,20 @@ const Detail = () => {
       type: "modal",
       onClick: onClickSubCategory,
       defaultValue: "",
+      endContent: subCategoryId ? (
+        <XMarkIcon
+          width={18}
+          color={IconColor.red}
+          className="cursor-pointer"
+          title="Hapus"
+          onClick={() => {
+            setSubCategoryId("");
+            setValue("subCategory", "");
+          }}
+        />
+      ) : (
+        <ChevronRightIcon width={16} color={IconColor.zinc} />
+      ),
     }),
     objectFields({
       label: "produk berbahaya",
@@ -404,6 +423,7 @@ const Detail = () => {
       type: "modal",
       onClick: actionIsDangerous,
       defaultValue: "",
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "variasi",
@@ -412,6 +432,7 @@ const Detail = () => {
       placeholder: "tentukan variasi",
       onClick: actionIsVariant,
       defaultValue: "",
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "harga (Rp) *",
@@ -430,6 +451,7 @@ const Detail = () => {
       placeholder: "masukkan ongkos kirim",
       onClick: actionIsPostage,
       rules: { required: { value: true, message: "atur ongkos kirim" } },
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "kondisi *",
@@ -438,6 +460,7 @@ const Detail = () => {
       onClick: actionIsCondition,
       defaultValue: "",
       rules: { required: { value: true, message: "pilih kondisi" } },
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "sub-distributor",
@@ -445,6 +468,7 @@ const Detail = () => {
       type: "modal",
       onClick: actionIsSubDistributor,
       defaultValue: "",
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
       label: "deskripsi *",
@@ -457,6 +481,7 @@ const Detail = () => {
       type: "modal",
       onClick: actionIsPromotion,
       defaultValue: "",
+      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
   ];
 
@@ -592,9 +617,6 @@ const Detail = () => {
                     control={control}
                     errorMessage={handleErrorMessage(errors, v.name)}
                     readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    endContent={
-                      <ChevronRightIcon width={16} color={IconColor.zinc} />
-                    }
                   />
                 )}
 

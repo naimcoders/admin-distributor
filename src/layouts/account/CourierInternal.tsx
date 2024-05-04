@@ -18,15 +18,13 @@ import { Spinner } from "@nextui-org/react";
 import { findLocationByUserId } from "src/api/location.service";
 import { setUser } from "src/stores/auth";
 
-// TODO:
-// 2. FIX SCROLL TABLE
-// 3. FIX COURIER INTERNAL WHEN POST & PUT
-
 const CourierInternal = () => {
   const user = setUser((v) => v.user);
   const { data, isLoading } = findMyCourier(user?.id ?? "");
   const { control, errors, onSubmit, isPending, onSubmitKeyDown } =
     useApi(data);
+
+  console.log(data);
 
   const couriers: TextfieldProps<ReqCourierInternal>[] = [
     objectFields({
@@ -45,8 +43,10 @@ const CourierInternal = () => {
     objectFields({
       name: "phoneNumber",
       label: "nomor HP",
-      type: "text",
-      defaultValue: parsePhoneNumber(data?.phoneNumber),
+      type: "number",
+      defaultValue: data?.phoneNumber
+        ? parsePhoneNumber(data?.phoneNumber)
+        : "",
     }),
   ];
 
@@ -56,7 +56,7 @@ const CourierInternal = () => {
       btnLabelForm={
         isPending ? (
           <Spinner color="secondary" size="sm" />
-        ) : !data ? (
+        ) : !data?.name ? (
           "buat kurir"
         ) : (
           "perbarui kurir"

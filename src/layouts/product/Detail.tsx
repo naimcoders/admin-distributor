@@ -299,7 +299,7 @@ const Detail = () => {
           deliveryPrice,
           category: { categoryId },
           description: e.description,
-          subCategoryId,
+          subCategoryId: subCategoryId === "-" ? "" : subCategoryId,
           price: {
             ...priceStore,
             price: newPrice,
@@ -410,7 +410,7 @@ const Detail = () => {
           title="Hapus"
           onClick={() => {
             setSubCategoryId("");
-            setValue("subCategory", "");
+            setValue("subCategory", "-");
           }}
         />
       ) : (

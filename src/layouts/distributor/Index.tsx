@@ -4,6 +4,7 @@ import Label from "src/components/Label";
 import {
   Distributor as IDistributor,
   RoleDistributor,
+  suspendDistributor,
   useDistributor,
 } from "src/api/distributor.service";
 import { Actions } from "src/components/Actions";
@@ -21,12 +22,15 @@ import { useActiveModal } from "src/stores/modalStore";
 import { setUser } from "src/stores/auth";
 import Skeleton from "src/components/Skeleton";
 import Pagination from "src/components/Pagination";
+import { toast } from "react-toastify";
 
 export const useSuspend = () => {
   const [isSuspend, setIsSuspend] = React.useState(false);
   const [id, setId] = React.useState("");
 
   const { actionIsConfirm } = useActiveModal();
+  const onResetSuspend = () => setIsSuspend(false);
+  const onResetId = () => setId("");
 
   const onSwitch = (id: string, isSuspendData: boolean) => {
     setIsSuspend(isSuspendData);
@@ -34,20 +38,26 @@ export const useSuspend = () => {
     actionIsConfirm();
   };
 
-  return { id, isSuspend, onSwitch, closeConfirm: actionIsConfirm };
+  return {
+    id,
+    isSuspend,
+    onResetSuspend,
+    onSwitch,
+    onResetId,
+    closeModal: actionIsConfirm,
+  };
 };
 
 const Distributor = () => {
   const user = setUser((v) => v.user);
-  const authLoading = setUser((v) => v.isLoading);
   const navigate = useNavigate();
   const { page: pageQuery } = parseQueryString<{ page: string }>();
 
-  const { find, suspend } = useDistributor();
+  const { find } = useDistributor();
   const { data, isLoading, error, page, setPage, isNext, setSearch } = find(
     Number(pageQuery)
   );
-  const { mutateAsync } = suspend;
+  const { mutateAsync } = suspendDistributor();
 
   const qs = stringifyQuery({ page });
   const qsToDetail = stringifyQuery({ tab: "profil" });
@@ -58,18 +68,22 @@ const Distributor = () => {
   const prev = () => setPage((num) => num - 1);
   const next = () => setPage((num) => num + 1);
 
-  const { onSwitch, isSuspend, closeConfirm, id } = useSuspend();
+  const { onSwitch, isSuspend, closeModal, id, onResetId, onResetSuspend } =
+    useSuspend();
 
   const onSuspend = async () => {
     try {
-      await mutateAsync({
-        id,
-        isSuspend: !isSuspend,
-        closeModal: closeConfirm,
-      });
+      toast.loading("Loading...", { toastId: "loading-suspend" });
+      await mutateAsync({ id, isSuspend: !isSuspend });
+      toast.success("Status berhasil diperbarui");
+      closeModal();
+      onResetId();
+      onResetSuspend();
     } catch (e) {
       const error = e as Error;
-      console.log(error.message);
+      toast.error(error.message);
+    } finally {
+      toast.dismiss("loading-suspend");
     }
   };
 
@@ -111,7 +125,7 @@ const Distributor = () => {
 
   return (
     <>
-      {authLoading ? (
+      {isLoading ? (
         <Skeleton />
       ) : (
         <>

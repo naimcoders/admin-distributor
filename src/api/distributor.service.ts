@@ -353,6 +353,23 @@ export const createDistributor = () => {
   return { mutateAsync, isPending };
 };
 
+export const suspendDistributor = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync } = useMutation<
+    Distributor,
+    Error,
+    { id: string; isSuspend: boolean }
+  >({
+    mutationKey: [key, "suspend"],
+    mutationFn: (r) =>
+      getDistributorApiInfo().suspend(r.id, { isSuspend: r.isSuspend }),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+
+  return { mutateAsync };
+};
+
 export const useDistributor = () => {
   const queryClient = useQueryClient();
 
@@ -418,22 +435,6 @@ export const useDistributor = () => {
     };
   };
 
-  const suspend = useMutation<
-    Distributor,
-    Error,
-    { id: string; isSuspend: boolean; closeModal: () => void }
-  >({
-    mutationKey: [key, "suspend"],
-    mutationFn: async (r) =>
-      await getDistributorApiInfo().suspend(r.id, { isSuspend: r.isSuspend }),
-    onError: (e) => toast.error(e.message),
-    onSuccess: (_, r) => {
-      toast.success("Status akun berhasil diperbarui");
-      void queryClient.invalidateQueries({ queryKey: [key] });
-      r.closeModal();
-    },
-  });
-
   const updateSubDistributor = useMutation<
     null,
     Error,
@@ -466,7 +467,6 @@ export const useDistributor = () => {
   return {
     find,
     findById,
-    suspend,
     updateDocument,
     updateSubDistributor,
     updateDistributor,

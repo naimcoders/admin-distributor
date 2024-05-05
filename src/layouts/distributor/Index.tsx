@@ -3,7 +3,6 @@ import Error from "src/components/Error";
 import Label from "src/components/Label";
 import {
   Distributor as IDistributor,
-  RoleDistributor,
   suspendDistributor,
   useDistributor,
 } from "src/api/distributor.service";
@@ -19,7 +18,6 @@ import { Columns } from "src/types";
 import { ConfirmModal } from "src/components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useActiveModal } from "src/stores/modalStore";
-import { setUser } from "src/stores/auth";
 import Skeleton from "src/components/Skeleton";
 import Pagination from "src/components/Pagination";
 import { toast } from "react-toastify";
@@ -49,7 +47,6 @@ export const useSuspend = () => {
 };
 
 const Distributor = () => {
-  const user = setUser((v) => v.user);
   const navigate = useNavigate();
   const { page: pageQuery } = parseQueryString<{ page: string }>();
 
@@ -124,66 +121,51 @@ const Distributor = () => {
   ];
 
   return (
-    <>
-      {isLoading ? (
+    <section>
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
         <Skeleton />
       ) : (
-        <>
-          {user?.role === RoleDistributor.DISTRIBUTOR ? (
-            <section>
-              {error ? (
-                <Error error={error} />
-              ) : (
-                <main className="whitespace-nowrap overflow-auto pb-5">
-                  <TableWithoutTabs
-                    header={{
-                      search: {
-                        placeholder: "cari nama sub-distributor/pemilik/no HP",
-                        setSearch,
-                      },
-                      createData: {
-                        isValue: true,
-                        label: "sub distributor",
-                        onClick: () => navigate("/sub-distributor/tambah"),
-                      },
-                    }}
-                    table={{
-                      columns,
-                      data: data?.items ?? [],
-                      isLoading,
-                      page,
-                      className:
-                        "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
-                    }}
-                  />
+        <main className="whitespace-nowrap overflow-auto pb-5">
+          <TableWithoutTabs
+            header={{
+              search: {
+                placeholder: "cari nama sub-distributor/pemilik/no HP",
+                setSearch,
+              },
+              createData: {
+                isValue: true,
+                label: "sub distributor",
+                onClick: () => navigate("/sub-distributor/tambah"),
+              },
+            }}
+            table={{
+              columns,
+              data: data?.items ?? [],
+              isLoading,
+              page,
+              className:
+                "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
+            }}
+          />
 
-                  <Pagination
-                    page={page}
-                    next={next}
-                    prev={prev}
-                    isNext={isNext}
-                  />
+          <Pagination page={page} next={next} prev={prev} isNext={isNext} />
 
-                  <ConfirmModal
-                    label={
-                      !isSuspend
-                        ? "Yakin ingin menonaktifkan akun ini?"
-                        : "Yakin ingin mengaktifkan akun ini?"
-                    }
-                    onSubmit={{
-                      label: !isSuspend ? "non-aktifkan" : "aktifkan",
-                      action: onSuspend,
-                    }}
-                  />
-                </main>
-              )}
-            </section>
-          ) : (
-            <p>Not Have Access</p>
-          )}
-        </>
+          <ConfirmModal
+            label={
+              !isSuspend
+                ? "Yakin ingin menonaktifkan akun ini?"
+                : "Yakin ingin mengaktifkan akun ini?"
+            }
+            onSubmit={{
+              label: !isSuspend ? "non-aktifkan" : "aktifkan",
+              action: onSuspend,
+            }}
+          />
+        </main>
       )}
-    </>
+    </section>
   );
 };
 

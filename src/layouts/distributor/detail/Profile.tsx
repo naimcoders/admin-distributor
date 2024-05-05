@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import React from "react";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
+import { Spinner } from "@nextui-org/react";
 
 export interface KtpFile {
   file: string;
@@ -102,7 +103,9 @@ const Profile = ({
           </section>
 
           <Button
-            label={isPending ? "loading..." : "simpan"}
+            label={
+              isPending ? <Spinner color="secondary" size="sm" /> : "simpan"
+            }
             onClick={onSubmit}
             className="mx-auto lg:mt-10 mt-6 sm:mt-8"
           />
@@ -111,16 +114,6 @@ const Profile = ({
     </>
   );
 };
-
-// export interface DefaultProfileValues {
-//   ownerName: string;
-//   password: string;
-//   detailAddress: string;
-//   name: string;
-//   phoneNumber: string;
-//   email: string;
-//   ktp: string;
-// }
 
 export const useDetailDistributorApi = (
   distributorId: string,

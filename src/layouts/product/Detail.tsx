@@ -139,7 +139,7 @@ const Detail = () => {
       setImageUrl(findById.data.imageUrl);
       setVariantTypesPrev(findById.data.variantProduct);
 
-      if (findById.data.price.price) {
+      if (findById.data.variantProduct.length < 1) {
         setPrice(Currency(findById.data.price.price ?? 0));
       } else {
         const prices: number[] = [];
@@ -185,6 +185,8 @@ const Detail = () => {
       }
     }
   }, [findById.data, imageUrl, price]);
+
+  // console.log(findById?.data?.variantProduct);
 
   React.useEffect(() => {
     if (newImageFile) onUploadImage();
@@ -599,15 +601,16 @@ const Detail = () => {
                     }
                     rules={{
                       required: v.rules?.required,
-                      onBlur: findById.data?.price.price
-                        ? (e) =>
-                            CurrencyIDInput({
-                              type: v.type ?? "",
-                              fieldName: v.name,
-                              setValue,
-                              value: e.target.value,
-                            })
-                        : undefined,
+                      onBlur:
+                        findById.data?.variantProduct.length ?? 0 > 1
+                          ? undefined
+                          : (e) =>
+                              CurrencyIDInput({
+                                type: v.type ?? "",
+                                fieldName: v.name,
+                                setValue,
+                                value: e.target.value,
+                              }),
                     }}
                   />
                 )}

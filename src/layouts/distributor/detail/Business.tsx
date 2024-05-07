@@ -13,6 +13,7 @@ import { useDetailDistributorApi } from "./Profile";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { FieldValues } from "react-hook-form";
+import { Spinner } from "@nextui-org/react";
 
 interface Business {
   distributorId: string;
@@ -81,7 +82,9 @@ const Business = ({
           </section>
 
           <Button
-            label={isPending ? "loading..." : "simpan"}
+            label={
+              isPending ? <Spinner color="secondary" size="sm" /> : "simpan"
+            }
             className="mx-auto mt-5"
             onClick={onSubmit}
           />

@@ -166,7 +166,6 @@ const PiliPay = () => {
   return (
     <section className="bg-primary px-4 py-6 rounded-xl flex gap-4 shadow-md md:col-span-2 whitespace-nowrap overflow-auto flex-grow">
       <PilipayTransaction />
-      {/* <div className="w-[.19rem] h-full bg-white opacity-[.4] rounded-md" /> */}
       <PilipayBalance />
     </section>
   );
@@ -218,7 +217,7 @@ const PilipayBalance = () => {
       {isActivated && (
         <ActivatedPilipay isOpen={isActivated} setOpen={setIsActivated} />
       )}
-      <section className="flex gap-4 items-center">
+      <section className="flex gap-8 lg:gap-4 items-center">
         <section className="text-white flex flex-col gap-2">
           <span className="text-[.75rem] tracking-wider inline-flex gap-1">
             <img src={walletSVG} alt="wallet" className="w-4" />

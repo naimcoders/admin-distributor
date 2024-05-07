@@ -41,7 +41,7 @@ import { CurrentProductImageProps } from "./Create";
 import { toast } from "react-toastify";
 import { useActiveModal } from "src/stores/modalStore";
 import { ModalCategory, ModalSubCategory } from "./Modals/Category";
-import { DangerousModal } from "./Modals/Dangerous";
+// import { DangerousModal } from "./Modals/Dangerous";
 import { ConditionModal } from "./Modals/Condition";
 import { PostageModal } from "./Modals/Postage";
 import useGeneralStore, {
@@ -162,7 +162,7 @@ const Detail = () => {
       setValue("productName", findById.data.name);
       setValue("category", findById.data.categoryProduct.category.name);
       setValue("subCategory", findById.data.subCategoryProduct?.name ?? "-");
-      setValue("dangerous", findById.data.isDangerous ? "Ya" : "Tidak");
+      // setValue("dangerous", findById.data.isDangerous ? "Ya" : "Tidak");
       setValue(
         "variant",
         findById.data.variantProduct?.map((e) => e.name).join(", ")
@@ -357,7 +357,7 @@ const Detail = () => {
   const {
     actionIsCategory,
     actionIsSubCategory,
-    actionIsDangerous,
+    // actionIsDangerous,
     actionIsCondition,
     actionIsPostage,
     actionIsVariant,
@@ -413,14 +413,14 @@ const Detail = () => {
           <ChevronRightIcon width={16} color={IconColor.zinc} />
         ),
     }),
-    objectFields({
-      label: "produk berbahaya",
-      name: "dangerous",
-      type: "modal",
-      onClick: actionIsDangerous,
-      defaultValue: "",
-      endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
-    }),
+    // objectFields({
+    //   label: "produk berbahaya",
+    //   name: "dangerous",
+    //   type: "modal",
+    //   onClick: actionIsDangerous,
+    //   defaultValue: "",
+    //   endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
+    // }),
     objectFields({
       label: "variasi",
       name: "variant",
@@ -467,17 +467,17 @@ const Detail = () => {
       endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
     }),
     objectFields({
-      label: "deskripsi *",
-      name: "description",
-      type: "textarea",
-    }),
-    objectFields({
       label: "atur promosi",
       name: "promotion",
       type: "modal",
       onClick: actionIsPromotion,
       defaultValue: "",
       endContent: <ChevronRightIcon width={16} color={IconColor.zinc} />,
+    }),
+    objectFields({
+      label: "deskripsi *",
+      name: "description",
+      type: "textarea",
     }),
   ];
 
@@ -684,7 +684,7 @@ const Detail = () => {
         clearErrors={clearErrors}
         categoryId={categoryId}
       />
-      <DangerousModal setValue={setValue} />
+      {/* <DangerousModal setValue={setValue} /> */}
       <ConditionModal setValue={setValue} />
       <VariantDetailProductModal
         fieldName="variant"

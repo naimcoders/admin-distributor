@@ -188,7 +188,7 @@ const Detail = () => {
                     {uppercaseToCapitalize(
                       data?.invoice.paymentType.split("_").join(" ") ?? ""
                     )}{" "}
-                    {uppercaseToCapitalize(data?.invoice.paymentMethod ?? "")}
+                    {data?.invoice.paymentMethod.split("_").join(" ")}
                   </h2>
                 </section>
               </section>

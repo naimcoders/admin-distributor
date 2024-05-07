@@ -15,7 +15,7 @@ import Image from "src/components/Image";
 import History from "./modals/History";
 import Transfer from "./modals/Transfer";
 import Topup from "./modals/Topup";
-import React, { FC } from "react";
+import React from "react";
 import ActivatedPilipay from "./modals/Activated";
 import {
   ProductBestSelling,
@@ -45,11 +45,11 @@ const Dashboard = () => {
   );
 };
 
-const TotalData: FC<{ data?: number; title: string; gradient: string }> = ({
-  gradient,
-  data,
-  title,
-}) => (
+const TotalData: React.FC<{
+  data?: number;
+  title: string;
+  gradient: string;
+}> = ({ gradient, data, title }) => (
   <Card
     className={cx(
       "bg-gradient-to-r text-white flex-grow lg:flex-1 z-0 px-1",

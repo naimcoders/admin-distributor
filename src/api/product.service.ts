@@ -230,7 +230,7 @@ export interface CreateProduct {
   deliveryPrice: DeliveryPrice;
   description: string;
   imageUrl?: string[];
-  isDangerous: boolean;
+  isDangerous?: boolean;
   name: string;
   subCategoryId: string;
   price: {

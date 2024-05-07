@@ -98,7 +98,6 @@ const Create = () => {
 
     try {
       setIsLoading(true);
-      const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price as string;
       const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
       const variants = variantTypes.map((v) => ({
@@ -114,7 +113,6 @@ const Create = () => {
         data: {
           category: { categoryId },
           name: e.productName,
-          isDangerous,
           deliveryPrice,
           variant: variants,
           createForDistrbutorId: subDistributorId,
@@ -413,7 +411,6 @@ const useFields = () => {
   const {
     actionIsCategory,
     actionIsSubCategory,
-    actionIsDangerous,
     actionIsCondition,
     actionIsPostage,
     actionIsVariant,
@@ -429,7 +426,6 @@ const useFields = () => {
       toast.error("Pilih kategori");
       return;
     }
-
     actionIsSubCategory();
   };
 
@@ -455,13 +451,6 @@ const useFields = () => {
       type: "modal",
       defaultValue: "",
       onClick: onClickSubCategory,
-    }),
-    objectFields({
-      label: "produk berbahaya",
-      name: "dangerous",
-      type: "modal",
-      defaultValue: "Tidak",
-      onClick: actionIsDangerous,
     }),
     objectFields({
       label: "variasi",

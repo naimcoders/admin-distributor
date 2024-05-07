@@ -104,7 +104,7 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
   const qsStore = stringifyQuery({ page: 1 });
   const qsDIstributor = stringifyQuery({ page: 1 });
   const qsOrder = stringifyQuery({ status: "waiting_accept" });
-  const qsAccount = stringifyQuery({ section: "password" });
+  const qsAccount = stringifyQuery({ section: "email & password" });
 
   return (
     <>

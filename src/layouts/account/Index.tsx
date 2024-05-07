@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 
 const tabs: ITabs[] = [
-  { label: "password", content: <Password /> },
+  { label: "email & password", content: <Password /> },
   { label: "rekening", content: <Rekening /> },
   { label: "kurir internal", content: <CourierInternal /> },
 ];

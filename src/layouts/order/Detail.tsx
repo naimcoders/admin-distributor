@@ -4,7 +4,12 @@ import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { acceptOrder, findOrderById, rejectOrder } from "src/api/order.service";
+import {
+  acceptOrder,
+  findOrderById,
+  itemReadyOrder,
+  rejectOrder,
+} from "src/api/order.service";
 import pemesanImg from "src/assets/images/pemesan.png";
 import { Button } from "src/components/Button";
 import Error from "src/components/Error";
@@ -52,6 +57,7 @@ const Detail = () => {
   const { error, isLoading, data } = findOrderById(orderId);
   const { onAccept, isLoadingAccept } = useAccept(orderId);
   const { onReject, isLoadingReject } = useReject(orderId);
+  const { onItemReady, isLoadingItemReady } = useItemReady(orderId);
 
   return (
     <>
@@ -250,8 +256,15 @@ const Detail = () => {
               {data?.status === "ACCEPT" && (
                 <div className="flex justify-end">
                   <Button
-                    label="tandai pesanan siap dikirim"
+                    label={
+                      isLoadingItemReady ? (
+                        <Spinner color="secondary" size="sm" />
+                      ) : (
+                        "tandai pesanan siap dikirim"
+                      )
+                    }
                     className="w-max"
+                    onClick={onItemReady}
                   />
                 </div>
               )}
@@ -282,24 +295,24 @@ const useAccept = (orderId: string) => {
   return { onAccept, isLoadingAccept: isPending };
 };
 
-// const useItemReady = (orderId: string) => {
-//   const { mutateAsync, isPending } = itemReadyOrder(orderId);
+const useItemReady = (orderId: string) => {
+  const { mutateAsync, isPending } = itemReadyOrder(orderId);
 
-//   const onItemReady = async () => {
-//     try {
-//       toast.loading("Loading...", { toastId: "loading-item-ready" });
-//       await mutateAsync();
-//       toast.success("Pesanan siap dikirim");
-//     } catch (e) {
-//       const error = e as Error;
-//       toast.error(`Failed to submit the item ready: ${error.message}`);
-//     } finally {
-//       toast.dismiss("loading-item-ready");
-//     }
-//   };
+  const onItemReady = async () => {
+    try {
+      toast.loading("Loading...", { toastId: "loading-item-ready" });
+      await mutateAsync();
+      toast.success("Pesanan siap dikirim");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to submit the item ready: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-item-ready");
+    }
+  };
 
-//   return { onItemReady, isLoadingItemReady: isPending };
-// };
+  return { onItemReady, isLoadingItemReady: isPending };
+};
 
 const useReject = (orderId: string) => {
   const { mutateAsync, isPending } = rejectOrder(orderId);

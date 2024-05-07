@@ -2,6 +2,8 @@ import Tabs, { ITabs } from "src/components/Tabs";
 import Password from "./Password";
 import Rekening from "./Rekening";
 import CourierInternal from "./CourierInternal";
+import { useNavigate } from "react-router-dom";
+import { parseQueryString, stringifyQuery } from "src/helpers";
 
 const tabs: ITabs[] = [
   { label: "password", content: <Password /> },
@@ -10,9 +12,22 @@ const tabs: ITabs[] = [
 ];
 
 const Account = () => {
+  const navigate = useNavigate();
+  const { section } = parseQueryString<{ section: string }>();
+
+  const onSelectionChange = (e: React.Key) => {
+    const qs = stringifyQuery({ section: e });
+    navigate(`/akun?${qs}`);
+  };
+
   return (
     <main>
-      <Tabs items={tabs} color="primary" />
+      <Tabs
+        items={tabs}
+        color="primary"
+        selectedKey={section}
+        onSelectionChange={onSelectionChange}
+      />
     </main>
   );
 };

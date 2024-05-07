@@ -104,6 +104,7 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
   const qsStore = stringifyQuery({ page: 1 });
   const qsDIstributor = stringifyQuery({ page: 1 });
   const qsOrder = stringifyQuery({ status: "waiting_accept" });
+  const qsAccount = stringifyQuery({ section: "password" });
 
   return (
     <>
@@ -142,7 +143,11 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
       {user?.role === RoleDistributor.DISTRIBUTOR && (
         <LinkSideBar name="Report" path="report" onClickNav={onClickNav} />
       )}
-      <LinkSideBar name="Akun" path="akun" onClickNav={onClickNav} />
+      <LinkSideBar
+        name="Akun"
+        path={`akun?${qsAccount}`}
+        onClickNav={onClickNav}
+      />
 
       <Button
         label="Logout"

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { req } from "./request";
+import queryString from "query-string";
 
 export interface ProductCategory {
   category: Category;
@@ -31,6 +32,7 @@ class Api {
   }
 
   private path = "category-product";
+  private subCategoryPath = "sub-category-product";
 
   async find(): Promise<ProductCategory[]> {
     return await req<ProductCategory[]>({
@@ -49,10 +51,27 @@ class Api {
       errors: "",
     });
   }
+
+  async findSubCategoryByCategoryId(
+    categoryProductId: string
+  ): Promise<Category[]> {
+    const query = queryString.stringify(
+      { categoryProductId },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<Category[]>({
+      method: "GET",
+      path: `${this.subCategoryPath}?${query}`,
+      isNoAuth: false,
+      errors: "",
+    });
+  }
 }
 
 interface ApiProductCategoryInfo {
   find(): Promise<ProductCategory[]>;
+  findSubCategoryByCategoryId(categoryProductId: string): Promise<Category[]>;
 }
 
 export function getProductCategoryApiInfo(): ApiProductCategoryInfo {
@@ -60,6 +79,23 @@ export function getProductCategoryApiInfo(): ApiProductCategoryInfo {
 }
 
 const key = "product-category";
+const subProductCategoryKey = "sub-product-category";
+
+export const findSubCategoryByCategoryId = (categoryProductId: string) => {
+  const data = useQuery<Category[], Error>({
+    queryKey: [subProductCategoryKey, categoryProductId],
+    queryFn: () =>
+      getProductCategoryApiInfo().findSubCategoryByCategoryId(
+        categoryProductId
+      ),
+    enabled: !!categoryProductId,
+  });
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error?.message,
+  };
+};
 
 export const useProductCategory = () => {
   const find = () => {

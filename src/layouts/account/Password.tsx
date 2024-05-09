@@ -1,106 +1,198 @@
 import React from "react";
 import Template from "./Template";
 import { useForm } from "react-hook-form";
-import {
-  Textfield,
-  TextfieldProps,
-  objectFields,
-} from "src/components/Textfield";
+import { Textfield } from "src/components/Textfield";
 import { handleErrorMessage } from "src/helpers";
 import { checkPassword } from "src/pages/Index";
 import { setUser } from "src/stores/auth";
-import { useDistributor } from "src/api/distributor.service";
-
-interface DefaultValues {
-  email: string;
-  password: string;
-  oldPassword: string;
-}
+import { updateDistributor } from "src/api/distributor.service";
+import { Spinner } from "@nextui-org/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { IconColor } from "src/types";
+import { toast } from "react-toastify";
 
 const Password = () => {
-  const { control, errors, isPending, onSubmit } = useApi();
-  const { fields } = useFields();
+  const [isOldPassword, setIsOldPassword] = React.useState(false);
+  const [isNewPassword, setIsNewPassword] = React.useState(false);
+  const [isConfirmNewPassword, setIsConfirmNewPassword] = React.useState(false);
+
+  const {
+    formEmail,
+    isPending,
+    onSubmitEmail,
+    formPassword,
+    onSubmitPassword,
+  } = useApi();
+  const user = setUser((v) => v.user);
 
   return (
-    <Template
-      title="perbarui password"
-      onClick={onSubmit}
-      btnLabelForm={isPending ? "loading..." : "buat baru"}
-    >
-      {fields.map((el, idx) => (
+    <main className="flex gap-4">
+      <Template
+        title="perbarui email"
+        onClick={onSubmitEmail}
+        btnLabelForm={
+          isPending && !formPassword.getValues("newPassword") ? (
+            <Spinner size="sm" color="secondary" />
+          ) : (
+            "Simpan"
+          )
+        }
+        className="w-[20rem] h-max"
+      >
         <Textfield
-          {...el}
-          key={idx}
-          defaultValue=""
-          control={control}
-          errorMessage={handleErrorMessage(errors, el.name ?? "")}
-          rules={{ required: { value: true, message: el.errorMessage ?? "" } }}
+          name="email"
+          label="email"
+          defaultValue={user?.email}
+          placeholder="Masukkan email"
+          control={formEmail.control}
+          rules={{
+            required: { value: true, message: "Masukkan email" },
+          }}
+          errorMessage={handleErrorMessage(formEmail.formState.errors, "email")}
+          endContent={
+            <XMarkIcon
+              width={16}
+              color={IconColor.zinc}
+              className="cursor-pointer"
+              onClick={() => formEmail.setValue("email", "")}
+            />
+          }
         />
-      ))}
-    </Template>
+      </Template>
+
+      <Template
+        title="perbarui password"
+        onClick={onSubmitPassword}
+        btnLabelForm={
+          isPending && formPassword.getValues("newPassword") ? (
+            <Spinner size="sm" color="secondary" />
+          ) : (
+            "Simpan"
+          )
+        }
+        className="w-[20rem]"
+      >
+        <Textfield
+          label="password lama"
+          name="oldPassword"
+          defaultValue=""
+          placeholder="Masukkan password lama"
+          control={formPassword.control}
+          rules={{
+            required: { value: true, message: "Masukkan password lama" },
+          }}
+          errorMessage={handleErrorMessage(
+            formPassword.formState.errors,
+            "oldPassword"
+          )}
+          type={!isOldPassword ? "password" : "text"}
+          endContent={checkPassword(isOldPassword, setIsOldPassword)}
+        />
+        <Textfield
+          label="password baru"
+          name="newPassword"
+          defaultValue=""
+          placeholder="Masukkan password baru"
+          control={formPassword.control}
+          rules={{
+            required: { value: true, message: "Masukkan password baru" },
+          }}
+          errorMessage={handleErrorMessage(
+            formPassword.formState.errors,
+            "newPassword"
+          )}
+          type={!isNewPassword ? "password" : "text"}
+          endContent={checkPassword(isNewPassword, setIsNewPassword)}
+        />
+        <Textfield
+          label="konfirmasi password baru"
+          name="confirmPassword"
+          defaultValue=""
+          placeholder="Masukkan konfirmasi password baru"
+          control={formPassword.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Masukkan konfirmasi password baru",
+            },
+          }}
+          errorMessage={handleErrorMessage(
+            formPassword.formState.errors,
+            "confirmPassword"
+          )}
+          type={!isConfirmNewPassword ? "password" : "text"}
+          endContent={checkPassword(
+            isConfirmNewPassword,
+            setIsConfirmNewPassword
+          )}
+        />
+      </Template>
+    </main>
   );
 };
 
 const useApi = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<DefaultValues>();
+  const formEmail = useForm<{ email: string }>();
+  const formPassword = useForm<{
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>();
   const user = setUser((v) => v.user);
 
-  const { updateDistributor } = useDistributor();
+  const { mutateAsync, isPending } = updateDistributor();
 
-  const onSubmit = handleSubmit(async (e) => {
+  const onSubmitEmail = formEmail.handleSubmit(async (e) => {
     if (!user) return;
 
     try {
-      const obj = {
+      await mutateAsync({
+        email: e.email,
         name: user.name,
         ownerName: user.ownerName,
-        email: e.email,
-        password: e.password,
-        oldPassword: e.oldPassword,
         phoneNumber: user.phoneNumber,
-      };
-      await updateDistributor.mutateAsync({ data: obj });
-      reset();
+      });
+      toast.success("Email berhasil diperbarui");
     } catch (e) {
       const error = e as Error;
-      console.error(`Failed to update account : ${error.message}`);
+      toast.error(`Failed to update email: ${error.message}`);
     }
   });
 
-  return { onSubmit, control, errors, isPending: updateDistributor.isPending };
-};
+  const onSubmitPassword = formPassword.handleSubmit(async (e) => {
+    if (!user) return;
 
-const useFields = () => {
-  const [isPassword, setIsPassword] = React.useState(false);
-  const [isOldPassword, setIsOldPassword] = React.useState(false);
+    try {
+      if (e.newPassword !== e.confirmPassword) {
+        formPassword.setError("confirmPassword", {
+          message: "Konfirmasi password harus sama dengan password baru",
+        });
+        return;
+      }
 
-  const fields: TextfieldProps<DefaultValues>[] = [
-    objectFields({
-      label: "email",
-      name: "email",
-      type: "email",
-      autoComplete: "on",
-    }),
-    objectFields({
-      label: "password lama",
-      name: "oldPassword",
-      type: !isOldPassword ? "password" : "text",
-      endContent: checkPassword(isOldPassword, setIsOldPassword),
-    }),
-    objectFields({
-      label: "password baru",
-      name: "password",
-      type: !isPassword ? "password" : "text",
-      endContent: checkPassword(isPassword, setIsPassword),
-    }),
-  ];
+      await mutateAsync({
+        email: user.email,
+        password: e.newPassword,
+        oldPassword: e.oldPassword,
+        name: user.name,
+        ownerName: user.ownerName,
+        phoneNumber: user.phoneNumber,
+      });
+      toast.success("Password berhasil diperbarui");
+      formPassword.reset();
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to update password: ${error.message}`);
+    }
+  });
 
-  return { fields };
+  return {
+    onSubmitEmail,
+    onSubmitPassword,
+    isPending,
+    formEmail,
+    formPassword,
+  };
 };
 
 export default Password;

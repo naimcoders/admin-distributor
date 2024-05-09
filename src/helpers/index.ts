@@ -7,6 +7,18 @@ import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 import queryString from "query-string";
 
+export const setMinMaxCalendar = (value: number) => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), value);
+};
+
+export const setRequiredField = (
+  value: boolean,
+  message: string
+): { value: boolean; message: string } => {
+  return { value, message };
+};
+
 export const splitSlash = (value: string): string => {
   return value.split("/")[1];
 };
@@ -91,9 +103,9 @@ export const parseTextToNumber = (val: string) => {
 
 export const handleErrorMessage = (
   errors: FieldErrors<FieldValues>,
-  data?: string
+  fieldName?: string
 ): string | undefined => {
-  return (errors[data ?? ""] as FieldError)?.message;
+  return (errors[fieldName ?? ""] as FieldError)?.message;
 };
 
 export const useDebounce = (value: string, delay: number) => {

@@ -17,6 +17,7 @@ import {
   epochToDateConvert,
   handleErrorMessage,
   parseTextToNumber,
+  setMinMaxCalendar,
 } from "src/helpers";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import ContentTextfield from "src/components/ContentTextfield";
@@ -103,6 +104,8 @@ const Promotion = ({
   const setEpoch = useGeneralStore((v) => v.setEpoch);
   const setDate = useGeneralStore((v) => v.setDate);
   const { update } = useProduct(productId);
+
+  const minDate = setMinMaxCalendar(new Date().getDate());
 
   const onSubmit = promoForm.handleSubmit(async (e) => {
     if (!productData) return;
@@ -256,6 +259,7 @@ const Promotion = ({
           setValue={promoForm.setValue}
           clearErrors={promoForm.clearErrors}
           fieldName="period"
+          minDate={minDate}
         />
       </Modal>
     </>

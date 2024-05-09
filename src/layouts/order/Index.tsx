@@ -13,7 +13,7 @@ const data: SelectDataProps[] = [
   { label: "menunggu diterima", value: "WAITING_ACCEPT" },
   { label: "pending", value: "PENDING" },
   { label: "diterima", value: "ACCEPT" },
-  { label: "barang siap", value: "ITEM_READY" },
+  { label: "pesanan siap", value: "ITEM_READY" },
   { label: "verifikasi PIN", value: "VERIFY_PIN" },
   { label: "pengiriman", value: "DELIVERY" },
   { label: "selesai", value: "COMPLETE" },

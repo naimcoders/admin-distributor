@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { req } from "./request";
-import queryString from "query-string";
 
 export interface ProductCategory {
   category: Category;
@@ -55,14 +54,9 @@ class Api {
   async findSubCategoryByCategoryId(
     categoryProductId: string
   ): Promise<Category[]> {
-    const query = queryString.stringify(
-      { categoryProductId },
-      { skipEmptyString: true, skipNull: true }
-    );
-
     return await req<Category[]>({
       method: "GET",
-      path: `${this.subCategoryPath}?${query}`,
+      path: `${this.subCategoryPath}/${categoryProductId}`,
       isNoAuth: false,
       errors: "",
     });
@@ -90,8 +84,13 @@ export const findSubCategoryByCategoryId = (categoryProductId: string) => {
       ),
     enabled: !!categoryProductId,
   });
+
+  const sortCategories = data.data?.sort((a, b) =>
+    a.name?.localeCompare(b.name)
+  );
+
   return {
-    data: data.data,
+    data: sortCategories,
     isLoading: data.isLoading,
     error: data.error?.message,
   };

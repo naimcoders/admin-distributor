@@ -186,7 +186,7 @@ interface UpdateDocument {
 
 interface UpdateDistributor {
   ownerName: string;
-  email: string;
+  email?: string;
   phoneNumber: string;
   name: string;
   detailAddress?: string;
@@ -370,23 +370,23 @@ export const suspendDistributor = () => {
   return { mutateAsync };
 };
 
-export const useDistributor = () => {
+export const updateDistributor = () => {
   const queryClient = useQueryClient();
-
-  const updateDistributor = useMutation<
+  const { mutateAsync, isPending } = useMutation<
     null,
     Error,
-    { data: UpdateDistributor }
+    UpdateDistributor
   >({
     mutationKey: [key, "update-distributor"],
-    mutationFn: async (r) =>
-      await getDistributorApiInfo().updateDistributor(r.data),
-    onSuccess: () => {
-      toast.success("Akun berhasil diperbarui");
-      void queryClient.invalidateQueries({ queryKey: [key] });
-    },
-    onError: (e) => toast.error(e.message),
+    mutationFn: (r) => getDistributorApiInfo().updateDistributor(r),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
   });
+
+  return { mutateAsync, isPending };
+};
+
+export const useDistributor = () => {
+  const queryClient = useQueryClient();
 
   const find = (pageTable: number) => {
     const { user } = useAuth();

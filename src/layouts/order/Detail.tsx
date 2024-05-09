@@ -1,6 +1,6 @@
 import cx from "classnames";
 import { ArrowDownTrayIcon, PrinterIcon } from "@heroicons/react/24/outline";
-import { DocumentChartBarIcon } from "@heroicons/react/24/solid";
+import { DocumentChartBarIcon } from "@heroicons/react/24/outline";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -28,7 +28,7 @@ const status: { eng: string; ina: string }[] = [
   { eng: "DELIVERY", ina: "Pengiriman" },
   { eng: "COMPLETE", ina: "Selesai" },
   { eng: "REJECT", ina: "Batal" },
-  { eng: "ITEM_READY", ina: "Diantar kurir" },
+  { eng: "ITEM_READY", ina: "Menunggu Kurir" },
   { eng: "VERIFY_PIN", ina: "Verifikasi PIN" },
 ];
 
@@ -59,6 +59,8 @@ const Detail = () => {
   const { onReject, isLoadingReject } = useReject(orderId);
   const { onItemReady, isLoadingItemReady } = useItemReady(orderId);
 
+  // console.log(data);
+
   return (
     <>
       {error ? (
@@ -75,23 +77,33 @@ const Detail = () => {
           <section className="bg-white rounded-lg px-5 mb-4">
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">ID Order</h1>
+                <h1 className="font-medium">ID Order</h1>
                 <p className="truncate" title={data?.id}>
                   {data?.id}
                 </p>
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">tanggal order</h1>
+                <h1 className="font-medium">Tanggal Order</h1>
                 <p>{epochToDateConvert(data?.createdAt)}</p>
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">status order</h1>
-                <p className={cx("capitalize ", `text-[#fcb230]`)}>
-                  {status.map((v) => data?.status === v.eng && v.ina)}
-                </p>
+                <h1 className="font-medium">Status Order</h1>
+                {status.map(
+                  (v) =>
+                    data?.status === v.eng && (
+                      <p
+                        className={cx(
+                          `text-[#fcb230]`,
+                          v.eng === "COMPLETE" && "text-green-500"
+                        )}
+                      >
+                        {v.ina}
+                      </p>
+                    )
+                )}
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">tanggal diterima</h1>
+                <h1 className="font-medium">Tanggal Diterima</h1>
               </section>
             </section>
 
@@ -99,7 +111,7 @@ const Detail = () => {
 
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">pemesan</h1>
+                <h1 className="font-medium">Pemesan</h1>
                 <section className="flex gap-2">
                   <img src={pemesanImg} alt="Order Image" className="w-6 h-6" />
                   <div>
@@ -109,15 +121,15 @@ const Detail = () => {
                 </section>
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">nama toko</h1>
+                <h1 className="font-medium">Nama Toko</h1>
                 <p>-</p>
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">alamat pengiriman</h1>
-                <p className="capitalize ">{data?.customer.address}</p>
+                <h1 className="font-medium">Alamat Pengiriman</h1>
+                <p>{data?.customer.address}</p>
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">catatan pengiriman</h1>
+                <h1 className="font-medium">Catatan Pengiriman</h1>
                 <p>{data?.note}</p>
               </section>
             </section>
@@ -126,14 +138,10 @@ const Detail = () => {
 
             <div className="overflow-auto whitespace-nowrap border-b border-gray-300 py-5">
               <section className="text-sm flex md:grid md:grid-cols-4 gap-2">
-                <h1 className="font-medium capitalize">jenis pesanan</h1>
-                <h1 className="font-medium capitalize">sub-distributor</h1>
-                <h1 className="font-medium capitalize text-right">
-                  unit harga (Rp)
-                </h1>
-                <h1 className="font-medium capitalize text-right">
-                  subtotal (Rp)
-                </h1>
+                <h1 className="font-medium">Jenis Pesanan</h1>
+                <h1 className="font-medium">Sub-Distributor</h1>
+                <h1 className="font-medium text-right">Unit Harga (Rp)</h1>
+                <h1 className="font-medium text-right">Subtotal (Rp)</h1>
 
                 {/* ITEMS */}
                 {data?.items.map((product, idx) => (
@@ -145,7 +153,7 @@ const Detail = () => {
                       <h2 className="truncate" title={product.product.name}>
                         {product.product.name}
                       </h2>
-                      <h2 className="truncate">-</h2>
+                      <h2>-</h2>
                       <h2 className="text-right">
                         {Currency(product.product.price.price)}
                       </h2>
@@ -160,7 +168,7 @@ const Detail = () => {
                     </section>
 
                     {product.note && (
-                      <div className="flex gap-1 text-xs bg-green-200 text-green-500 font-medium px-3 py-2 rounded-md">
+                      <div className="flex gap-1 text-xs bg-gray-200 px-3 py-2 rounded-md">
                         <DocumentChartBarIcon width={15} />
                         {product.note}
                       </div>
@@ -204,7 +212,7 @@ const Detail = () => {
 
             <section className="text-sm grid grid-cols-4 gap-6 border-b border-gray-300 py-5">
               <section className="flex flex-col gap-2 col-span-1">
-                <h1 className="font-medium capitalize">kurir</h1>
+                <h1 className="font-medium">Kurir</h1>
                 {!data?.delivery.courier ? (
                   "-"
                 ) : (
@@ -217,8 +225,7 @@ const Detail = () => {
                 )}
               </section>
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium capitalize">PIC sales</h1>
-                <p>-</p>
+                <h1 className="font-medium">PIC Sales</h1>
                 <p>-</p>
               </section>
             </section>
@@ -286,7 +293,7 @@ const useAccept = (orderId: string) => {
       toast.success("Order berhasil diterima");
     } catch (e) {
       const error = e as Error;
-      toast.error(`Failed to accept the order: ${error.message}`);
+      toast.error(`Failed to accept: ${error.message}`);
     } finally {
       toast.dismiss("loading-accept");
     }
@@ -305,7 +312,7 @@ const useItemReady = (orderId: string) => {
       toast.success("Pesanan siap dikirim");
     } catch (e) {
       const error = e as Error;
-      toast.error(`Failed to submit the item ready: ${error.message}`);
+      toast.error(`Failed to submit: ${error.message}`);
     } finally {
       toast.dismiss("loading-item-ready");
     }
@@ -324,7 +331,7 @@ const useReject = (orderId: string) => {
       toast.success("Order berhasil ditolak");
     } catch (e) {
       const error = e as Error;
-      toast.error(`Failed to reject the order: ${error.message}`);
+      toast.error(`Failed to reject: ${error.message}`);
     } finally {
       toast.dismiss("loading-reject");
     }

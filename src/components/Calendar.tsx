@@ -14,7 +14,10 @@ interface IDateRange {
 
 export const Calendar = (
   r: Pick<ActionModal, "close"> &
-    Pick<UseForm, "setValue" | "clearErrors"> & { fieldName: string }
+    Pick<UseForm, "setValue" | "clearErrors"> & {
+      fieldName: string;
+      minDate?: Date;
+    }
 ) => {
   const { dateRange, handleSelect, epochTime } = useHook();
   const date = useGeneralStore((v) => v.date);
@@ -36,6 +39,7 @@ export const Calendar = (
           startDate: new Date(date.startAt),
           endDate: new Date(date.endAt),
         }}
+        minDate={r.minDate}
       />
 
       {!epochTime.start && !epochTime.end ? null : (

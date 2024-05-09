@@ -1,6 +1,5 @@
 import cx from "classnames";
 import { FC } from "react";
-import { useCategory } from "src/api/category.service";
 import { useProductCategory } from "src/api/product-category.service";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
@@ -12,44 +11,19 @@ interface ModalCategoryProps extends Pick<UseForm, "setValue" | "clearErrors"> {
   categoryId?: string;
 }
 
-export const ModalCategory: FC<ModalCategoryProps> = ({
-  clearErrors,
-  setValue,
-  id,
-  setId,
-}) => {
-  const { isCategory, actionIsCategory } = useActiveModal();
-  const { data } = useCategory().find();
+interface IListingModal<T extends object> {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  render: (data: T) => React.ReactNode;
+  data?: T;
+}
 
-  const key = "category";
-  const onClick = (id: string, name: string) => {
-    setId(id);
-    clearErrors(key);
-    setValue(key, name);
-    actionIsCategory();
-  };
-
-  const sortCategories = data?.sort((a, b) => a.name?.localeCompare(b.name));
-
+export const ListingModal = <T extends object>(props: IListingModal<T>) => {
   return (
-    <Modal title="kategori" isOpen={isCategory} closeModal={actionIsCategory}>
-      {!sortCategories ? (
-        <div>Memuat kategori...</div>
-      ) : (
-        <ul className="flex flex-col gap-2 my-4">
-          {sortCategories?.map((v) => (
-            <li
-              key={v.id}
-              onClick={() => onClick(v.id, v.name)}
-              className={cx(
-                "hover:font-bold cursor-pointer w-max",
-                v.id === id && "font-bold"
-              )}
-            >
-              {v.name}
-            </li>
-          ))}
-        </ul>
+    <Modal title={props.title} isOpen={props.isOpen} closeModal={props.onClose}>
+      {props.data && (
+        <ul className="flex flex-col gap-2 my-4">{props.render(props.data)}</ul>
       )}
     </Modal>
   );

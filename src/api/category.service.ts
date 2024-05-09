@@ -41,20 +41,17 @@ export function getCategoryApiInfo(): ApiCategoryInfo {
 
 const key = "category";
 
-export const useCategory = () => {
-  const find = () => {
-    const get = async () => await getCategoryApiInfo().find();
-    const { data, isLoading, error } = useQuery<Category[], Error>({
-      queryKey: [key],
-      queryFn: get,
-    });
+export const findCategories = () => {
+  const { data, isLoading, error } = useQuery<Category[], Error>({
+    queryKey: [key],
+    queryFn: () => getCategoryApiInfo().find(),
+  });
 
-    return {
-      data,
-      isLoading,
-      error: error?.message,
-    };
+  const sortCategories = data?.sort((a, b) => a.name?.localeCompare(b.name));
+
+  return {
+    data: sortCategories,
+    isLoading,
+    error: error?.message,
   };
-
-  return { find };
 };

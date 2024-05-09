@@ -1,28 +1,26 @@
 import square from "src/assets/images/square.png";
 import rectangle from "src/assets/images/rectangle.png";
 import cx from "classnames";
-import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
 import useGeneralStore from "src/stores/generalStore";
-import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import {
+  ChevronRightIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File as FileComp } from "src/components/File";
-import {
-  Textfield,
-  TextfieldProps,
-  objectFields,
-} from "src/components/Textfield";
+import { Textfield } from "src/components/Textfield";
 import {
   CurrencyIDInput,
-  checkForDash,
   handleErrorMessage,
   parseTextToNumber,
+  setRequiredField,
 } from "src/helpers";
 import { IconColor } from "src/types";
-import { useCategory } from "src/api/category.service";
 import { useActiveModal } from "src/stores/modalStore";
 import {
   Button as Btn,
@@ -35,7 +33,7 @@ import { Button } from "src/components/Button";
 import { DangerousModal } from "./Modals/Dangerous";
 import { PostageModal } from "./Modals/Postage";
 import { ConditionModal } from "./Modals/Condition";
-import { ModalCategory, ModalSubCategory } from "./Modals/Category";
+import { ListingModal } from "./Modals/Category";
 import { VariantModal } from "./Modals/Variant";
 import { useProduct } from "src/api/product.service";
 import { useNavigate } from "react-router-dom";
@@ -45,12 +43,19 @@ import { onPickImage } from "src/helpers/crop-image";
 import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import { SubDistributorModal } from "./Modals/SubDistributor";
+import { findCategories } from "src/api/category.service";
+import { findSubCategoryByCategoryId } from "src/api/product-category.service";
+import Error from "src/components/Error";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCourierInternal, setIsCourierInternal] = useState(true);
   const [subDistributorId, setSubDistributorId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [subCategoryId, setSubCategoryId] = useState("");
+
+  const user = setUser((v) => v.user);
 
   const {
     reset,
@@ -63,6 +68,18 @@ const Create = () => {
   } = useForm<FieldValues>();
 
   const {
+    actionIsSubCategory,
+    actionIsCategory,
+    actionIsVariant,
+    actionIsPrice,
+    actionIsPostage,
+    actionIsCondition,
+    actionIsSubDistributor,
+    isCategory,
+    isSubCategory,
+  } = useActiveModal();
+
+  const {
     productPhotoRef,
     onChange,
     photos,
@@ -72,11 +89,7 @@ const Create = () => {
     onProductSize,
   } = useUploadProduct();
 
-  const { fields, categoryId, subCategoryId, setCategoryId, setSubCategoryId } =
-    useFields();
-
   const navigate = useNavigate();
-  const findCategories = useCategory().find();
   const { create } = useProduct();
 
   const variantTypes = useGeneralStore((v) => v.variantTypes);
@@ -84,7 +97,10 @@ const Create = () => {
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
 
-  // onSubmit
+  const categories = findCategories();
+  const subCategories = findSubCategoryByCategoryId(categoryId);
+
+  // ONSUBMIT
   const onSubmit = handleSubmit(async (e) => {
     if (photos.length < 1) {
       toast.error("Tambah foto produk");
@@ -99,7 +115,7 @@ const Create = () => {
     try {
       setIsLoading(true);
       const price = e.price as string;
-      const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
+      const newPrice = variantTypes.length > 0 ? 0 : parseTextToNumber(price);
       const variants = variantTypes.map((v) => ({
         name: v.name,
         imageUrl: "",
@@ -175,178 +191,312 @@ const Create = () => {
     }
   });
 
+  useEffect(() => {
+    if (!subCategories.data?.length) {
+      setSubCategoryId("");
+      setValue("subCategory", "");
+    }
+  }, [subCategories]);
+
   return (
-    <>
-      {findCategories.error ? (
-        <Error error={findCategories.error} />
-      ) : (
-        <main className="flexcol gap-5 lg:gap-8">
-          <header className="flexcol gap-4">
-            <section className="flex gap-6 items-start flex-wrap">
-              {photos.map((v) => (
-                <Image
-                  src={v.src}
-                  alt="Product"
-                  key={v.src}
-                  className={cx(
-                    "w-[10rem] object-cover rounded-md",
-                    v.size === "1:1" ? "aspect-square" : "aspect-3/4"
-                  )}
-                  actions={[
-                    {
-                      src: <TrashIcon width={16} />,
-                      onClick: () => setPhotos(photos.filter((e) => e !== v)),
-                    },
-                  ]}
-                />
-              ))}
-
-              <Popover placement="right" isOpen={isPopOver}>
-                <PopoverTrigger>
-                  <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
-                    Tambah Foto
-                  </Btn>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <section className="flex gap-4">
-                    {["1:1", "3:4"].map((v) => (
-                      <FileComp
-                        key={v}
-                        control={control}
-                        onClick={() => onProductSize(v)}
-                        onChange={(e) => onChange(e)}
-                        name="productPhoto"
-                        ref={productPhotoRef}
-                        placeholder={v}
-                        className="w-[5rem] cursor-pointer"
-                        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                        startContent={
-                          <img
-                            src={v === "1:1" ? square : rectangle}
-                            alt="square icon"
-                            className="w-4 cursor-pointer"
-                            onClick={() => onProductSize(v)}
-                          />
-                        }
-                      />
-                    ))}
-                  </section>
-                </PopoverContent>
-              </Popover>
-            </section>
-          </header>
-
-          <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
-            {fields.map((v, k) => (
-              <Fragment key={k}>
-                {["text", "rp"].includes(v.type!) && (
-                  <Textfield
-                    {...v}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={variantTypes.length > 1 ? v.readOnly : undefined}
-                    onClick={variantTypes.length > 1 ? v.onClick : undefined}
-                    endContent={
-                      variantTypes.length > 1 &&
-                      v.name === "price" && (
-                        <ChevronRightIcon width={16} color={IconColor.zinc} />
-                      )
-                    }
-                    rules={{
-                      required: v.rules?.required,
-                      onBlur:
-                        variantTypes.length < 1
-                          ? (e) =>
-                              CurrencyIDInput({
-                                type: v.type!,
-                                fieldName: v.name,
-                                setValue,
-                                value: e.target.value,
-                              })
-                          : undefined,
-                    }}
-                  />
-                )}
-
-                {["modal"].includes(v.type!) && (
-                  <Textfield
-                    {...v}
-                    control={control}
-                    errorMessage={handleErrorMessage(errors, v.name)}
-                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    endContent={
-                      <ChevronRightIcon width={16} color={IconColor.zinc} />
-                    }
-                  />
-                )}
-              </Fragment>
-            ))}
-          </main>
-
-          <main className="grid grid-cols-3">
-            <Textarea
-              label="deskripsi *"
-              name="description"
-              defaultValue=""
-              control={control}
-              placeholder="masukkan deskripsi"
-              errorMessage={handleErrorMessage(errors, "description")}
-              rules={{
-                required: { value: true, message: "Masukkan deskripsi" },
-              }}
-              classNameWrapper="col-span-2"
+    <main className="flex flex-col gap-5 lg:gap-8">
+      <header className="flexcol gap-4">
+        <section className="flex gap-6 items-start flex-wrap">
+          {photos.map((v) => (
+            <Image
+              src={v.src}
+              alt="Product"
+              key={v.src}
+              className={cx(
+                "w-[10rem] object-cover rounded-md",
+                v.size === "1:1" ? "aspect-square" : "aspect-3/4"
+              )}
+              actions={[
+                {
+                  src: <TrashIcon width={16} />,
+                  onClick: () => setPhotos(photos.filter((e) => e !== v)),
+                },
+              ]}
             />
-          </main>
+          ))}
 
-          {/* submit */}
-          <Button
-            onClick={onSubmit}
-            className="mx-auto my-5"
-            label={
-              isLoading ? <Spinner size="sm" color="secondary" /> : "simpan"
+          <Popover placement="right" isOpen={isPopOver}>
+            <PopoverTrigger>
+              <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
+                Tambah Foto
+              </Btn>
+            </PopoverTrigger>
+            <PopoverContent>
+              <section className="flex gap-4">
+                {["1:1", "3:4"].map((v) => (
+                  <FileComp
+                    key={v}
+                    control={control}
+                    onClick={() => onProductSize(v)}
+                    onChange={(e) => onChange(e)}
+                    name="productPhoto"
+                    ref={productPhotoRef}
+                    placeholder={v}
+                    className="w-[5rem] cursor-pointer"
+                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                    startContent={
+                      <img
+                        src={v === "1:1" ? square : rectangle}
+                        alt="square icon"
+                        className="w-4 cursor-pointer"
+                        onClick={() => onProductSize(v)}
+                      />
+                    }
+                  />
+                ))}
+              </section>
+            </PopoverContent>
+          </Popover>
+        </section>
+      </header>
+
+      <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">
+        <Textfield
+          name="productName"
+          label="nama produk *"
+          placeholder="Masukkan nama produk"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: setRequiredField(true, "Masukkan nama Produk"),
+          }}
+          errorMessage={handleErrorMessage(errors, "productName")}
+        />
+        <Textfield
+          name="category"
+          label="kategori *"
+          placeholder="pilih kategori"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: setRequiredField(true, "pilih kategori"),
+          }}
+          errorMessage={handleErrorMessage(errors, "category")}
+          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          onClick={actionIsCategory}
+        />
+        <Textfield
+          name="subCategory"
+          label="sub-kategori"
+          placeholder="pilih sub-kategori"
+          control={control}
+          defaultValue=""
+          endContent={
+            !subCategoryId ? (
+              <ChevronRightIcon width={16} color={IconColor.zinc} />
+            ) : (
+              <XMarkIcon
+                width={16}
+                color={IconColor.red}
+                className="cursor-pointer"
+                onClick={() => {
+                  setSubCategoryId("");
+                  setValue("subCategory", "");
+                }}
+              />
+            )
+          }
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          onClick={() => {
+            if (!categoryId) {
+              toast.error("Pilih kategori");
+              return;
             }
+            actionIsSubCategory();
+          }}
+        />
+        <Textfield
+          name="variant"
+          label="variasi"
+          placeholder="tentukan variasi"
+          control={control}
+          defaultValue=""
+          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          onClick={actionIsVariant}
+        />
+        <Textfield
+          name="price"
+          label="harga *"
+          placeholder="masukkan harga"
+          control={control}
+          defaultValue=""
+          errorMessage={handleErrorMessage(errors, "price")}
+          endContent={
+            variantTypes.length > 0 ? (
+              <ChevronRightIcon width={16} color={IconColor.zinc} />
+            ) : undefined
+          }
+          readOnly={
+            variantTypes.length > 0
+              ? { isValue: true, cursor: "cursor-pointer" }
+              : undefined
+          }
+          onClick={variantTypes.length > 0 ? actionIsPrice : undefined}
+          rules={{
+            required: setRequiredField(true, "masukkan harga"),
+            onBlur: (e) =>
+              variantTypes.length > 0
+                ? undefined
+                : CurrencyIDInput({
+                    type: "rp",
+                    fieldName: "price",
+                    setValue,
+                    value: e.target.value,
+                  }),
+          }}
+        />
+        <Textfield
+          name="postage"
+          label="ongkos kirim *"
+          placeholder="tentukan ongkir"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: setRequiredField(true, "tentukan ongkir"),
+          }}
+          errorMessage={handleErrorMessage(errors, "postage")}
+          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          onClick={actionIsPostage}
+        />
+        <Textfield
+          name="condition"
+          label="kondisi *"
+          placeholder="pilih kondisi"
+          control={control}
+          defaultValue="Baru"
+          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+          onClick={actionIsCondition}
+        />
+        {user?.role === RoleDistributor.DISTRIBUTOR && (
+          <Textfield
+            name="subDistributor"
+            label="sub-distributor"
+            placeholder="pilih sub-distributor"
+            control={control}
+            defaultValue=""
+            endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+            readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+            onClick={actionIsSubDistributor}
           />
+        )}
+      </main>
 
-          {/* modal */}
-          <ModalCategory
-            id={categoryId}
-            setValue={setValue}
-            setId={setCategoryId}
-            clearErrors={clearErrors}
-          />
-          <ModalSubCategory
-            id={subCategoryId}
-            setValue={setValue}
-            setId={setSubCategoryId}
-            clearErrors={clearErrors}
-            categoryId={categoryId}
-          />
-          <DangerousModal setValue={setValue} />
-          <ConditionModal setValue={setValue} />
-          <PostageModal
-            setValue={setValue}
-            clearErrors={clearErrors}
-            isCourierInternal={isCourierInternal}
-            setIsCourierInternal={() => setIsCourierInternal((v) => !v)}
-          />
-          <VariantModal fieldName="variant" setValue={setValue} />
-          <PriceModal
-            fieldName="price"
-            setValue={setValue}
-            clearErrors={clearErrors}
-            isMassal={isMassal}
-            setIsMassal={setIsMassal}
-            variantTypes={variantTypes}
-          />
-          <SubDistributorModal
-            setValue={setValue}
-            clearErrors={clearErrors}
-            setDistributorId={setSubDistributorId}
-            subDistributorId={subDistributorId}
-          />
-        </main>
-      )}
-    </>
+      <section className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 gap-4">
+        <Textarea
+          name="description"
+          control={control}
+          label="deskripsi produk *"
+          defaultValue=""
+          rules={{
+            required: setRequiredField(true, "masukkan deskripsi"),
+          }}
+          errorMessage={handleErrorMessage(errors, "description")}
+          classNameWrapper="col-span-2"
+        />
+      </section>
+
+      <Button
+        onClick={onSubmit}
+        className="mx-auto my-5"
+        label={isLoading ? <Spinner size="sm" color="secondary" /> : "simpan"}
+      />
+
+      <ListingModal
+        isOpen={isCategory}
+        onClose={actionIsCategory}
+        data={categories}
+        title="kategori"
+        render={(e) => (
+          <>
+            {e.error && <Error error={e.error} />}
+            {e.isLoading && <Spinner className="mx-auto" />}
+            {e.data?.map((v) => (
+              <li
+                key={v.id}
+                onClick={() => {
+                  setCategoryId(v.id);
+                  setValue("category", v.name);
+                  clearErrors("subCategory");
+                  actionIsCategory();
+                }}
+                className={cx(
+                  "hover:font-bold cursor-pointer w-max",
+                  v.id === categoryId && "font-bold"
+                )}
+              >
+                {v.name}
+              </li>
+            ))}
+          </>
+        )}
+      />
+
+      <ListingModal
+        isOpen={isSubCategory}
+        onClose={actionIsSubCategory}
+        data={subCategories}
+        title="sub-kategori"
+        render={(e) => (
+          <>
+            {e.error && <Error error={e.error} />}
+            {e.isLoading && <Spinner className="mx-auto" />}
+            {!e.data && (
+              <h1 className="font-semibold text-center">Tidak ada data</h1>
+            )}
+            {e.data?.map((v) => (
+              <li
+                key={v.id}
+                onClick={() => {
+                  setSubCategoryId(v.id);
+                  actionIsSubCategory();
+                  setValue("subCategory", v.name);
+                  clearErrors("subCategory");
+                }}
+                className={cx(
+                  "hover:font-bold cursor-pointer w-max",
+                  v.id === subCategoryId && "font-bold"
+                )}
+              >
+                {v.name}
+              </li>
+            ))}
+          </>
+        )}
+      />
+
+      <DangerousModal setValue={setValue} />
+      <ConditionModal setValue={setValue} />
+      <PostageModal
+        setValue={setValue}
+        clearErrors={clearErrors}
+        isCourierInternal={isCourierInternal}
+        setIsCourierInternal={() => setIsCourierInternal((v) => !v)}
+      />
+      <VariantModal fieldName="variant" setValue={setValue} />
+      <PriceModal
+        fieldName="price"
+        setValue={setValue}
+        clearErrors={clearErrors}
+        isMassal={isMassal}
+        setIsMassal={setIsMassal}
+        variantTypes={variantTypes}
+      />
+      <SubDistributorModal
+        setValue={setValue}
+        clearErrors={clearErrors}
+        setDistributorId={setSubDistributorId}
+        subDistributorId={subDistributorId}
+      />
+    </main>
   );
 };
 
@@ -402,108 +552,6 @@ export const useUploadProduct = () => {
     handleProductSize,
     isPopOver,
     setIsPopOver,
-  };
-};
-
-const useFields = () => {
-  const user = setUser((v) => v.user);
-
-  const {
-    actionIsCategory,
-    actionIsSubCategory,
-    actionIsCondition,
-    actionIsPostage,
-    actionIsVariant,
-    actionIsSubDistributor,
-    actionIsPrice,
-  } = useActiveModal();
-
-  const [categoryId, setCategoryId] = useState("");
-  const [subCategoryId, setSubCategoryId] = useState("");
-
-  const onClickSubCategory = () => {
-    if (!categoryId) {
-      toast.error("Pilih kategori");
-      return;
-    }
-    actionIsSubCategory();
-  };
-
-  const fields: TextfieldProps<FieldValues>[] = [
-    objectFields({
-      label: "nama produk *",
-      name: "productName",
-      type: "text",
-      defaultValue: "",
-      rules: { required: { value: true, message: "Masukkan nama produk" } },
-    }),
-    objectFields({
-      label: "kategori *",
-      name: "category",
-      type: "modal",
-      defaultValue: "",
-      onClick: actionIsCategory,
-      rules: { required: { value: true, message: "Pilih kategori" } },
-    }),
-    objectFields({
-      label: "sub-kategori",
-      name: "subCategory",
-      type: "modal",
-      defaultValue: "",
-      onClick: onClickSubCategory,
-    }),
-    objectFields({
-      label: "variasi",
-      name: "variant",
-      type: "modal",
-      defaultValue: "",
-      placeholder: "tentukan variasi",
-      onClick: actionIsVariant,
-    }),
-    objectFields({
-      label: "harga (Rp) *",
-      name: "price",
-      type: "rp",
-      placeholder: "masukkan harga",
-      defaultValue: "",
-      rules: { required: { value: true, message: "masukkan harga" } },
-      readOnly: { isValue: true, cursor: "cursor-pointer" },
-      onClick: actionIsPrice,
-    }),
-    objectFields({
-      label: "ongkos kirim (berat/ukuran) *",
-      name: "postage",
-      type: "modal",
-      defaultValue: "",
-      placeholder: "masukkan ongkos kirim",
-      onClick: actionIsPostage,
-      rules: { required: { value: true, message: "atur ongkos kirim" } },
-    }),
-    objectFields({
-      label: "kondisi *",
-      name: "condition",
-      type: "modal",
-      defaultValue: "Baru",
-      onClick: actionIsCondition,
-      rules: { required: { value: true, message: "pilih kondisi" } },
-    }),
-    user?.role === RoleDistributor.DISTRIBUTOR
-      ? objectFields({
-          label: "sub-distributor",
-          name: "subDistributor",
-          type: "modal",
-          defaultValue: "",
-          onClick: actionIsSubDistributor,
-        })
-      : { name: "" },
-  ];
-
-  return {
-    fields,
-    categoryId,
-    setCategoryId,
-    subCategoryId,
-    setSubCategoryId,
   };
 };
 

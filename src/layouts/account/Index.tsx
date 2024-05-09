@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 
 // TODO:
-// 1. MODIFY CATEGORY PRODUCT
-// 2/ CREATE BUSINESS SECTION IN ACCOUNT PAGE
+// 1. MODIFY EMAIL & PASSWORD
+// 2. FIX: HISTORY TRANSFER
 
 const tabs: ITabs[] = [
   { label: "email & password", content: <Password /> },

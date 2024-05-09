@@ -96,6 +96,7 @@ const Detail = () => {
                           `text-[#fcb230]`,
                           v.eng === "COMPLETE" && "text-green-500"
                         )}
+                        key={v.eng}
                       >
                         {v.ina}
                       </p>

@@ -26,6 +26,7 @@ import {
   XMarkIcon,
   MinusCircleIcon,
 } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 type TStateHistory = {
   data: HistoryPilipay | null;
@@ -73,6 +74,12 @@ const History = () => {
   const dataHistory = findMeWallet(true);
   const setDetailHistory = stateHistoryDetail((v) => v.setHistory);
   const dataHistoryState = stateHistoryDetail((v) => v.data);
+  const navigate = useNavigate();
+
+  const onDetail = (history: HistoryPilipay) => {
+    if (!history.orderId) setDetailHistory(history);
+    else navigate(`/order/complete/${history.orderId}`);
+  };
 
   return (
     <Modal
@@ -95,7 +102,7 @@ const History = () => {
                   <HistoryContent
                     history={it}
                     type={bindingTypeHistory(it)}
-                    onClick={() => setDetailHistory(it)}
+                    onClick={() => onDetail(it)}
                     icon={{
                       src: it?.topupRequestId ? topUpImg : transferImg,
                       alt: "Top Up Image",

@@ -66,18 +66,21 @@ const Detail = () => {
   const [subDistributorId, setSubDistributorId] = React.useState("");
   const [price, setPrice] = React.useState("");
 
+  const { id } = useParams() as { id: string };
+  const user = setUser((v) => v.user);
+
+  const {
+    control,
+    setValue,
+    clearErrors,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>();
+
   const variantTypes = useGeneralStore((v) => v.variantTypesDetailProduct);
   const setVariantTypes = useGeneralStore(
     (v) => v.setVariantTypesDetailProduct
   );
-
-  console.log(price);
-
-  const { id } = useParams() as { id: string };
-  const user = setUser((v) => v.user);
-
-  const categories = findCategories();
-  const subCategories = findSubCategoryByCategoryId(categoryId);
 
   const deliveryPrice = useGeneralStore((v) => v.deliveryPrice);
   const setDeliveryPrice = useGeneralStore((v) => v.setDeliveryPrice);
@@ -87,14 +90,8 @@ const Detail = () => {
   const navigate = useNavigate();
 
   const { update, findById, removeImageUrl } = useProduct(id);
-
-  const {
-    control,
-    setValue,
-    clearErrors,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>();
+  const categories = findCategories();
+  const subCategories = findSubCategoryByCategoryId(categoryId);
 
   const [isPopOver, setIsPopOver] = React.useState(false);
   const [productSize, setProductSize] = React.useState("1:1");

@@ -324,7 +324,7 @@ const Detail = () => {
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
       clearDeliveryPrice();
-      // if (result.name) navigate(-1);
+      if (result.name) navigate(-1);
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to update : ${error.message}`);

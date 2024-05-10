@@ -115,7 +115,10 @@ const Create = () => {
     try {
       setIsLoading(true);
       const price = e.price as string;
-      const newPrice = variantTypes.length > 0 ? 0 : parseTextToNumber(price);
+      const newPrice =
+        variantTypes.length > 0
+          ? parseTextToNumber(price.split("-")[0])
+          : parseTextToNumber(price);
       const variants = variantTypes.map((v) => ({
         name: v.name,
         imageUrl: "",
@@ -174,6 +177,24 @@ const Create = () => {
           }
         }
       }
+
+      // console.log({
+      //   category: { categoryId },
+      //   name: e.productName,
+      //   deliveryPrice,
+      //   variant: variants,
+      //   createForDistrbutorId: subDistributorId,
+      //   description: e.description,
+      //   subCategoryId,
+      //   isAvailable: true,
+      //   price: {
+      //     fee: 0,
+      //     startAt: 0,
+      //     expiredAt: 0,
+      //     price: newPrice,
+      //     priceDiscount: 0,
+      //   },
+      // });
 
       setPhotos([]);
       setVariantType([]);

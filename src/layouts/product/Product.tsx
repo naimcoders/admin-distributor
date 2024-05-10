@@ -121,7 +121,14 @@ const useHook = () => {
       render: (v) => (
         <p className="truncate">{v.categoryProduct.category.name}</p>
       ),
-      width: "max-w-[10rem]",
+      width: "max-w-[8rem]",
+    },
+    {
+      header: <p className="text-center">sub-kategori</p>,
+      render: (v) => (
+        <p className="truncate">{v.subCategoryProduct?.name ?? "-"}</p>
+      ),
+      width: "min-w-[8rem]",
     },
     {
       header: <p className="text-right">harga (Rp)</p>,

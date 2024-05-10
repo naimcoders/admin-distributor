@@ -133,8 +133,7 @@ export const useVariant = (productId: string) => {
     { data: VariantProduct; variantId: string }
   >({
     mutationKey: [key, "update", productId],
-    mutationFn: async (r) =>
-      await getVariantApiInfo().update(r.variantId, r.data),
+    mutationFn: (r) => getVariantApiInfo().update(r.variantId, r.data),
     onSuccess: () =>
       void queryClient.invalidateQueries({ queryKey: ["product", productId] }),
     onError: (e) => toast.error(`Failed to update the variant : ${e.message}`),

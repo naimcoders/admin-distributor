@@ -1,6 +1,10 @@
 import React from "react";
 import cx from "classnames";
-import { ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import square from "src/assets/images/square.png";
 import rectangle from "src/assets/images/rectangle.png";
 import {
@@ -20,7 +24,6 @@ import { Textfield } from "src/components/Textfield";
 import {
   Currency,
   CurrencyIDInput,
-  checkForDash,
   epochToDateConvert,
   handleErrorMessage,
   parseTextToNumber,
@@ -133,11 +136,12 @@ const Detail = () => {
         }))
       );
       setVariantTypes(findById.data.variantProduct);
+      setVariantTypesPrev(findById.data.variantProduct);
+
       setCategoryId(findById.data.categoryProduct.category.id);
       setDeliveryPrice(findById.data.deliveryPrice);
       setPriceStore(findById.data.price);
       setImageUrl(findById.data.imageUrl);
-      setVariantTypesPrev(findById.data.variantProduct);
 
       if (findById.data.variantProduct.length < 1) {
         setPrice(Currency(findById.data.price.price ?? 0));
@@ -270,33 +274,37 @@ const Detail = () => {
     }
 
     // ON UPDATE VARIANT CURRENT VARIANTS
-    variantTypesPrev?.forEach((typePrev) => {
-      variantTypes.map(async (type) => {
-        if (typePrev.name === type.name) {
-          try {
-            await updateVariant.mutateAsync({
-              data: typePrev,
-              variantId: typePrev.id ?? "",
-            });
-          } catch (e) {
-            const error = e as Error;
-            console.error(`Failed to update variant : ${error.message}`);
-          }
-        }
-      });
-    });
+    // variantTypesPrev?.forEach((typePrev) => {
+    //   variantTypes.map(async (type) => {
+    //     if (typePrev.name === type.name) {
+    //       try {
+    //         await updateVariant.mutateAsync({
+    //           data: {
+    //             ...typePrev,
+    //             price: 10000,
+    //           },
+    //           variantId: typePrev.id ?? "",
+    //         });
+    //       } catch (e) {
+    //         const error = e as Error;
+    //         console.error(`Failed to update variant : ${error.message}`);
+    //       }
+    //     }
+    //   });
+    // });
 
     try {
-      const isDangerous = e.dangerous === "Tidak" ? false : true;
       const price = e.price;
-      const newPrice = checkForDash(price) ? 0 : parseTextToNumber(price);
+      const newPrice =
+        variantTypes.length > 0
+          ? parseTextToNumber(price.split("-")[0])
+          : parseTextToNumber(price);
 
       if (!findById.data) return;
 
       const result = await update.mutateAsync({
         data: {
           name: e.productName,
-          isDangerous,
           deliveryPrice: {
             ...deliveryPrice,
             isCourierInternal,
@@ -316,9 +324,9 @@ const Detail = () => {
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
       clearDeliveryPrice();
-      if (result.name) navigate(-1);
-    } catch (err) {
-      const error = err as Error;
+      // if (result.name) navigate(-1);
+    } catch (e) {
+      const error = e as Error;
       toast.error(`Failed to update : ${error.message}`);
     } finally {
       clearVariantId();
@@ -392,6 +400,7 @@ const Detail = () => {
   React.useEffect(() => {
     if (categoryId !== findById.data?.categoryProduct.category.id) {
       setValue("subCategory", "-");
+      setSubCategoryId("");
     }
   }, [findById.data, categoryId]);
 
@@ -490,7 +499,19 @@ const Detail = () => {
               control={control}
               defaultValue=""
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                subCategoryId ? (
+                  <XMarkIcon
+                    width={16}
+                    color={IconColor.red}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSubCategoryId("");
+                      setValue("subCategory", "-");
+                    }}
+                  />
+                ) : (
+                  <ChevronRightIcon width={16} color={IconColor.zinc} />
+                )
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={() => {
@@ -653,23 +674,27 @@ const Detail = () => {
           <>
             {e.error && <Error error={e.error} />}
             {e.isLoading && <Spinner className="mx-auto" />}
-            {e.data?.map((v) => (
-              <li
-                key={v.id}
-                onClick={() => {
-                  setCategoryId(v.id);
-                  setValue("category", v.name);
-                  clearErrors("subCategory");
-                  actionIsCategory();
-                }}
-                className={cx(
-                  "hover:font-bold cursor-pointer w-max",
-                  v.id === categoryId && "font-bold"
-                )}
-              >
-                {v.name}
-              </li>
-            ))}
+            {!e.data ? (
+              <h1>Tidak ada data</h1>
+            ) : (
+              e.data.map((v) => (
+                <li
+                  key={v.id}
+                  onClick={() => {
+                    setCategoryId(v.id);
+                    setValue("category", v.name);
+                    clearErrors("subCategory");
+                    actionIsCategory();
+                  }}
+                  className={cx(
+                    "hover:font-bold cursor-pointer w-max",
+                    v.id === categoryId && "font-bold"
+                  )}
+                >
+                  {v.name}
+                </li>
+              ))
+            )}
           </>
         )}
       />
@@ -683,23 +708,27 @@ const Detail = () => {
           <>
             {e.error && <Error error={e.error} />}
             {e.isLoading && <Spinner className="mx-auto" />}
-            {e.data?.map((v) => (
-              <li
-                key={v.id}
-                onClick={() => {
-                  setSubCategoryId(v.id);
-                  actionIsSubCategory();
-                  setValue("subCategory", v.name);
-                  clearErrors("subCategory");
-                }}
-                className={cx(
-                  "hover:font-bold cursor-pointer w-max",
-                  v.id === subCategoryId && "font-bold"
-                )}
-              >
-                {v.name}
-              </li>
-            ))}
+            {!e.data ? (
+              <h1 className="text-center">Tidak ada data</h1>
+            ) : (
+              e.data.map((v) => (
+                <li
+                  key={v.id}
+                  onClick={() => {
+                    setSubCategoryId(v.id);
+                    actionIsSubCategory();
+                    setValue("subCategory", v.name);
+                    clearErrors("subCategory");
+                  }}
+                  className={cx(
+                    "hover:font-bold cursor-pointer w-max",
+                    v.id === subCategoryId && "font-bold"
+                  )}
+                >
+                  {v.name}
+                </li>
+              ))
+            )}
           </>
         )}
       />

@@ -250,7 +250,7 @@ const Promotion = ({
           />
           <Textfield
             name="discount"
-            label="nilai diskon"
+            label="nilai diskon *"
             control={promoForm.control}
             defaultValue={
               productData?.price.priceDiscount
@@ -279,7 +279,10 @@ const Promotion = ({
                   } else {
                     const discount = parseTextToNumber(discountValue);
                     const calc = (discount / price) * 100;
-                    promoForm.setValue("discountPercentage", Currency(calc));
+                    promoForm.setValue(
+                      "discountPercentage",
+                      `${roundNumber(calc)}%`
+                    );
                   }
                   promoForm.clearErrors("discountPercentage");
                 } else {
@@ -300,7 +303,6 @@ const Promotion = ({
             label="persentase diskon"
             control={promoForm.control}
             defaultValue=""
-            endContent={<ContentTextfield label="%" />}
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
           <Textfield
@@ -321,11 +323,11 @@ const Promotion = ({
           />
           <Textfield
             name="period"
-            label="periode diskon"
+            label="periode"
             control={promoForm.control}
             defaultValue=""
             readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-            placeholder="tentukan periode diskon"
+            placeholder="tentukan periode"
             rules={{
               required: setRequiredField(true, "tentukan periode"),
             }}

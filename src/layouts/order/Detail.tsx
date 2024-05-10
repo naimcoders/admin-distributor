@@ -21,7 +21,7 @@ import {
   uppercaseToCapitalize,
 } from "src/helpers";
 
-const status: { eng: string; ina: string }[] = [
+export const statusOrder: { eng: string; ina: string }[] = [
   { eng: "PENDING", ina: "Pending" },
   { eng: "WAITING_ACCEPT", ina: "Menunggu konfirmasi" },
   { eng: "ACCEPT", ina: "Pesanan diproses" },
@@ -88,7 +88,7 @@ const Detail = () => {
               </section>
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium">Status Order</h1>
-                {status.map(
+                {statusOrder.map(
                   (v) =>
                     data?.status === v.eng && (
                       <p

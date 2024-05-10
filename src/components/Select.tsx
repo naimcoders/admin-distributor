@@ -2,7 +2,7 @@ import { Select as Listbox, SelectItem } from "@nextui-org/react";
 import { HTMLAttributes } from "react";
 
 export interface SelectDataProps {
-  label: string;
+  label: React.ReactNode;
   value: string;
 }
 
@@ -14,6 +14,7 @@ interface SelectProps<T extends unknown>
   setSelected: (v: T) => void;
   errorMessage?: string;
   defaultSelectedKeys?: string;
+  textValue?: string;
 }
 
 const Select = <T extends unknown>({
@@ -24,6 +25,7 @@ const Select = <T extends unknown>({
   setSelected,
   className,
   defaultSelectedKeys,
+  textValue,
 }: SelectProps<T>) => {
   return (
     <Listbox
@@ -47,6 +49,7 @@ const Select = <T extends unknown>({
         <SelectItem
           key={item.value}
           onClick={() => setSelected(item.value as T)}
+          textValue={textValue}
         >
           {item.label}
         </SelectItem>

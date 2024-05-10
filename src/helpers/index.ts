@@ -7,6 +7,15 @@ import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 import queryString from "query-string";
 
+export const roundNumber = (number: number): number => {
+  const decimalPart = number - Math.floor(number);
+  if (decimalPart > 0.5) {
+    return Math.ceil(number);
+  } else {
+    return Math.floor(number);
+  }
+};
+
 export const setMinMaxCalendar = (value: number) => {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), value);

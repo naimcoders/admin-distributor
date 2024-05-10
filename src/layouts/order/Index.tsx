@@ -14,22 +14,6 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "src/components/Pagination";
 import { statusOrder } from "./Detail";
 
-const filterByStatusOrder = (data: IOrder[], statusOrder: string) =>
-  data.filter((v) => v.status === statusOrder);
-
-const SelectLabel = (label: string, data: IOrder[]) => {
-  return (
-    <div className="flex items-center gap-2">
-      {label}
-      {data.length > 0 ? (
-        <span className="bg-red-500 px-1 text-xs rounded-full text-white">
-          {data.length}
-        </span>
-      ) : null}
-    </div>
-  );
-};
-
 const Order = () => {
   const { status } = parseQueryString<{ status: string }>();
   const newStatus = status.toUpperCase();
@@ -141,6 +125,22 @@ const Order = () => {
         </>
       )}
     </main>
+  );
+};
+
+const filterByStatusOrder = (data: IOrder[], statusOrder: string) =>
+  data.filter((v) => v.status === statusOrder);
+
+const SelectLabel = (label: string, data: IOrder[]) => {
+  return (
+    <div className="flex items-center gap-2">
+      {label}
+      {data.length > 0 ? (
+        <span className="bg-red-500 px-1 text-xs rounded-full text-white">
+          {data.length}
+        </span>
+      ) : null}
+    </div>
   );
 };
 

@@ -198,6 +198,16 @@ const Create = () => {
     }
   }, [subCategories]);
 
+  useEffect(() => {
+    const subCategoryById = subCategories.data?.filter(
+      (f) => f.id === subCategoryId
+    );
+    if (!subCategoryById?.length) {
+      setValue("subCategory", "");
+      setSubCategoryId("");
+    }
+  }, [subCategories, categoryId]);
+
   return (
     <main className="flex flex-col gap-5 lg:gap-8">
       <header className="flexcol gap-4">

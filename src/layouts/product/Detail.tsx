@@ -274,24 +274,21 @@ const Detail = () => {
     }
 
     // ON UPDATE VARIANT CURRENT VARIANTS
-    // variantTypesPrev?.forEach((typePrev) => {
-    //   variantTypes.map(async (type) => {
-    //     if (typePrev.name === type.name) {
-    //       try {
-    //         await updateVariant.mutateAsync({
-    //           data: {
-    //             ...typePrev,
-    //             price: 10000,
-    //           },
-    //           variantId: typePrev.id ?? "",
-    //         });
-    //       } catch (e) {
-    //         const error = e as Error;
-    //         console.error(`Failed to update variant : ${error.message}`);
-    //       }
-    //     }
-    //   });
-    // });
+    variantTypesPrev?.forEach((typePrev) => {
+      variantTypes.map(async (type) => {
+        if (typePrev.name === type.name) {
+          try {
+            await updateVariant.mutateAsync({
+              data: typePrev,
+              variantId: typePrev.id ?? "",
+            });
+          } catch (e) {
+            const error = e as Error;
+            console.error(`Failed to update variant : ${error.message}`);
+          }
+        }
+      });
+    });
 
     try {
       const price = e.price;
@@ -372,6 +369,11 @@ const Detail = () => {
   } = useActiveModal();
 
   const onIsDeleteModal = (path: string) => {
+    if (currentProductImage.length < 2) {
+      toast.error("Tidak bisa menghapus foto produk");
+      return;
+    }
+
     setImageUrlDel(path);
     actionIsDeleteImageProduct();
   };

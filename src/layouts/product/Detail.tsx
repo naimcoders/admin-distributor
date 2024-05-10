@@ -14,7 +14,7 @@ import {
   PopoverContent,
   Spinner,
 } from "@nextui-org/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useProduct } from "src/api/product.service";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
@@ -90,7 +90,6 @@ const Detail = () => {
   const clearDeliveryPrice = useGeneralStore((v) => v.clearDeliveryPrice);
   const priceStore = useGeneralStore((v) => v.price);
   const setPriceStore = useGeneralStore((v) => v.setPrice);
-  const navigate = useNavigate();
 
   const { update, findById, removeImageUrl } = useProduct(id);
   const categories = findCategories();
@@ -299,7 +298,7 @@ const Detail = () => {
 
       if (!findById.data) return;
 
-      const result = await update.mutateAsync({
+      await update.mutateAsync({
         data: {
           name: e.productName,
           deliveryPrice: {
@@ -321,7 +320,6 @@ const Detail = () => {
       toast.success("Produk berhasil diperbarui");
       setVariantTypes([]);
       clearDeliveryPrice();
-      if (result.name) navigate(-1);
     } catch (e) {
       const error = e as Error;
       toast.error(`Failed to update : ${error.message}`);

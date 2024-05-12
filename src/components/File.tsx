@@ -51,6 +51,33 @@ export const File = forwardRef(
   }
 );
 
+interface IImageFile extends HTMLAttributes<HTMLInputElement> {
+  render: React.ReactNode;
+}
+
+export const ImageFile = forwardRef((props: IImageFile, ref: Ref<ChildRef>) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  useImperativeHandle(ref, () => ({
+    click: () => {
+      if (inputRef.current) {
+        inputRef.current.click();
+      }
+    },
+  }));
+
+  return (
+    <>
+      <input
+        type="file"
+        ref={inputRef}
+        className="hidden"
+        onChange={props.onChange}
+      />
+      {props.render}
+    </>
+  );
+});
+
 interface LabelAndImageProps
   extends Pick<HTMLAttributes<HTMLImageElement>, "className"> {
   src: string;

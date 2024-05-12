@@ -16,6 +16,7 @@ type Image = Pick<
   actions?: IconImage[];
   radius?: Radius;
   classNameWrapper?: string;
+  onClick?: () => void;
 };
 
 export default function Image({
@@ -27,6 +28,7 @@ export default function Image({
   radius,
   className,
   classNameWrapper,
+  onClick,
 }: Image) {
   const [onHover, setOnHover] = useState(false);
   const mouseEnter = () => setOnHover(true);
@@ -43,6 +45,7 @@ export default function Image({
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
         className={cx("z-0", className)}
+        onClick={onClick}
       />
 
       {actions && (

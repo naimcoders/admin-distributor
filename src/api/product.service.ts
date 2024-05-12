@@ -412,20 +412,24 @@ export const findtotalProduct = () => {
   };
 };
 
+export const removeImageProduct = (productId: string) => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMutation<
+    void,
+    Error,
+    { data: RemoveImage }
+  >({
+    mutationKey: [key, "remove-image", productId],
+    mutationFn: (r) =>
+      getProductApiInfo().removeImageUrl(productId ?? "", r.data),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+
+  return { mutateAsync, isPending };
+};
+
 export const useProduct = (productId?: string) => {
   const queryClient = useQueryClient();
-
-  const removeImageUrl = useMutation<void, Error, { data: RemoveImage }>({
-    mutationKey: [key, "remove-image", productId],
-    mutationFn: async (r) =>
-      await getProductApiInfo().removeImageUrl(productId ?? "", r.data),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: [key, productId],
-      });
-    },
-    onError: (e) => toast.error(e.message),
-  });
 
   const update = useMutation<Product, Error, { data: UpdateProduct }>({
     mutationKey: [key, "update", productId],
@@ -482,5 +486,5 @@ export const useProduct = (productId?: string) => {
     };
   };
 
-  return { find, findById, create, update, removeImageUrl };
+  return { find, findById, create, update };
 };

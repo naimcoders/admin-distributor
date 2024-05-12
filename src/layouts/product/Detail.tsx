@@ -15,11 +15,11 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
-import { useProduct } from "src/api/product.service";
+import { removeImageProduct, useProduct } from "src/api/product.service";
 import Error from "src/components/Error";
 import Image from "src/components/Image";
 import Skeleton from "src/components/Skeleton";
-import { ChildRef, File as FileComp } from "src/components/File";
+import { ChildRef, File as FileComp, ImageFile } from "src/components/File";
 import { Textfield } from "src/components/Textfield";
 import {
   Currency,
@@ -91,7 +91,7 @@ const Detail = () => {
   const priceStore = useGeneralStore((v) => v.price);
   const setPriceStore = useGeneralStore((v) => v.setPrice);
 
-  const { update, findById, removeImageUrl } = useProduct(id);
+  const { update, findById } = useProduct(id);
   const categories = findCategories();
   const subCategories = findSubCategoryByCategoryId(categoryId);
 
@@ -105,6 +105,8 @@ const Detail = () => {
   >([]);
 
   const { actionIsDeleteImageProduct, isDeleteImageProduct } = useActiveModal();
+
+  const removeImgProduct = removeImageProduct(id);
 
   const productImageRef = React.useRef<ChildRef>(null);
   const onOpenExplorer = () => {
@@ -130,7 +132,7 @@ const Detail = () => {
       setCurrentProductImage(
         findById.data.imageUrl?.map((imageUrl) => ({
           name: imageUrl,
-          size: "1:1",
+          size: imageUrl.split("/")[6].split("_")[0],
           src: imageUrl,
         }))
       );
@@ -188,18 +190,18 @@ const Detail = () => {
   }, [findById.data, imageUrl, price]);
 
   React.useEffect(() => {
-    if (newImageFile) onUploadImage();
+    if (newImageFile) onUploadImage(newImageFile, productSize);
   }, [newImageFile]);
 
-  const onUploadImage = async () => {
+  const onUploadImage = async (files: File, size: string) => {
     try {
-      if (!newImageFile) return;
-      toast.loading("sedang upload foto produk", {
+      if (!files) return;
+      toast.loading("Sedang upload foto produk...", {
         toastId: "upload-foto-produk",
       });
       await uploadFile({
-        file: newImageFile,
-        prefix: `product/${id}/${productSize}_${Date.now()}.png`,
+        file: files,
+        prefix: `product/${id}/${size}_${Date.now()}.png`,
       });
       toast.success(`Berhasil upload foto produk`);
     } catch (e) {
@@ -383,17 +385,18 @@ const Detail = () => {
 
   const onRemoveImage = async (path: string) => {
     try {
-      await removeImageUrl.mutateAsync({
-        data: {
-          imageUrl: path,
-        },
+      toast.loading("Loading...", { toastId: "loading-remove-image" });
+      await removeImgProduct.mutateAsync({
+        data: { imageUrl: path },
       });
+      toast.success("Foto berhasil dihapus");
+      setImageUrlDel("");
+      actionIsDeleteImageProduct();
     } catch (err) {
       const error = err as Error;
-      console.error(`Failed to remove image : ${error.message}`);
+      toast.error(`Failed remove image: ${error.message}`);
     } finally {
-      actionIsDeleteImageProduct();
-      setImageUrlDel("");
+      toast.dismiss("loading-remove-image");
     }
   };
 
@@ -403,6 +406,56 @@ const Detail = () => {
       setSubCategoryId("");
     }
   }, [findById.data, categoryId]);
+
+  const imageProductRef = React.useRef<ChildRef>(null);
+  const onChangeProductImage = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!e.target.files || !imageUrlDel) return;
+    const files = e.target.files[0];
+
+    try {
+      toast.loading("Loading...", { toastId: "loading-update-image" });
+      await removeImgProduct.mutateAsync({
+        data: { imageUrl: imageUrlDel },
+      });
+
+      const nFile = await onPickImage({
+        file: files,
+        ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
+      });
+
+      await uploadFile({
+        file: nFile.file,
+        prefix: `product/${id}/${productSize}_${Date.now()}.png`,
+      });
+
+      const filterBySrc = currentProductImage.filter(
+        (v) => v.src !== imageUrlDel
+      );
+
+      setCurrentProductImage([
+        ...filterBySrc,
+        { name: nFile.url, size: productSize, src: nFile.url },
+      ]);
+      // currentProductImage.forEach((e) => {
+      //   if (e.src === imageUrlDel) {
+      //     e.src = nFile.url;
+      //     e.size = productSize;
+      //   }
+      // });
+      // setCurrentProductImage(currentProductImage);
+
+      toast.success("Foto berhasil diperbarui");
+      setImageUrlDel("");
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Error update product image: ${error.message}`);
+      toast.error("Gagal memperbarui foto");
+    } finally {
+      toast.dismiss("loading-update-image");
+    }
+  };
 
   return (
     <>
@@ -415,17 +468,45 @@ const Detail = () => {
           <header className="flex flex-col gap-4">
             <section className="flex gap-6 items-start flex-wrap">
               {currentProductImage?.map((v, k) => (
-                <Image
+                // <Image
+                //   key={k}
+                //   src={v.src}
+                //   alt="Product"
+                //   className={cx("w-[10rem] object-cover rounded-md")}
+                //   actions={[
+                //     {
+                //       src: <TrashIcon width={16} />,
+                //       onClick: () => onIsDeleteModal(v.src),
+                //     },
+                //   ]}
+                // />
+                <ImageFile
                   key={k}
-                  src={v.src}
-                  alt="Product"
-                  className={cx("w-[10rem] object-cover rounded-md")}
-                  actions={[
-                    {
-                      src: <TrashIcon width={16} />,
-                      onClick: () => onIsDeleteModal(v.src),
-                    },
-                  ]}
+                  onChange={onChangeProductImage}
+                  ref={imageProductRef}
+                  render={
+                    <Image
+                      src={v.src}
+                      alt={`Product Image ${k + 1}`}
+                      className={cx(
+                        "w-[10rem] object-cover rounded-md cursor-pointer"
+                      )}
+                      onClick={() => {
+                        if (imageProductRef.current) {
+                          imageProductRef.current.click();
+                          setImageUrlDel(v.src);
+                          setProductSize(v.size);
+                        }
+                      }}
+                      actions={[
+                        {
+                          src: <TrashIcon width={16} />,
+                          onClick: () => onIsDeleteModal(v.src),
+                        },
+                      ]}
+                      loading="lazy"
+                    />
+                  }
                 />
               ))}
 

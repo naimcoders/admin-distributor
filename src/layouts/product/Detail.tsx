@@ -56,7 +56,6 @@ import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import { findCategories } from "src/api/category.service";
 import { findSubCategoryByCategoryId } from "src/api/product-category.service";
-import { useQueryClient } from "@tanstack/react-query";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -415,8 +414,6 @@ const Detail = () => {
     }
   };
 
-  const queryClient = useQueryClient();
-
   React.useEffect(() => {
     if (isLoadingUpdateImage) {
       const timer = setTimeout(() => {
@@ -424,7 +421,7 @@ const Detail = () => {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [isLoadingUpdateImage, queryClient, id]);
+  }, [isLoadingUpdateImage, id]);
 
   return (
     <>
@@ -682,7 +679,9 @@ const Detail = () => {
           <Button
             onClick={onSubmit}
             className="mx-auto my-5"
-            label={isLoading ? <Spinner color="secondary" /> : "simpan"}
+            label={
+              isLoading ? <Spinner color="secondary" size="sm" /> : "simpan"
+            }
           />
         </main>
       )}

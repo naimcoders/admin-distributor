@@ -533,7 +533,7 @@ const Create = () => {
 
 export interface CurrentProductImageProps {
   src: string;
-  name: String;
+  name: string;
   size: string;
   file?: File;
 }

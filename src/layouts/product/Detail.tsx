@@ -56,12 +56,12 @@ import { setUser } from "src/stores/auth";
 import { RoleDistributor } from "src/api/distributor.service";
 import { findCategories } from "src/api/category.service";
 import { findSubCategoryByCategoryId } from "src/api/product-category.service";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isCourierInternal, setIsCourierInternal] = React.useState(true);
   const [imageUrlDel, setImageUrlDel] = React.useState("");
-  const [newImageFile, setNewImageFile] = React.useState<File>();
   const [isMassal, setIsMassal] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState<string[]>([]);
@@ -187,32 +187,7 @@ const Detail = () => {
         );
       }
     }
-  }, [findById.data, imageUrl, price]);
-
-  React.useEffect(() => {
-    if (newImageFile) onUploadImage(newImageFile, productSize);
-  }, [newImageFile]);
-
-  const onUploadImage = async (files: File, size: string) => {
-    try {
-      if (!files) return;
-      toast.loading("Sedang upload foto produk...", {
-        toastId: "upload-foto-produk",
-      });
-      await uploadFile({
-        file: files,
-        prefix: `product/${id}/${size}_${Date.now()}.png`,
-      });
-      toast.success(`Berhasil upload foto produk`);
-    } catch (e) {
-      const err = e as Error;
-      console.error(`Error upload product ` + `${err.message}`);
-      toast.error(`Gagal upload foto produk`);
-    } finally {
-      toast.dismiss("upload-foto-produk");
-      setNewImageFile(undefined);
-    }
-  };
+  }, [findById.data, findById.data?.imageUrl, imageUrl, price]);
 
   const onSubmit = handleSubmit(async (e) => {
     setIsLoading(true);
@@ -336,21 +311,23 @@ const Detail = () => {
     if (!e.target.files) return null;
     const files = e.target.files[0];
 
-    const nFile = await onPickImage({
-      file: files,
-      ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
-    });
+    try {
+      setIsLoadingUpdateImage(true);
+      const nFile = await onPickImage({
+        file: files,
+        ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
+      });
 
-    setNewImageFile(nFile.file);
-    if (currentProductImage?.length) {
-      setCurrentProductImage([
-        ...currentProductImage,
-        { src: nFile.url, size: productSize, name: files.name },
-      ]);
-    } else {
-      setCurrentProductImage([
-        { src: nFile.url, size: productSize, name: files.name },
-      ]);
+      await uploadFile({
+        file: nFile.file,
+        prefix: `product/${id}/${productSize}_${Date.now()}.png`,
+      });
+      setIsLoadingUpdateImage(true);
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Gagal menambahkan foto: ${error.message}`);
+      toast.error(`Gagal menambahkan foto`);
+      setIsLoadingUpdateImage(false);
     }
     setIsPopOver((v) => !v);
   };
@@ -373,7 +350,6 @@ const Detail = () => {
       toast.error("Tidak bisa menghapus foto produk");
       return;
     }
-
     setImageUrlDel(path);
     actionIsDeleteImageProduct();
   };
@@ -407,15 +383,16 @@ const Detail = () => {
     }
   }, [findById.data, categoryId]);
 
+  const [isLoadingUpdateImage, setIsLoadingUpdateImage] = React.useState(false);
+
   const imageProductRef = React.useRef<ChildRef>(null);
   const onChangeProductImage = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (!e.target.files || !imageUrlDel) return;
+    if (!e.target.files) return;
     const files = e.target.files[0];
 
     try {
-      toast.loading("Loading...", { toastId: "loading-update-image" });
       await removeImgProduct.mutateAsync({
         data: { imageUrl: imageUrlDel },
       });
@@ -429,33 +406,25 @@ const Detail = () => {
         file: nFile.file,
         prefix: `product/${id}/${productSize}_${Date.now()}.png`,
       });
-
-      const filterBySrc = currentProductImage.filter(
-        (v) => v.src !== imageUrlDel
-      );
-
-      setCurrentProductImage([
-        ...filterBySrc,
-        { name: nFile.url, size: productSize, src: nFile.url },
-      ]);
-      // currentProductImage.forEach((e) => {
-      //   if (e.src === imageUrlDel) {
-      //     e.src = nFile.url;
-      //     e.size = productSize;
-      //   }
-      // });
-      // setCurrentProductImage(currentProductImage);
-
-      toast.success("Foto berhasil diperbarui");
-      setImageUrlDel("");
+      setIsLoadingUpdateImage(true);
     } catch (e) {
       const error = e as Error;
       console.error(`Error update product image: ${error.message}`);
       toast.error("Gagal memperbarui foto");
-    } finally {
-      toast.dismiss("loading-update-image");
+      setIsLoadingUpdateImage(false);
     }
   };
+
+  const queryClient = useQueryClient();
+
+  React.useEffect(() => {
+    if (isLoadingUpdateImage) {
+      const timer = setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoadingUpdateImage, queryClient, id]);
 
   return (
     <>
@@ -466,83 +435,77 @@ const Detail = () => {
       ) : (
         <main className="flex flex-col gap-5 lg:gap-8">
           <header className="flex flex-col gap-4">
-            <section className="flex gap-6 items-start flex-wrap">
-              {currentProductImage?.map((v, k) => (
-                // <Image
-                //   key={k}
-                //   src={v.src}
-                //   alt="Product"
-                //   className={cx("w-[10rem] object-cover rounded-md")}
-                //   actions={[
-                //     {
-                //       src: <TrashIcon width={16} />,
-                //       onClick: () => onIsDeleteModal(v.src),
-                //     },
-                //   ]}
-                // />
-                <ImageFile
-                  key={k}
-                  onChange={onChangeProductImage}
-                  ref={imageProductRef}
-                  render={
-                    <Image
-                      src={v.src}
-                      alt={`Product Image ${k + 1}`}
-                      className={cx(
-                        "w-[10rem] object-cover rounded-md cursor-pointer"
-                      )}
-                      onClick={() => {
-                        if (imageProductRef.current) {
-                          imageProductRef.current.click();
-                          setImageUrlDel(v.src);
-                          setProductSize(v.size);
-                        }
-                      }}
-                      actions={[
-                        {
-                          src: <TrashIcon width={16} />,
-                          onClick: () => onIsDeleteModal(v.src),
-                        },
-                      ]}
-                      loading="lazy"
-                    />
-                  }
-                />
-              ))}
-
-              <Popover placement="right" isOpen={isPopOver}>
-                <PopoverTrigger>
-                  <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
-                    Tambah Foto
-                  </Btn>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <section className="flex gap-4">
-                    {["1:1", "3:4"].map((v) => (
-                      <FileComp
-                        key={v}
-                        control={control}
-                        onClick={() => onProductSize(v)}
-                        onChange={onChange}
-                        name="productPhoto"
-                        ref={productImageRef}
-                        placeholder={v}
-                        className="w-[5rem] cursor-pointer"
-                        readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                        startContent={
-                          <img
-                            src={v === "1:1" ? square : rectangle}
-                            alt="square icon"
-                            className="w-4 cursor-pointer"
-                            onClick={() => onProductSize(v)}
-                          />
-                        }
+            {isLoadingUpdateImage && <Spinner />}
+            {!isLoadingUpdateImage && (
+              <section className="flex gap-6 items-start flex-wrap">
+                {currentProductImage?.map((v, k) => (
+                  <ImageFile
+                    key={k}
+                    onChange={onChangeProductImage}
+                    ref={imageProductRef}
+                    render={
+                      <Image
+                        src={v.src}
+                        alt={`Product Image ${k + 1}`}
+                        className={cx(
+                          "w-[10rem] object-cover rounded-md cursor-pointer"
+                        )}
+                        onClick={() => {
+                          if (imageProductRef.current) {
+                            imageProductRef.current.click();
+                            setImageUrlDel(v.src);
+                            setProductSize(v.src.split("/")[6].split("_")[0]);
+                          }
+                        }}
+                        actions={[
+                          {
+                            src: <TrashIcon width={16} />,
+                            onClick: () => onIsDeleteModal(v.name),
+                          },
+                        ]}
+                        loading="lazy"
                       />
-                    ))}
-                  </section>
-                </PopoverContent>
-              </Popover>
-            </section>
+                    }
+                  />
+                ))}
+
+                <Popover placement="right" isOpen={isPopOver}>
+                  <PopoverTrigger>
+                    <Btn
+                      onClick={() => setIsPopOver((v) => !v)}
+                      color="primary"
+                    >
+                      Tambah Foto
+                    </Btn>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <section className="flex gap-4">
+                      {["1:1", "3:4"].map((v) => (
+                        <FileComp
+                          key={v}
+                          control={control}
+                          onClick={() => onProductSize(v)}
+                          onChange={onChange}
+                          name="productPhoto"
+                          ref={productImageRef}
+                          placeholder={v}
+                          className="w-[5rem] cursor-pointer"
+                          readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                          startContent={
+                            <img
+                              src={v === "1:1" ? square : rectangle}
+                              alt="square icon"
+                              className="w-4 cursor-pointer"
+                              onClick={() => onProductSize(v)}
+                            />
+                          }
+                        />
+                      ))}
+                    </section>
+                  </PopoverContent>
+                </Popover>
+              </section>
+            )}
           </header>
 
           <main className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 lg:gap-5">

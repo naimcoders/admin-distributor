@@ -120,8 +120,6 @@ const Detail = () => {
               </section>
             </section>
 
-            {/*  */}
-
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium">Pemesan</h1>
@@ -146,8 +144,6 @@ const Detail = () => {
                 <p>{data?.note}</p>
               </section>
             </section>
-
-            {/*  */}
 
             <section className="border-b border-gray-300 py-5 text-sm overflow-x-auto">
               <section className="grid grid-cols-4 gap-4 text-xs sm:text-sm">
@@ -216,8 +212,6 @@ const Detail = () => {
                 </section>
               </section>
             </section>
-
-            {/*  */}
 
             <section className="text-sm grid grid-cols-4 gap-6 border-b border-gray-300 py-5">
               <section className="flex flex-col gap-2 col-span-1">

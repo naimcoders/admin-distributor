@@ -8,6 +8,13 @@ import { UseForm } from "src/types";
 import queryString from "query-string";
 import { toast } from "react-toastify";
 
+export const setFieldRequired = (
+  isValue: boolean,
+  message: string
+): { value: boolean; message: string } => {
+  return { value: isValue, message };
+};
+
 export const onClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);

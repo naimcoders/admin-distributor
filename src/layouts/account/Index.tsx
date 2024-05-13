@@ -4,15 +4,13 @@ import Rekening from "./Rekening";
 import CourierInternal from "./CourierInternal";
 import { useNavigate } from "react-router-dom";
 import { parseQueryString, stringifyQuery } from "src/helpers";
-
-// TODO:
-// 1. MODIFY EMAIL & PASSWORD
-// 2. FIX: HISTORY TRANSFER
+import Business from "./Business";
 
 const tabs: ITabs[] = [
   { label: "email & password", content: <Password /> },
   { label: "rekening", content: <Rekening /> },
   { label: "kurir internal", content: <CourierInternal /> },
+  { label: "usaha", content: <Business /> },
 ];
 
 const Account = () => {

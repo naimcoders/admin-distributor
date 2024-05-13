@@ -26,6 +26,7 @@ import {
   uppercaseToCapitalize,
 } from "src/helpers";
 import { IconColor } from "src/types";
+import React from "react";
 
 export const statusOrder: { eng: string; ina: string }[] = [
   { eng: "PENDING", ina: "Pending" },
@@ -91,7 +92,7 @@ const Detail = () => {
                     onClick={() => onClipboard(data?.id ?? "")}
                   />
                 </h1>
-                <p>{data?.id} </p>
+                <p>{data?.id}</p>
               </section>
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium">Tanggal Order</h1>
@@ -148,47 +149,43 @@ const Detail = () => {
 
             {/*  */}
 
-            <div className="overflow-auto whitespace-nowrap border-b border-gray-300 py-5">
-              <section className="text-sm flex md:grid md:grid-cols-4 gap-2">
+            <section className="border-b border-gray-300 py-5 text-sm overflow-x-auto">
+              <section className="grid grid-cols-4 gap-4 text-xs sm:text-sm">
                 <h1 className="font-medium">Jenis Pesanan</h1>
                 <h1 className="font-medium">Sub-Distributor</h1>
                 <h1 className="font-medium text-right">Unit Harga (Rp)</h1>
                 <h1 className="font-medium text-right">Subtotal (Rp)</h1>
+              </section>
 
-                {/* ITEMS */}
+              <section className="grid grid-cols-4 gap-2 mt-2">
                 {data?.items.map((product, idx) => (
-                  <section
-                    className="flex flex-col gap-2 col-span-4 mt-1"
-                    key={`${idx}-${product.product.name}`}
-                  >
-                    <section className="grid grid-cols-4 gap-2">
-                      <h2 className="truncate" title={product.product.name}>
-                        {product.product.name}
-                      </h2>
-                      <h2>-</h2>
-                      <h2 className="text-right">
-                        {Currency(product.product.price.price)}
-                      </h2>
-                      <h2 className="text-right">
-                        {Currency(
-                          calculateSubTotal(
-                            product.product.price.price,
-                            product.qty
-                          )
-                        )}
-                      </h2>
-                    </section>
+                  <React.Fragment key={idx}>
+                    <h2 title={product.product.name}>{product.product.name}</h2>
+                    <h2>-</h2>
+                    <h2 className="text-right truncate">
+                      {Currency(product.product.price.price)}
+                    </h2>
+                    <h2 className="text-right truncate">
+                      {Currency(
+                        calculateSubTotal(
+                          product.product.price.price,
+                          product.qty
+                        )
+                      )}
+                    </h2>
 
                     {product.note && (
-                      <div className="flex gap-1 text-xs bg-gray-200 px-3 py-2 rounded-md">
+                      <div className="flex gap-1 text-sm bg-gray-200 px-3 py-2 rounded-md col-span-4">
                         <DocumentChartBarIcon width={15} />
                         {product.note}
                       </div>
                     )}
-                  </section>
+                  </React.Fragment>
                 ))}
+              </section>
 
-                <section className="font-medium flex justify-between col-span-4 mt-3">
+              <section className="text-sm grid grid-cols-4 gap-2 mt-4">
+                <section className="font-medium flex justify-between col-span-4">
                   <h2>Total Harga</h2>
                   <p>{Currency(data?.price.totalPriceItems ?? 0)}</p>
                 </section>
@@ -218,7 +215,7 @@ const Detail = () => {
                   </h2>
                 </section>
               </section>
-            </div>
+            </section>
 
             {/*  */}
 

@@ -6,10 +6,9 @@ import { findTransaction } from "src/api/transaction.service";
 import Error from "src/components/Error";
 import { Spinner } from "@nextui-org/react";
 import { Link } from "react-router-dom";
-import { Currency, convertEpochToDate } from "src/helpers";
+import { Currency, convertEpochToDate, onClipboard } from "src/helpers";
 import { ClipboardIcon } from "@heroicons/react/24/outline";
 import { IconColor } from "src/types";
-import { toast } from "react-toastify";
 import { Button } from "src/components/Button";
 import CountdownTimer from "src/components/CountdownTimer";
 
@@ -25,16 +24,6 @@ const getTime = (value: Date) => {
   const now = new Date(value);
   const result = `${now.getHours()}:${now.getMinutes()}`;
   return result;
-};
-
-const onClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast.success("Berhasil disalin");
-  } catch (e) {
-    const error = e as Error;
-    toast.error(`Gagal menyalin teks ke clipboard: ${error.message}`);
-  }
 };
 
 const Payment: React.FC<IPayment> = ({

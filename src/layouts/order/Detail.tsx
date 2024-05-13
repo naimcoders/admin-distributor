@@ -1,5 +1,9 @@
 import cx from "classnames";
-import { ArrowDownTrayIcon, PrinterIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowDownTrayIcon,
+  ClipboardIcon,
+  PrinterIcon,
+} from "@heroicons/react/24/outline";
 import { DocumentChartBarIcon } from "@heroicons/react/24/outline";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
@@ -17,9 +21,11 @@ import Skeleton from "src/components/Skeleton";
 import {
   Currency,
   epochToDateConvert,
+  onClipboard,
   parsePhoneNumber,
   uppercaseToCapitalize,
 } from "src/helpers";
+import { IconColor } from "src/types";
 
 export const statusOrder: { eng: string; ina: string }[] = [
   { eng: "PENDING", ina: "Pending" },
@@ -59,8 +65,6 @@ const Detail = () => {
   const { onReject, isLoadingReject } = useReject(orderId);
   const { onItemReady, isLoadingItemReady } = useItemReady(orderId);
 
-  // console.log(data);
-
   return (
     <>
       {error ? (
@@ -77,10 +81,17 @@ const Detail = () => {
           <section className="bg-white rounded-lg px-5 mb-4">
             <section className="text-sm py-5 grid-min-300 gap-6 border-b border-gray-300">
               <section className="flex flex-col gap-2">
-                <h1 className="font-medium">ID Order</h1>
-                <p className="truncate" title={data?.id}>
-                  {data?.id}
-                </p>
+                <h1 className="font-medium inline-flex gap-2">
+                  ID Order{" "}
+                  <ClipboardIcon
+                    width={18}
+                    color={IconColor.zinc}
+                    className="cursor-pointer"
+                    title="Salin"
+                    onClick={() => onClipboard(data?.id ?? "")}
+                  />
+                </h1>
+                <p>{data?.id} </p>
               </section>
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium">Tanggal Order</h1>

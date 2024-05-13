@@ -6,6 +6,17 @@ import { format, fromUnixTime, getUnixTime } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import { UseForm } from "src/types";
 import queryString from "query-string";
+import { toast } from "react-toastify";
+
+export const onClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Berhasil disalin");
+  } catch (e) {
+    const error = e as Error;
+    toast.error(`Gagal menyalin teks ke clipboard: ${error.message}`);
+  }
+};
 
 export const roundNumber = (number: number): number => {
   const decimalPart = number - Math.floor(number);

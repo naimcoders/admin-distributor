@@ -5,6 +5,8 @@ import { Textfield } from "src/components/Textfield";
 import { useForm } from "react-hook-form";
 import { handleErrorMessage, setFieldRequired } from "src/helpers";
 import Coordinate, { UserCoordinate } from "src/components/Coordinate";
+import { useActiveModal } from "src/stores/modalStore";
+import { Modal } from "src/components/Modal";
 
 interface IDefaultValues {
   name: string;
@@ -13,12 +15,26 @@ interface IDefaultValues {
 }
 
 const Business = () => {
+  const [latLng, setLatLng] = React.useState<{
+    lat: number;
+    lng: number;
+  }>({ lat: 0, lng: 0 });
+
   const form = useForm<IDefaultValues>();
   const user = setUser((v) => v.user);
 
+  const { actionIsCoordinate, isCoordinate } = useActiveModal();
+
   const onSubmit = form.handleSubmit(async (e) => {
-    console.log(e);
+    console.log(e, latLng);
   });
+
+  React.useEffect(() => {
+    setLatLng({
+      lat: user?.locations[0].lat ?? 0,
+      lng: user?.locations[0].lng ?? 0,
+    });
+  }, [user]);
 
   if (!user) return;
 
@@ -76,10 +92,21 @@ const Business = () => {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
         <UserCoordinate
           label="maps"
-          lat={user.locations[0].lat}
-          lng={user.locations[0].lng}
+          lat={latLng.lat}
+          lng={latLng.lng}
+          zoom={19}
+          onClick={actionIsCoordinate}
         />
       </section>
+
+      <Modal isOpen={isCoordinate} closeModal={actionIsCoordinate}>
+        <Coordinate
+          zoom={19}
+          setCoordinate={(e) => setLatLng({ lat: e.lat, lng: e.lng })}
+          lat={latLng.lat}
+          lng={latLng.lng}
+        />
+      </Modal>
     </Template>
   );
 };

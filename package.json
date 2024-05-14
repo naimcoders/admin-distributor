@@ -16,6 +16,7 @@
     "@react-google-maps/api": "^2.19.2",
     "@tanstack/react-query": "^5.17.15",
     "@types/react-places-autocomplete": "^7.2.14",
+    "@vis.gl/react-google-maps": "^1.0.0",
     "classnames": "^2.5.1",
     "cropperjs": "^1.6.1",
     "date-fns": "^3.3.1",
@@ -34,6 +35,7 @@
     "react-toastify": "^10.0.3",
     "react-use-websocket": "^4.8.1",
     "socket.io-client": "^4.7.5",
+    "use-places-autocomplete": "^4.0.1",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

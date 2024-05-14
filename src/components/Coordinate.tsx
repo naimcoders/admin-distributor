@@ -1,13 +1,7 @@
 import cx from "classnames";
 import Error from "./Error";
-import useGeneralStore from "src/stores/generalStore";
-import {
-  GoogleMap,
-  Marker,
-  useJsApiLoader,
-  Libraries,
-} from "@react-google-maps/api";
-import { CSSProperties, FC, useCallback, useEffect, useState } from "react";
+import { useJsApiLoader, Libraries } from "@react-google-maps/api";
+import React from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -15,18 +9,18 @@ import PlacesAutocomplete, {
 import { Input, Spinner } from "@nextui-org/react";
 import { Button } from "./Button";
 import { useActiveModal } from "src/stores/modalStore";
-import { Modal } from "./Modal";
+import {
+  APIProvider,
+  AdvancedMarker,
+  Map,
+  MapCameraChangedEvent,
+  MapCameraProps,
+} from "@vis.gl/react-google-maps";
 
 export interface CoordinateProps {
   lat: number;
   lng: number;
 }
-
-const containerStyle: CSSProperties = {
-  width: "400px",
-  height: "300px",
-  borderRadius: ".5rem",
-};
 
 export const defaultCoordinate = {
   lat: -5.135399,
@@ -35,27 +29,25 @@ export const defaultCoordinate = {
 
 const libraries: Libraries = ["maps", "places"];
 
-const Coordinate: React.FC<{ zoom?: number }> = (props) => {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+const Coordinate: React.FC<{
+  setCoordinate: (e: CoordinateProps) => void;
+  lat: number;
+  lng: number;
+  zoom?: number;
+}> = (props) => {
   const [currentCoordinate, setCurrentCoordinate] =
-    useState<CoordinateProps | null>(null);
-  const [address, setAddress] = useState("");
-  const [formattedAddress, setFormattedAddress] = useState("");
+    React.useState<CoordinateProps | null>(null);
+  const [address, setAddress] = React.useState("");
+  const [formattedAddress, setFormattedAddress] = React.useState("");
 
   const { actionIsCoordinate } = useActiveModal();
   const { isLoaded, loadError } = useMaps();
 
-  const setCoordinate = useGeneralStore((v) => v.setCoordinate);
-  const formatAddress = useGeneralStore((v) => v.formatAddress);
-  const setFormatAddress = useGeneralStore((v) => v.setFormatAddress);
-
   const handleSearch = (newAddress: string) => setAddress(newAddress);
-
   const handleSelect = async (newAddress: string) => {
     try {
       const results = await geocodeByAddress(newAddress);
       const latlng = await getLatLng(results[0]);
-
       setCurrentCoordinate(latlng);
       setFormattedAddress(results[0].formatted_address);
     } catch (e) {
@@ -64,69 +56,19 @@ const Coordinate: React.FC<{ zoom?: number }> = (props) => {
     }
   };
 
-  const onLoad = useCallback((map: google.maps.Map): void => {
-    setMap(map);
-
-    // get coordinate user
-    map.addListener("click", async (e: google.maps.MapMouseEvent) => {
-      const latLng = {
-        lat: e.latLng?.lat()!,
-        lng: e.latLng?.lng()!,
-      };
-
-      setCurrentCoordinate(latLng);
-      setAddress("");
-
-      try {
-        const geocoder = new window.google.maps.Geocoder();
-        geocoder.geocode({ location: latLng }, (results, status) => {
-          if (status === "OK") {
-            if (results?.[0]) {
-              setFormattedAddress(results[0].formatted_address);
-            } else {
-              console.error("Tidak terdapat data");
-            }
-          } else {
-            console.error(`Geocoder failed : ${status}`);
-          }
-        });
-      } catch (e) {
-        const error = e as Error;
-        console.error(error.message);
-      }
-    });
-  }, []);
-
-  const onUnmount = useCallback(() => setMap(null), []);
-
-  const closeModal = () => {
-    setCoordinate(currentCoordinate!);
-    setFormatAddress(formattedAddress);
-    actionIsCoordinate();
+  const coordinate = {
+    lat: props.lat,
+    lng: props.lng,
   };
-
-  useEffect(() => {
-    if (formatAddress) {
-      setFormattedAddress(formatAddress);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (map && currentCoordinate) {
-      const { lat, lng } = currentCoordinate;
-      map.panTo({ lat, lng });
-    }
-  }, [map, currentCoordinate]);
 
   return (
     <section>
       {loadError ? (
         <Error error="Error Maps" />
       ) : !isLoaded ? (
-        <div className="text-sm font-semibold">Loading...</div>
+        <Spinner />
       ) : (
         <section className="flexcol gap-4">
-          {/* search location */}
           <PlacesAutocomplete
             value={address}
             onChange={handleSearch}
@@ -145,7 +87,7 @@ const Coordinate: React.FC<{ zoom?: number }> = (props) => {
                   autoFocus
                 />
                 <div className="mt-4">
-                  {loading && <div className="font-semibold">Loading...</div>}
+                  {loading && <Spinner />}
                   {suggestions.map((suggestion) => (
                     <div
                       {...getSuggestionItemProps(suggestion, {
@@ -167,23 +109,39 @@ const Coordinate: React.FC<{ zoom?: number }> = (props) => {
           </PlacesAutocomplete>
 
           {/* maps */}
-          <div className="flexcol gap-2">
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              zoom={props.zoom ?? 10}
-              center={defaultCoordinate}
-              onLoad={onLoad}
-              onUnmount={onUnmount}
-            >
-              {currentCoordinate && (
-                <Marker
-                  position={{
-                    lat: currentCoordinate.lat,
-                    lng: currentCoordinate.lng,
+          <div className="flex flex-col gap-2">
+            <APIProvider apiKey={import.meta.env.VITE_COORDINATE}>
+              <div className="w-full h-[15rem] bg-yellow-300 flex">
+                <Map
+                  mapId={import.meta.env.VITE_COORDINATE}
+                  defaultCenter={defaultCoordinate}
+                  onClick={(e) => {
+                    props.setCoordinate({
+                      lat: e.detail.latLng?.lat ?? 0,
+                      lng: e.detail.latLng?.lng ?? 0,
+                    });
+
+                    setCurrentCoordinate({
+                      lat: e.detail.latLng?.lat ?? 0,
+                      lng: e.detail.latLng?.lng ?? 0,
+                    });
                   }}
-                />
-              )}
-            </GoogleMap>
+                  center={
+                    !props.lat
+                      ? defaultCoordinate
+                      : currentCoordinate ?? coordinate
+                  }
+                  zoom={props.zoom ?? 12}
+                  disableDefaultUI
+                >
+                  {props.lat && (
+                    <AdvancedMarker
+                      position={currentCoordinate ?? coordinate}
+                    />
+                  )}
+                </Map>
+              </div>
+            </APIProvider>
 
             {formattedAddress && (
               <p className="text-sm border border-gray-400 p-2 rounded-md">
@@ -195,7 +153,13 @@ const Coordinate: React.FC<{ zoom?: number }> = (props) => {
           <Button
             label="pilih koordinat"
             className="mx-auto mt-2"
-            onClick={closeModal}
+            onClick={() => {
+              actionIsCoordinate();
+              props.setCoordinate({
+                lat: currentCoordinate?.lat ?? 0,
+                lng: currentCoordinate?.lng ?? 0,
+              });
+            }}
           />
         </section>
       )}
@@ -212,35 +176,41 @@ export interface UserCoordinateProps extends CoordinateProps {
   zoom?: number;
 }
 
-export const UserCoordinate: FC<UserCoordinateProps> = (props) => {
+export const UserCoordinate: React.FC<UserCoordinateProps> = (props) => {
   const { isLoaded } = useMaps();
   const coordinate = { lat: props.lat, lng: props.lng };
+
+  const INITIAL_CAMERA = {
+    center: coordinate,
+    zoom: props.zoom ?? 12,
+  };
+
+  const [cameraProps, setCameraProps] =
+    React.useState<MapCameraProps>(INITIAL_CAMERA);
+  const handleCameraChange = (ev: MapCameraChangedEvent) =>
+    setCameraProps(ev.detail);
 
   return (
     <section className="flex flex-col gap-4">
       {props.label && <h2 className="capitalize text-sm">{props.label}</h2>}
       {!isLoaded ? (
-        // <div className="font-semibold text-base">Loading...</div>
         <Spinner />
       ) : (
-        <div className="relative">
-          <GoogleMap
-            zoom={8}
-            center={coordinate}
-            mapContainerStyle={{
-              width: "100%",
-              aspectRatio: 16 / 9,
-              borderRadius: ".5rem",
-            }}
-            options={{
-              draggableCursor: props.cursor ?? "pointer",
-              fullscreenControl: false,
-            }}
-            onClick={props.onClick}
-          >
-            {coordinate && <Marker position={coordinate} />}
-          </GoogleMap>
-        </div>
+        <APIProvider apiKey={import.meta.env.VITE_COORDINATE}>
+          <div className="w-full h-[10rem] bg-yellow-300 flex">
+            <Map
+              {...cameraProps}
+              mapId={import.meta.env.VITE_COORDINATE}
+              defaultCenter={defaultCoordinate}
+              center={coordinate}
+              onClick={props.onClick}
+              onCameraChanged={handleCameraChange}
+              disableDefaultUI
+            >
+              <AdvancedMarker position={coordinate} />
+            </Map>
+          </div>
+        </APIProvider>
       )}
     </section>
   );
@@ -254,13 +224,4 @@ const useMaps = () => {
   });
 
   return { isLoaded, loadError };
-};
-
-export const CoordinateModal: React.FC<{ zoom?: number }> = (props) => {
-  const { isCoordinate, actionIsCoordinate } = useActiveModal();
-  return (
-    <Modal isOpen={isCoordinate} closeModal={actionIsCoordinate}>
-      <Coordinate zoom={props.zoom} />
-    </Modal>
-  );
 };

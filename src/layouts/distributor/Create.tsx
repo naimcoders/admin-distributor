@@ -16,8 +16,10 @@ import {
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor } from "src/types";
-import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
-import useGeneralStore from "src/stores/generalStore";
+import Coordinate, {
+  CoordinateProps,
+  UserCoordinate,
+} from "src/components/Coordinate";
 import { useLocation } from "src/api/location.service";
 import { Chip, CircularProgress, Spinner } from "@nextui-org/react";
 import { toast } from "react-toastify";
@@ -27,6 +29,7 @@ import { uploadFile } from "src/firebase/upload";
 import { checkPassword } from "src/pages/Index";
 import { useNavigate } from "react-router-dom";
 import { useBanner, useKtp } from "src/hooks/document";
+import { Modal } from "src/components/Modal";
 
 interface DefaultValues {
   ownerName: string;
@@ -44,17 +47,23 @@ interface DefaultValues {
 }
 
 const Create = () => {
-  const coordinate = useGeneralStore((v) => v.coordinate);
+  const [latLng, setLatLng] = React.useState<CoordinateProps>({
+    lat: 0,
+    lng: 0,
+  });
+
   const { fields, bannerFile, ktpFile } = useField();
-  const { actionIsCoordinate } = useActiveModal();
+  const { actionIsCoordinate, isCoordinate } = useActiveModal();
   const { forms, geoLocation, zipCode, onSubmit, isPending } = useApi(
+    latLng.lat,
+    latLng.lng,
     ktpFile,
     bannerFile
   );
 
   return (
-    <main className="flexcol gap-5 lg:gap-8">
-      {!coordinate ? (
+    <main className="flex flex-col gap-5 lg:gap-8">
+      {!latLng.lng ? (
         <Textfield
           name="coordinate"
           defaultValue=""
@@ -78,9 +87,10 @@ const Create = () => {
           <section className="aspect-video lg:w-[20rem] w-[10rem]">
             <UserCoordinate
               label="koordinat usaha"
-              lat={coordinate.lat}
-              lng={coordinate.lng}
+              lat={latLng.lat}
+              lng={latLng.lng}
               onClick={actionIsCoordinate}
+              zoom={18}
             />
           </section>
           {!geoLocation.data ? (
@@ -90,7 +100,7 @@ const Create = () => {
               className="mx-auto"
             />
           ) : (
-            <div className="flexcol gap-2">
+            <div className="flex flex-col gap-2">
               <Chip color="default">{geoLocation.data?.addressName}</Chip>
               <Chip color="default">
                 {geoLocation.data?.district} / {zipCode}
@@ -100,7 +110,7 @@ const Create = () => {
         </section>
       )}
 
-      {coordinate && (
+      {Boolean(latLng.lat) && (
         <>
           <section className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
             {fields.map((v, idx) => (
@@ -187,18 +197,29 @@ const Create = () => {
         </>
       )}
 
-      <CoordinateModal />
+      <Modal isOpen={isCoordinate} closeModal={actionIsCoordinate}>
+        <Coordinate
+          setCoordinate={({ lat, lng }) => setLatLng({ lat, lng })}
+          zoom={!latLng.lat ? 11 : 18}
+          lat={latLng.lat}
+          lng={latLng.lng}
+        />
+      </Modal>
     </main>
   );
 };
 
-const useApi = (ktpFile?: File, bannerFile?: File) => {
+const useApi = (
+  lat: number,
+  lng: number,
+  ktpFile?: File,
+  bannerFile?: File
+) => {
   const forms = useForm<DefaultValues>();
-  const coordinate = useGeneralStore((v) => v.coordinate);
   const navigate = useNavigate();
 
   const { findGeoLocation } = useLocation();
-  const geoLocation = findGeoLocation(coordinate?.lat!, coordinate?.lng!);
+  const geoLocation = findGeoLocation(lat, lng);
   const zipCode = geoLocation.data?.zipCode ? geoLocation.data?.zipCode : "-";
 
   const { mutateAsync, isPending } = createDistributor();

@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-modern-drawer/dist/index.css";
 import "react-image-crop/dist/ReactCrop.css";
 
-
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

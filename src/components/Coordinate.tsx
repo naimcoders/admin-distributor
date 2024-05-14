@@ -12,7 +12,7 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
-import { Input } from "@nextui-org/react";
+import { Input, Spinner } from "@nextui-org/react";
 import { Button } from "./Button";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "./Modal";
@@ -35,7 +35,7 @@ export const defaultCoordinate = {
 
 const libraries: Libraries = ["maps", "places"];
 
-const Coordinate = () => {
+const Coordinate: React.FC<{ zoom?: number }> = (props) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [currentCoordinate, setCurrentCoordinate] =
     useState<CoordinateProps | null>(null);
@@ -119,7 +119,7 @@ const Coordinate = () => {
   }, [map, currentCoordinate]);
 
   return (
-    <>
+    <section>
       {loadError ? (
         <Error error="Error Maps" />
       ) : !isLoaded ? (
@@ -170,7 +170,7 @@ const Coordinate = () => {
           <div className="flexcol gap-2">
             <GoogleMap
               mapContainerStyle={containerStyle}
-              zoom={8}
+              zoom={props.zoom ?? 10}
               center={defaultCoordinate}
               onLoad={onLoad}
               onUnmount={onUnmount}
@@ -199,7 +199,7 @@ const Coordinate = () => {
           />
         </section>
       )}
-    </>
+    </section>
   );
 };
 
@@ -209,23 +209,19 @@ export interface UserCoordinateProps extends CoordinateProps {
   label?: string;
   cursor?: string;
   onClick?: () => void;
+  zoom?: number;
 }
 
-export const UserCoordinate: FC<UserCoordinateProps> = ({
-  label,
-  lat,
-  lng,
-  onClick,
-  cursor,
-}) => {
-  const coordinate = { lat, lng };
+export const UserCoordinate: FC<UserCoordinateProps> = (props) => {
   const { isLoaded } = useMaps();
+  const coordinate = { lat: props.lat, lng: props.lng };
 
   return (
-    <section className="flexcol gap-4">
-      {label && <h2 className="capitalize text-sm">{label}</h2>}
+    <section className="flex flex-col gap-4">
+      {props.label && <h2 className="capitalize text-sm">{props.label}</h2>}
       {!isLoaded ? (
-        <div className="font-semibold text-base">Loading...</div>
+        // <div className="font-semibold text-base">Loading...</div>
+        <Spinner />
       ) : (
         <div className="relative">
           <GoogleMap
@@ -237,10 +233,10 @@ export const UserCoordinate: FC<UserCoordinateProps> = ({
               borderRadius: ".5rem",
             }}
             options={{
-              draggableCursor: cursor ?? "pointer",
+              draggableCursor: props.cursor ?? "pointer",
               fullscreenControl: false,
             }}
-            onClick={onClick}
+            onClick={props.onClick}
           >
             {coordinate && <Marker position={coordinate} />}
           </GoogleMap>
@@ -260,11 +256,11 @@ const useMaps = () => {
   return { isLoaded, loadError };
 };
 
-export const CoordinateModal = () => {
+export const CoordinateModal: React.FC<{ zoom?: number }> = (props) => {
   const { isCoordinate, actionIsCoordinate } = useActiveModal();
   return (
     <Modal isOpen={isCoordinate} closeModal={actionIsCoordinate}>
-      <Coordinate />
+      <Coordinate zoom={props.zoom} />
     </Modal>
   );
 };

@@ -1,5 +1,5 @@
 import { req } from "./request";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import queryString from "query-string";
 import { setUser } from "src/stores/auth";
 
@@ -14,7 +14,7 @@ export interface Location {
   province: string;
   zipCode: string;
   isPrimary: boolean;
-  type: "BUSINESS";
+  type: string;
   userId: string;
 }
 
@@ -44,6 +44,16 @@ class Api {
     });
   }
 
+  async create(r: Location): Promise<Location> {
+    return await req<Location>({
+      method: "POST",
+      isNoAuth: false,
+      path: this.path,
+      errors: "",
+      body: r,
+    });
+  }
+
   async findGeoLocation(r: Coordinate): Promise<Location> {
     const query = queryString.stringify(
       {
@@ -65,6 +75,7 @@ class Api {
 interface ApiLocationInfo {
   findLocationByUserId(userId: string): Promise<Location[]>;
   findGeoLocation(r: Coordinate): Promise<Location>;
+  create(r: Location): Promise<Location>;
 }
 
 function getLocationApiInfo(): ApiLocationInfo {
@@ -83,15 +94,21 @@ export const findLocationByUserId = () => {
   });
 };
 
-export const useLocation = () => {
-  const findGeoLocation = (lat: number, lng: number) => {
-    return useQuery<Location, Error>({
-      queryKey: [key, lat, lng],
-      queryFn: async () =>
-        await getLocationApiInfo().findGeoLocation({ lat, lng }),
-      enabled: !!lat && !!lng,
-    });
-  };
+export const createLocation = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMutation<Location, Error, Location>({
+    mutationKey: [key, "create"],
+    mutationFn: (r) => getLocationApiInfo().create(r),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+  return { mutateAsync, isPending };
+};
 
-  return { findGeoLocation };
+export const findGeoLocation = (lat: number, lng: number) => {
+  return useQuery<Location, Error>({
+    queryKey: [key, lat, lng],
+    queryFn: async () =>
+      await getLocationApiInfo().findGeoLocation({ lat, lng }),
+    enabled: !!lat && !!lng,
+  });
 };

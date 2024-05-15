@@ -7,6 +7,8 @@ import { handleErrorMessage, setFieldRequired } from "src/helpers";
 import Coordinate, { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
+import { createLocation } from "src/api/location.service";
+import { Spinner } from "@nextui-org/react";
 
 interface IDefaultValues {
   name: string;
@@ -20,14 +22,11 @@ const Business = () => {
     lng: number;
   }>({ lat: 0, lng: 0 });
 
-  const form = useForm<IDefaultValues>();
-  const user = setUser((v) => v.user);
-
   const { actionIsCoordinate, isCoordinate } = useActiveModal();
 
-  const onSubmit = form.handleSubmit(async (e) => {
-    console.log(e, latLng);
-  });
+  const form = useForm<IDefaultValues>();
+  const user = setUser((v) => v.user);
+  const createNewLocation = createLocation();
 
   React.useEffect(() => {
     setLatLng({
@@ -36,13 +35,30 @@ const Business = () => {
     });
   }, [user]);
 
-  if (!user) return;
+  const onSubmit = form.handleSubmit(async (e) => {
+    if (!user) return;
+    const location = user.locations?.[0];
+    const lat = location.lat;
+    const lng = location.lng;
+
+    if (lat === latLng.lat && lng === latLng.lng) {
+      createNewLocation.mutateAsync(location);
+    } else {
+      console.log("no id");
+    }
+  });
 
   return (
     <Template
       title="usaha"
       onClick={onSubmit}
-      btnLabelForm="simpan"
+      btnLabelForm={
+        createNewLocation.isPending ? (
+          <Spinner color="secondary" size="sm" />
+        ) : (
+          "simpan"
+        )
+      }
       className="max-w-full"
     >
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">

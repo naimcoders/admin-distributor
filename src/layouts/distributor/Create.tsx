@@ -20,7 +20,7 @@ import Coordinate, {
   CoordinateProps,
   UserCoordinate,
 } from "src/components/Coordinate";
-import { useLocation } from "src/api/location.service";
+import { findGeoLocation } from "src/api/location.service";
 import { Chip, CircularProgress, Spinner } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { createDistributor } from "src/api/distributor.service";
@@ -218,7 +218,6 @@ const useApi = (
   const forms = useForm<DefaultValues>();
   const navigate = useNavigate();
 
-  const { findGeoLocation } = useLocation();
   const geoLocation = findGeoLocation(lat, lng);
   const zipCode = geoLocation.data?.zipCode ? geoLocation.data?.zipCode : "-";
 

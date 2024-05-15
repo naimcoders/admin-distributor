@@ -381,7 +381,6 @@ export const updateDistributor = () => {
     mutationFn: (r) => getDistributorApiInfo().updateDistributor(r),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
   });
-
   return { mutateAsync, isPending };
 };
 

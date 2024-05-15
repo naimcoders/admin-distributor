@@ -7,8 +7,10 @@ import { handleErrorMessage, setFieldRequired } from "src/helpers";
 import Coordinate, { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
 import { Modal } from "src/components/Modal";
-import { createLocation } from "src/api/location.service";
+import { createLocation, findGeoLocation } from "src/api/location.service";
 import { Spinner } from "@nextui-org/react";
+import { toast } from "react-toastify";
+import { updateDistributor } from "src/api/distributor.service";
 
 interface IDefaultValues {
   name: string;
@@ -26,7 +28,10 @@ const Business = () => {
 
   const form = useForm<IDefaultValues>();
   const user = setUser((v) => v.user);
+
+  const geoLocation = findGeoLocation(latLng.lat, latLng.lng);
   const createNewLocation = createLocation();
+  const updateMyAccount = updateDistributor();
 
   React.useEffect(() => {
     setLatLng({
@@ -42,9 +47,41 @@ const Business = () => {
     const lng = location.lng;
 
     if (lat === latLng.lat && lng === latLng.lng) {
-      createNewLocation.mutateAsync(location);
+      // try {
+      //   await createNewLocation.mutateAsync(location);
+      // } catch (e) {
+      //   const error = e as Error;
+      //   toast.error(`Error to update location: ${error.message}`);
+      // }
+      console.log("Lokasi tidak perlu diperbarui");
     } else {
-      console.log("no id");
+      if (!geoLocation.data) return;
+      const data = geoLocation.data;
+      try {
+        await createNewLocation.mutateAsync({
+          ...data,
+          id: "",
+        });
+        toast.success("lokasi berhasil diperbarui");
+      } catch (e) {
+        const error = e as Error;
+        toast.error(`Error to create a new location: ${error.message}`);
+      }
+    }
+
+    try {
+      toast.loading("Loading...", { toastId: "loading-update-business" });
+      await updateMyAccount.mutateAsync({
+        name: e.name,
+        ownerName: user.ownerName,
+        phoneNumber: user.phoneNumber,
+      });
+      toast.success("Data berhasil diperbarui");
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Failed to update: ${error.message}`);
+    } finally {
+      toast.dismiss("loading-update-business");
     }
   });
 
@@ -53,7 +90,7 @@ const Business = () => {
       title="usaha"
       onClick={onSubmit}
       btnLabelForm={
-        createNewLocation.isPending ? (
+        updateMyAccount.isPending ? (
           <Spinner color="secondary" size="sm" />
         ) : (
           "simpan"

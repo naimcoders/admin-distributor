@@ -107,8 +107,7 @@ export const createLocation = () => {
 export const findGeoLocation = (lat: number, lng: number) => {
   return useQuery<Location, Error>({
     queryKey: [key, lat, lng],
-    queryFn: async () =>
-      await getLocationApiInfo().findGeoLocation({ lat, lng }),
+    queryFn: () => getLocationApiInfo().findGeoLocation({ lat, lng }),
     enabled: !!lat && !!lng,
   });
 };

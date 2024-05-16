@@ -28,6 +28,7 @@ const Business = () => {
 
   const form = useForm<IDefaultValues>();
   const user = setUser((v) => v.user);
+  const setNewUser = setUser((v) => v.setUser);
 
   const geoLocation = findGeoLocation(latLng.lat, latLng.lng);
   const createNewLocation = createLocation();
@@ -68,6 +69,7 @@ const Business = () => {
         phoneNumber: user.phoneNumber,
         email: user.email,
       });
+      setNewUser();
       toast.success("Data berhasil diperbarui");
     } catch (e) {
       const error = e as Error;

@@ -28,45 +28,37 @@ const Business = () => {
 
   const form = useForm<IDefaultValues>();
   const user = setUser((v) => v.user);
+  console.log(user);
 
   const geoLocation = findGeoLocation(latLng.lat, latLng.lng);
   const createNewLocation = createLocation();
   const updateMyAccount = updateDistributor();
 
   React.useEffect(() => {
-    setLatLng({
-      lat: user?.locations[0].lat ?? 0,
-      lng: user?.locations[0].lng ?? 0,
-    });
+    if (user) {
+      setLatLng({
+        lat: user.locations[user.locations.length - 1].lat ?? 0,
+        lng: user.locations[user.locations.length - 1].lng ?? 0,
+      });
+    }
   }, [user]);
 
   const onSubmit = form.handleSubmit(async (e) => {
     if (!user) return;
     const location = user.locations?.[0];
-    const lat = location.lat;
-    const lng = location.lng;
 
-    if (lat === latLng.lat && lng === latLng.lng) {
-      // try {
-      //   await createNewLocation.mutateAsync(location);
-      // } catch (e) {
-      //   const error = e as Error;
-      //   toast.error(`Error to update location: ${error.message}`);
-      // }
-      console.log("Lokasi tidak perlu diperbarui");
-    } else {
-      if (!geoLocation.data) return;
-      const data = geoLocation.data;
-      try {
-        await createNewLocation.mutateAsync({
-          ...data,
-          id: "",
-        });
-        toast.success("lokasi berhasil diperbarui");
-      } catch (e) {
-        const error = e as Error;
-        toast.error(`Error to create a new location: ${error.message}`);
-      }
+    if (!geoLocation.data) return;
+    const data = geoLocation.data;
+
+    try {
+      await createNewLocation.mutateAsync({
+        ...data,
+        id: location.id,
+        type: location.type,
+      });
+    } catch (e) {
+      const error = e as Error;
+      toast.error(`Error to update location: ${error.message}`);
     }
 
     try {
@@ -75,6 +67,7 @@ const Business = () => {
         name: e.name,
         ownerName: user.ownerName,
         phoneNumber: user.phoneNumber,
+        email: user.email,
       });
       toast.success("Data berhasil diperbarui");
     } catch (e) {
@@ -84,6 +77,8 @@ const Business = () => {
       toast.dismiss("loading-update-business");
     }
   });
+
+  const detailAddress = user?.locations?.[0].detailAddress;
 
   return (
     <Template
@@ -111,32 +106,30 @@ const Business = () => {
           errorMessage={handleErrorMessage(form.formState.errors, "name")}
         />
         <Textfield
-          name="detailAddress"
-          label="detail alamat"
-          control={form.control}
-          defaultValue={user?.locations?.[0].detailAddress}
-          placeholder="masukkan detail alamat"
-          rules={{
-            required: setFieldRequired(true, "masukkan detail alamat"),
-          }}
-          errorMessage={handleErrorMessage(
-            form.formState.errors,
-            "detailAddress"
-          )}
-          readOnly={{ isValue: true, cursor: "cursor-default" }}
-        />
-        <Textfield
           name="addressName"
           label="alamat"
           control={form.control}
           defaultValue={user?.locations?.[0].addressName}
-          placeholder="atur alamat"
           rules={{
             required: setFieldRequired(true, "atur alamat"),
           }}
           errorMessage={handleErrorMessage(
             form.formState.errors,
             "addressName"
+          )}
+          readOnly={{ isValue: true, cursor: "cursor-default" }}
+        />
+        <Textfield
+          name="detailAddress"
+          label="detail alamat"
+          control={form.control}
+          defaultValue={!detailAddress ? "-" : detailAddress}
+          rules={{
+            required: setFieldRequired(true, "masukkan detail alamat"),
+          }}
+          errorMessage={handleErrorMessage(
+            form.formState.errors,
+            "detailAddress"
           )}
           readOnly={{ isValue: true, cursor: "cursor-default" }}
         />

@@ -28,7 +28,6 @@ const Business = () => {
 
   const form = useForm<IDefaultValues>();
   const user = setUser((v) => v.user);
-  console.log(user);
 
   const geoLocation = findGeoLocation(latLng.lat, latLng.lng);
   const createNewLocation = createLocation();
@@ -78,7 +77,8 @@ const Business = () => {
     }
   });
 
-  const detailAddress = user?.locations?.[0].detailAddress;
+  const detailAddress =
+    user?.locations?.[user.locations.length - 1].detailAddress;
 
   return (
     <Template
@@ -93,7 +93,7 @@ const Business = () => {
       }
       className="max-w-full"
     >
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
         <Textfield
           name="name"
           label="nama"
@@ -109,7 +109,9 @@ const Business = () => {
           name="addressName"
           label="alamat"
           control={form.control}
-          defaultValue={user?.locations?.[0].addressName}
+          defaultValue={
+            user?.locations?.[user.locations.length - 1].addressName
+          }
           rules={{
             required: setFieldRequired(true, "atur alamat"),
           }}

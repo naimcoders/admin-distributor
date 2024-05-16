@@ -16,7 +16,7 @@ import {
 } from "src/components/Textfield";
 import { GridInput } from "../Index";
 import { handleErrorMessage } from "src/helpers";
-import { CoordinateModal, UserCoordinate } from "src/components/Coordinate";
+import { UserCoordinate } from "src/components/Coordinate";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor } from "src/types";
 
@@ -130,8 +130,6 @@ const Create = () => {
       <div className="flex justify-center mt-10">
         <Button label="simpan" onClick={onSubmit} />
       </div>
-
-      <CoordinateModal />
     </main>
   );
 };

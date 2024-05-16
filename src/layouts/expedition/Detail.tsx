@@ -18,11 +18,7 @@ import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
 import { useKtp } from "./Create";
 import { GridInput } from "../Index";
 import { useActiveModal } from "src/stores/modalStore";
-import {
-  CoordinateModal,
-  UserCoordinate,
-  defaultCoordinate,
-} from "src/components/Coordinate";
+import { UserCoordinate, defaultCoordinate } from "src/components/Coordinate";
 import { IconColor } from "src/types";
 
 const Detail = () => {
@@ -100,8 +96,6 @@ const Detail = () => {
       <div className="flex justify-center mt-10">
         <Button label="simpan" />
       </div>
-
-      <CoordinateModal />
     </main>
   );
 };

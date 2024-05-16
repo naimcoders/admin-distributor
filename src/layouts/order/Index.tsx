@@ -1,11 +1,7 @@
 import Select, { SelectDataProps } from "src/components/Select";
 import React from "react";
 import { TableWithoutTabs } from "src/components/Table";
-import {
-  Order as IOrder,
-  ReqStatusOrder,
-  findOrders,
-} from "src/api/order.service";
+import { ReqStatusOrder, countOrder, findOrders } from "src/api/order.service";
 import useOrderColumns from "./column";
 import Error from "src/components/Error";
 import { setUser } from "src/stores/auth";
@@ -41,49 +37,63 @@ const Order = () => {
     navigate(`/order?${qs}`);
   }, [selectedOrder]);
 
-  const waitingAccept = filterByStatusOrder(
-    orders?.items ?? [],
-    "WAITING_ACCEPT"
-  );
-  const pending = filterByStatusOrder(orders?.items ?? [], "PENDING");
-  const accept = filterByStatusOrder(orders?.items ?? [], "ACCEPT");
-  const itemReady = filterByStatusOrder(orders?.items ?? [], "ITEM_READY");
-  const verifyPin = filterByStatusOrder(orders?.items ?? [], "VERIFY_PIN");
-  const delivery = filterByStatusOrder(orders?.items ?? [], "DELIVERY");
-  const complete = filterByStatusOrder(orders?.items ?? [], "COMPLETE");
-  const reject = filterByStatusOrder(orders?.items ?? [], "REJECT");
+  const totalOrder = countOrder(user?.id ?? "", newStatus);
 
   const data: SelectDataProps[] = [
     {
-      label: SelectLabel("menunggu konfirmasi", waitingAccept),
+      label: SelectLabel(
+        "menunggu konfirmasi",
+        newStatus === "WAITING_ACCEPT" ? totalOrder.data : undefined
+      ),
       value: "WAITING_ACCEPT",
     },
     {
-      label: SelectLabel("pending", pending),
+      label: SelectLabel(
+        "pending",
+        newStatus === "PENDING" ? totalOrder.data : undefined
+      ),
       value: "PENDING",
     },
     {
-      label: SelectLabel("pesanan diproses", accept),
+      label: SelectLabel(
+        "pesanan diproses",
+        newStatus === "ACCEPT" ? totalOrder.data : undefined
+      ),
       value: "ACCEPT",
     },
     {
-      label: SelectLabel("menunggu kurir", itemReady),
+      label: SelectLabel(
+        "menunggu kurir",
+        newStatus === "ITEM_READY" ? totalOrder.data : undefined
+      ),
       value: "ITEM_READY",
     },
     {
-      label: SelectLabel("verifikasi PIN", verifyPin),
+      label: SelectLabel(
+        "verifikasi PIN",
+        newStatus === "VERIFY_PIN" ? totalOrder.data : undefined
+      ),
       value: "VERIFY_PIN",
     },
     {
-      label: SelectLabel("pengiriman", delivery),
+      label: SelectLabel(
+        "pengiriman",
+        newStatus === "DELIVERY" ? totalOrder.data : undefined
+      ),
       value: "DELIVERY",
     },
     {
-      label: SelectLabel("selesai", complete),
+      label: SelectLabel(
+        "selesai",
+        newStatus === "COMPLETE" ? totalOrder.data : undefined
+      ),
       value: "COMPLETE",
     },
     {
-      label: SelectLabel("batal", reject),
+      label: SelectLabel(
+        "batal",
+        newStatus === "REJECT" ? totalOrder.data : undefined
+      ),
       value: "REJECT",
     },
   ];
@@ -128,18 +138,13 @@ const Order = () => {
   );
 };
 
-const filterByStatusOrder = (data: IOrder[], statusOrder: string) =>
-  data.filter((v) => v.status === statusOrder);
-
-const SelectLabel = (label: string, data: IOrder[]) => {
+const SelectLabel = (label: string, count?: number) => {
   return (
     <div className="flex items-center gap-2">
       {label}
-      {data.length > 0 ? (
-        <span className="bg-red-500 px-1 text-xs rounded-full text-white">
-          {data.length}
-        </span>
-      ) : null}
+      <span className="bg-red-500 px-1 text-xs rounded-full text-white">
+        {count}
+      </span>
     </div>
   );
 };

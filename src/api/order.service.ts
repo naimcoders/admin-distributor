@@ -266,6 +266,20 @@ class Api {
       errors: "",
     });
   }
+
+  async countOrder(merchantId: string, status: string): Promise<number> {
+    const query = queryString.stringify(
+      { merchantId, status },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/count?${query}`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiOrderInfo {
@@ -279,6 +293,7 @@ interface ApiOrderInfo {
   accept(orderId: string): Promise<string>;
   itemReady(orderId: string): Promise<string>;
   reject(orderId: string): Promise<string>;
+  countOrder(merchantId: string, status: string): Promise<number>;
 }
 
 function getOrderApiInfo(): ApiOrderInfo {
@@ -286,6 +301,20 @@ function getOrderApiInfo(): ApiOrderInfo {
 }
 
 const key = "order";
+
+export const countOrder = (merchantId: string, status: string) => {
+  const data = useQuery<number, Error>({
+    queryKey: [key, merchantId, status],
+    queryFn: () => getOrderApiInfo().countOrder(merchantId, status),
+    enabled: !!merchantId && !!status,
+  });
+
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error?.message,
+  };
+};
 
 export const findOrders = (
   statusOrder: ReqStatusOrder,

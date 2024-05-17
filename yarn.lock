@@ -643,11 +643,6 @@
     "@tanstack/react-virtual" "^3.0.0-beta.60"
     client-only "^0.0.1"
 
-"@heroicons/react@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/@heroicons/react/-/react-2.1.1.tgz"
-  integrity sha512-JyyN9Lo66kirbCMuMMRPtJxtKJoIsXKS569ebHGGRKbl8s4CtUfLnyKJxteA+vIKySocO4s1SkTkGS4xtG/yEA==
-
 "@humanwhocodes/config-array@^0.11.13":
   version "0.11.14"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.14.tgz"

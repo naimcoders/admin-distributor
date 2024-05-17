@@ -4,7 +4,6 @@ import {
   ClipboardIcon,
   PrinterIcon,
 } from "@heroicons/react/24/outline";
-import { DocumentChartBarIcon } from "@heroicons/react/24/outline";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -173,8 +172,7 @@ const Detail = () => {
 
                     {product.note && (
                       <div className="flex gap-1 text-sm bg-gray-200 px-3 py-2 rounded-md col-span-4">
-                        {/* <DocumentChartBarIcon width={15} /> */}
-                        BsPencilSquare
+                        <BsPencilSquare size={15} />
                         {product.note}
                       </div>
                     )}

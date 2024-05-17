@@ -27,6 +27,7 @@ import {
 } from "src/helpers";
 import { IconColor } from "src/types";
 import React from "react";
+import { BsPencilSquare } from "react-icons/bs";
 
 export const statusOrder: { eng: string; ina: string }[] = [
   { eng: "PENDING", ina: "Pending" },
@@ -172,7 +173,8 @@ const Detail = () => {
 
                     {product.note && (
                       <div className="flex gap-1 text-sm bg-gray-200 px-3 py-2 rounded-md col-span-4">
-                        <DocumentChartBarIcon width={15} />
+                        {/* <DocumentChartBarIcon width={15} /> */}
+                        BsPencilSquare
                         {product.note}
                       </div>
                     )}

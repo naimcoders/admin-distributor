@@ -6,10 +6,10 @@ import Textarea from "src/components/Textarea";
 import PriceModal from "./Modals/Price";
 import useGeneralStore from "src/stores/generalStore";
 import {
-  ChevronRightIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineChevronRight,
+  HiOutlineTrash,
+  HiOutlineXMark,
+} from "react-icons/hi2";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ChildRef, File as FileComp } from "src/components/File";
@@ -244,7 +244,7 @@ const Create = () => {
               )}
               actions={[
                 {
-                  src: <TrashIcon width={16} />,
+                  src: <HiOutlineTrash size={16} />,
                   onClick: () => setPhotos(photos.filter((e) => e !== v)),
                 },
               ]}
@@ -308,7 +308,9 @@ const Create = () => {
             required: setRequiredField(true, "pilih kategori"),
           }}
           errorMessage={handleErrorMessage(errors, "category")}
-          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          endContent={
+            <HiOutlineChevronRight size={16} color={IconColor.zinc} />
+          }
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
           onClick={actionIsCategory}
         />
@@ -320,10 +322,10 @@ const Create = () => {
           defaultValue=""
           endContent={
             !subCategoryId ? (
-              <ChevronRightIcon width={16} color={IconColor.zinc} />
+              <HiOutlineChevronRight size={16} color={IconColor.zinc} />
             ) : (
-              <XMarkIcon
-                width={16}
+              <HiOutlineXMark
+                size={16}
                 color={IconColor.red}
                 className="cursor-pointer"
                 onClick={() => {
@@ -348,7 +350,9 @@ const Create = () => {
           placeholder="tentukan variasi"
           control={control}
           defaultValue=""
-          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          endContent={
+            <HiOutlineChevronRight size={16} color={IconColor.zinc} />
+          }
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
           onClick={actionIsVariant}
         />
@@ -361,7 +365,7 @@ const Create = () => {
           errorMessage={handleErrorMessage(errors, "price")}
           endContent={
             variantTypes.length > 0 ? (
-              <ChevronRightIcon width={16} color={IconColor.zinc} />
+              <HiOutlineChevronRight size={16} color={IconColor.zinc} />
             ) : undefined
           }
           readOnly={
@@ -393,7 +397,9 @@ const Create = () => {
             required: setRequiredField(true, "tentukan ongkir"),
           }}
           errorMessage={handleErrorMessage(errors, "postage")}
-          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          endContent={
+            <HiOutlineChevronRight size={16} color={IconColor.zinc} />
+          }
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
           onClick={actionIsPostage}
         />
@@ -403,7 +409,9 @@ const Create = () => {
           placeholder="pilih kondisi"
           control={control}
           defaultValue="Baru"
-          endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+          endContent={
+            <HiOutlineChevronRight size={16} color={IconColor.zinc} />
+          }
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
           onClick={actionIsCondition}
         />
@@ -414,7 +422,9 @@ const Create = () => {
             placeholder="pilih sub-distributor"
             control={control}
             defaultValue=""
-            endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+            endContent={
+              <HiOutlineChevronRight size={16} color={IconColor.zinc} />
+            }
             readOnly={{ isValue: true, cursor: "cursor-pointer" }}
             onClick={actionIsSubDistributor}
           />

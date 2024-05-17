@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { usePilipay, type Activated } from "src/api/pilipay.service";
 import { Modal } from "src/components/Modal";
 import { Textfield } from "src/components/Textfield";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { Button } from "@nextui-org/react";
 import { SendOtpType, useLogin } from "src/api/auth.service";
 import { setUser } from "src/stores/auth";
@@ -77,13 +77,17 @@ const ActivatedPilipay: FC<ActivatedProps> = ({ isOpen, setOpen }) => {
               onClick={() => setIsVisible(!isVisible)}
             >
               {!isVisible ? (
-                <EyeSlashIcon
-                  width={18}
+                <HiOutlineEyeSlash
+                  size={18}
                   className="cursor-pointer"
                   title="Show"
                 />
               ) : (
-                <EyeIcon width={18} className="cursor-pointer" title="Hide" />
+                <HiOutlineEye
+                  size={18}
+                  className="cursor-pointer"
+                  title="Hide"
+                />
               )}
             </button>
           }

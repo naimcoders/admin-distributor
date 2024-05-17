@@ -8,7 +8,7 @@ import useGeneralStore, {
   useVariantIdStore,
 } from "src/stores/generalStore";
 import { IconColor, UseForm } from "src/types";
-import { XCircleIcon } from "@heroicons/react/24/solid";
+import { HiOutlineXCircle } from "react-icons/hi2";
 import { useActiveModal } from "src/stores/modalStore";
 import { FieldValues, useForm } from "react-hook-form";
 import { useUploadProduct } from "../Create";
@@ -155,8 +155,8 @@ export const VariantModal: FC<VariantModalProps> = ({
                   {v.name}
                 </Btn>
                 {isDeleteType && (
-                  <XCircleIcon
-                    width={20}
+                  <HiOutlineXCircle
+                    size={20}
                     color={IconColor.red}
                     className="absolute -top-2 -right-2 cursor-pointer"
                     title="hapus sss"
@@ -238,8 +238,8 @@ export const VariantModal: FC<VariantModalProps> = ({
                         {s.name}
                       </Btn>
                       {isDeleteSize && (
-                        <XCircleIcon
-                          width={20}
+                        <HiOutlineXCircle
+                          size={20}
                           color={IconColor.red}
                           className="absolute -top-2 -right-2 cursor-pointer"
                           title="hapus"

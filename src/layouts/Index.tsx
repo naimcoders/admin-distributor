@@ -4,7 +4,7 @@ import Image from "src/components/Image";
 import Hamburger from "src/components/Hamburger";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Button } from "src/components/Button";
-import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
+import { HiOutlineArrowRightStartOnRectangle } from "react-icons/hi2";
 import { useAuth } from "src/firebase/auth";
 import { splitSlash, stringifyQuery } from "src/helpers";
 import { setUser } from "src/stores/auth";
@@ -153,7 +153,7 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
         label="Logout"
         className="bg-[#c41414] mx-auto mt-4"
         endContent={
-          <ArrowRightStartOnRectangleIcon width={18} color="#FFFFFF" />
+          <HiOutlineArrowRightStartOnRectangle size={18} color="#FFFFFF" />
         }
         onClick={logout}
       />

@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { HiOutlineX } from "react-icons/hi";
 import React, { Fragment } from "react";
 import { useActiveModal } from "src/stores/modalStore";
 import { Button } from "./Button";
@@ -70,7 +70,7 @@ export const Modal = ({
                       className="mt-4 absolute right-4 top-0 outline-none remove-highlight"
                       title="Tutup popup"
                     >
-                      <XMarkIcon width={18} />
+                      <HiOutlineX width={18} />
                     </button>
                   </Dialog.Panel>
                 </Transition.Child>

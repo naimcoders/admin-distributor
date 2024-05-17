@@ -1,8 +1,7 @@
-// import singleLogo from "src/assets/images/icon_pilipilih flat_white.png";
 import mokes from "src/assets/images/mokes.png";
 import { Button } from "src/components/Button";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { HiOutlineArrowLeft } from "react-icons/hi2";
 import Image from "src/components/Image";
 
 const NotFound = () => {
@@ -24,7 +23,7 @@ const NotFound = () => {
           onClick={goBack}
           color="secondary"
           className="text-black font-interMedium"
-          startContent={<ArrowLeftIcon width={18} />}
+          startContent={<HiOutlineArrowLeft size={18} />}
         />
       </section>
       <section className="flex justify-center sm:items-center sm:flex-1">

@@ -1,10 +1,10 @@
 import ktp from "src/assets/images/ktp.png";
 import salesPhoto from "src/assets/images/sales_photo.jpg";
 import {
-  ArrowUpTrayIcon,
-  ChevronRightIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineArrowUpTray,
+  HiOutlineChevronRight,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import {
@@ -57,7 +57,7 @@ const Profile = () => {
               readOnly={v.readOnly}
               type="text"
               label={v.label}
-              endContent={<ChevronRightIcon width={16} />}
+              endContent={<HiOutlineChevronRight size={16} />}
               onClick={v.onClick}
             />
           )}
@@ -73,7 +73,7 @@ const Profile = () => {
                 ref={v.uploadImage?.file.ref}
                 onClick={v.uploadImage?.file.onClick}
                 onChange={v.uploadImage?.file.onChange}
-                startContent={<ArrowUpTrayIcon width={16} />}
+                startContent={<HiOutlineArrowUpTray size={16} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{
                   required: { value: true, message: v.errorMessage ?? "" },
@@ -173,7 +173,7 @@ const useHook = () => {
         image: {
           actions: [
             {
-              src: <TrashIcon width={16} color={IconColor.red} />,
+              src: <HiOutlineTrash size={16} color={IconColor.red} />,
               onClick: () => setKtpBlob(""),
             },
           ],

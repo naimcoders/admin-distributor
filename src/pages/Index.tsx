@@ -15,7 +15,7 @@ import React from "react";
 import { requestForToken } from "src/firebase";
 import { useLogin as useLoginApi } from "src/api/auth.service";
 import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { IconColor } from "src/types";
 import { Spinner } from "@nextui-org/react";
 
@@ -93,16 +93,16 @@ export const checkPassword = (
 ) => {
   const onPassword = () => setIsPassword((v) => !v);
   return !isPassword ? (
-    <EyeSlashIcon
-      width={18}
+    <HiOutlineEyeSlash
+      size={18}
       className="cursor-pointer"
       onClick={onPassword}
       color={IconColor.zinc}
       title="Show"
     />
   ) : (
-    <EyeIcon
-      width={18}
+    <HiOutlineEye
+      size={18}
       color={IconColor.zinc}
       className="cursor-pointer"
       onClick={onPassword}

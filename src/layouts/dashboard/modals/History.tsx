@@ -21,11 +21,11 @@ import {
 import { formatRupiah } from "src/helpers/idr";
 import { convertEpochToDate } from "src/helpers";
 import {
-  ArrowPathIcon,
-  PlusCircleIcon,
-  XMarkIcon,
-  MinusCircleIcon,
-} from "@heroicons/react/24/solid";
+  HiOutlineArrowPath,
+  HiOutlinePlusCircle,
+  HiOutlineXMark,
+  HiOutlineMinusCircle,
+} from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 
 type TStateHistory = {
@@ -239,17 +239,17 @@ const HistoryContent: React.FC<{
           )}
         >
           {props.history.status === EITransactionStatus.PENDING ? (
-            <ArrowPathIcon className="h-4 w-4" />
+            <HiOutlineArrowPath className="h-4 w-4" />
           ) : props.history.status === EITransactionStatus.SUCCESS ? (
             <>
               {props.type === ETypeHistoryPilipay.TOPUP ? (
-                <PlusCircleIcon className="h-4 w-4" />
+                <HiOutlinePlusCircle className="h-4 w-4" />
               ) : (
-                <MinusCircleIcon className="h-4 w-4" />
+                <HiOutlineMinusCircle className="h-4 w-4" />
               )}
             </>
           ) : (
-            <XMarkIcon className="h-4 w-4" />
+            <HiOutlineXMark className="h-4 w-4" />
           )}
           <p className="text-xs">{formatRupiah(props.history.amount)}</p>
         </div>

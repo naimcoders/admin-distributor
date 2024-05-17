@@ -1,4 +1,4 @@
-import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { HiOutlineArrowUpTray, HiOutlineTrash } from "react-icons/hi2";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ChildRef, File, LabelAndImage } from "src/components/File";
@@ -28,7 +28,7 @@ const Banner = () => {
           label="logo"
           actions={[
             {
-              src: <TrashIcon color={IconColor.red} width={16} />,
+              src: <HiOutlineTrash color={IconColor.red} size={16} />,
               onClick: () => setLogoUrl(""),
             },
           ]}
@@ -44,7 +44,7 @@ const Banner = () => {
             ref={logo}
             onClick={onClickLogo}
             onChange={onChangeLogo}
-            startContent={<ArrowUpTrayIcon width={16} />}
+            startContent={<HiOutlineArrowUpTray size={16} />}
           />
           {logoPercent > 0 && logoPercent < 100 && (
             <p>Loading: {logoPercent}</p>
@@ -58,7 +58,7 @@ const Banner = () => {
           label="banner etalase"
           actions={[
             {
-              src: <TrashIcon color={IconColor.red} width={16} />,
+              src: <HiOutlineTrash color={IconColor.red} size={16} />,
               onClick: () => setBannerUrl(""),
             },
           ]}
@@ -74,7 +74,7 @@ const Banner = () => {
             ref={banner}
             onClick={onClickBanner}
             onChange={onChangeBanner}
-            startContent={<ArrowUpTrayIcon width={16} />}
+            startContent={<HiOutlineArrowUpTray size={16} />}
           />
           {bannerPercent > 0 && bannerPercent < 100 && (
             <p>Loading: {bannerPercent}</p>

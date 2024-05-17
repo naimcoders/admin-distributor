@@ -7,7 +7,7 @@ import Error from "src/components/Error";
 import { Spinner } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { Currency, convertEpochToDate, onClipboard } from "src/helpers";
-import { ClipboardIcon } from "@heroicons/react/24/outline";
+import { HiOutlineClipboard } from "react-icons/hi2";
 import { IconColor } from "src/types";
 import { Button } from "src/components/Button";
 import CountdownTimer from "src/components/CountdownTimer";
@@ -150,8 +150,8 @@ const Payment: React.FC<IPayment> = ({
                     </span>
                   )}
                 </h2>
-                <ClipboardIcon
-                  width={16}
+                <HiOutlineClipboard
+                  size={16}
                   color={IconColor.zinc}
                   onClick={() => onClipboard(String(data?.amount))}
                   className="cursor-pointer"
@@ -210,8 +210,8 @@ const ActionContent = ({
       ) : (
         <div className="flex gap-2">
           <h2 className="font-semibold">{value}</h2>
-          <ClipboardIcon
-            width={16}
+          <HiOutlineClipboard
+            size={16}
             color={IconColor.zinc}
             onClick={onClipboard}
             className="cursor-pointer"

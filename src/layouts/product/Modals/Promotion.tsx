@@ -16,7 +16,7 @@ import {
   setMinMaxCalendar,
   setRequiredField,
 } from "src/helpers";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronRight } from "react-icons/hi2";
 import ContentTextfield from "src/components/ContentTextfield";
 import { Calendar } from "src/components/Calendar";
 import useGeneralStore from "src/stores/generalStore";
@@ -339,7 +339,9 @@ const Promotion = ({
               actionIsPromotion();
               setTimeout(actionIsPeriod, 400);
             }}
-            endContent={<ChevronRightIcon width={16} color={IconColor.zinc} />}
+            endContent={
+              <HiOutlineChevronRight width={16} color={IconColor.zinc} />
+            }
           />
         </section>
 

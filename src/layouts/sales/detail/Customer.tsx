@@ -1,4 +1,4 @@
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { HiCheckBadge } from "react-icons/hi2";
 import { Actions } from "src/components/Actions";
 import Label from "src/components/Label";
 import Table from "src/components/Table";
@@ -64,7 +64,7 @@ const useHook = () => {
         <Label
           label={v.ownerName}
           startContent={
-            v.isVerify && <CheckBadgeIcon color="#006FEE" width={20} />
+            v.isVerify && <HiCheckBadge color="#006FEE" size={20} />
           }
         />
       ),

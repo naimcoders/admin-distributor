@@ -3,7 +3,7 @@ import Tabs, { ITabs } from "src/components/Tabs";
 import CategorySub from "./sub-category/Index";
 import SubProduct from "./Product";
 import { Button } from "src/components/Button";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { HiOutlinePlus } from "react-icons/hi2";
 import { useProduct } from "src/api/product.service";
 import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,7 @@ const Product = () => {
           />
           <Button
             label="produk"
-            startContent={<PlusIcon width={16} />}
+            startContent={<HiOutlinePlus size={16} />}
             className="absolute top-0 left-[300px]"
             onClick={() => navigate("/produk/tambah")}
           />

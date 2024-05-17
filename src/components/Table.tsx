@@ -3,7 +3,7 @@ import { TableProps } from "src/types";
 import { CircularProgress } from "@nextui-org/react";
 import { HTMLAttributes, useEffect } from "react";
 import { Textfield } from "./Textfield";
-import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { HiOutlinePlus, HiOutlineMagnifyingGlass } from "react-icons/hi2";
 import { Control, FieldValues, useForm } from "react-hook-form";
 import { useDebounce } from "src/helpers";
 import { Button } from "./Button";
@@ -102,7 +102,7 @@ export function TableWithSearchAndTabs<S extends object>(
         control={props.control}
         placeholder={props.placeholder}
         className="lg:absolute lg:top-0 lg:right-0 w-[24rem] mt-5 lg:mt-0"
-        startContent={<MagnifyingGlassIcon width={18} color="#808080" />}
+        startContent={<HiOutlineMagnifyingGlass size={18} color="#808080" />}
       />
 
       <Table
@@ -170,14 +170,14 @@ const Header = ({ search, createData }: HeaderProps) => {
         control={control}
         className={cx("w-[24rem]", search.className)}
         placeholder={search.placeholder}
-        startContent={<MagnifyingGlassIcon width={16} color="#808080" />}
+        startContent={<HiOutlineMagnifyingGlass size={16} color="#808080" />}
       />
 
       {createData?.isValue && (
         <Button
           label={createData.label}
           onClick={createData.onClick}
-          startContent={<PlusIcon width={16} />}
+          startContent={<HiOutlinePlus size={16} />}
         />
       )}
     </header>

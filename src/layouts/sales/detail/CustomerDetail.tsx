@@ -10,7 +10,7 @@ import { useActiveModal } from "src/stores/modalStore";
 import { Fragment } from "react";
 import { handleErrorMessage } from "src/helpers";
 import { FieldValues, useForm } from "react-hook-form";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronRight } from "react-icons/hi2";
 import { Modal } from "src/components/Modal";
 import { UseForm } from "src/types";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
@@ -68,7 +68,7 @@ const CustomerDetail = () => {
                 placeholder={v.placeholder}
                 defaultValue={v.defaultValue}
                 autoComplete={v.autoComplete}
-                endContent={<ChevronRightIcon width={16} />}
+                endContent={<HiOutlineChevronRight size={16} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{
                   required: { value: true, message: v.errorMessage ?? "" },

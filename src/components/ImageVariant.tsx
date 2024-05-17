@@ -2,7 +2,7 @@ import React from "react";
 import Image from "./Image";
 import cx from "classnames";
 import { ChildRef, FileProps } from "./File";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { HiOutlinePlus, HiOutlineTrash } from "react-icons/hi";
 import { IconColor } from "src/types";
 import { UseVariantProps } from "src/layouts/product/Modals/Variant";
 
@@ -41,7 +41,7 @@ const VariantImage = React.forwardRef(
         >
           {!props.image ? (
             <section className="flex gap-2 border aspect-square border-dashed border-gray-400 p-2 rounded-tl-md rounded-tr-md items-center">
-              <PlusIcon width={16} color={IconColor.zinc} />
+              <HiOutlinePlus width={16} color={IconColor.zinc} />
               <p className={`capitalize text-sm text-[${IconColor.zinc}]`}>
                 tambah foto/video
               </p>
@@ -53,7 +53,7 @@ const VariantImage = React.forwardRef(
               className="rounded-tl-md rounded-tr-md aspect-square object-cover border border-gray-400"
               actions={[
                 {
-                  src: <TrashIcon width={16} color={IconColor.red} />,
+                  src: <HiOutlineTrash width={16} color={IconColor.red} />,
                   onClick: () => props.onDeleteImage(props.label, props.image),
                 },
               ]}

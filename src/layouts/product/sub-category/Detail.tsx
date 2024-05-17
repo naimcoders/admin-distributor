@@ -1,6 +1,10 @@
 import React from "react";
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import {
+  HiOutlinePencil,
+  HiOutlinePlus,
+  HiOutlineTrash,
+  HiMiniCheck,
+} from "react-icons/hi2";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Textfield } from "src/components/Textfield";
@@ -159,12 +163,14 @@ const Detail = () => {
                 onClick={activeBtnUpdate}
                 placeholder="tambah sub-kategori"
                 startContent={
-                  !isUpdate && <PlusIcon width={16} color={IconColor.zinc} />
+                  !isUpdate && (
+                    <HiOutlinePlus size={16} color={IconColor.zinc} />
+                  )
                 }
                 endContent={
                   isUpdate && (
-                    <CheckIcon
-                      width={16}
+                    <HiMiniCheck
+                      size={16}
                       color={IconColor.green}
                       className="cursor-pointer"
                       onClick={onUpdate}
@@ -195,12 +201,12 @@ const Detail = () => {
               cursor: !isCreate ? "cursor-pointer" : "cursor-text",
             }}
             startContent={
-              !isCreate && <PlusIcon width={16} color={IconColor.zinc} />
+              !isCreate && <HiOutlinePlus size={16} color={IconColor.zinc} />
             }
             endContent={
               isCreate && (
-                <CheckIcon
-                  width={16}
+                <HiMiniCheck
+                  size={16}
                   color={IconColor.green}
                   className="cursor-pointer"
                   onClick={onSubmit}
@@ -227,9 +233,13 @@ const Listing = ({ label, update, remove }: ListingProps) => {
       <h2>{label}</h2>
 
       <section className="flex gap-5">
-        <PencilIcon width={16} className="cursor-pointer" onClick={update} />
-        <TrashIcon
-          width={16}
+        <HiOutlinePencil
+          size={16}
+          className="cursor-pointer"
+          onClick={update}
+        />
+        <HiOutlineTrash
+          size={16}
           onClick={remove}
           color={IconColor.red}
           className="cursor-pointer"

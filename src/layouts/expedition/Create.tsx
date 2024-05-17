@@ -1,10 +1,10 @@
 import useGeneralStore from "src/stores/generalStore";
 import {
-  ArrowUpTrayIcon,
-  ChevronRightIcon,
-  MapPinIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineArrowUpTray,
+  HiOutlineChevronRight,
+  HiOutlineMapPin,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -62,7 +62,7 @@ const Create = () => {
                 autoComplete={v.autoComplete}
                 defaultValue={v.defaultValue}
                 placeholder={v.placeholder}
-                endContent={<ChevronRightIcon width={16} />}
+                endContent={<HiOutlineChevronRight size={16} />}
                 errorMessage={handleErrorMessage(errors, v.name)}
                 rules={{
                   required: { value: true, message: v.errorMessage! },
@@ -94,7 +94,7 @@ const Create = () => {
                   placeholder={v.placeholder}
                   autoComplete={v.autoComplete}
                   startContent={
-                    <MapPinIcon width={16} color={IconColor.zinc} />
+                    <HiOutlineMapPin size={16} color={IconColor.zinc} />
                   }
                   errorMessage={handleErrorMessage(errors, v.name)}
                   readOnly={{ isValue: true, cursor: "cursor-pointer" }}
@@ -114,7 +114,7 @@ const Create = () => {
                   ref={v.uploadImage?.file.ref}
                   onClick={v.uploadImage?.file.onClick}
                   onChange={v.uploadImage?.file.onChange}
-                  startContent={<ArrowUpTrayIcon width={16} />}
+                  startContent={<HiOutlineArrowUpTray size={16} />}
                   errorMessage={handleErrorMessage(errors, v.name)}
                   rules={{
                     required: { value: true, message: v.errorMessage ?? "" },
@@ -226,7 +226,7 @@ const useHook = () => {
         image: {
           actions: [
             {
-              src: <TrashIcon width={16} color={IconColor.red} />,
+              src: <HiOutlineTrash size={16} color={IconColor.red} />,
               onClick: () => setKtpBlob(""),
             },
           ],

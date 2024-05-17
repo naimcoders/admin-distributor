@@ -4,7 +4,7 @@ import {
   objectFields,
 } from "src/components/Textfield";
 import { FieldValues, useForm } from "react-hook-form";
-import { ArrowUpTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { HiOutlineArrowUpTray, HiOutlineTrash } from "react-icons/hi2";
 import { Button } from "src/components/Button";
 import { File, LabelAndImage } from "src/components/File";
 import { handleErrorMessage, parsePhoneNumber } from "src/helpers";
@@ -79,7 +79,7 @@ const Profile = ({
                       ref={v.uploadImage?.file.ref}
                       onClick={v.uploadImage?.file.onClick}
                       onChange={v.uploadImage?.file.onChange}
-                      startContent={<ArrowUpTrayIcon width={16} />}
+                      startContent={<HiOutlineArrowUpTray size={16} />}
                       errorMessage={handleErrorMessage(
                         forms.formState.errors,
                         v.name
@@ -232,7 +232,7 @@ const useField = (data: Distributor, distributorId: string, ktp: KtpFile) => {
         image: {
           actions: [
             {
-              src: <TrashIcon color={IconColor.red} width={16} />,
+              src: <HiOutlineTrash color={IconColor.red} size={16} />,
               onClick: () => (!ktpBlob ? ktp.setFile("") : setKtpBlob("")),
             },
           ],

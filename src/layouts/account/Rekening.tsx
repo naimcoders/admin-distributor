@@ -7,7 +7,7 @@ import {
 import Template from "./Template";
 import { FieldValues, useForm } from "react-hook-form";
 import { handleErrorMessage } from "src/helpers";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronRight } from "react-icons/hi2";
 import { Modal } from "src/components/Modal";
 import { useActiveModal } from "src/stores/modalStore";
 import { UseForm } from "src/types";
@@ -50,7 +50,7 @@ const Rekening = () => {
               rules={{
                 required: { value: true, message: el.errorMessage ?? "" },
               }}
-              endContent={<ChevronRightIcon width={16} />}
+              endContent={<HiOutlineChevronRight width={16} />}
             />
           )}
         </section>

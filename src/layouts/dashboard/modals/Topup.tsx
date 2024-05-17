@@ -16,7 +16,7 @@ import {
 } from "src/api/pilipay.service";
 import { cn, Image } from "@nextui-org/react";
 import { toast } from "react-toastify";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { HiOutlineArrowLeft } from "react-icons/hi2";
 import Payment from "./Payment";
 
 const Topup = () => {
@@ -75,7 +75,7 @@ const Topup = () => {
         <main className="my-4 border-t border-gray-300 pt-4 flexcol gap-4">
           <div className="relative">
             {showListPaymentChannel && (
-              <ArrowLeftIcon
+              <HiOutlineArrowLeft
                 width={18}
                 className="cursor-pointer absolute top-1"
                 title="Kembali"

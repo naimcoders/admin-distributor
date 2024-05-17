@@ -1,9 +1,9 @@
 import {
-  ArrowUpTrayIcon,
-  ChevronRightIcon,
-  MapPinIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineArrowUpTray,
+  HiOutlineChevronRight,
+  HiOutlineMapPin,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -72,7 +72,7 @@ const Create = () => {
           className="max-w-sm"
           control={forms.control}
           onClick={actionIsCoordinate}
-          startContent={<MapPinIcon width={16} color={IconColor.zinc} />}
+          startContent={<HiOutlineMapPin width={16} color={IconColor.zinc} />}
           errorMessage={handleErrorMessage(
             forms.formState.errors,
             "coordinate"
@@ -138,7 +138,7 @@ const Create = () => {
                     defaultValue=""
                     autoComplete={v.autoComplete}
                     endContent={
-                      <ChevronRightIcon width={16} color={IconColor.zinc} />
+                      <HiOutlineChevronRight size={16} color={IconColor.zinc} />
                     }
                     errorMessage={handleErrorMessage(
                       forms.formState.errors,
@@ -166,8 +166,8 @@ const Create = () => {
                         v.name
                       )}
                       startContent={
-                        <ArrowUpTrayIcon
-                          width={16}
+                        <HiOutlineArrowUpTray
+                          size={16}
                           color={IconColor.zinc}
                           className="cursor-pointer"
                         />
@@ -359,7 +359,7 @@ const useField = () => {
         image: {
           actions: [
             {
-              src: <TrashIcon width={16} color={IconColor.red} />,
+              src: <HiOutlineTrash size={16} color={IconColor.red} />,
               onClick: () => setKtpBlob(""),
             },
           ],
@@ -381,7 +381,7 @@ const useField = () => {
         image: {
           actions: [
             {
-              src: <TrashIcon width={16} color={IconColor.red} />,
+              src: <HiOutlineTrash size={16} color={IconColor.red} />,
               onClick: () => setBannerBlob(""),
             },
           ],

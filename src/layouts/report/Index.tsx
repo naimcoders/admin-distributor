@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronRight } from "react-icons/hi2";
 import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { Calendar } from "src/components/Calendar";
@@ -54,7 +54,7 @@ export const Period = () => {
         control={control}
         onClick={actionIsPeriod}
         placeholder="pilih periode report"
-        endContent={<ChevronRightIcon width={16} />}
+        endContent={<HiOutlineChevronRight size={16} />}
         errorMessage={handleErrorMessage(errors, "period")}
         readOnly={{ isValue: true, cursor: "cursor-pointer" }}
         rules={{ required: { value: true, message: "pilih periode report" } }}

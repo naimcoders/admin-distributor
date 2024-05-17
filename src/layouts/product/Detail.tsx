@@ -1,10 +1,10 @@
 import React from "react";
 import cx from "classnames";
 import {
-  ChevronRightIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineChevronRight,
+  HiOutlineTrash,
+  HiOutlineXMark,
+} from "react-icons/hi2";
 import square from "src/assets/images/square.png";
 import rectangle from "src/assets/images/rectangle.png";
 import {
@@ -456,7 +456,7 @@ const Detail = () => {
                         }}
                         actions={[
                           {
-                            src: <TrashIcon width={16} />,
+                            src: <HiOutlineTrash size={16} />,
                             onClick: () => onIsDeleteModal(v.name),
                           },
                         ]}
@@ -528,7 +528,7 @@ const Detail = () => {
               }}
               errorMessage={handleErrorMessage(errors, "category")}
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                <HiOutlineChevronRight size={16} color={IconColor.zinc} />
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={actionIsCategory}
@@ -541,8 +541,8 @@ const Detail = () => {
               defaultValue=""
               endContent={
                 subCategoryId ? (
-                  <XMarkIcon
-                    width={16}
+                  <HiOutlineXMark
+                    size={16}
                     color={IconColor.red}
                     className="cursor-pointer"
                     onClick={() => {
@@ -551,7 +551,7 @@ const Detail = () => {
                     }}
                   />
                 ) : (
-                  <ChevronRightIcon width={16} color={IconColor.zinc} />
+                  <HiOutlineChevronRight size={16} color={IconColor.zinc} />
                 )
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
@@ -570,7 +570,7 @@ const Detail = () => {
               control={control}
               defaultValue=""
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                <HiOutlineChevronRight size={16} color={IconColor.zinc} />
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={actionIsVariant}
@@ -584,7 +584,7 @@ const Detail = () => {
               errorMessage={handleErrorMessage(errors, "price")}
               endContent={
                 variantTypes.length > 0 ? (
-                  <ChevronRightIcon width={16} color={IconColor.zinc} />
+                  <HiOutlineChevronRight size={16} color={IconColor.zinc} />
                 ) : undefined
               }
               readOnly={
@@ -617,7 +617,7 @@ const Detail = () => {
               }}
               errorMessage={handleErrorMessage(errors, "postage")}
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                <HiOutlineChevronRight size={16} color={IconColor.zinc} />
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={actionIsPostage}
@@ -629,7 +629,7 @@ const Detail = () => {
               control={control}
               defaultValue="Baru"
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                <HiOutlineChevronRight size={16} color={IconColor.zinc} />
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={actionIsCondition}
@@ -642,7 +642,7 @@ const Detail = () => {
                 control={control}
                 defaultValue=""
                 endContent={
-                  <ChevronRightIcon width={16} color={IconColor.zinc} />
+                  <HiOutlineChevronRight size={16} color={IconColor.zinc} />
                 }
                 readOnly={{ isValue: true, cursor: "cursor-pointer" }}
                 onClick={actionIsSubDistributor}
@@ -655,7 +655,7 @@ const Detail = () => {
               control={control}
               defaultValue=""
               endContent={
-                <ChevronRightIcon width={16} color={IconColor.zinc} />
+                <HiOutlineChevronRight size={16} color={IconColor.zinc} />
               }
               readOnly={{ isValue: true, cursor: "cursor-pointer" }}
               onClick={actionIsPromotion}

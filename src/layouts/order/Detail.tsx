@@ -1,9 +1,9 @@
 import cx from "classnames";
 import {
-  ArrowDownTrayIcon,
-  ClipboardIcon,
-  PrinterIcon,
-} from "@heroicons/react/24/outline";
+  HiOutlineArrowDownTray,
+  HiOutlineClipboard,
+  HiOutlinePrinter,
+} from "react-icons/hi2";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -44,7 +44,7 @@ const calculateSubTotal = (price: number, qty: number) => price * qty;
 const Print = () => {
   return (
     <section className="flex gap-2 cursor-pointer">
-      <PrinterIcon width={18} />
+      <HiOutlinePrinter size={18} />
       Print
     </section>
   );
@@ -53,7 +53,7 @@ const Print = () => {
 const Download = () => {
   return (
     <section className="flex gap-2 cursor-pointer">
-      <ArrowDownTrayIcon width={18} />
+      <HiOutlineArrowDownTray size={18} />
       Download
     </section>
   );
@@ -84,8 +84,8 @@ const Detail = () => {
               <section className="flex flex-col gap-2">
                 <h1 className="font-medium inline-flex gap-2">
                   ID Order{" "}
-                  <ClipboardIcon
-                    width={18}
+                  <HiOutlineClipboard
+                    size={18}
                     color={IconColor.zinc}
                     className="cursor-pointer"
                     title="Salin"

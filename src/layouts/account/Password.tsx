@@ -7,7 +7,7 @@ import { checkPassword } from "src/pages/Index";
 import { setUser } from "src/stores/auth";
 import { updateDistributor } from "src/api/distributor.service";
 import { Spinner } from "@nextui-org/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { HiOutlineXMark } from "react-icons/hi2";
 import { IconColor } from "src/types";
 import { toast } from "react-toastify";
 
@@ -50,8 +50,8 @@ const Password = () => {
           }}
           errorMessage={handleErrorMessage(formEmail.formState.errors, "email")}
           endContent={
-            <XMarkIcon
-              width={16}
+            <HiOutlineXMark
+              size={16}
               color={IconColor.zinc}
               className="cursor-pointer"
               onClick={() => formEmail.setValue("email", "")}

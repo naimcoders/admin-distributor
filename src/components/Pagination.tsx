@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronRight, HiOutlineChevronLeft } from "react-icons/hi";
 import { usePagination, PaginationItemType, Button } from "@nextui-org/react";
 import { Fragment } from "react";
 
@@ -47,7 +47,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 title="Previous"
                 size="sm"
               >
-                <ChevronLeftIcon width={16} color="#1E1E1E" />
+                <HiOutlineChevronLeft width={16} color="#1E1E1E" />
               </Button>
             )}
 
@@ -73,7 +73,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
                 title="Next"
                 size="sm"
               >
-                <ChevronRightIcon width={16} color="#1E1E1E" />
+                <HiOutlineChevronRight width={16} color="#1E1E1E" />
               </Button>
             )}
           </Fragment>

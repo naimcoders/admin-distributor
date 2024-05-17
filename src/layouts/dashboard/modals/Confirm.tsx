@@ -1,4 +1,4 @@
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { HiOutlineChevronLeft } from "react-icons/hi2";
 import { FC, ReactNode } from "react";
 import { Modal } from "src/components/Modal";
 import { Currency } from "src/helpers";
@@ -52,7 +52,7 @@ export const ConfirmHeader: FC<HeaderProps> = ({ title, onBack }) => {
           onClick={onBack}
           title="Kembali"
         >
-          <ChevronLeftIcon width={18} />
+          <HiOutlineChevronLeft size={18} />
         </nav>
       )}
       <h1 className="capitalize text-center w-full text-lg font-semibold">

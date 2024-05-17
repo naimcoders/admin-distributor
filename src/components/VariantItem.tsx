@@ -1,4 +1,4 @@
-import { CheckIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { HiOutlineCheck, HiOutlinePlus, HiOutlineXMark } from "react-icons/hi2";
 import { Button } from "./Button";
 import { Textfield } from "./Textfield";
 import { IconColor, UseForm } from "src/types";
@@ -57,7 +57,11 @@ export const ItemVariant: React.FC<ItemProps> = ({
             <Button
               label={!add.isAdd ? "tambah" : "batal"}
               endContent={
-                !add.isAdd ? <PlusIcon width={16} /> : <XMarkIcon width={16} />
+                !add.isAdd ? (
+                  <HiOutlinePlus size={16} />
+                ) : (
+                  <HiOutlineXMark size={16} />
+                )
               }
               className="w-[6rem] border border-gray-300 text-gray-500"
               color="default"
@@ -83,8 +87,8 @@ export const ItemVariant: React.FC<ItemProps> = ({
               },
             }}
             endContent={
-              <CheckIcon
-                width={16}
+              <HiOutlineCheck
+                size={16}
                 title="Tambah"
                 className="cursor-pointer"
                 onClick={add.onSubmit}

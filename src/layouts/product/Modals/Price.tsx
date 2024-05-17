@@ -1,4 +1,4 @@
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { HiOutlinePencil } from "react-icons/hi2";
 import { FC, Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
@@ -99,7 +99,7 @@ const PriceModal: React.FC<PriceProps> = (props) => {
             >
               {!props.isMassal ? (
                 <>
-                  <PencilIcon width={16} />
+                  <HiOutlinePencil width={16} />
                   massal
                 </>
               ) : (

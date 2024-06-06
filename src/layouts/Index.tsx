@@ -105,6 +105,7 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
   const qsDIstributor = stringifyQuery({ page: 1 });
   const qsOrder = stringifyQuery({ status: "waiting_accept" });
   const qsAccount = stringifyQuery({ section: "email & password" });
+  const qsSales = stringifyQuery({ page: 1 });
 
   return (
     <>
@@ -127,7 +128,11 @@ export const SideBarFeature = ({ onClickNav }: { onClickNav?: () => void }) => {
             name="Sub Distributor"
             path={`sub-distributor?${qsDIstributor}`}
           />
-          <LinkSideBar name="Sales" path="sales" onClickNav={onClickNav} />
+          <LinkSideBar
+            name="Sales"
+            path={`sales?${qsSales}`}
+            onClickNav={onClickNav}
+          />
           <LinkSideBar
             name="Ekspedisi"
             path="ekspedisi"

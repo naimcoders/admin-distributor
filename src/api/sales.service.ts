@@ -2,7 +2,7 @@ import { ReqPaging, ResPaging } from "src/interface";
 import { req } from "./request";
 import queryString from "query-string";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface Sales {
   id: string;
@@ -25,6 +25,19 @@ export interface Category {
   id: string;
   name: string;
   imageUrl: string;
+  isActive: boolean;
+}
+
+interface CreateSales {
+  name: string;
+  phoneNumber: string;
+  email: string;
+  ktpImagePath: string;
+  comition: number;
+  categoryId: string[];
+}
+
+interface Activated {
   isActive: boolean;
 }
 
@@ -53,10 +66,42 @@ class Api {
       errors: "",
     });
   }
+
+  async findSalesById(salesId: string): Promise<Sales> {
+    return await req<Sales>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/${salesId}`,
+      errors: "",
+    });
+  }
+
+  async createSales(r: CreateSales): Promise<Sales> {
+    return await req<Sales>({
+      method: "POST",
+      isNoAuth: false,
+      path: `${this.path}`,
+      errors: "",
+      body: r,
+    });
+  }
+
+  async salesActivated(salesId: string, r: Activated): Promise<Sales> {
+    return await req<Sales>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${salesId}/activated`,
+      errors: "",
+      body: r,
+    });
+  }
 }
 
 interface ApiSalesInfo {
   find(r: ReqPaging): Promise<ResPaging<Sales>>;
+  createSales(r: CreateSales): Promise<Sales>;
+  findSalesById(salesId: string): Promise<Sales>;
+  salesActivated(salesId: string, r: Activated): Promise<Sales>;
 }
 
 function getSalesApiInfo(): ApiSalesInfo {
@@ -86,4 +131,36 @@ export const findSales = (pageTable: number) => {
     setSearch,
     isNext: data.data?.canNext,
   };
+};
+
+export const findSalesById = (salesId: string) => {
+  const data = useQuery<Sales, Error>({
+    queryKey: [key, salesId],
+    queryFn: () => getSalesApiInfo().findSalesById(salesId),
+    enabled: !!salesId,
+  });
+
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error,
+  };
+};
+
+export const createSales = () => {
+  const queryClient = useQueryClient();
+  return useMutation<Sales, Error, CreateSales>({
+    mutationKey: ["create-sales"],
+    mutationFn: (r) => getSalesApiInfo().createSales(r),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+};
+
+export const salesActivated = (salesId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation<Sales, Error, Activated>({
+    mutationKey: ["sales-activated", salesId],
+    mutationFn: (r) => getSalesApiInfo().salesActivated(salesId, r),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
 };

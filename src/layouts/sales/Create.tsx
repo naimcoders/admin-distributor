@@ -12,7 +12,9 @@ import { Textfield } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor, UseForm } from "src/types";
 import { handleErrorMessage, setRequiredField } from "src/helpers";
-import { Checkbox, CheckboxGroup } from "@nextui-org/react";
+import { Checkbox, CheckboxGroup, Spinner } from "@nextui-org/react";
+import { findCategories } from "src/api/category.service";
+import Error from "src/components/Error";
 
 interface IDefaultValues {
   comition: string;
@@ -161,20 +163,26 @@ export const CategoryModal = ({
   setCategories,
 }: ICategory) => {
   const { isCategory, actionIsCategory } = useActiveModal();
-
-  const data: string[] = [
-    "Semua Kategori",
-    "Alat & Mesin",
-    "Bahan Bangunan",
-    "Dapur",
-  ];
+  const categoryApi = findCategories();
 
   const key = "category";
 
   const onNext = () => {
-    setValue(key, categories.join(", "));
+    if (!categoryApi.data) return;
+    let category: string[] = [];
+
+    categoryApi.data.filter((e) => {
+      categories.forEach((f) => {
+        if (f === e.id) {
+          category.push(e.name);
+        }
+      });
+    });
+
+    setValue(key, category.join(", "));
     clearErrors(key);
     actionIsCategory();
+    category = [];
   };
 
   return (
@@ -183,26 +191,28 @@ export const CategoryModal = ({
       isOpen={isCategory}
       closeModal={actionIsCategory}
     >
-      <CheckboxGroup
-        className="my-5"
-        // onChange={(e) => setCategories(e)}
-        // defaultValue={categories}
-        value={categories}
-        onValueChange={setCategories}
-      >
-        {data.map((v) => (
-          <Checkbox
-            value={v}
-            key={v}
-            id={v}
-            name={v}
-            classNames={{ label: "text-sm" }}
-            size="sm"
-          >
-            {v}
-          </Checkbox>
-        ))}
-      </CheckboxGroup>
+      {categoryApi.error && <Error error={categoryApi.error} />}
+      {categoryApi.isLoading ? (
+        <Spinner size="sm" />
+      ) : (
+        <CheckboxGroup
+          className="my-5"
+          value={categories}
+          onValueChange={setCategories}
+        >
+          {categoryApi.data?.map((v) => (
+            <Checkbox
+              key={v.id}
+              value={v.id}
+              name={v.name}
+              classNames={{ label: "text-sm" }}
+              size="sm"
+            >
+              {v.name}
+            </Checkbox>
+          ))}
+        </CheckboxGroup>
+      )}
 
       <Button label="selanjutnya" className="mx-auto block" onClick={onNext} />
     </Modal>

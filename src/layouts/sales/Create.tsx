@@ -9,16 +9,14 @@ import { Button } from "src/components/Button";
 import { ChildRef, File, LabelAndImage } from "src/components/File";
 import { Modal } from "src/components/Modal";
 import { Textfield } from "src/components/Textfield";
-import { useActiveModal } from "src/stores/modalStore";
-import { IconColor, UseForm } from "src/types";
+import { IconColor } from "src/types";
 import {
   handleErrorMessage,
   parsePhoneNumber,
   setRequiredField,
 } from "src/helpers";
 import { Checkbox, CheckboxGroup, Spinner } from "@nextui-org/react";
-import { findCategories } from "src/api/category.service";
-import Error from "src/components/Error";
+import { Category, findCategories } from "src/api/category.service";
 import { uploadFile } from "src/firebase/upload";
 import { toast } from "react-toastify";
 import { createSales } from "src/api/sales.service";
@@ -33,7 +31,8 @@ interface IDefaultValues {
 
 const Create = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = React.useState<string[]>([]);
+  const [isCategoryModal, setIsCategoryModal] = useState(false);
+  const [pickCategories, setPickCategories] = React.useState<string[]>([]);
 
   const {
     control,
@@ -41,9 +40,9 @@ const Create = () => {
     setValue,
     clearErrors,
     formState: { errors },
+    reset,
   } = useForm<IDefaultValues>();
 
-  const { actionIsCategory } = useActiveModal();
   const {
     ktpBlob,
     ktpRef,
@@ -54,7 +53,26 @@ const Create = () => {
     setKtpFiles,
   } = useKtp();
 
+  const findAllCategories = findCategories();
   const createNewSales = createSales();
+
+  const onNext = () => {
+    if (!findAllCategories.data) return;
+    let category: string[] = [];
+
+    findAllCategories.data.filter((e) => {
+      pickCategories.forEach((f) => {
+        if (f === e.id) {
+          category.push(e.name);
+        }
+      });
+    });
+
+    setValue("category", category.join(", "));
+    clearErrors("category");
+    onCloseModal();
+    category = [];
+  };
 
   const onSubmit = handleSubmit(async (e) => {
     if (!ktpFiles) return;
@@ -72,17 +90,21 @@ const Create = () => {
         email: e.email,
         name: e.name,
         phoneNumber,
-        categoryId: categories,
+        categoryId: pickCategories,
       });
 
       toast.success("Sales berhasil dibuat");
       setKtpFiles(undefined);
+      reset();
+      setKtpBlob("");
     } catch (e) {
       toast.error("Gagal membuat sales");
     } finally {
       setIsLoading(false);
     }
   });
+
+  const onCloseModal = () => setIsCategoryModal((v) => !v);
 
   return (
     <main>
@@ -134,7 +156,7 @@ const Create = () => {
           rules={{ required: setRequiredField(true, "pilih kategori") }}
           className="w-full"
           readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-          onClick={actionIsCategory}
+          onClick={onCloseModal}
           endContent={<HiOutlineChevronRight size={16} />}
         />
 
@@ -188,66 +210,43 @@ const Create = () => {
         className="mx-auto block mt-14"
       />
 
-      <CategoryModal
-        setValue={setValue}
-        clearErrors={clearErrors}
-        categories={categories}
-        setCategories={setCategories}
+      <OptionCategoryModal
+        categories={pickCategories}
+        setCategories={setPickCategories}
+        data={findAllCategories.data ?? []}
+        isOpenModal={isCategoryModal}
+        onCloseModal={onCloseModal}
+        onNext={onNext}
       />
     </main>
   );
 };
 
-interface ICategory extends Pick<UseForm, "setValue" | "clearErrors"> {
+interface ICategory {
+  data: Category[];
+  isOpenModal: boolean;
+  onCloseModal: () => void;
   setCategories: React.Dispatch<React.SetStateAction<string[]>>;
   categories: string[];
+  onNext: () => void;
 }
 
-export const CategoryModal = ({
-  setValue,
-  clearErrors,
-  categories,
-  setCategories,
-}: ICategory) => {
-  const { isCategory, actionIsCategory } = useActiveModal();
-  const categoryApi = findCategories();
-
-  const key = "category";
-
-  const onNext = () => {
-    if (!categoryApi.data) return;
-    let category: string[] = [];
-
-    categoryApi.data.filter((e) => {
-      categories.forEach((f) => {
-        if (f === e.id) {
-          category.push(e.name);
-        }
-      });
-    });
-
-    setValue(key, category.join(", "));
-    clearErrors(key);
-    actionIsCategory();
-    category = [];
-  };
-
+export const OptionCategoryModal = (props: ICategory) => {
   return (
     <Modal
       title="pilih kategori"
-      isOpen={isCategory}
-      closeModal={actionIsCategory}
+      isOpen={props.isOpenModal}
+      closeModal={props.onCloseModal}
     >
-      {categoryApi.error && <Error error={categoryApi.error} />}
-      {categoryApi.isLoading ? (
+      {props.data.length < 1 ? (
         <Spinner size="sm" />
       ) : (
         <CheckboxGroup
           className="my-5"
-          value={categories}
-          onValueChange={setCategories}
+          value={props.categories}
+          onValueChange={props.setCategories}
         >
-          {categoryApi.data?.map((v) => (
+          {props.data?.map((v) => (
             <Checkbox
               key={v.id}
               value={v.id}
@@ -261,7 +260,11 @@ export const CategoryModal = ({
         </CheckboxGroup>
       )}
 
-      <Button label="selanjutnya" className="mx-auto block" onClick={onNext} />
+      <Button
+        label="selanjutnya"
+        className="mx-auto block"
+        onClick={props.onNext}
+      />
     </Modal>
   );
 };

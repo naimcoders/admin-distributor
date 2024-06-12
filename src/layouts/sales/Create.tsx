@@ -3,7 +3,7 @@ import {
   HiOutlineChevronRight,
   HiOutlineTrash,
 } from "react-icons/hi2";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "src/components/Button";
 import { ChildRef, File, LabelAndImage } from "src/components/File";
@@ -11,10 +11,17 @@ import { Modal } from "src/components/Modal";
 import { Textfield } from "src/components/Textfield";
 import { useActiveModal } from "src/stores/modalStore";
 import { IconColor, UseForm } from "src/types";
-import { handleErrorMessage, setRequiredField } from "src/helpers";
+import {
+  handleErrorMessage,
+  parsePhoneNumber,
+  setRequiredField,
+} from "src/helpers";
 import { Checkbox, CheckboxGroup, Spinner } from "@nextui-org/react";
 import { findCategories } from "src/api/category.service";
 import Error from "src/components/Error";
+import { uploadFile } from "src/firebase/upload";
+import { toast } from "react-toastify";
+import { createSales } from "src/api/sales.service";
 
 interface IDefaultValues {
   comition: string;
@@ -25,6 +32,7 @@ interface IDefaultValues {
 }
 
 const Create = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = React.useState<string[]>([]);
 
   const {
@@ -46,19 +54,39 @@ const Create = () => {
     setKtpFiles,
   } = useKtp();
 
+  const createNewSales = createSales();
+
   const onSubmit = handleSubmit(async (e) => {
+    if (!ktpFiles) return;
+
     try {
-      console.log(e, ktpFiles, categories);
+      setIsLoading(true);
+      const comition = Number(e.comition);
+      const fileName = `temp/${Date.now()}.png`;
+      const phoneNumber = parsePhoneNumber(e.phoneNumber);
+
+      await uploadFile({ file: ktpFiles, prefix: fileName });
+      await createNewSales.mutateAsync({
+        ktpImagePath: fileName,
+        comition,
+        email: e.email,
+        name: e.name,
+        phoneNumber,
+        categoryId: categories,
+      });
+
+      toast.success("Sales berhasil dibuat");
       setKtpFiles(undefined);
     } catch (e) {
-      const error = e as Error;
-      console.error(error);
+      toast.error("Gagal membuat sales");
+    } finally {
+      setIsLoading(false);
     }
   });
 
   return (
     <main>
-      <section className="grid grid-cols-4 lg:gap-8 gap-4">
+      <section className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-2 lg:gap-8 gap-4">
         <Textfield
           type="text"
           label="nama sales"
@@ -119,6 +147,8 @@ const Create = () => {
             ref={ktpRef}
             onClick={onClick}
             onChange={onChange}
+            errorMessage={handleErrorMessage(errors, "ktp")}
+            rules={{ required: setRequiredField(true, "unggah KTP") }}
             startContent={<HiOutlineArrowUpTray size={16} />}
           />
         ) : (
@@ -133,10 +163,27 @@ const Create = () => {
             ]}
           />
         )}
+
+        <Textfield
+          label="komisi penjualan (%)"
+          control={control}
+          name="comition"
+          placeholder="masukkan komisi"
+          defaultValue=""
+          errorMessage={handleErrorMessage(errors, "comition")}
+          rules={{ required: setRequiredField(true, "masukkan komisi") }}
+          className="w-full"
+        />
       </section>
 
       <Button
-        label="simpan"
+        label={
+          isLoading || createNewSales.isLoading ? (
+            <Spinner color="secondary" size="sm" />
+          ) : (
+            "simpan"
+          )
+        }
         onClick={onSubmit}
         className="mx-auto block mt-14"
       />
@@ -221,7 +268,7 @@ export const CategoryModal = ({
 
 export const useKtp = () => {
   const [ktpBlob, setKtpBlob] = React.useState("");
-  const [ktpFiles, setKtpFiles] = React.useState<FileList>();
+  const [ktpFiles, setKtpFiles] = React.useState<File>();
   const ktpRef = React.useRef<ChildRef>(null);
 
   const onClick = () => {
@@ -231,7 +278,7 @@ export const useKtp = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    setKtpFiles(files);
+    setKtpFiles(files[0]);
     const blob = URL.createObjectURL(files[0]);
     setKtpBlob(blob);
   };

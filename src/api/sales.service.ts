@@ -149,11 +149,17 @@ export const findSalesById = (salesId: string) => {
 
 export const createSales = () => {
   const queryClient = useQueryClient();
-  return useMutation<Sales, Error, CreateSales>({
+  const data = useMutation<Sales, Error, CreateSales>({
     mutationKey: ["create-sales"],
     mutationFn: (r) => getSalesApiInfo().createSales(r),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
   });
+
+  return {
+    mutateAsync: data.mutateAsync,
+    isLoading: data.isPending,
+    error: data.error?.message,
+  };
 };
 
 export const salesActivated = (salesId: string) => {

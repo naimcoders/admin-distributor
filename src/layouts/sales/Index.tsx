@@ -1,10 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Sales as ISales, findSales } from "src/api/sales.service";
 import { Actions } from "src/components/Actions";
 import Error from "src/components/Error";
 import Label from "src/components/Label";
+import Pagination from "src/components/Pagination";
 import { TableWithoutTabs } from "src/components/Table";
 import {
-  Currency,
   detailNavigate,
   parsePhoneNumber,
   parseQueryString,
@@ -13,11 +14,13 @@ import { Columns } from "src/types";
 
 const Sales = () => {
   const { columns } = useHook();
-  const { onNav } = detailNavigate();
+  const navigate = useNavigate();
   const qString = parseQueryString<{ page: number }>();
-  const { data, isLoading, error, page, setSearch } = findSales(
-    Number(qString.page)
-  );
+  const { data, isLoading, error, page, setSearch, setPage, isNext } =
+    findSales(Number(qString.page));
+
+  const onNext = () => setPage((v) => v + 1);
+  const onPrev = () => setPage((v) => v - 1);
 
   return (
     <>
@@ -34,7 +37,7 @@ const Sales = () => {
               createData: {
                 isValue: true,
                 label: "sales",
-                onClick: () => onNav("tambah"),
+                onClick: () => navigate("/sales/tambah"),
               },
             }}
             table={{
@@ -42,8 +45,12 @@ const Sales = () => {
               data: data?.items ?? [],
               isLoading,
               page,
+              className:
+                "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
             }}
           />
+
+          <Pagination page={page} next={onNext} prev={onPrev} isNext={isNext} />
         </main>
       )}
     </>
@@ -69,6 +76,23 @@ const useHook = () => {
     {
       header: <p className="text-center">tanggal join</p>,
       render: (v) => <p>{v.createdAt}</p>,
+    },
+    {
+      header: <p className="text-center">kategori sales</p>,
+      render: (v) => (
+        <p className="truncate normal-case">
+          {v.category.map((e) => e.name).join(", ")}
+        </p>
+      ),
+      width: "max-w-[2rem]",
+    },
+    {
+      header: <p className="text-center">kategori sales</p>,
+      render: (v) => <p className="text-right">{v.comition}%</p>,
+    },
+    {
+      header: <p className="text-center">omset bulan ini</p>,
+      render: (v) => <p className="text-right">{v.revenue}</p>,
     },
     {
       header: <p className="text-center">aksi</p>,

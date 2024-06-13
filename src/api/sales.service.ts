@@ -162,11 +162,11 @@ export const createSales = () => {
   };
 };
 
-export const salesActivated = (salesId: string) => {
+export const salesActivated = () => {
   const queryClient = useQueryClient();
-  return useMutation<Sales, Error, Activated>({
-    mutationKey: ["sales-activated", salesId],
-    mutationFn: (r) => getSalesApiInfo().salesActivated(salesId, r),
+  return useMutation<Sales, Error, Activated & { salesId: string }>({
+    mutationKey: ["sales-activated"],
+    mutationFn: (r) => getSalesApiInfo().salesActivated(r.salesId, r),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
   });
 };

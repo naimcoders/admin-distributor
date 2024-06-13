@@ -5,60 +5,43 @@ import Error from "src/components/Error";
 import Label from "src/components/Label";
 import Pagination from "src/components/Pagination";
 import { TableWithoutTabs } from "src/components/Table";
-import {
-  detailNavigate,
-  parsePhoneNumber,
-  parseQueryString,
-} from "src/helpers";
+import { parsePhoneNumber, parseQueryString } from "src/helpers";
 import { Columns } from "src/types";
+import { useSuspend } from "../distributor/Index";
+import { toast } from "react-toastify";
+import { ConfirmModal } from "src/components/Modal";
+
+// TODO:
+// 1. sales activated
 
 const Sales = () => {
-  const { columns } = useHook();
   const navigate = useNavigate();
   const qString = parseQueryString<{ page: number }>();
   const { data, isLoading, error, page, setSearch, setPage, isNext } =
     findSales(Number(qString.page));
 
+  const { onSwitch, isSuspend, closeModal, id, onResetId, onResetSuspend } =
+    useSuspend();
+
+  const onSuspend = async () => {
+    try {
+      toast.loading("Loading...", { toastId: "activated-sales" });
+      console.log({ id, isSuspend });
+
+      toast.success("Status berhasil diperbarui");
+      closeModal();
+      onResetId();
+      onResetSuspend();
+    } catch (e) {
+      const error = e as Error;
+      toast.error(error.message);
+    } finally {
+      toast.dismiss("activated-sales");
+    }
+  };
+
   const onNext = () => setPage((v) => v + 1);
   const onPrev = () => setPage((v) => v - 1);
-
-  return (
-    <>
-      {error ? (
-        <Error error={error} />
-      ) : (
-        <main className="overflow-auto whitespace-nowrap pb-5">
-          <TableWithoutTabs
-            header={{
-              search: {
-                placeholder: "cari nama sales/nomor HP/kategori",
-                setSearch,
-              },
-              createData: {
-                isValue: true,
-                label: "sales",
-                onClick: () => navigate("/sales/tambah"),
-              },
-            }}
-            table={{
-              columns,
-              data: data?.items ?? [],
-              isLoading,
-              page,
-              className:
-                "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
-            }}
-          />
-
-          <Pagination page={page} next={onNext} prev={onPrev} isNext={isNext} />
-        </main>
-      )}
-    </>
-  );
-};
-
-const useHook = () => {
-  const { onNav } = detailNavigate();
 
   const columns: Columns<ISales>[] = [
     {
@@ -102,9 +85,10 @@ const useHook = () => {
           action="switchAndDetail"
           switch={{
             isSelected: true,
+            onClick: () => onSwitch(v.id, v.isActive),
           }}
           detail={{
-            onClick: () => onNav(String(v.id)),
+            onClick: () => navigate(`/sales/${v.id}`),
           }}
         />
       ),
@@ -112,7 +96,51 @@ const useHook = () => {
     },
   ];
 
-  return { columns };
+  return (
+    <>
+      {error ? (
+        <Error error={error} />
+      ) : (
+        <main className="overflow-auto whitespace-nowrap pb-5">
+          <TableWithoutTabs
+            header={{
+              search: {
+                placeholder: "cari nama sales/nomor HP/kategori",
+                setSearch,
+              },
+              createData: {
+                isValue: true,
+                label: "sales",
+                onClick: () => navigate("/sales/tambah"),
+              },
+            }}
+            table={{
+              columns,
+              data: data?.items ?? [],
+              isLoading,
+              page,
+              className:
+                "mb-4 overflow-auto whitespace-nowrap h-calcSubDistributorTable",
+            }}
+          />
+
+          <Pagination page={page} next={onNext} prev={onPrev} isNext={isNext} />
+
+          <ConfirmModal
+            label={
+              !isSuspend
+                ? "Yakin ingin menonaktifkan akun ini?"
+                : "Yakin ingin mengaktifkan akun ini?"
+            }
+            onSubmit={{
+              label: !isSuspend ? "non-aktifkan" : "aktifkan",
+              action: onSuspend,
+            }}
+          />
+        </main>
+      )}
+    </>
+  );
 };
 
 export default Sales;

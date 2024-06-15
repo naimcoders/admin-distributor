@@ -12,7 +12,6 @@ export const PrivateRoute = () => {
   useEffect(() => {
     if (user) {
       setUsers();
-      <Navigate to="/dashboard" />;
     }
   }, [user]);
 

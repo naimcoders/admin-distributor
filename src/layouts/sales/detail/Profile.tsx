@@ -8,12 +8,17 @@ import { FieldValues, useForm } from "react-hook-form";
 import { Textfield } from "src/components/Textfield";
 import { useKtp } from "../Create";
 import { File, LabelAndImage } from "src/components/File";
-import { handleErrorMessage, setRequiredField } from "src/helpers";
+import {
+  handleErrorMessage,
+  parsePhoneNumber,
+  setRequiredField,
+} from "src/helpers";
 import { IconColor } from "src/types";
 import { findSalesById } from "src/api/sales.service";
 import { useParams } from "react-router-dom";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
+import { getFileFromFirebase } from "src/firebase/upload";
 
 const Profile = () => {
   const { id } = useParams() as { id: string };
@@ -43,6 +48,14 @@ const Profile = () => {
     }
   }, [salesById.data]);
 
+  React.useEffect(() => {
+    if (salesById.data) {
+      getFileFromFirebase(salesById.data.ktpImage).then((path) =>
+        setKtpBlob(path ?? "")
+      );
+    }
+  }, [salesById.data]);
+
   return (
     <main>
       {salesById.error && <Error error={salesById.error.message} />}
@@ -68,7 +81,7 @@ const Profile = () => {
             control={control}
             name="phoneNumber"
             placeholder="Masukkan nomor HP sales"
-            defaultValue={salesById.data?.phoneNumber}
+            defaultValue={parsePhoneNumber(salesById.data?.phoneNumber)}
             errorMessage={handleErrorMessage(errors, "phoneNumber")}
             rules={{ required: setRequiredField(true, "Masukkan nomor HP") }}
             className="w-full"
@@ -92,7 +105,9 @@ const Profile = () => {
             control={control}
             name="category"
             placeholder="pilih kategori sales"
-            defaultValue=""
+            defaultValue={salesById.data?.category
+              .map((e) => e.name)
+              .join(", ")}
             errorMessage={handleErrorMessage(errors, "category")}
             rules={{ required: setRequiredField(true, "pilih kategori") }}
             className="w-full"
@@ -140,70 +155,6 @@ const Profile = () => {
         </section>
       )}
     </main>
-    // <GridInput className="mt-5">
-    //   {fields.map((v, idx) => (
-    //     <Fragment key={idx}>
-    //       {["text", "number", "email"].includes(v.type!) && (
-    //         <Textfield
-    //           label={v.label}
-    //           control={control}
-    //           name={v.name ?? ""}
-    //           placeholder={v.placeholder}
-    //           defaultValue={v.defaultValue}
-    //           autoComplete={v.autoComplete}
-    //           readOnly={v.readOnly}
-    //           description={v.description}
-    //         />
-    //       )}
-
-    //       {["modal"].includes(v.type!) && (
-    //         <Textfield
-    //           name={v.name!}
-    //           autoComplete={v.autoComplete}
-    //           control={control}
-    //           defaultValue={v.defaultValue}
-    //           placeholder={v.placeholder}
-    //           readOnly={v.readOnly}
-    //           type="text"
-    //           label={v.label}
-    //           endContent={<HiOutlineChevronRight size={16} />}
-    //           onClick={v.onClick}
-    //         />
-    //       )}
-
-    //       {["file"].includes(v.type!) &&
-    //         (!v.defaultValue ? (
-    //           <File
-    //             name={v.name}
-    //             label={v.label}
-    //             control={control}
-    //             className="w-full"
-    //             placeholder={v.placeholder}
-    //             ref={v.uploadImage?.file.ref}
-    //             onClick={v.uploadImage?.file.onClick}
-    //             onChange={v.uploadImage?.file.onChange}
-    //             startContent={<HiOutlineArrowUpTray size={16} />}
-    //             errorMessage={handleErrorMessage(errors, v.name)}
-    //             rules={{
-    //               required: { value: true, message: v.errorMessage ?? "" },
-    //             }}
-    //           />
-    //         ) : (
-    //           <LabelAndImage src={v.defaultValue} label={v.label!} />
-    //         ))}
-
-    //       {["image"].includes(v.type!) && (
-    //         <LabelAndImage
-    //           label={v.label}
-    //           src={v.defaultValue}
-    //           actions={v.uploadImage?.image.actions}
-    //           className="aspect-square w-[10rem]"
-    //         />
-    //       )}
-    //     </Fragment>
-    //   ))}
-
-    // </GridInput>
   );
 };
 

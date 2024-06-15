@@ -6,7 +6,7 @@ import { parseQueryString, stringifyQuery } from "src/helpers";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDistributor } from "src/api/distributor.service";
 import React from "react";
-import { getFile } from "src/firebase/upload";
+import { getFileFromFirebase } from "src/firebase/upload";
 import Skeleton from "src/components/Skeleton";
 
 const Detail = () => {
@@ -26,7 +26,12 @@ const Detail = () => {
   const { findById } = useDistributor();
   const distributors = findById(id);
 
-  getFile(distributors?.data?.documents.ktpImage ?? "", setKtpFile);
+  React.useEffect(() => {
+    getFileFromFirebase(distributors?.data?.documents.ktpImage ?? "").then(
+      (e) => setKtpFile(e ?? "")
+    );
+  }, []);
+
   if (!distributors.data) return <Skeleton />;
 
   const tabs: ITabs[] = [

@@ -1,6 +1,5 @@
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FbStorage } from ".";
-import React from "react";
 
 export interface IUpload {
   file: File;
@@ -18,13 +17,15 @@ export const uploadFile = async (req: IUpload) => {
   }
 };
 
-export const getFile = async (path: string, setFile: (v: string) => void) => {
+export const getFileFromFirebase = async (path: string) => {
+  if (!path) return;
   const fileRef = ref(FbStorage, path);
-  // Kenapa ada useEffect disini?
-  React.useEffect(() => {
-    if (!path) return;
-    getDownloadURL(fileRef)
-      .then((e) => setFile(e))
-      .catch((e) => console.error(e));
-  }, [path]);
+  return await getDownloadURL(fileRef);
+
+  // React.useEffect(() => {
+  //   if (!path) return;
+  //   getDownloadURL(fileRef)
+  //     .then((e) => setFile(e))
+  //     .catch((e) => console.error(e));
+  // }, [path]);
 };

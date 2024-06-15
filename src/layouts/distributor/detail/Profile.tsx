@@ -107,7 +107,7 @@ const Profile = ({
               isPending ? <Spinner color="secondary" size="sm" /> : "simpan"
             }
             onClick={onSubmit}
-            className="mx-auto lg:mt-10 mt-6 sm:mt-8"
+            className="mx-auto lg:mt-10 mt-6 sm:mt-8 block"
           />
         </main>
       )}

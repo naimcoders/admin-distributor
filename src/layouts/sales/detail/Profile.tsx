@@ -116,6 +116,17 @@ const Profile = () => {
             endContent={<HiOutlineChevronRight size={16} />}
           />
 
+          <Textfield
+            label="komisi penjualan (%)"
+            control={control}
+            name="comition"
+            placeholder="masukkan komisi"
+            defaultValue={salesById.data?.comition}
+            errorMessage={handleErrorMessage(errors, "comition")}
+            rules={{ required: setRequiredField(true, "masukkan komisi") }}
+            className="w-full"
+          />
+
           {!ktpBlob ? (
             <File
               name="ktp"
@@ -142,15 +153,15 @@ const Profile = () => {
             />
           )}
 
-          <Textfield
-            label="komisi penjualan (%)"
-            control={control}
-            name="comition"
-            placeholder="masukkan komisi"
-            defaultValue={salesById.data?.comition}
-            errorMessage={handleErrorMessage(errors, "comition")}
-            rules={{ required: setRequiredField(true, "masukkan komisi") }}
-            className="w-full"
+          <LabelAndImage
+            src={salesById.data?.imageUrl ?? ""}
+            label="foto sales"
+            actions={[
+              {
+                src: <HiOutlineTrash size={16} color={IconColor.red} />,
+                onClick: () => setKtpBlob(""),
+              },
+            ]}
           />
         </section>
       )}

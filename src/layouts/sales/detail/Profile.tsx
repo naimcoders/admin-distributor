@@ -4,9 +4,9 @@ import {
   HiOutlineTrash,
 } from "react-icons/hi2";
 import React from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Textfield } from "src/components/Textfield";
-import { useKtp } from "../Create";
+import { OptionCategoryModal, useKtp } from "../Create";
 import { File, LabelAndImage } from "src/components/File";
 import {
   handleErrorMessage,
@@ -19,16 +19,28 @@ import { useParams } from "react-router-dom";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { getFileFromFirebase } from "src/firebase/upload";
+import { findCategories } from "src/api/category.service";
+
+interface IDefaultValues {
+  comition: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  category: string;
+}
 
 const Profile = () => {
+  const [isCategoryModal, setIsCategoryModal] = React.useState(false);
+  const [pickCategories, setPickCategories] = React.useState<string[]>([]);
+
   const { id } = useParams() as { id: string };
 
   const {
     control,
-    // setValue,
-    // clearErrors,
+    setValue,
+    clearErrors,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm<IDefaultValues>();
 
   const {
     ktpBlob,
@@ -40,21 +52,38 @@ const Profile = () => {
     // setKtpFiles,
   } = useKtp();
 
+  const onCloseCategoryModal = () => setIsCategoryModal((v) => !v);
+
   const salesById = findSalesById(id);
+  const findAllCategories = findCategories();
 
   React.useEffect(() => {
     if (salesById.data) {
       setKtpBlob(salesById.data.ktpImage);
-    }
-  }, [salesById.data]);
-
-  React.useEffect(() => {
-    if (salesById.data) {
       getFileFromFirebase(salesById.data.ktpImage).then((path) =>
         setKtpBlob(path ?? "")
       );
+      setPickCategories(salesById.data.category.map((e) => e.id));
     }
   }, [salesById.data]);
+
+  const onNext = () => {
+    if (!findAllCategories.data) return;
+    let category: string[] = [];
+
+    findAllCategories.data.filter((e) => {
+      pickCategories.forEach((f) => {
+        if (f === e.id) {
+          category.push(e.name);
+        }
+      });
+    });
+
+    setValue("category", category.join(", "));
+    clearErrors("category");
+    onCloseCategoryModal();
+    category = [];
+  };
 
   return (
     <main>
@@ -112,7 +141,7 @@ const Profile = () => {
             rules={{ required: setRequiredField(true, "pilih kategori") }}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-            // onClick={onCloseModal}
+            onClick={onCloseCategoryModal}
             endContent={<HiOutlineChevronRight size={16} />}
           />
 
@@ -121,7 +150,7 @@ const Profile = () => {
             control={control}
             name="comition"
             placeholder="masukkan komisi"
-            defaultValue={salesById.data?.comition}
+            defaultValue={String(salesById.data?.comition)}
             errorMessage={handleErrorMessage(errors, "comition")}
             rules={{ required: setRequiredField(true, "masukkan komisi") }}
             className="w-full"
@@ -165,6 +194,16 @@ const Profile = () => {
           />
         </section>
       )}
+
+      <OptionCategoryModal
+        value={pickCategories}
+        setCategories={setPickCategories}
+        data={findAllCategories.data ?? []}
+        isOpenModal={isCategoryModal}
+        onCloseModal={onCloseCategoryModal}
+        onNext={onNext}
+        defaultValue={salesById.data?.category.map((e) => e.id)}
+      />
     </main>
   );
 };

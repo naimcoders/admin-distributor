@@ -211,7 +211,7 @@ const Create = () => {
       />
 
       <OptionCategoryModal
-        categories={pickCategories}
+        value={pickCategories}
         setCategories={setPickCategories}
         data={findAllCategories.data ?? []}
         isOpenModal={isCategoryModal}
@@ -227,8 +227,9 @@ interface ICategory {
   isOpenModal: boolean;
   onCloseModal: () => void;
   setCategories: React.Dispatch<React.SetStateAction<string[]>>;
-  categories: string[];
+  value: string[];
   onNext: () => void;
+  defaultValue?: string[];
 }
 
 export const OptionCategoryModal = (props: ICategory) => {
@@ -243,7 +244,7 @@ export const OptionCategoryModal = (props: ICategory) => {
       ) : (
         <CheckboxGroup
           className="my-5"
-          value={props.categories}
+          value={props.value}
           onValueChange={props.setCategories}
         >
           {props.data?.map((v) => (

@@ -186,12 +186,6 @@ const Profile = () => {
           <LabelAndImage
             src={salesById.data?.imageUrl ?? ""}
             label="foto sales"
-            actions={[
-              {
-                src: <HiOutlineTrash size={16} color={IconColor.red} />,
-                onClick: () => setKtpBlob(""),
-              },
-            ]}
           />
         </section>
       )}

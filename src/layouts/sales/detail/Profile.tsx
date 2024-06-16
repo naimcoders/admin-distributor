@@ -14,12 +14,13 @@ import {
   setRequiredField,
 } from "src/helpers";
 import { IconColor } from "src/types";
-import { findSalesById } from "src/api/sales.service";
+import { findSalesById, updateSalesCategory } from "src/api/sales.service";
 import { useParams } from "react-router-dom";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { getFileFromFirebase } from "src/firebase/upload";
 import { findCategories } from "src/api/category.service";
+import { toast } from "react-toastify";
 
 interface IDefaultValues {
   comition: string;
@@ -33,14 +34,12 @@ const Profile = () => {
   const [isCategoryModal, setIsCategoryModal] = React.useState(false);
   const [pickCategories, setPickCategories] = React.useState<string[]>([]);
 
-  const { id } = useParams() as { id: string };
-
   const {
     control,
-    setValue,
     clearErrors,
     formState: { errors },
   } = useForm<IDefaultValues>();
+  const { id } = useParams() as { id: string };
 
   const {
     ktpBlob,
@@ -56,6 +55,7 @@ const Profile = () => {
 
   const salesById = findSalesById(id);
   const findAllCategories = findCategories();
+  const updateCategory = updateSalesCategory();
 
   React.useEffect(() => {
     if (salesById.data) {
@@ -67,22 +67,23 @@ const Profile = () => {
     }
   }, [salesById.data]);
 
-  const onNext = () => {
-    if (!findAllCategories.data) return;
-    let category: string[] = [];
-
-    findAllCategories.data.filter((e) => {
-      pickCategories.forEach((f) => {
-        if (f === e.id) {
-          category.push(e.name);
-        }
+  const onNext = async () => {
+    try {
+      toast.loading("Loading...", { toastId: "loading-update-sales-category" });
+      await updateCategory.mutateAsync({
+        salesId: id,
+        categoryId: pickCategories,
       });
-    });
-
-    setValue("category", category.join(", "));
-    clearErrors("category");
-    onCloseCategoryModal();
-    category = [];
+      toast.success("Berhasil memperbarui kategori");
+      clearErrors("category");
+      onCloseCategoryModal();
+    } catch (e) {
+      const error = e as Error;
+      toast.error("Gagal memperbarui kategori");
+      console.error(error.message);
+    } finally {
+      toast.dismiss("loading-update-sales-category");
+    }
   };
 
   return (

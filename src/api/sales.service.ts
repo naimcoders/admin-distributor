@@ -41,6 +41,11 @@ interface Activated {
   isActive: boolean;
 }
 
+interface ReqUpdateCategory {
+  categoryId: string[];
+  salesId?: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -95,6 +100,16 @@ class Api {
       body: r,
     });
   }
+
+  async updateCategory(salesId: string, r: ReqUpdateCategory): Promise<Sales> {
+    return await req<Sales>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${salesId}/update-category`,
+      errors: "",
+      body: r,
+    });
+  }
 }
 
 interface ApiSalesInfo {
@@ -102,6 +117,7 @@ interface ApiSalesInfo {
   createSales(r: CreateSales): Promise<Sales>;
   findSalesById(salesId: string): Promise<Sales>;
   salesActivated(salesId: string, r: Activated): Promise<Sales>;
+  updateCategory(salesId: string, r: ReqUpdateCategory): Promise<Sales>;
 }
 
 function getSalesApiInfo(): ApiSalesInfo {
@@ -109,6 +125,23 @@ function getSalesApiInfo(): ApiSalesInfo {
 }
 
 const key = "sales";
+
+export const updateSalesCategory = () => {
+  const queryClient = useQueryClient();
+  const data = useMutation<Sales, Error, ReqUpdateCategory>({
+    mutationKey: ["update-category"],
+    mutationFn: (r) =>
+      getSalesApiInfo().updateCategory(r.salesId ?? "", {
+        categoryId: r.categoryId,
+      }),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+
+  return {
+    mutateAsync: data.mutateAsync,
+    isLoading: data.isPending,
+  };
+};
 
 export const findSales = (pageTable: number) => {
   const [page, setPage] = React.useState(pageTable);

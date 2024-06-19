@@ -5,7 +5,6 @@ import { Textarea as Txtarea } from "@nextui-org/react";
 
 const Textarea = (props: TextfieldProps<any>) => {
   const { field } = useController(props);
-
   return (
     <section className={cx("flex flex-col gap-4", props.classNameWrapper)}>
       {props.label && (
@@ -21,7 +20,7 @@ const Textarea = (props: TextfieldProps<any>) => {
         placeholder={props.placeholder}
         errorMessage={props.errorMessage}
         classNames={{
-          input: "placeholder:capitalize",
+          input: "placeholder:capitalize resize-y",
           errorMessage: "capitalize font-semibold",
         }}
       />

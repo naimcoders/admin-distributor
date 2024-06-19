@@ -1,6 +1,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/messaging";
+import "firebase/compat/firestore";
 import { getToken, MessagePayload, onMessage } from "firebase/messaging";
 import { getStorage } from "firebase/storage";
 
@@ -22,8 +23,9 @@ const FbApp = firebase.app();
 const FbAuth = firebase.auth();
 const FbMessage = firebase.messaging();
 const FbStorage = getStorage(firebase.app());
+const FbFirestore = FbApp.firestore();
 
-export { FbApp, FbAuth, FbMessage, FbStorage };
+export { FbApp, FbAuth, FbMessage, FbStorage, FbFirestore };
 
 export const requestForToken = (): Promise<string> => {
   return new Promise<string>((resolve, reject) => {

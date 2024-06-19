@@ -36,12 +36,14 @@
     "react-use-websocket": "^4.8.1",
     "socket.io-client": "^4.7.5",
     "use-places-autocomplete": "^4.0.1",
+    "uuid": "^10.0.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-date-range": "^1.4.9",
     "@types/react-dom": "^18.2.17",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react-swc": "^3.5.0",

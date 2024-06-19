@@ -46,6 +46,8 @@ import { SubDistributorModal } from "./Modals/SubDistributor";
 import { findCategories } from "src/api/category.service";
 import { findSubCategoryByCategoryId } from "src/api/product-category.service";
 import Error from "src/components/Error";
+import { v4 as uuidv4 } from "uuid";
+import { FbFirestore } from "src/firebase";
 
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
@@ -87,6 +89,10 @@ const Create = () => {
     isPopOver,
     setIsPopOver,
     onProductSize,
+    productDescription,
+    setProductDescription,
+    isLoadingProductDesc,
+    isLoadingProductImage,
   } = useUploadProduct();
 
   const navigate = useNavigate();
@@ -203,14 +209,19 @@ const Create = () => {
       clearDeliveryPrice();
       reset();
       toast.success("Produk berhasil dibuat");
+      setProductDescription("");
       navigate(-1);
     } catch (e) {
       const error = e as Error;
-      console.error(`Something wrong to create product : ${error.message}`);
+      console.error(`Failed to create product : ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   });
+
+  useEffect(() => {
+    if (productDescription) setValue("description", productDescription);
+  }, [productDescription]);
 
   useEffect(() => {
     if (!subCategories.data?.length) {
@@ -231,7 +242,7 @@ const Create = () => {
 
   return (
     <main className="flex flex-col gap-5 lg:gap-8">
-      <header className="flexcol gap-4">
+      <header className="flex flex-col gap-4">
         <section className="flex gap-6 items-start flex-wrap">
           {photos.map((v) => (
             <Image
@@ -251,38 +262,42 @@ const Create = () => {
             />
           ))}
 
-          <Popover placement="right" isOpen={isPopOver}>
-            <PopoverTrigger>
-              <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
-                Tambah Foto
-              </Btn>
-            </PopoverTrigger>
-            <PopoverContent>
-              <section className="flex gap-4">
-                {["1:1", "3:4"].map((v) => (
-                  <FileComp
-                    key={v}
-                    control={control}
-                    onClick={() => onProductSize(v)}
-                    onChange={(e) => onChange(e)}
-                    name="productPhoto"
-                    ref={productPhotoRef}
-                    placeholder={v}
-                    className="w-[5rem] cursor-pointer"
-                    readOnly={{ isValue: true, cursor: "cursor-pointer" }}
-                    startContent={
-                      <img
-                        src={v === "1:1" ? square : rectangle}
-                        alt="square icon"
-                        className="w-4 cursor-pointer"
-                        onClick={() => onProductSize(v)}
-                      />
-                    }
-                  />
-                ))}
-              </section>
-            </PopoverContent>
-          </Popover>
+          {isLoadingProductImage ? (
+            <Spinner size="md" />
+          ) : (
+            <Popover placement="right" isOpen={isPopOver}>
+              <PopoverTrigger>
+                <Btn onClick={() => setIsPopOver((v) => !v)} color="primary">
+                  Tambah Foto
+                </Btn>
+              </PopoverTrigger>
+              <PopoverContent>
+                <section className="flex gap-4">
+                  {["1:1", "3:4"].map((v) => (
+                    <FileComp
+                      key={v}
+                      control={control}
+                      onClick={() => onProductSize(v)}
+                      onChange={(e) => onChange(e)}
+                      name="productPhoto"
+                      ref={productPhotoRef}
+                      placeholder={v}
+                      className="w-[5rem] cursor-pointer"
+                      readOnly={{ isValue: true, cursor: "cursor-pointer" }}
+                      startContent={
+                        <img
+                          src={v === "1:1" ? square : rectangle}
+                          alt="square icon"
+                          className="w-4 cursor-pointer"
+                          onClick={() => onProductSize(v)}
+                        />
+                      }
+                    />
+                  ))}
+                </section>
+              </PopoverContent>
+            </Popover>
+          )}
         </section>
       </header>
 
@@ -431,19 +446,27 @@ const Create = () => {
         )}
       </main>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 gap-4">
-        <Textarea
-          name="description"
-          control={control}
-          label="deskripsi produk *"
-          defaultValue=""
-          rules={{
-            required: setRequiredField(true, "masukkan deskripsi"),
-          }}
-          errorMessage={handleErrorMessage(errors, "description")}
-          classNameWrapper="col-span-2"
-        />
-      </section>
+      {isLoadingProductDesc ? (
+        <div className="flex flex-col gap-3 justify-center items-center">
+          <Spinner size="md" />
+          <h2>Memuat deskripsi...</h2>
+        </div>
+      ) : (
+        <section className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 gap-4">
+          <Textarea
+            name="description"
+            control={control}
+            label="deskripsi produk *"
+            defaultValue=""
+            placeholder="Masukkan deskripsi"
+            rules={{
+              required: setRequiredField(true, "masukkan deskripsi"),
+            }}
+            errorMessage={handleErrorMessage(errors, "description")}
+            classNameWrapper="col-span-2"
+          />
+        </section>
+      )}
 
       <Button
         onClick={onSubmit}
@@ -553,6 +576,9 @@ export const useUploadProduct = () => {
   const [photos, setPhotos] = useState<CurrentProductImageProps[]>([]);
   const [productSize, setProductSize] = useState("1:1");
   const productPhotoRef = useRef<ChildRef>(null);
+  const [productDescription, setProductDescription] = useState("");
+  const [isLoadingProductImage, setIsLoadingProductImage] = useState(false);
+  const [isLoadingProductDesc, setIsLoadingProductDesc] = useState(false);
 
   const handleProductSize = (size: string) => setProductSize(size);
 
@@ -563,13 +589,37 @@ export const useUploadProduct = () => {
   };
 
   const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return null;
+    if (!e.target.files) return;
 
     const files = e.target.files[0];
     const nFile = await onPickImage({
       file: files,
       ratio: productSize === "1:1" ? 1 / 1 : 3 / 4,
     });
+
+    try {
+      setIsLoadingProductImage(true);
+      setIsLoadingProductDesc(true);
+      const uuidProduct = uuidv4();
+      const path = `temp/image_suggestion/${uuidProduct}/${Date.now()}.jpg`;
+      await uploadFile({ file: nFile.file, prefix: path });
+
+      const db = FbFirestore.collection("products_description").doc(
+        `${uuidProduct}`
+      );
+      db.onSnapshot((doc) => {
+        if (doc.exists) {
+          const data = doc.data() as { text: string[] };
+          setProductDescription(data.text[0]);
+          setIsLoadingProductDesc(false);
+        }
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(`Failed to submit product image: ${error.message}`);
+    } finally {
+      setIsLoadingProductImage(false);
+    }
 
     setPhotos([
       ...photos,
@@ -593,6 +643,10 @@ export const useUploadProduct = () => {
     handleProductSize,
     isPopOver,
     setIsPopOver,
+    productDescription,
+    setProductDescription,
+    isLoadingProductDesc,
+    isLoadingProductImage,
   };
 };
 

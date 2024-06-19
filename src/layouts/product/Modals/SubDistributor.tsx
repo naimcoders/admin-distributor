@@ -41,7 +41,7 @@ export const SubDistributorModal = ({
         <p>Loading...</p>
       ) : (
         <ul className="flex flex-col gap-2 my-4">
-          {data?.items.map((v) => (
+          {data?.items?.map((v) => (
             <li
               key={v.id}
               onClick={() => onClick(v.id, v.name)}

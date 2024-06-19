@@ -49,6 +49,9 @@ import Error from "src/components/Error";
 import { v4 as uuidv4 } from "uuid";
 import { FbFirestore } from "src/firebase";
 
+const removeAsterisks = (input: string): string =>
+  input.replace(/\*\*(.*?)\*\*/g, "$1");
+
 const Create = () => {
   const [isMassal, setIsMassal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -220,7 +223,9 @@ const Create = () => {
   });
 
   useEffect(() => {
-    if (productDescription) setValue("description", productDescription);
+    if (productDescription) {
+      setValue("description", removeAsterisks(productDescription));
+    }
   }, [productDescription]);
 
   useEffect(() => {

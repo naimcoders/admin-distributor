@@ -51,20 +51,13 @@ class Api {
 
   private path = "store";
 
-  private errors: { [key: number]: string } = {
-    400: "input tidak valid",
-    401: "hak akses ditolak",
-    403: "forbidden",
-    404: "data tidak ditemukan",
-    500: "server sedang bermasalah, silahkan coba beberapa saat lagi",
-  };
-
   async find(r: ReqPaging): Promise<ResPaging<Store>> {
     const query = queryString.stringify(
       {
         limit: r.limit,
         page: r.page,
         search: r.search,
+        createdById: r.createdById,
       },
       {
         skipEmptyString: true,
@@ -76,7 +69,7 @@ class Api {
       method: "GET",
       isNoAuth: false,
       path: `${this.path}?${query}`,
-      errors: this.errors,
+      errors: "",
     });
   }
 
@@ -85,7 +78,7 @@ class Api {
       method: "GET",
       isNoAuth: false,
       path: `${this.path}/${id}`,
-      errors: this.errors,
+      errors: "",
     });
   }
 }
@@ -101,49 +94,41 @@ export function getStoreApiInfo(): ApiStoreInfo {
 
 const key = "store";
 
-export const useStore = () => {
-  const find = (pageTable: number) => {
-    const [page, setPage] = useState(pageTable);
-    const [limit, setLimit] = useState(10);
-    const [search, setSearch] = useState("");
+export const findStores = (pageTable: number, createdById: string) => {
+  const [page, setPage] = useState(pageTable);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
 
-    const byPaging = async () =>
-      await getStoreApiInfo().find({ page, limit, search });
+  const { data, isLoading, error } = useQuery<ResPaging<Store>, Error>({
+    queryKey: [key, page, limit, search, createdById],
+    queryFn: () => getStoreApiInfo().find({ page, limit, search, createdById }),
+    enabled: !!page && !!limit,
+  });
 
-    const { data, isLoading, error } = useQuery<ResPaging<Store>, Error>({
-      queryKey: [key, page, limit, search],
-      queryFn: byPaging,
-      enabled: !!page && !!limit,
-    });
-
-    return {
-      data,
-      isLoading,
-      error: error?.message,
-      page,
-      setPage,
-      limit,
-      setLimit,
-      search,
-      setSearch,
-      isNext: data?.canNext,
-    };
+  return {
+    data,
+    isLoading,
+    error: error?.message,
+    page,
+    setPage,
+    limit,
+    setLimit,
+    search,
+    setSearch,
+    isNext: data?.canNext,
   };
+};
 
-  const findByid = (id: string) => {
-    const byId = async () => await getStoreApiInfo().findById(id);
+export const findStoreById = (id: string) => {
+  const { data, isLoading, error } = useQuery<Store, Error>({
+    queryKey: [key, id],
+    queryFn: () => getStoreApiInfo().findById(id),
+    enabled: !!id,
+  });
 
-    const { data, isLoading, error } = useQuery<Store, Error>({
-      queryKey: [key, id],
-      queryFn: byId,
-    });
-
-    return {
-      data,
-      isLoading,
-      error: error?.message,
-    };
+  return {
+    data,
+    isLoading,
+    error: error?.message,
   };
-
-  return { find, findByid };
 };

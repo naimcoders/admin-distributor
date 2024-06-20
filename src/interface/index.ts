@@ -10,4 +10,5 @@ export interface ReqPaging {
   page: number;
   limit: number;
   search?: string;
+  createdById?: string;
 }

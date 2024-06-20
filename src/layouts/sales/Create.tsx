@@ -80,7 +80,7 @@ const Create = () => {
     try {
       setIsLoading(true);
       const comition = Number(e.comition);
-      const fileName = `temp/${Date.now()}.png`;
+      const fileName = `temp/sales/${Date.now()}.png`;
       const phoneNumber = parsePhoneNumber(e.phoneNumber);
 
       await uploadFile({ file: ktpFiles, prefix: fileName });

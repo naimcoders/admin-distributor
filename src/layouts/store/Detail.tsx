@@ -10,7 +10,7 @@ import {
 import { GridInput } from "../Index";
 import { LabelAndImage } from "src/components/File";
 import { UserCoordinate } from "src/components/Coordinate";
-import { useStore } from "src/api/store.service";
+import { findStoreById } from "src/api/store.service";
 import { useParams } from "react-router-dom";
 import { epochToDateConvert, parsePhoneNumber } from "src/helpers";
 
@@ -62,8 +62,8 @@ const Detail = () => {
 
 const useHook = () => {
   const { id } = useParams() as { id: string };
-  const { data, isLoading, error } = useStore().findByid(id);
-  const location = data?.location[0];
+  const { data, isLoading, error } = findStoreById(id);
+  const location = data?.location?.[0];
   const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
 
   const fields: TextfieldProps<any>[] = [

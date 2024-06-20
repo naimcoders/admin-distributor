@@ -9,19 +9,7 @@ import { Buyers, findBuyers } from "src/api/performance.service";
 
 const Store = () => {
   const { columns } = useHook();
-  // const parsed = parseQueryString<{ page: string }>();
-  // const { data, isLoading, error, isNext, page, setSearch, setPage } =
-  //   useStore().find(Number(parsed.page));
-
   const { data, isLoading, error } = findBuyers();
-
-  // const onPrev = () => setPage((num) => num - 1);
-  // const onNext = () => setPage((num) => num + 1);
-
-  // const qs = stringifyQuery({ page });
-  // React.useEffect(() => {
-  //   navigate(`/toko?${qs}`);
-  // }, [qs]);
 
   return (
     <section className="relative">

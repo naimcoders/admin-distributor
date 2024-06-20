@@ -1,59 +1,28 @@
 import { HiCheckBadge } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+import { Store, findStores } from "src/api/store.service";
 import { Actions } from "src/components/Actions";
+import Error from "src/components/Error";
 import Label from "src/components/Label";
+import Pagination from "src/components/Pagination";
+import Skeleton from "src/components/Skeleton";
 import Table from "src/components/Table";
-import { Currency, detailNavigate, parsePhoneNumber } from "src/helpers";
+import { parsePhoneNumber, parseQueryString } from "src/helpers";
 import { Columns } from "src/types";
 
-const Customer = () => {
-  const { columns } = useHook();
+const Customer = (props: { salesId: string }) => {
+  const navigate = useNavigate();
+  const getQueryString = parseQueryString<{ page: number }>();
 
-  return (
-    <main className="mt-5">
-      <Table columns={columns} data={customers} isLoading={false} page={1} />
-    </main>
+  const { data, error, isLoading, page, setPage, isNext } = findStores(
+    Number(getQueryString.page),
+    props.salesId
   );
-};
 
-export default Customer;
+  const onPrev = () => setPage((v) => v - 1);
+  const onNext = () => setPage((v) => v + 1);
 
-interface Customer {
-  id: number;
-  storeName: string;
-  ownerName: string;
-  phoneNumber: string;
-  city: string;
-  totalRevenue: number;
-  totalTransaction: number;
-  isVerify: boolean;
-}
-
-const customers: Customer[] = [
-  {
-    id: 1,
-    storeName: "Maju Jaya",
-    ownerName: "Andi",
-    phoneNumber: "+6285867853456",
-    city: "Makassar",
-    totalRevenue: 85000000,
-    totalTransaction: 321,
-    isVerify: true,
-  },
-  {
-    id: 2,
-    storeName: "Mbak Atun",
-    ownerName: "Bobi",
-    phoneNumber: "+6285867853456",
-    city: "Makassar",
-    totalRevenue: 112980000,
-    totalTransaction: 647,
-    isVerify: false,
-  },
-];
-
-const useHook = () => {
-  const { onNav } = detailNavigate();
-  const columns: Columns<Customer>[] = [
+  const columns: Columns<Store>[] = [
     {
       header: <p className="text-center">nama toko</p>,
       render: (v) => <Label label={v.storeName} />,
@@ -74,35 +43,35 @@ const useHook = () => {
       render: (v) => <Label label={parsePhoneNumber(v.phoneNumber)} />,
     },
     {
-      header: <p className="text-center">kota</p>,
-      render: (v) => <Label label={v.city} />,
-    },
-    {
-      header: <p className="text-right">total revenue</p>,
-      render: (v) => (
-        <Label
-          label={`Rp${Currency(v.totalRevenue)}`}
-          className="justify-end"
-        />
-      ),
-    },
-    {
-      header: <p className="text-right">total transaksi</p>,
-      render: (v) => (
-        <Label label={Currency(v.totalTransaction)} className="justify-end" />
-      ),
-    },
-    {
       header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
           id={idx}
           action="detail"
-          detail={{ onClick: () => onNav(`pelanggan/${v.id}`) }}
+          detail={{ onClick: () => navigate(`pelanggan/${v.id}`) }}
         />
       ),
     },
   ];
 
-  return { columns };
+  return (
+    <main className="mt-5">
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
+        <Skeleton />
+      ) : (
+        <Table
+          columns={columns}
+          data={data?.items ?? []}
+          isLoading={false}
+          page={page}
+        />
+      )}
+
+      <Pagination page={page} isNext={isNext} next={onNext} prev={onPrev} />
+    </main>
+  );
 };
+
+export default Customer;

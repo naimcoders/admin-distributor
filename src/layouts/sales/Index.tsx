@@ -5,7 +5,11 @@ import Error from "src/components/Error";
 import Label from "src/components/Label";
 import Pagination from "src/components/Pagination";
 import { TableWithoutTabs } from "src/components/Table";
-import { parsePhoneNumber, parseQueryString } from "src/helpers";
+import {
+  parsePhoneNumber,
+  parseQueryString,
+  stringifyQuery,
+} from "src/helpers";
 import { Columns } from "src/types";
 import { useSuspend } from "../distributor/Index";
 import { toast } from "react-toastify";
@@ -17,6 +21,7 @@ import { ConfirmModal } from "src/components/Modal";
 const Sales = () => {
   const navigate = useNavigate();
   const qString = parseQueryString<{ page: number }>();
+  const setDetailQueryString = stringifyQuery({ tab: "profil" });
   const { data, isLoading, error, page, setSearch, setPage, isNext } =
     findSales(Number(qString.page));
 
@@ -88,7 +93,7 @@ const Sales = () => {
             onClick: () => onSwitch(v.id, v.isActive),
           }}
           detail={{
-            onClick: () => navigate(`/sales/${v.id}`),
+            onClick: () => navigate(`/sales/${v.id}?${setDetailQueryString}`),
           }}
         />
       ),

@@ -37,6 +37,8 @@ interface CreateSales {
   categoryId: string[];
 }
 
+type UpdateSales = Omit<CreateSales, "categoryId">;
+
 interface Activated {
   isActive: boolean;
 }
@@ -91,6 +93,16 @@ class Api {
     });
   }
 
+  async updateSales(salesId: string, r: UpdateSales): Promise<Sales> {
+    return await req<Sales>({
+      method: "PUT",
+      isNoAuth: false,
+      path: `${this.path}/${salesId}`,
+      errors: "",
+      body: r,
+    });
+  }
+
   async salesActivated(salesId: string, r: Activated): Promise<Sales> {
     return await req<Sales>({
       method: "PUT",
@@ -116,6 +128,7 @@ interface ApiSalesInfo {
   find(r: ReqPaging): Promise<ResPaging<Sales>>;
   createSales(r: CreateSales): Promise<Sales>;
   findSalesById(salesId: string): Promise<Sales>;
+  updateSales(salesId: string, r: UpdateSales): Promise<Sales>;
   salesActivated(salesId: string, r: Activated): Promise<Sales>;
   updateCategory(salesId: string, r: ReqUpdateCategory): Promise<Sales>;
 }
@@ -125,6 +138,25 @@ function getSalesApiInfo(): ApiSalesInfo {
 }
 
 const key = "sales";
+
+export const updateSales = () => {
+  const queryClient = useQueryClient();
+  const data = useMutation<
+    Sales,
+    Error,
+    { data: UpdateSales; salesId: string }
+  >({
+    mutationKey: ["update-sales"],
+    mutationFn: (r) => getSalesApiInfo().updateSales(r.salesId, r.data),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: [key] }),
+  });
+
+  return {
+    mutateAsync: data.mutateAsync,
+    isLoading: data.isPending,
+    error: data.error?.message,
+  };
+};
 
 export const updateSalesCategory = () => {
   const queryClient = useQueryClient();

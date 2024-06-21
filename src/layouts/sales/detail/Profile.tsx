@@ -15,6 +15,7 @@ import {
 } from "src/helpers";
 import { IconColor } from "src/types";
 import {
+  TUpdateSales,
   findSalesById,
   updateSales,
   updateSalesCategory,
@@ -96,24 +97,35 @@ const Profile = () => {
     }
   };
 
+  const updated = async (request: TUpdateSales) => {
+    try {
+      await update.mutateAsync({
+        salesId: id,
+        data: request,
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.error(error.message);
+    }
+  };
+
   const onUpdateSales = handleSubmit(async (e) => {
     try {
       toast.loading("Loading...", { toastId: "loading-update-sales" });
       const fileName = `temp/sales/${Date.now()}.png`;
-      const newKtpPathImage = !ktpFiles ? e.ktpPathImage : fileName;
 
-      if (ktpFiles) await uploadFile({ file: ktpFiles, prefix: fileName });
+      let data = {
+        comition: Number(e.comition),
+        email: e.email,
+        name: e.name,
+        phoneNumber: parsePhoneNumber(e.phoneNumber),
+      };
 
-      await update.mutateAsync({
-        salesId: id,
-        data: {
-          comition: Number(e.comition),
-          email: e.email,
-          name: e.name,
-          phoneNumber: parsePhoneNumber(e.phoneNumber),
-          ktpImagePath: newKtpPathImage,
-        },
-      });
+      if (ktpFiles) {
+        await uploadFile({ file: ktpFiles, prefix: fileName });
+        Object.assign(data, { ktpPathImage: fileName });
+        await updated(data);
+      } else await updated(data);
 
       setKtpFiles(undefined);
       toast.success("Berhasil menyimpan data");
@@ -218,7 +230,10 @@ const Profile = () => {
                 actions={[
                   {
                     src: <HiOutlineTrash size={16} color={IconColor.red} />,
-                    onClick: () => setKtpBlob(""),
+                    onClick: () => {
+                      setKtpBlob("");
+                      setValue("ktpPathImage", "");
+                    },
                   },
                 ]}
               />

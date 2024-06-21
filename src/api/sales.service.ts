@@ -32,12 +32,12 @@ interface CreateSales {
   name: string;
   phoneNumber: string;
   email: string;
-  ktpImagePath: string;
   comition: number;
   categoryId: string[];
+  ktpImagePath?: string;
 }
 
-type UpdateSales = Omit<CreateSales, "categoryId">;
+export type TUpdateSales = Omit<CreateSales, "categoryId">;
 
 interface Activated {
   isActive: boolean;
@@ -93,7 +93,7 @@ class Api {
     });
   }
 
-  async updateSales(salesId: string, r: UpdateSales): Promise<Sales> {
+  async updateSales(salesId: string, r: TUpdateSales): Promise<Sales> {
     return await req<Sales>({
       method: "PUT",
       isNoAuth: false,
@@ -128,7 +128,7 @@ interface ApiSalesInfo {
   find(r: ReqPaging): Promise<ResPaging<Sales>>;
   createSales(r: CreateSales): Promise<Sales>;
   findSalesById(salesId: string): Promise<Sales>;
-  updateSales(salesId: string, r: UpdateSales): Promise<Sales>;
+  updateSales(salesId: string, r: TUpdateSales): Promise<Sales>;
   salesActivated(salesId: string, r: Activated): Promise<Sales>;
   updateCategory(salesId: string, r: ReqUpdateCategory): Promise<Sales>;
 }
@@ -144,7 +144,7 @@ export const updateSales = () => {
   const data = useMutation<
     Sales,
     Error,
-    { data: UpdateSales; salesId: string }
+    { data: TUpdateSales; salesId: string }
   >({
     mutationKey: ["update-sales"],
     mutationFn: (r) => getSalesApiInfo().updateSales(r.salesId, r.data),

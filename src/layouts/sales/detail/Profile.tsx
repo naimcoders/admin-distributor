@@ -143,7 +143,7 @@ const Profile = () => {
         <Skeleton />
       ) : (
         <>
-          <section className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-2 lg:gap-8 gap-4">
+          <section className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-2 lg:gap-8 gap-4 mt-5">
             <Textfield
               type="text"
               label="nama sales"

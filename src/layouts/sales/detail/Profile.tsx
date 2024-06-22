@@ -122,8 +122,8 @@ const Profile = () => {
       };
 
       if (ktpFiles) {
-        await uploadFile({ file: ktpFiles, prefix: fileName });
         Object.assign(data, { ktpPathImage: fileName });
+        await uploadFile({ file: ktpFiles, prefix: fileName });
         await updated(data);
       } else await updated(data);
 

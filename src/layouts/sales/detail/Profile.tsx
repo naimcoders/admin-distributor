@@ -1,19 +1,14 @@
-import {
-  HiOutlineArrowUpTray,
-  HiOutlineChevronRight,
-  HiOutlineTrash,
-} from "react-icons/hi2";
+import { HiOutlineChevronRight } from "react-icons/hi2";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Textfield } from "src/components/Textfield";
 import { OptionCategoryModal, useKtp } from "../Create";
-import { File, LabelAndImage } from "src/components/File";
+import { ImageFile, LabelAndImage } from "src/components/File";
 import {
   handleErrorMessage,
   parsePhoneNumber,
   setRequiredField,
 } from "src/helpers";
-import { IconColor } from "src/types";
 import {
   TUpdateSales,
   findSalesById,
@@ -50,15 +45,8 @@ const Profile = () => {
   } = useForm<IDefaultValues>();
   const { id } = useParams() as { id: string };
 
-  const {
-    ktpBlob,
-    ktpRef,
-    onClick,
-    onChange,
-    setKtpBlob,
-    ktpFiles,
-    setKtpFiles,
-  } = useKtp();
+  const { ktpBlob, ktpRef, onChange, setKtpBlob, ktpFiles, setKtpFiles } =
+    useKtp();
 
   const onCloseCategoryModal = () => setIsCategoryModal((v) => !v);
 
@@ -210,34 +198,20 @@ const Profile = () => {
               className="w-full"
             />
 
-            {!ktpBlob ? (
-              <File
-                name="ktpPathImage"
-                label="KTP"
-                control={control}
-                placeholder="unggah KTP"
-                ref={ktpRef}
-                onClick={onClick}
-                onChange={onChange}
-                errorMessage={handleErrorMessage(errors, "ktp")}
-                rules={{ required: setRequiredField(true, "unggah KTP") }}
-                startContent={<HiOutlineArrowUpTray size={16} />}
-              />
-            ) : (
-              <LabelAndImage
-                src={ktpBlob}
-                label="KTP"
-                actions={[
-                  {
-                    src: <HiOutlineTrash size={16} color={IconColor.red} />,
-                    onClick: () => {
-                      setKtpBlob("");
-                      setValue("ktpPathImage", "");
-                    },
-                  },
-                ]}
-              />
-            )}
+            <ImageFile
+              ref={ktpRef}
+              onChange={onChange}
+              render={
+                <LabelAndImage
+                  src={ktpBlob}
+                  label="KTP sales"
+                  onClick={() => {
+                    if (ktpRef.current) ktpRef.current.click();
+                  }}
+                  className="cursor-pointer"
+                />
+              }
+            />
 
             <LabelAndImage
               src={salesById.data?.imageUrl ?? ""}

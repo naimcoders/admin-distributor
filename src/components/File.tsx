@@ -83,23 +83,20 @@ interface LabelAndImageProps
   src: string;
   label?: string;
   actions?: IconImage[];
+  onClick?: () => void;
 }
 
-export const LabelAndImage: FC<LabelAndImageProps> = ({
-  label,
-  src,
-  actions,
-  className,
-}) => {
+export const LabelAndImage: FC<LabelAndImageProps> = (props) => {
   return (
     <section className="flex flex-col gap-4">
-      {label && <h2 className="text-sm capitalize">{label}</h2>}
+      {props.label && <h2 className="text-sm capitalize">{props.label}</h2>}
       <Image
-        src={src}
+        src={props.src}
         alt="image"
         loading="lazy"
-        actions={actions}
-        className={cx("aspect-video object-cover", className)}
+        actions={props.actions}
+        className={cx("aspect-video object-cover", props.className)}
+        onClick={props.onClick}
       />
     </section>
   );

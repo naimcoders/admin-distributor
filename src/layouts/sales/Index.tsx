@@ -89,8 +89,8 @@ const Sales = () => {
           id={idx}
           action="switchAndDetail"
           switch={{
-            isSelected: !v.isActive,
-            onClick: () => onSwitch(v.id, v.isActive),
+            isSelected: !v.isSuspend,
+            onClick: () => onSwitch(v.id, v.isSuspend),
           }}
           detail={{
             onClick: () => navigate(`/sales/${v.id}?${setDetailQueryString}`),

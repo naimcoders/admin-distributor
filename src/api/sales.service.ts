@@ -15,6 +15,7 @@ export interface Sales {
   ktpImage: string;
   isActive: boolean;
   isVerified: boolean;
+  isSuspend: boolean;
   category: Category[];
   revenue: number;
   createdAt: number;

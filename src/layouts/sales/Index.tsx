@@ -89,7 +89,7 @@ const Sales = () => {
           id={idx}
           action="switchAndDetail"
           switch={{
-            isSelected: true,
+            isSelected: !v.isActive,
             onClick: () => onSwitch(v.id, v.isActive),
           }}
           detail={{

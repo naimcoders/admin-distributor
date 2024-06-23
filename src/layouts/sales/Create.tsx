@@ -269,6 +269,13 @@ export const OptionCategoryModal = (props: ICategory) => {
               name={v.name}
               classNames={{ label: "text-sm" }}
               size="sm"
+              onClick={() => {
+                const all = props.value.filter((e) => e === "all");
+                if (all.length) {
+                  const notAll = props.value.filter((e) => e !== "all");
+                  props.setCategories(notAll);
+                }
+              }}
             >
               {v.name}
             </Checkbox>

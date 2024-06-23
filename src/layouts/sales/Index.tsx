@@ -75,7 +75,7 @@ const Sales = () => {
       width: "max-w-[2rem]",
     },
     {
-      header: <p className="text-center">kategori sales</p>,
+      header: <p className="text-center">komisi sales</p>,
       render: (v) => <p className="text-right">{v.comition}%</p>,
     },
     {

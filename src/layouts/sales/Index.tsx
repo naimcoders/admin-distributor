@@ -15,9 +15,6 @@ import { useSuspend } from "../distributor/Index";
 import { toast } from "react-toastify";
 import { ConfirmModal } from "src/components/Modal";
 
-// TODO:
-// 1. sales activated
-
 const Sales = () => {
   const navigate = useNavigate();
   const qString = parseQueryString<{ page: number }>();

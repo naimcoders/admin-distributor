@@ -247,6 +247,21 @@ export const OptionCategoryModal = (props: ICategory) => {
           value={props.value}
           onValueChange={props.setCategories}
         >
+          <Checkbox
+            size="sm"
+            value="all"
+            name="Pilih semua"
+            classNames={{ label: "text-sm font-semibold" }}
+            onChange={() => {
+              const datas = [...props.data.map((v) => v.id), "all"];
+              const checkAll = props.value.filter((v) => v === "all");
+              if (checkAll.length > 0) props.setCategories([]);
+              else props.setCategories(datas);
+            }}
+          >
+            Pilih semua
+          </Checkbox>
+
           {props.data?.map((v) => (
             <Checkbox
               key={v.id}

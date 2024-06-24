@@ -3,6 +3,7 @@ import {
   HiOutlineArrowDownTray,
   HiOutlineClipboard,
   HiOutlinePrinter,
+  HiMapPin,
 } from "react-icons/hi2";
 import { Chip, Spinner } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
@@ -65,6 +66,13 @@ const Detail = () => {
   const { onAccept, isLoadingAccept } = useAccept(orderId);
   const { onReject, isLoadingReject } = useReject(orderId);
   const { onItemReady, isLoadingItemReady } = useItemReady(orderId);
+
+  const onDetailLocation = (deliveryId: string) => {
+    window.open(
+      `https://tracking-dev.pilipilih.com/?id=${deliveryId}`,
+      "_blank"
+    );
+  };
 
   return (
     <>
@@ -213,10 +221,10 @@ const Detail = () => {
               </section>
             </section>
 
-            <section className="text-sm grid grid-cols-4 gap-6 border-b border-gray-300 py-5">
+            <section className="text-sm lg:grid lg:grid-cols-4 flex flex-col gap-6 border-b border-gray-300 py-5">
               <section className="flex flex-col gap-2 col-span-1">
                 <h1 className="font-medium">Kurir</h1>
-                {!data?.delivery.courier ? (
+                {!data?.delivery.courier.name ? (
                   "-"
                 ) : (
                   <>
@@ -231,6 +239,20 @@ const Detail = () => {
                 <h1 className="font-medium">PIC Sales</h1>
                 <p>-</p>
               </section>
+
+              {data?.delivery.courier.name && (
+                <Button
+                  label={
+                    <div className="inline-flex items-center gap-2 text-sm">
+                      <HiMapPin size={16} />
+                      Detail Lokasi
+                    </div>
+                  }
+                  variant="flat"
+                  className="my-auto"
+                  onClick={() => onDetailLocation(data?.delivery.id ?? "")}
+                />
+              )}
             </section>
 
             <section className="py-5">

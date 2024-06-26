@@ -22,6 +22,7 @@ export interface Store {
   locations: Location[];
   createdAt: number;
   updatedAt: number;
+  revenue: number;
 }
 
 export interface Location {

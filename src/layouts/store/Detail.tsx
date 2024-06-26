@@ -9,12 +9,14 @@ import { UserCoordinate } from "src/components/Coordinate";
 import { findStoreById } from "src/api/store.service";
 import { useParams } from "react-router-dom";
 import {
+  Currency,
   epochToDateConvert,
   handleErrorMessage,
   parsePhoneNumber,
 } from "src/helpers";
 import { IconColor } from "src/types";
 import { getFileFromFirebase } from "src/firebase/upload";
+import ContentTextfield from "src/components/ContentTextfield";
 
 const Detail = () => {
   const [ktpImage, setKtpImage] = React.useState<string | undefined>("");
@@ -41,7 +43,7 @@ const Detail = () => {
       ) : isLoading ? (
         <Skeleton />
       ) : (
-        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8 gap-4">
+        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8 gap-4 mb-5">
           <Textfield
             type="text"
             label="nama pemilik"
@@ -136,6 +138,18 @@ const Detail = () => {
             errorMessage={handleErrorMessage(errors, "detailAddress")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="revenue"
+            type="text"
+            label="total revenue"
+            control={control}
+            defaultValue={Currency(data?.revenue ?? 0)}
+            errorMessage={handleErrorMessage(errors, "detailAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+            startContent={<ContentTextfield label="Rp" />}
           />
 
           <Textfield

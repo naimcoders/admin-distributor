@@ -3,12 +3,7 @@ import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
 import { FieldValues, useForm } from "react-hook-form";
 import { HiCheckCircle } from "react-icons/hi2";
-import {
-  Textfield,
-  TextfieldProps,
-  objectFields,
-} from "src/components/Textfield";
-import { GridInput } from "../Index";
+import { Textfield } from "src/components/Textfield";
 import { LabelAndImage } from "src/components/File";
 import { UserCoordinate } from "src/components/Coordinate";
 import { findStoreById } from "src/api/store.service";
@@ -17,10 +12,8 @@ import {
   epochToDateConvert,
   handleErrorMessage,
   parsePhoneNumber,
-  setRequiredField,
 } from "src/helpers";
 import { IconColor } from "src/types";
-import Image from "src/components/Image";
 import { getFileFromFirebase } from "src/firebase/upload";
 
 const Detail = () => {
@@ -128,7 +121,7 @@ const Detail = () => {
             type="text"
             label="nama jalan, gedung, no. rumah"
             control={control}
-            defaultValue={"-"}
+            defaultValue={location?.addressName}
             errorMessage={handleErrorMessage(errors, "streetName")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}

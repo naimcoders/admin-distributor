@@ -168,7 +168,7 @@ const useHook = () => {
       header: <p className="text-center">aksi</p>,
       render: (v, idx) => (
         <Actions
-          action="switchAndDetail"
+          action="switch-detail"
           id={idx}
           detail={{ onClick: () => navigate(`/produk/${v.id}`) }}
           switch={{

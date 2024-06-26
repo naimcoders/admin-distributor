@@ -161,7 +161,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "sales/:id/pelanggan/:id",
+            path: "sales/:id/pelanggan/:customerId",
             element: (
               <Suspense fallback={<Skeleton />}>
                 <CustomerSalesDetail />

@@ -1,6 +1,6 @@
+import cx from "classnames";
 import folder from "src/assets/images/folder.png";
 import { Switch } from "@nextui-org/react";
-import cx from "classnames";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 
 interface Switch {
@@ -10,10 +10,10 @@ interface Switch {
 
 interface ActionProps {
   id: number | string;
-  action: "switch" | "detail" | "switchAndDetail";
+  action?: "switch" | "detail" | "switch-detail";
   switch?: Switch;
   detail?: HTMLAttributes<HTMLImageElement>;
-  delete?: () => void;
+  render?: React.ReactNode;
 }
 
 export const Actions: React.FC<ActionProps> = (props) => {
@@ -21,10 +21,10 @@ export const Actions: React.FC<ActionProps> = (props) => {
     <section
       className={cx(
         "flex justify-center lg:gap-4 gap-3 items-center",
-        props.action === "switchAndDetail" && "px-3"
+        props.action === "switch-detail" && "px-3"
       )}
     >
-      {props.action === "switchAndDetail" && (
+      {props.action === "switch-detail" && (
         <>
           <Switch
             as="button"
@@ -66,6 +66,8 @@ export const Actions: React.FC<ActionProps> = (props) => {
           className={props.detail?.className}
         />
       )}
+
+      {props.render}
     </section>
   );
 };

@@ -105,7 +105,7 @@ const useHook = () => {
       render: (v, idx) => (
         <Actions
           id={idx}
-          action="switchAndDetail"
+          action="switch-detail"
           switch={{
             isSelected: true,
           }}

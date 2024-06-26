@@ -1,270 +1,192 @@
-import ktp from "src/assets/images/ktp.png";
-import bannerEtalase from "src/assets/images/banner_etalase.jpg";
-
-import {
-  Textfield,
-  TextfieldProps,
-  objectFields,
-} from "src/components/Textfield";
-import { useActiveModal } from "src/stores/modalStore";
-import { Fragment } from "react";
-import { handleErrorMessage } from "src/helpers";
+import React from "react";
+import Error from "src/components/Error";
+import Skeleton from "src/components/Skeleton";
 import { FieldValues, useForm } from "react-hook-form";
-import { HiOutlineChevronRight } from "react-icons/hi2";
-import { Modal } from "src/components/Modal";
-import { UseForm } from "src/types";
-import { Checkbox, CheckboxGroup } from "@nextui-org/react";
-import { Button } from "src/components/Button";
-import useGeneralStore from "src/stores/generalStore";
-import { GridInput } from "src/layouts/Index";
+import { HiCheckCircle } from "react-icons/hi2";
+import { Textfield } from "src/components/Textfield";
 import { LabelAndImage } from "src/components/File";
+import { UserCoordinate } from "src/components/Coordinate";
+import { findStoreById } from "src/api/store.service";
+import { useParams } from "react-router-dom";
 import {
-  CoordinateProps,
-  UserCoordinate,
-  defaultCoordinate,
-} from "src/components/Coordinate";
+  Currency,
+  epochToDateConvert,
+  handleErrorMessage,
+  parsePhoneNumber,
+} from "src/helpers";
+import { IconColor } from "src/types";
+import { getFileFromFirebase } from "src/firebase/upload";
+import ContentTextfield from "src/components/ContentTextfield";
 
-const CustomerDetail = () => {
+const Detail = () => {
+  const [ktpImage, setKtpImage] = React.useState<string | undefined>("");
+
   const {
     control,
-    setValue,
-    clearErrors,
     formState: { errors },
-  } = useForm<FieldValues>({
-    mode: "onChange",
-  });
+  } = useForm<FieldValues>();
+  const { customerId } = useParams() as { customerId: string };
+  const { data, isLoading, error } = findStoreById(customerId);
+  const location = data?.locations?.[0];
+  const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
 
-  const { fields } = useHook();
+  React.useEffect(() => {
+    if (data) {
+      getFileFromFirebase(data.ktpImageUrl).then((path) => setKtpImage(path));
+    }
+  }, [data]);
 
   return (
     <>
-      <GridInput className="mt-2">
-        {fields.map((v, idx) => (
-          <Fragment key={idx}>
-            {["text", "number", "email"].includes(v.type!) && (
-              <Textfield
-                type={v.type}
-                name={v.name!}
-                label={v.label}
-                control={control}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                autoComplete={v.autoComplete}
-                errorMessage={handleErrorMessage(errors, v.name)}
-                rules={{
-                  required: { value: true, message: v.errorMessage ?? "" },
-                }}
-                readOnly={v.readOnly}
-              />
-            )}
+      {error ? (
+        <Error error={error} />
+      ) : isLoading ? (
+        <Skeleton />
+      ) : (
+        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8 gap-4 mb-5">
+          <Textfield
+            type="text"
+            label="nama pemilik"
+            control={control}
+            name="name"
+            placeholder="Masukkan nama pemilik"
+            defaultValue={data?.ownerName}
+            errorMessage={handleErrorMessage(errors, "ownerName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
 
-            {["modal"].includes(v.type!) && (
-              <Textfield
-                name={v.name!}
-                label={v.label}
-                control={control}
-                onClick={v.onClick}
-                readOnly={v.readOnly}
-                placeholder={v.placeholder}
-                defaultValue={v.defaultValue}
-                autoComplete={v.autoComplete}
-                endContent={<HiOutlineChevronRight size={16} />}
-                errorMessage={handleErrorMessage(errors, v.name)}
-                rules={{
-                  required: { value: true, message: v.errorMessage ?? "" },
-                }}
-              />
-            )}
+          <Textfield
+            type="number"
+            label="nomor HP"
+            control={control}
+            name="phoneNumber"
+            placeholder="Masukkan nomor HP"
+            defaultValue={parsePhoneNumber(data?.phoneNumber)}
+            errorMessage={handleErrorMessage(errors, "phoneNumber")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
 
-            {["coordinate"].includes(v.type!) && (
-              <UserCoordinate
-                label={v.label!}
-                lat={v.defaultValue.lat}
-                lng={v.defaultValue.lng}
-                cursor="default"
-              />
-            )}
+          <Textfield
+            name="email"
+            type="email"
+            label="email"
+            control={control}
+            placeholder="Masukkan email"
+            defaultValue={data?.email}
+            errorMessage={handleErrorMessage(errors, "email")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+            endContent={
+              data?.emailVerify && (
+                <HiCheckCircle size={20} color={IconColor.green} />
+              )
+            }
+          />
 
-            {["image"].includes(v.type!) && (
-              <LabelAndImage label={v.label!} src={v.defaultValue} />
-            )}
-          </Fragment>
-        ))}
-      </GridInput>
+          <Textfield
+            name="createdAt"
+            type="text"
+            label="tanggal join"
+            control={control}
+            defaultValue={epochToDateConvert(data?.createdAt)}
+            errorMessage={handleErrorMessage(errors, "createdAt")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
 
-      <PicSalesModal setValue={setValue} clearErrors={clearErrors} />
+          <Textfield
+            name="storeName"
+            type="text"
+            label="nama toko"
+            control={control}
+            defaultValue={data?.storeName}
+            errorMessage={handleErrorMessage(errors, "storeName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="storeAddress"
+            type="text"
+            label="alamat toko"
+            control={control}
+            defaultValue={storeAddress}
+            errorMessage={handleErrorMessage(errors, "storeAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="streetName"
+            type="text"
+            label="nama jalan, gedung, no. rumah"
+            control={control}
+            defaultValue={location?.addressName}
+            errorMessage={handleErrorMessage(errors, "streetName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="detailAddress"
+            type="text"
+            label="detail alamat"
+            control={control}
+            defaultValue={location?.detailAddress}
+            errorMessage={handleErrorMessage(errors, "detailAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="revenue"
+            type="text"
+            label="total revenue"
+            control={control}
+            defaultValue={Currency(data?.revenue ?? 0)}
+            errorMessage={handleErrorMessage(errors, "detailAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+            startContent={<ContentTextfield label="Rp" />}
+          />
+
+          <Textfield
+            name="rating"
+            type="text"
+            label="rating"
+            control={control}
+            defaultValue={data?.rate}
+            errorMessage={handleErrorMessage(errors, "rating")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="verify"
+            type="text"
+            label="status akun"
+            control={control}
+            defaultValue={data?.isVerify ? "Verified" : "Unverified"}
+            errorMessage={handleErrorMessage(errors, "verify")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <UserCoordinate
+            lat={location?.lat ?? 0}
+            lng={location?.lng ?? 0}
+            label="koordinat toko"
+            zoom={19}
+          />
+
+          <LabelAndImage src={ktpImage ?? ""} label="KTP pemilik" />
+          <LabelAndImage src={data?.banner ?? ""} label="banner etalase" />
+        </main>
+      )}
     </>
   );
 };
 
-const PicSalesModal = ({
-  setValue,
-  clearErrors,
-}: Pick<UseForm, "setValue" | "clearErrors">) => {
-  const picSales = useGeneralStore((v) => v.picSales) as string[];
-  const setPicSales = useGeneralStore((v) => v.setPicSales);
-  const { isCategory, actionIsCategory } = useActiveModal();
-
-  const data: string[] = [
-    "Andi, 085845672348",
-    "Marlin, 085845672348",
-    "Zulkifli, 085845672348",
-    "Irfan, 085845672348",
-  ];
-
-  const key = "picSales";
-  const onNext = () => {
-    setValue(key, picSales);
-    clearErrors(key);
-    actionIsCategory();
-  };
-
-  return (
-    <Modal title="PIC sales" isOpen={isCategory} closeModal={actionIsCategory}>
-      <CheckboxGroup
-        className="my-5"
-        onChange={(e) => setPicSales(e)}
-        defaultValue={picSales}
-      >
-        {data.map((v) => (
-          <Checkbox
-            value={v}
-            key={v}
-            id={v}
-            name={v}
-            classNames={{ label: "text-sm" }}
-            size="sm"
-          >
-            {v}
-          </Checkbox>
-        ))}
-      </CheckboxGroup>
-
-      <div className="flex justify-center">
-        <Button label="selanjutnya" className="mx-auto" onClick={onNext} />
-      </div>
-    </Modal>
-  );
-};
-
-const useHook = () => {
-  // const { ktpBlob, ktpRef, onClick, onChange, setKtpBlob } = useKtp();
-  const { actionIsCategory } = useActiveModal();
-
-  const fields: TextfieldProps<FieldValues>[] = [
-    objectFields({
-      label: "nama pemilik",
-      name: "ownerName",
-      type: "text",
-      defaultValue: "Andi",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nomor HP",
-      name: "phoneNumber",
-      type: "text",
-      defaultValue: "085845678634",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "email",
-      name: "email",
-      type: "email",
-      defaultValue: "-",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "tanggal join",
-      name: "category",
-      type: "text",
-      defaultValue: "13 Des 2023",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nama toko",
-      name: "storeName",
-      type: "text",
-      defaultValue: "Mba Atun",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "alamat toko",
-      name: "storeAddress",
-      type: "text",
-      defaultValue: "SULAWESI SELATAN, KOTA MAKASSAR",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "nama jalan, gedung, no. rumah",
-      name: "street",
-      type: "text",
-      defaultValue: "Jl. Pongtiku No. 112",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "detail alamat",
-      name: "detailAddress",
-      type: "text",
-      defaultValue: "Depan SMP Negeri 4",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "total revenue",
-      name: "totalRevenue",
-      type: "number",
-      defaultValue: 112980000,
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "total transaksi",
-      name: "totalTransaction",
-      type: "number",
-      defaultValue: 647,
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "rating",
-      name: "rate",
-      type: "text",
-      defaultValue: "-",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "status akun",
-      name: "statusAccount",
-      type: "text",
-      defaultValue: "-",
-      readOnly: { isValue: true, cursor: "cursor-default" },
-    }),
-    objectFields({
-      label: "PIC sales",
-      name: "picSales",
-      type: "modal",
-      defaultValue: "-",
-      onClick: actionIsCategory,
-      readOnly: { isValue: true, cursor: "cursor-pointer" },
-    }),
-    objectFields({
-      label: "koordinat toko",
-      name: "coordinate",
-      type: "coordinate",
-      defaultValue: defaultCoordinate as CoordinateProps,
-    }),
-    objectFields({
-      label: "KTP pemilik",
-      name: "ktp",
-      type: "image",
-      defaultValue: ktp,
-    }),
-    objectFields({
-      label: "banner etalase",
-      name: "banner",
-      type: "image",
-      defaultValue: bannerEtalase,
-    }),
-  ];
-
-  return { fields };
-};
-
-export default CustomerDetail;
+export default Detail;

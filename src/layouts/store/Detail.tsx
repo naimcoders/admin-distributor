@@ -164,6 +164,7 @@ const Detail = () => {
             lat={location?.lat ?? 0}
             lng={location?.lng ?? 0}
             label="koordinat toko"
+            zoom={19}
           />
 
           <LabelAndImage src={ktpImage ?? ""} label="KTP pemilik" />

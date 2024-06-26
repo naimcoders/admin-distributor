@@ -19,7 +19,7 @@ export interface Store {
   emailVerify: boolean;
   imageUrl: string;
   ktpImageUrl: string;
-  location: Location[];
+  locations: Location[];
   createdAt: number;
   updatedAt: number;
 }

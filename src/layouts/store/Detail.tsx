@@ -1,7 +1,8 @@
+import React from "react";
 import Error from "src/components/Error";
 import Skeleton from "src/components/Skeleton";
-import { Fragment } from "react";
 import { FieldValues, useForm } from "react-hook-form";
+import { HiCheckCircle } from "react-icons/hi2";
 import {
   Textfield,
   TextfieldProps,
@@ -12,11 +13,33 @@ import { LabelAndImage } from "src/components/File";
 import { UserCoordinate } from "src/components/Coordinate";
 import { findStoreById } from "src/api/store.service";
 import { useParams } from "react-router-dom";
-import { epochToDateConvert, parsePhoneNumber } from "src/helpers";
+import {
+  epochToDateConvert,
+  handleErrorMessage,
+  parsePhoneNumber,
+  setRequiredField,
+} from "src/helpers";
+import { IconColor } from "src/types";
+import Image from "src/components/Image";
+import { getFileFromFirebase } from "src/firebase/upload";
 
 const Detail = () => {
-  const { control } = useForm<FieldValues>({ mode: "onChange" });
-  const { fields, isLoading, error, location } = useHook();
+  const [ktpImage, setKtpImage] = React.useState<string | undefined>("");
+
+  const {
+    control,
+    formState: { errors },
+  } = useForm<FieldValues>();
+  const { id } = useParams() as { id: string };
+  const { data, isLoading, error } = findStoreById(id);
+  const location = data?.locations?.[0];
+  const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
+
+  React.useEffect(() => {
+    if (data) {
+      getFileFromFirebase(data.ktpImageUrl).then((path) => setKtpImage(path));
+    }
+  }, [data]);
 
   return (
     <>
@@ -25,160 +48,137 @@ const Detail = () => {
       ) : isLoading ? (
         <Skeleton />
       ) : (
-        <GridInput>
-          {fields.map((v, idx) => (
-            <Fragment key={idx}>
-              {["text", "number", "email"].includes(v.type!) && (
-                <Textfield
-                  name={v.name}
-                  type={v.type}
-                  label={v.label}
-                  control={control}
-                  defaultValue={v.defaultValue}
-                  autoComplete={v.autoComplete}
-                  readOnly={v.readOnly}
-                />
-              )}
+        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8 gap-4">
+          <Textfield
+            type="text"
+            label="nama pemilik"
+            control={control}
+            name="name"
+            placeholder="Masukkan nama pemilik"
+            defaultValue={data?.ownerName}
+            errorMessage={handleErrorMessage(errors, "ownerName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
 
-              {["coordinate"].includes(v.type!) && location?.lat && (
-                <UserCoordinate
-                  label={v.label}
-                  cursor="default"
-                  lat={location.lat}
-                  lng={location.lng}
-                />
-              )}
+          <Textfield
+            type="number"
+            label="nomor HP"
+            control={control}
+            name="phoneNumber"
+            placeholder="Masukkan nomor HP"
+            defaultValue={parsePhoneNumber(data?.phoneNumber)}
+            errorMessage={handleErrorMessage(errors, "phoneNumber")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
 
-              {["image"].includes(v.type!) && (
-                <LabelAndImage label={v.label} src={v.defaultValue} />
-              )}
-            </Fragment>
-          ))}
-        </GridInput>
+          <Textfield
+            name="email"
+            type="email"
+            label="email"
+            control={control}
+            placeholder="Masukkan email"
+            defaultValue={data?.email}
+            errorMessage={handleErrorMessage(errors, "email")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+            endContent={
+              data?.emailVerify && (
+                <HiCheckCircle size={20} color={IconColor.green} />
+              )
+            }
+          />
+
+          <Textfield
+            name="createdAt"
+            type="text"
+            label="tanggal join"
+            control={control}
+            defaultValue={epochToDateConvert(data?.createdAt)}
+            errorMessage={handleErrorMessage(errors, "createdAt")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="storeName"
+            type="text"
+            label="nama toko"
+            control={control}
+            defaultValue={data?.storeName}
+            errorMessage={handleErrorMessage(errors, "storeName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="storeAddress"
+            type="text"
+            label="alamat toko"
+            control={control}
+            defaultValue={storeAddress}
+            errorMessage={handleErrorMessage(errors, "storeAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="streetName"
+            type="text"
+            label="nama jalan, gedung, no. rumah"
+            control={control}
+            defaultValue={"-"}
+            errorMessage={handleErrorMessage(errors, "streetName")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="detailAddress"
+            type="text"
+            label="detail alamat"
+            control={control}
+            defaultValue={location?.detailAddress}
+            errorMessage={handleErrorMessage(errors, "detailAddress")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="rating"
+            type="text"
+            label="rating"
+            control={control}
+            defaultValue={data?.rate}
+            errorMessage={handleErrorMessage(errors, "rating")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
+            name="verify"
+            type="text"
+            label="status akun"
+            control={control}
+            defaultValue={data?.isVerify ? "Verified" : "Unverified"}
+            errorMessage={handleErrorMessage(errors, "verify")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <UserCoordinate
+            lat={location?.lat ?? 0}
+            lng={location?.lng ?? 0}
+            label="koordinat toko"
+          />
+
+          <LabelAndImage src={ktpImage ?? ""} label="KTP pemilik" />
+          <LabelAndImage src={data?.banner ?? ""} label="banner etalase" />
+        </main>
       )}
     </>
   );
-};
-
-const useHook = () => {
-  const { id } = useParams() as { id: string };
-  const { data, isLoading, error } = findStoreById(id);
-  const location = data?.location?.[0];
-  const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
-
-  const fields: TextfieldProps<any>[] = [
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "nama pemilik",
-      name: "ownerName",
-      type: "text",
-      defaultValue: data?.ownerName,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "nomor HP",
-      name: "phoneNumber",
-      type: "text",
-      defaultValue: parsePhoneNumber(data?.phoneNumber),
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "email",
-      name: "email",
-      type: "email",
-      defaultValue: data?.email,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "tanggal join",
-      name: "joinDate",
-      type: "text",
-      defaultValue: epochToDateConvert(data?.createdAt),
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "nama toko",
-      name: "storeName",
-      type: "text",
-      defaultValue: data?.storeName,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "alamat toko",
-      name: "storeAddress",
-      type: "text",
-      defaultValue: storeAddress,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "nama jalan, gedung, no. rumah",
-      name: "streetName",
-      type: "text",
-      defaultValue: "Jl. Pongtiku No. 112",
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "detail alamat",
-      name: "detailAddress",
-      type: "text",
-      defaultValue: location?.detailAddress,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "total revenue",
-      name: "totalRevenue",
-      type: "text",
-      defaultValue: `Rp85.000.000`,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "total transaksi",
-      name: "totalTransaction",
-      type: "number",
-      defaultValue: 321,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "rating",
-      name: "rate",
-      type: "text",
-      defaultValue: data?.rate,
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "status akun",
-      name: "verify",
-      type: "text",
-      defaultValue: "Verified",
-    }),
-    objectFields({
-      readOnly: { isValue: true, cursor: "cursor-default" },
-      label: "PIC sales",
-      name: "picSales",
-      type: "text",
-      defaultValue: "-",
-    }),
-    objectFields({
-      label: "koordinat toko",
-      name: "coordinate",
-      type: "coordinate",
-      defaultValue: "",
-    }),
-    objectFields({
-      label: "KTP pemilik",
-      name: "ktp",
-      type: "image",
-      defaultValue: data?.ktpImageUrl,
-    }),
-    objectFields({
-      label: "banner etalase",
-      name: "banner",
-      type: "image",
-      defaultValue: data?.banner,
-    }),
-  ];
-
-  return { fields, isLoading, error, location };
 };
 
 export default Detail;

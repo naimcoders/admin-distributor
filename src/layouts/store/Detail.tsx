@@ -153,6 +153,17 @@ const Detail = () => {
           />
 
           <Textfield
+            name="totalOrder"
+            type="text"
+            label="total transaksi"
+            control={control}
+            defaultValue="-"
+            errorMessage={handleErrorMessage(errors, "totalOrder")}
+            className="w-full"
+            readOnly={{ isValue: true, cursor: "cursor-default" }}
+          />
+
+          <Textfield
             name="rating"
             type="text"
             label="rating"

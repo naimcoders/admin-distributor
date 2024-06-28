@@ -234,6 +234,7 @@ const Profile = () => {
         onCloseModal={onCloseCategoryModal}
         onNext={onNext}
         defaultValue={salesById.data?.category.map((e) => e.id)}
+        buttonLabel="simpan"
       />
     </main>
   );

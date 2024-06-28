@@ -217,6 +217,7 @@ const Create = () => {
         isOpenModal={isCategoryModal}
         onCloseModal={onCloseModal}
         onNext={onNext}
+        buttonLabel="selanjutnya"
       />
     </main>
   );
@@ -230,6 +231,7 @@ interface ICategory {
   value: string[];
   onNext: () => void;
   defaultValue?: string[];
+  buttonLabel: string;
 }
 
 export const OptionCategoryModal = (props: ICategory) => {
@@ -284,7 +286,7 @@ export const OptionCategoryModal = (props: ICategory) => {
       )}
 
       <Button
-        label="selanjutnya"
+        label={props.buttonLabel}
         className="mx-auto block"
         onClick={props.onNext}
       />

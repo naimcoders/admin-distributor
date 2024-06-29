@@ -174,7 +174,11 @@ export const findRevenueSales = (r: StartEndAt) => {
     enabled: !!r.startAt && !!r.endAt,
   });
 
-  return { data, isLoading: data.isLoading, error: data.error?.message };
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error?.message,
+  };
 };
 
 export const findOrderCountSales = (r: StartEndAt) => {
@@ -184,5 +188,9 @@ export const findOrderCountSales = (r: StartEndAt) => {
     enabled: !!r.startAt && !!r.endAt,
   });
 
-  return { data, isLoading: data.isLoading, error: data.error?.message };
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error?.message,
+  };
 };

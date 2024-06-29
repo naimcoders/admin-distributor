@@ -11,24 +11,37 @@ import { useParams } from "react-router-dom";
 import {
   Currency,
   epochToDateConvert,
-  handleErrorMessage,
   parsePhoneNumber,
+  setHoursEpochTime,
 } from "src/helpers";
 import { IconColor } from "src/types";
 import { getFileFromFirebase } from "src/firebase/upload";
 import ContentTextfield from "src/components/ContentTextfield";
+import {
+  findOrderCountSales,
+  findRevenueSales,
+} from "src/api/performance.service";
+import { Spinner } from "@nextui-org/react";
 
 const Detail = () => {
   const [ktpImage, setKtpImage] = React.useState<string | undefined>("");
-
-  const {
-    control,
-    formState: { errors },
-  } = useForm<FieldValues>();
   const { customerId } = useParams() as { customerId: string };
+
+  const { control } = useForm<FieldValues>();
+
   const { data, isLoading, error } = findStoreById(customerId);
   const location = data?.locations?.[0];
   const storeAddress = `${location?.province}, ${location?.city}, ${location?.district}, ${location?.zipCode}`;
+
+  const endAtEpoch = setHoursEpochTime(23, 59);
+  const revenueSales = findRevenueSales({
+    startAt: data?.createdAt ?? 0,
+    endAt: endAtEpoch,
+  });
+  const orderCountSales = findOrderCountSales({
+    startAt: data?.createdAt ?? 0,
+    endAt: endAtEpoch,
+  });
 
   React.useEffect(() => {
     if (data) {
@@ -51,7 +64,6 @@ const Detail = () => {
             name="name"
             placeholder="Masukkan nama pemilik"
             defaultValue={data?.ownerName}
-            errorMessage={handleErrorMessage(errors, "ownerName")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -63,7 +75,6 @@ const Detail = () => {
             name="phoneNumber"
             placeholder="Masukkan nomor HP"
             defaultValue={parsePhoneNumber(data?.phoneNumber)}
-            errorMessage={handleErrorMessage(errors, "phoneNumber")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -75,7 +86,6 @@ const Detail = () => {
             control={control}
             placeholder="Masukkan email"
             defaultValue={data?.email}
-            errorMessage={handleErrorMessage(errors, "email")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
             endContent={
@@ -91,7 +101,6 @@ const Detail = () => {
             label="tanggal join"
             control={control}
             defaultValue={epochToDateConvert(data?.createdAt)}
-            errorMessage={handleErrorMessage(errors, "createdAt")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -102,7 +111,6 @@ const Detail = () => {
             label="nama toko"
             control={control}
             defaultValue={data?.storeName}
-            errorMessage={handleErrorMessage(errors, "storeName")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -113,7 +121,6 @@ const Detail = () => {
             label="alamat toko"
             control={control}
             defaultValue={storeAddress}
-            errorMessage={handleErrorMessage(errors, "storeAddress")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -124,7 +131,6 @@ const Detail = () => {
             label="nama jalan, gedung, no. rumah"
             control={control}
             defaultValue={location?.addressName}
-            errorMessage={handleErrorMessage(errors, "streetName")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -135,22 +141,46 @@ const Detail = () => {
             label="detail alamat"
             control={control}
             defaultValue={location?.detailAddress}
-            errorMessage={handleErrorMessage(errors, "detailAddress")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
 
-          <Textfield
-            name="revenue"
-            type="text"
-            label="total revenue"
-            control={control}
-            defaultValue={Currency(data?.revenue ?? 0)}
-            errorMessage={handleErrorMessage(errors, "detailAddress")}
-            className="w-full"
-            readOnly={{ isValue: true, cursor: "cursor-default" }}
-            startContent={<ContentTextfield label="Rp" />}
-          />
+          {revenueSales.error ? (
+            <Error error={revenueSales.error} />
+          ) : revenueSales.isLoading ? (
+            <div>
+              <Spinner size="md" />
+            </div>
+          ) : (
+            <Textfield
+              name="revenue"
+              type="text"
+              label="total revenue"
+              control={control}
+              defaultValue={Currency(revenueSales.data ?? 0)}
+              className="w-full"
+              readOnly={{ isValue: true, cursor: "cursor-default" }}
+              startContent={<ContentTextfield label="Rp" />}
+            />
+          )}
+
+          {orderCountSales.error ? (
+            <Error error={orderCountSales.error} />
+          ) : orderCountSales.isLoading ? (
+            <div>
+              <Spinner size="md" />
+            </div>
+          ) : (
+            <Textfield
+              name="orderCount"
+              type="text"
+              label="total transaksi"
+              control={control}
+              defaultValue={Currency(orderCountSales.data ?? 0)}
+              className="w-full"
+              readOnly={{ isValue: true, cursor: "cursor-default" }}
+            />
+          )}
 
           <Textfield
             name="rating"
@@ -158,7 +188,6 @@ const Detail = () => {
             label="rating"
             control={control}
             defaultValue={data?.rate}
-            errorMessage={handleErrorMessage(errors, "rating")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />
@@ -169,7 +198,6 @@ const Detail = () => {
             label="status akun"
             control={control}
             defaultValue={data?.isVerify ? "Verified" : "Unverified"}
-            errorMessage={handleErrorMessage(errors, "verify")}
             className="w-full"
             readOnly={{ isValue: true, cursor: "cursor-default" }}
           />

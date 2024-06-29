@@ -16,6 +16,11 @@ export interface Buyers {
   totalOrder: number;
 }
 
+interface StartEndAt {
+  startAt: number;
+  endAt: number;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -77,6 +82,34 @@ class Api {
       errors: "",
     });
   }
+
+  async findRevenueSales(r: StartEndAt): Promise<number> {
+    const query = queryString.stringify(
+      { startAt: r.startAt, endAt: r.endAt },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/revenue/sales?${query}`,
+      errors: "",
+    });
+  }
+
+  async findOrderCountSales(r: StartEndAt): Promise<number> {
+    const query = queryString.stringify(
+      { startAt: r.startAt, endAt: r.endAt },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<number>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/order-count/sales?${query}`,
+      errors: "",
+    });
+  }
 }
 
 interface ApiPerformanceInfo {
@@ -87,6 +120,8 @@ interface ApiPerformanceInfo {
     endAt?: number
   ): Promise<number>;
   findOrderCount(merchantId: string): Promise<number>;
+  findRevenueSales(r: StartEndAt): Promise<number>;
+  findOrderCountSales(r: StartEndAt): Promise<number>;
 }
 
 function getPerformanceApiInfo(): ApiPerformanceInfo {
@@ -130,4 +165,24 @@ export const findOrderCount = () => {
   });
 
   return { data, isLoading, error: error?.message };
+};
+
+export const findRevenueSales = (r: StartEndAt) => {
+  const data = useQuery<number, Error>({
+    queryKey: ["revenue-sales", r],
+    queryFn: () => getPerformanceApiInfo().findRevenueSales(r),
+    enabled: !!r.startAt && !!r.endAt,
+  });
+
+  return { data, isLoading: data.isLoading, error: data.error?.message };
+};
+
+export const findOrderCountSales = (r: StartEndAt) => {
+  const data = useQuery<number, Error>({
+    queryKey: ["order-count-sales", r],
+    queryFn: () => getPerformanceApiInfo().findOrderCountSales(r),
+    enabled: !!r.startAt && !!r.endAt,
+  });
+
+  return { data, isLoading: data.isLoading, error: data.error?.message };
 };

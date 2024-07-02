@@ -1,7 +1,8 @@
+import React from "react";
+import cx from "classnames";
 import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
 import { HiOutlineX } from "react-icons/hi";
-import React, { Fragment } from "react";
 import { useActiveModal } from "src/stores/modalStore";
 import { Button } from "./Button";
 
@@ -11,6 +12,7 @@ interface Modal {
   children: React.ReactNode;
   customHeader?: React.ReactNode;
   title?: string | React.ReactNode;
+  width?: string;
 }
 
 export const Modal = ({
@@ -19,6 +21,7 @@ export const Modal = ({
   title,
   children,
   customHeader,
+  width,
 }: Modal) => {
   const modalDOM = document.querySelector("#modal");
   if (!modalDOM || !isOpen) return null;
@@ -26,10 +29,10 @@ export const Modal = ({
   return (
     <>
       {createPortal(
-        <Transition appear show={isOpen} as={Fragment}>
+        <Transition appear show={isOpen} as={React.Fragment}>
           <Dialog as="section" className="relative z-20" onClose={closeModal}>
             <Transition.Child
-              as={Fragment}
+              as={React.Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
               enterTo="opacity-100"
@@ -43,7 +46,7 @@ export const Modal = ({
             <div className="fixed inset-0 overflow-y-auto">
               <div className="flex min-h-full items-center justify-center p-4 text-center relative">
                 <Transition.Child
-                  as={Fragment}
+                  as={React.Fragment}
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 scale-95"
                   enterTo="opacity-100 scale-100"
@@ -51,7 +54,12 @@ export const Modal = ({
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Panel
+                    className={cx(
+                      "w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all",
+                      width
+                    )}
+                  >
                     {!customHeader && title ? (
                       <Dialog.Title
                         as="h3"

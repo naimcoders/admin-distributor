@@ -92,20 +92,20 @@ export interface ITransaction {
   updatedAt: number;
   successAt: number;
   failedAt: number;
-  topup?: Topup;
-  withdraw?: Withdraw;
-  transfer?: Transfer;
-  orders?: Orders;
+  topup?: ITopup;
+  withdraw?: IWithdrawTransaction;
+  transfer?: ITransfer;
+  orders?: IOrders;
 }
 
-export interface Orders {
+export interface IOrders {
   id: string;
   orderId: string;
   amount: number;
   type: string;
 }
 
-export interface Topup {
+export interface ITopup {
   id: string;
   actions: Actions;
   paymentType: string;
@@ -159,12 +159,12 @@ export interface Metadata {
   additionalProp3: string;
 }
 
-export interface Transfer {
+export interface ITransfer {
   id: string;
   toPhoneNumber: string;
 }
 
-export interface Withdraw {
+export interface IWithdrawTransaction {
   id: string;
   channelCode: string;
   numberAccount: string;

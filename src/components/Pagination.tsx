@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { HiOutlineChevronRight, HiOutlineChevronLeft } from "react-icons/hi";
 import { usePagination, PaginationItemType, Button } from "@nextui-org/react";
 import { Fragment } from "react";
@@ -7,9 +8,16 @@ interface IPagination {
   prev?: () => void;
   next?: () => void;
   isNext?: boolean;
+  baseClassName?: string;
 }
 
-const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
+const Pagination: React.FC<IPagination> = ({
+  page,
+  next,
+  prev,
+  isNext,
+  baseClassName,
+}) => {
   const { activePage, range, onNext, onPrevious } = usePagination({
     total: isNext ? page + 1 : page,
     showControls: true,
@@ -33,7 +41,7 @@ const Pagination: React.FC<IPagination> = ({ page, next, prev, isNext }) => {
   };
 
   return (
-    <main>
+    <main className={cx(baseClassName)}>
       <ul className="flex gap-2 justify-end">
         {newRange.map((page) => (
           <Fragment key={page}>

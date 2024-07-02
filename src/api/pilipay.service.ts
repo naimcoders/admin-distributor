@@ -92,7 +92,7 @@ export interface ITransaction {
   updatedAt: number;
   successAt: number;
   failedAt: number;
-  topup?: ITopup;
+  topup?: ITopupTransaction;
   withdraw?: IWithdrawTransaction;
   transfer?: ITransfer;
   orders?: IOrders;
@@ -105,7 +105,7 @@ export interface IOrders {
   type: string;
 }
 
-export interface ITopup {
+export interface ITopupTransaction {
   id: string;
   actions: Actions;
   paymentType: string;

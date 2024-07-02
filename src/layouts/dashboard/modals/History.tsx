@@ -320,7 +320,7 @@ const History = () => {
         setDetailHistory(null);
       }}
       customHeader={<BeginHeader />}
-      width="max-w-[40rem]"
+      width="min-w-[40rem]"
     >
       {dataHistoryState && <DetailHistory />}
 

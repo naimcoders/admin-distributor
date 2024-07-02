@@ -3,6 +3,8 @@ import queryString from "query-string";
 import { req } from "./request";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { ReqPaging, ResPaging } from "src/interface";
+import React from "react";
 
 export enum ETypeHistoryPilipay {
   TOPUP = "Top Up",
@@ -80,6 +82,94 @@ export interface IWithdraw {
   accountHolderName: string;
 }
 
+export interface ITransaction {
+  id: string;
+  pilipayId: string;
+  status: string;
+  type: string;
+  amount: number;
+  createdAt: number;
+  updatedAt: number;
+  successAt: number;
+  failedAt: number;
+  topup?: Topup;
+  withdraw?: Withdraw;
+  transfer?: Transfer;
+  orders?: Orders;
+}
+
+export interface Orders {
+  id: string;
+  orderId: string;
+  amount: number;
+  type: string;
+}
+
+export interface Topup {
+  id: string;
+  actions: Actions;
+  paymentType: string;
+  paymentMethod: string;
+}
+
+export interface Actions {
+  retail: Retail;
+  virtualAccount: VirtualAccount;
+  eWallet: EWallet;
+}
+
+export interface EWallet {
+  action: string;
+  urlType: string;
+  method: string;
+  url: string;
+  qrCode: string;
+}
+
+export interface Retail {
+  amount: number;
+  currency: string;
+  channelCode: string;
+  channelProperties: RetailChannelProperties;
+}
+
+export interface RetailChannelProperties {
+  paymentCode: string;
+  customerName: string;
+  expiresAt: Date;
+}
+
+export interface VirtualAccount {
+  amount: number;
+  currency: string;
+  channelCode: string;
+  channelProperties: VirtualAccountChannelProperties;
+  metadata: Metadata;
+}
+
+export interface VirtualAccountChannelProperties {
+  customerName: string;
+  virtualAccountNumber: string;
+  expiresAt: Date;
+}
+
+export interface Metadata {
+  additionalProp1: string;
+  additionalProp2: string;
+  additionalProp3: string;
+}
+
+export interface Transfer {
+  id: string;
+  toPhoneNumber: string;
+}
+
+export interface Withdraw {
+  id: string;
+  channelCode: string;
+  numberAccount: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -155,6 +245,28 @@ class Api {
       errors: "",
     });
   }
+
+  async transactions(
+    typeTransactions: string,
+    r: ReqPaging
+  ): Promise<ResPaging<ITransaction>> {
+    const query = queryString.stringify(
+      {
+        page: r.page,
+        limit: r.limit,
+        typeTransactions,
+      },
+      { skipEmptyString: true, skipNull: true }
+    );
+
+    return await req<ResPaging<ITransaction>>({
+      method: "GET",
+      isNoAuth: false,
+      path: `${this.path}/transactions?${query}`,
+      body: r,
+      errors: "",
+    });
+  }
 }
 
 interface ApiPilipayInfo {
@@ -164,11 +276,38 @@ interface ApiPilipayInfo {
   topup(r: ITopup): Promise<string>;
   transferBalance(r: ITransferBalance): Promise<Pilipay>;
   withdraw(r: IWithdraw): Promise<Pilipay>;
+  transactions(
+    typeTransactions: string,
+    r: ReqPaging
+  ): Promise<ResPaging<ITransaction>>;
 }
 
 function getPilipayApiInfo(): ApiPilipayInfo {
   return Api.getInstance();
 }
+
+export const getPilipayTransactions = (typeTransactions: string) => {
+  const [page, setPage] = React.useState(1);
+  const [limit, setLimit] = React.useState(10);
+
+  const data = useQuery<ResPaging<ITransaction>, Error>({
+    queryKey: ["pilipay-transaction", page, limit, typeTransactions],
+    queryFn: () =>
+      getPilipayApiInfo().transactions(typeTransactions, { limit, page }),
+    enabled: !!typeTransactions,
+  });
+
+  return {
+    data: data.data,
+    isLoading: data.isLoading,
+    error: data.error?.message,
+    limit,
+    page,
+    setPage,
+    setLimit,
+    isNext: data.data?.canNext,
+  };
+};
 
 export const findPaymentChannel = () => {
   const data = useQuery<PayoutChannels[], Error>({

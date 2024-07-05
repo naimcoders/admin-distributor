@@ -69,8 +69,8 @@ const Payment: React.FC<IPayment> = ({
 
         <section
           className={cx(
-            "border-b border-gray-300",
-            resultTopup.eWallet ? "pb-3" : "py-3"
+            "border-b border-gray-300"
+            // resultTopup.eWallet ? "pb-3" : "py-3"
           )}
         >
           <h1 className="font-medium">
@@ -83,7 +83,7 @@ const Payment: React.FC<IPayment> = ({
           <ActionContent
             title="Link Pembayaran"
             value={resultTopup.eWallet?.url ?? ""}
-            paymentType={"EWALLET"}
+            paymentType="EWALLET"
             classNameWrapper="truncate py-3"
             onClipboard={() => onClipboard(resultTopup.eWallet?.url ?? "")}
             onCloseModalPayment={() => {

@@ -486,25 +486,31 @@ const Create = () => {
         title="kategori"
         render={(e) => (
           <>
-            {e.error && <Error error={e.error} />}
-            {e.isLoading && <Spinner className="mx-auto" />}
-            {e.data?.map((v) => (
-              <li
-                key={v.id}
-                onClick={() => {
-                  setCategoryId(v.id);
-                  setValue("category", v.name);
-                  clearErrors("subCategory");
-                  actionIsCategory();
-                }}
-                className={cx(
-                  "hover:font-bold cursor-pointer w-max",
-                  v.id === categoryId && "font-bold"
-                )}
-              >
-                {v.name}
-              </li>
-            ))}
+            {e.error ? (
+              <Error error={e.error} />
+            ) : e.isLoading ? (
+              <Spinner className="mx-auto" />
+            ) : !e.data ? (
+              <h1 className="font-semibold text-center">Tidak ada data</h1>
+            ) : (
+              e.data?.map((v) => (
+                <li
+                  key={v.id}
+                  onClick={() => {
+                    setCategoryId(v.id);
+                    setValue("category", v.name);
+                    clearErrors("subCategory");
+                    actionIsCategory();
+                  }}
+                  className={cx(
+                    "hover:font-bold cursor-pointer w-max",
+                    v.id === categoryId && "font-bold"
+                  )}
+                >
+                  {v.name}
+                </li>
+              ))
+            )}
           </>
         )}
       />
@@ -516,28 +522,31 @@ const Create = () => {
         title="sub-kategori"
         render={(e) => (
           <>
-            {e.error && <Error error={e.error} />}
-            {e.isLoading && <Spinner className="mx-auto" />}
-            {!e.data && (
+            {e.error ? (
+              <Error error={e.error} />
+            ) : e.isLoading ? (
+              <Spinner className="mx-auto" />
+            ) : !e.data ? (
               <h1 className="font-semibold text-center">Tidak ada data</h1>
+            ) : (
+              e.data?.map((v) => (
+                <li
+                  key={v.id}
+                  onClick={() => {
+                    setSubCategoryId(v.id);
+                    actionIsSubCategory();
+                    setValue("subCategory", v.name);
+                    clearErrors("subCategory");
+                  }}
+                  className={cx(
+                    "hover:font-bold cursor-pointer w-max",
+                    v.id === subCategoryId && "font-bold"
+                  )}
+                >
+                  {v.name}
+                </li>
+              ))
             )}
-            {e.data?.map((v) => (
-              <li
-                key={v.id}
-                onClick={() => {
-                  setSubCategoryId(v.id);
-                  actionIsSubCategory();
-                  setValue("subCategory", v.name);
-                  clearErrors("subCategory");
-                }}
-                className={cx(
-                  "hover:font-bold cursor-pointer w-max",
-                  v.id === subCategoryId && "font-bold"
-                )}
-              >
-                {v.name}
-              </li>
-            ))}
           </>
         )}
       />

@@ -79,24 +79,22 @@ const Payment: React.FC<IPayment> = ({
           </h1>
         </section>
 
-        {/* {data?.actions.eWallet && (
+        {resultTopup.eWallet && (
           <ActionContent
-            amount={1000}
             title="Link Pembayaran"
-            value={data.actions.eWallet.url}
-            paymentType={data.paymentType}
+            value={resultTopup.eWallet?.url ?? ""}
+            paymentType={"EWALLET"}
             classNameWrapper="truncate py-3"
-            onClipboard={() => onClipboard(data?.actions?.eWallet?.url ?? "")}
+            onClipboard={() => onClipboard(resultTopup.eWallet?.url ?? "")}
             onCloseModalPayment={() => {
               close();
               onClearState();
             }}
           />
-        )} */}
+        )}
 
         {resultTopup.retail && (
           <ActionContent
-            amount={resultTopup.retail.amount}
             classNameWrapper="py-3"
             onClipboard={() =>
               onClipboard(
@@ -111,7 +109,6 @@ const Payment: React.FC<IPayment> = ({
 
         {resultTopup.virtualAccount && (
           <ActionContent
-            amount={resultTopup.virtualAccount.amount}
             classNameWrapper="py-3"
             onClipboard={() =>
               onClipboard(
@@ -177,7 +174,6 @@ const Payment: React.FC<IPayment> = ({
 interface IAction {
   title: string;
   value: string;
-  amount: number;
   paymentType: string;
   onCloseModalPayment?: () => void;
   classNameWrapper?: string;

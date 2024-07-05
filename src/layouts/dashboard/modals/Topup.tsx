@@ -10,9 +10,10 @@ import cx from "classnames";
 import { nominals } from "./Transfer";
 import {
   findPaymentChannel,
+  IResTopup,
   ITopup,
   PayoutChannels,
-  usePilipay,
+  topup,
 } from "src/api/pilipay.service";
 import { cn, Image } from "@nextui-org/react";
 import { toast } from "react-toastify";
@@ -21,13 +22,15 @@ import Payment from "./Payment";
 
 const Topup = () => {
   const formState = useForm<ITopup>();
+  const [paymentType, setPaymentType] = useState("");
   const [isOtherField, setIsOtherField] = useState(false);
-  const [topUpId, setTopUpId] = useState("");
+  const [resultTopup, setResultTopup] = useState<IResTopup | null>(null);
   const [showListPaymentChannel, setShowListPaymentChannel] = useState(false);
   const [amount, setAmount] = useState(0);
   const [channelPayment, setPaymentChannel] = useState<PayoutChannels>();
   const paymentChannel = findPaymentChannel();
-  const { topup: topupActions } = usePilipay();
+
+  const topUpActions = topup();
 
   const { isTopUp, actionIsTopUp, actionIsPayment, isPayment } =
     useActiveModal();
@@ -45,14 +48,22 @@ const Topup = () => {
       toast.loading("Loading...", {
         toastId: "loading-topup",
       });
-      const result = await topupActions.mutateAsync({
+
+      console.log({
         amount: fixAmount,
         paymentMethod: channelPayment?.paymentChannel ?? "",
         paymentType: channelPayment?.paymentMethod ?? "",
       });
-      setTopUpId(result);
+
+      const result = await topUpActions.mutateAsync({
+        amount: fixAmount,
+        paymentMethod: channelPayment?.paymentChannel ?? "",
+        paymentType: channelPayment?.paymentMethod ?? "",
+      });
 
       if (result) {
+        setPaymentType(channelPayment?.paymentMethod ?? "");
+        setResultTopup(result);
         actionIsTopUp();
         setTimeout(actionIsPayment, 800);
       }
@@ -193,7 +204,7 @@ const Topup = () => {
           ) : (
             <>
               <Button
-                isLoading={topupActions.isPending}
+                isLoading={topUpActions.isPending}
                 onClick={onActionTopup}
                 label="Proses Topup"
                 className={cx("w-full", !isOtherField && "col-span-2")}
@@ -203,16 +214,17 @@ const Topup = () => {
         </main>
       </Modal>
 
-      {topUpId && (
+      {resultTopup && (
         <Payment
           close={actionIsPayment}
           isOpen={isPayment}
-          topupId={topUpId}
+          resultTopup={resultTopup}
           onClearState={() => {
             setAmount(0);
-            setTopUpId("");
+            setResultTopup(null);
             setShowListPaymentChannel(false);
           }}
+          paymentType={paymentType}
         />
       )}
     </>

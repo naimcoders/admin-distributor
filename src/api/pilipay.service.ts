@@ -170,6 +170,49 @@ export interface IWithdrawTransaction {
   numberAccount: string;
 }
 
+// TOPUP
+export interface IResTopup {
+  retail?: IReatilTopUp;
+  virtualAccount?: IVirtualAccount;
+  eWallet?: IEWalletTopUp;
+  payLater?: null;
+}
+
+export interface IVirtualAccount {
+  amount: number;
+  currency: string;
+  channel_code: string;
+  channel_properties: IVirtualAccountChannelProperties;
+  metadata: null;
+}
+
+export interface IVirtualAccountChannelProperties {
+  customer_name: string;
+  virtual_account_number: string;
+  expires_at: Date;
+}
+
+interface IReatilTopUp {
+  amount: number;
+  currency: string;
+  channel_code: string;
+  channel_properties: IChannelCodeTopUp;
+}
+
+interface IChannelCodeTopUp {
+  payment_code: string;
+  customer_name: string;
+  expires_at: Date;
+}
+
+interface IEWalletTopUp {
+  action: string;
+  url_type: string;
+  method: string;
+  url: string;
+  qr_code: string;
+}
+
 class Api {
   private static instance: Api;
   private constructor() {}
@@ -216,8 +259,8 @@ class Api {
     });
   }
 
-  async topup(r: ITopup): Promise<string> {
-    return await req<string>({
+  async topup(r: ITopup): Promise<IResTopup> {
+    return await req<IResTopup>({
       method: "POST",
       isNoAuth: false,
       path: `${this.path}/topup`,
@@ -273,7 +316,7 @@ interface ApiPilipayInfo {
   findMeWallet(showHistory: boolean): Promise<Pilipay>;
   activated(r: Activated): Promise<Pilipay>;
   findPaymentChannel(): Promise<PayoutChannels[]>;
-  topup(r: ITopup): Promise<string>;
+  topup(r: ITopup): Promise<IResTopup>;
   transferBalance(r: ITransferBalance): Promise<Pilipay>;
   withdraw(r: IWithdraw): Promise<Pilipay>;
   transactions(
@@ -362,6 +405,16 @@ export const transferBalance = () => {
   return { mutateAsync, isPending };
 };
 
+export const topup = () => {
+  const queryClient = useQueryClient();
+  return useMutation<IResTopup, Error, ITopup>({
+    mutationKey: ["topup"],
+    mutationFn: (r) => getPilipayApiInfo().topup(r),
+    onSuccess: () =>
+      void queryClient.invalidateQueries({ queryKey: ["pilipay-transaction"] }),
+  });
+};
+
 export const usePilipay = () => {
   const activated = useMutation<Pilipay, Error, Activated>({
     mutationKey: [key],
@@ -375,10 +428,5 @@ export const usePilipay = () => {
     },
   });
 
-  const topup = useMutation<string, Error, ITopup>({
-    mutationKey: [key],
-    mutationFn: (r) => getPilipayApiInfo().topup(r),
-  });
-
-  return { activated, topup };
+  return { activated };
 };
